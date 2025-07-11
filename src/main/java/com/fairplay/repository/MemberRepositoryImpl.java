@@ -43,6 +43,42 @@ public class MemberRepositoryImpl implements MemberRepository{
 		// 조회 결과를 MemberRowMapper를 통해 Member 객체로 매핑
 		return jdbcTemplate.query(sql, new MemberRowMapper());
 	}
+
+	// 특정 회원 조회 (Read_one)
+	@Override
+	public Member findById(int id) {
+		
+		String sql = "SELECT * FROM member Where id = ?";
+		
+		// queryForObject는 단일 결과 반환할 때 사용
+		return jdbcTemplate.queryForObject(sql, new MemberRowMapper(), id);
+	}
+
+	// 특정 회원 업데이트 (Update)
+	@Override
+	public void update(Member member) {
+		
+		String sql = "UPDATE member SET username = ?, nickname = ?, email = ?, address = ?, phone = ? WHERE id = ?";
+		
+		jdbcTemplate.update(sql,
+			member.getUsername(),
+			member.getNickname(),
+			member.getEmail(),
+			member.getAddress(),
+			member.getPhone(),
+			member.getId()
+		);
+		
+		
+	}
+
+
+	@Override
+	public void delete(int id) {
+		String sql = "delete from member where id =?";
+		jdbcTemplate.update(sql, id);
+	}
+	
 	
 	
 
