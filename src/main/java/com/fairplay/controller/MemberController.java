@@ -26,9 +26,9 @@ public class MemberController {
 	@GetMapping("/create")
 	public String createForm() {
 		
-		System.out.println("createForm 진입"); // 디버깅용 오류 없으면 삭제
+		System.out.println("createForm 함수 진입"); // 디버깅용 오류 없으면 삭제
 		
-		return "createForm";
+		return "memberCreateForm";
 	}
 	
 	// 회원가입 폼 제출 시 회원 등록 처리 (Create)
