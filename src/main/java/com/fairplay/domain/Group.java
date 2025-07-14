@@ -1,14 +1,16 @@
 package com.fairplay.domain;
 import java.sql.Timestamp;
 
+
+
 public class Group {
     
     private int id;                     // 고유 그룹 ID
     private String name;                // 그룹 이름
     private String description;         // 그룹 설명
     private String code;                // 초대 코드
-    private int max_member;             // 최대 인원
-    private boolean is_public;          // 공개 여부
+    private Integer maxMember;          // 최대 인원
+    private String publicStatus;        // 공개 여부
     private String profile_img;         // 그룹 대표 이미지 파일명
     private Timestamp created_at;       // 생성일시 (DB의 DATETIME과 연결됨)
     private String admin_comment;       // 그룹장이 쓴 한 줄 메시지
@@ -38,17 +40,17 @@ public class Group {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public int getMax_member() {
-		return max_member;
+	public Integer getMaxMember() {
+		return maxMember;
 	}
-	public void setMax_member(int max_member) {
-		this.max_member = max_member;
+	public void setMaxMember(Integer maxMember) {
+		this.maxMember = maxMember;
 	}
-	public boolean isIs_public() {
-		return is_public;
+	public String getPublicStatus() {
+		return publicStatus;
 	}
-	public void setIs_public(boolean is_public) {
-		this.is_public = is_public;
+	public void setPublicStatus(String publicStatus) {
+		this.publicStatus = publicStatus;
 	}
 	public String getProfile_img() {
 		return profile_img;
