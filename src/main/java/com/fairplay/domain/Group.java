@@ -1,6 +1,8 @@
 package com.fairplay.domain;
 import java.sql.Timestamp;
 
+import org.springframework.web.multipart.MultipartFile;
+
 
 
 public class Group {
@@ -11,7 +13,8 @@ public class Group {
     private String code;                // 초대 코드
     private Integer maxMember;          // 최대 인원
     private String publicStatus;        // 공개 여부
-    private String profile_img;         // 그룹 대표 이미지 파일명
+    private MultipartFile file;			// 업로드 받는 파일 (폼에서 전달)
+    private String profile_img;         // DB에 저장할 파일명
     private Timestamp created_at;       // 생성일시 (DB의 DATETIME과 연결됨)
     private String admin_comment;       // 그룹장이 쓴 한 줄 메시지
     
@@ -69,6 +72,12 @@ public class Group {
 	}
 	public void setAdmin_comment(String admin_comment) {
 		this.admin_comment = admin_comment;
+	}
+	public MultipartFile getFile() {
+		return file;
+	}
+	public void setFile(MultipartFile file) {
+		this.file = file;
 	}
 
     

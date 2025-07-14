@@ -34,39 +34,35 @@ public class GroupController {
 	
 	// 그룹등록 폼 제출 시 그룹 등록 처리 (Create)
 	@PostMapping("/create")
-	public String createGroup(@ModelAttribute Group group, @RequestParam("file") MultipartFile file) {
-		
-		// 공개 여부 확인용 로그 출력
-	    if ("true".equals(group.getPublicStatus())) {
-	        System.out.println("공개 그룹으로 등록됨");
-	    } else {
-	        System.out.println("비공개 그룹으로 등록됨");
+	public String createGroup(@ModelAttribute Group group) {
+	    
+	    // 1. 업로드된 파일 꺼내오기 (폼에서 전달된 파일은 DTO의 file 필드에 바인딩됨)
+	    MultipartFile file = group.getFile();
+
+	    // 2. 파일이 존재하고 비어있지 않은 경우 처리
+	    if (file != null && !file.isEmpty()) {
+	        // 2-1. 원래 파일 이름 추출
+	        String fileName = file.getOriginalFilename();
+
+	        // 2-2. 저장할 경로 지정 (서버의 C:/upload 디렉토리에 저장)
+	        Path savePath = Paths.get("C:/upload/" + fileName);
+
+	        try {
+	            // 2-3. 실제 파일 저장
+	            file.transferTo(savePath.toFile());
+
+	            // 2-4. 저장된 파일명을 DB에 넣기 위해 DTO의 profile_img 필드에 설정
+	            group.setProfile_img(fileName);
+	        } catch (IOException e) {
+	            e.printStackTrace(); // 에러 발생 시 로그 출력
+	        }
 	    }
-		
-		// 파일이 비어있지 않으면 처리
-		if (!file.isEmpty()) {
-			// 파일 이름 추출
-			String fileName = file.getOriginalFilename();
-			
-			// 실제 저장 경로 (서버 설정에 따라 변경 가능)
-			Path savePath = Paths.get("C:/upload/" + fileName);
-			
-			try {
-				// 파일 저장
-				file.transferTo(savePath.toFile());
-				
-				// 파일명만 group 객체에 설정 (DB 저장용)
-				group.setProfile_img(fileName);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		// 나머지 정보 저장
-		groupService.save(group);
-		
-		// 그룹 목록으로 리다이렉트
-		return "redirect:/group/groups";
+
+	    // 3. 서비스 호출 → DB에 그룹 정보 저장 (파일명 포함)
+	    groupService.save(group);
+
+	    // 4. 저장 후 그룹 목록 페이지로 리다이렉트
+	    return "redirect:/group/groups";
 	}
 	
 	// 전체 그룹 목록을 조회하여 뷰에 전달 (Read_all)
