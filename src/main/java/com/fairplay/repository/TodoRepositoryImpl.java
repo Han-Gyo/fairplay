@@ -45,12 +45,14 @@ public class TodoRepositoryImpl implements TodoRepository{
 
 	@Override
 	public void insert(Todo todo) {
-		String sql = "INSERT INTO todo (group_id, title, completed, difficulty_point) VALUES (?, ?, ?, ?)";
+		String sql = "INSERT INTO todo (title, group_id, assigned_to, due_date, difficulty_point, completed) VALUES (?, ?, ?, ?, ?, ?)";
 		template.update(sql,
-			todo.getGroup_id(),
 			todo.getTitle(),
-			todo.isCompleted(),
-			todo.getDifficulty_point()
+			todo.getGroup_id(),
+			todo.getAssigned_to(),
+			todo.getDue_date(),
+			todo.getDifficulty_point(),
+			todo.isCompleted()
 		);
 	}
 
@@ -78,4 +80,11 @@ public class TodoRepositoryImpl implements TodoRepository{
 		String sql = "UPDATE todo SET completed = true WHERE id = ?";
 		template.update(sql, id);
 	}
+
+	@Override
+	public Todo findById(int id) {
+		String sql = "SELECT * FROM todo WHERE id = ?";
+		return template.queryForObject(sql, todoRowMapper, id);
+	}
+	
 }

@@ -22,14 +22,11 @@ public class TodoServiceImpl implements TodoService{
 	}
 	// ✅ 할 일 추가
 	@Override
-	public void addTodo(String title, int group_id) {
-		Todo todo = new Todo();
-		todo.setTitle(title);	
-		todo.setCompleted(false);		// 기본값 false
-		todo.setDifficulty_point(3);	// 기본 난이도 3
-		todo.setGroup_id(group_id);
+	public void addTodo(Todo todo) {
+		todo.setCompleted(false);
 		todoRepository.insert(todo);
-		System.out.println("할 일 추가됨 : " + title);
+		
+		System.out.println("할 일 추가됨 : " + todo.getTitle());
 	}
 	// ✅ 할 일 수정
 	@Override
@@ -49,6 +46,8 @@ public class TodoServiceImpl implements TodoService{
 		todoRepository.complete(id);
 		System.out.println("✅ 완료 처리된 ID: " + id);
 	}
-	
-	
+	@Override
+	public Todo findById(int id) {
+		return todoRepository.findById(id);
+	}
 }
