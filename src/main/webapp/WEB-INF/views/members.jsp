@@ -33,13 +33,14 @@
             text-align: center;
             border-bottom: 1px solid #ddd;
         }
-        
+
         .action-buttons a {
             margin: 0 5px;
             text-decoration: none;
-            color: #4CAF50;
+            color: #007bff;
             font-weight: bold;
         }
+
         .action-buttons a:hover {
             text-decoration: underline;
         }
@@ -52,7 +53,8 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
+            
+                <!-- ID 컬럼 제거 -->
                 <th>아이디</th>
                 <th>비밀번호</th>
                 <th>닉네임</th>
@@ -61,12 +63,17 @@
                 <th>전화번호</th>
                 <th>상태</th>
                 <th>가입일</th>
+                <th>관리</th>
+                
             </tr>
+            
         </thead>
         <tbody>
+        
             <c:forEach var="member" items="${members}">
+            
                 <tr>
-                	<td>${member.id}</td>
+                    <!-- ID 제거 -->
                     <td>${member.username}</td>
                     <td>${member.password}</td>
                     <td>${member.nickname}</td>
@@ -75,9 +82,19 @@
                     <td>${member.phone}</td>
                     <td>${member.status}</td>
                     <td>${member.created_at}</td>
+                    <td class="action-buttons">
+					    <a href="${pageContext.request.contextPath}/member/edit?id=${member.id}">수정</a>
+					    |
+					    <a href="${pageContext.request.contextPath}/member/delete?id=${member.id}"
+					       onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</a>
+					</td>
+                    
                 </tr>
+                
             </c:forEach>
+            
         </tbody>
+        
     </table>
 
 </body>
