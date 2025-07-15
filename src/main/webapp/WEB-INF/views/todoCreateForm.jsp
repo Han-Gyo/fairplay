@@ -12,7 +12,7 @@
 <form action="${pageContext.request.contextPath}/todos/create" method="post">
   <input type="hidden" name="group_id" value="1" />
   <div>
-    <label for="title">제목:</label><br>
+    <label for="title">제목:</label>
     <input type="text" id="title" name="title" required />
   </div><br>
 
@@ -30,7 +30,7 @@
   </div><br>
 
   <div>
-    <label for="difficulty_point">난이도:</label><br>
+    <label for="difficulty_point">난이도 : </label>
     <select id="difficulty_point" name="difficulty_point">
       <%-- 난이도 숫자 선택 (1~5) --%>
       <option value="1">1</option>
@@ -42,11 +42,11 @@
   </div><br>
 
   <div>
-    <label for="complete">상태:</label><br>
-    <select id="complete" name="complete">
-      <option value="미완료">미완료</option>
-      <option value="완료">완료</option>
-    </select>
+		완료 여부 : 
+		<select id="completed" name="completed">
+		  <option value="true" <c:if test="${todo.completed}">selected</c:if>>완료</option>
+		  <option value="false" <c:if test="${!todo.completed}">selected</c:if>>미완료</option>
+		</select>
   </div><br>
 
   <button type="submit">✅ 할 일 등록</button>

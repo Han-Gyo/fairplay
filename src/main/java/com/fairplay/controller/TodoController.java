@@ -1,15 +1,19 @@
 package com.fairplay.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +32,13 @@ public class TodoController {
 	private TodoService todoService;
 	@Autowired
 	private MemberService memberService;
+	
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	    dateFormat.setLenient(false);
+	    binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+	}
 	
 	// ✅ 1. 전체 할 일 목록 조회
 	@GetMapping
@@ -65,7 +76,8 @@ public class TodoController {
 	    @RequestParam("group_id") int group_id,
 	    @RequestParam("assigned_to") int assigned_to,
 	    @RequestParam("due_date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date due_date,
-	    @RequestParam("difficulty_point") int difficulty_point
+	    @RequestParam("difficulty_point") int difficulty_point,
+	    @RequestParam("completed") boolean completed
 	) {
 		// 받은 데이터로 Todo 객체 만들기
 	    Todo todo = new Todo();
@@ -74,10 +86,12 @@ public class TodoController {
 	    todo.setAssigned_to(assigned_to);
 	    todo.setDue_date(due_date);
 	    todo.setDifficulty_point(difficulty_point);
+	    todo.setCompleted(false);
 	    
 	    System.out.println("🧾 받은 title: " + title);
 	    System.out.println("📌 받은 group_id: " + group_id);
 	    System.out.println("👤 받은 assigned_to: " + assigned_to);
+	    System.out.println("🧾 completed 값: " + completed);
 	    
 	    todoService.addTodo(todo);
 	    return "redirect:/todos";
