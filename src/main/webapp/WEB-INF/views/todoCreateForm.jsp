@@ -17,9 +17,9 @@
   </div><br>
 
 담당자 : 
-<select name="assigned_to">
-  <c:forEach var="member" items="${memberList}">
-    <option value="${member.id}">${member.nickname}</option>
+<select name="assigned_to"> <%-- 담당자 선택 드롭다운 --%>
+  <c:forEach var="member" items="${memberList}"> <%-- 서버에서 전달된 memberList를 반복 --%>
+    <option value="${member.id}">${member.nickname}</option> <%-- 각 멤버의 id(선택값)와 닉네임(보이는값) 출력 --%>
   </c:forEach>
 </select>
 <br>
@@ -32,6 +32,7 @@
   <div>
     <label for="difficulty_point">난이도:</label><br>
     <select id="difficulty_point" name="difficulty_point">
+      <%-- 난이도 숫자 선택 (1~5) --%>
       <option value="1">1</option>
       <option value="2">2</option>
       <option value="3">3</option>
