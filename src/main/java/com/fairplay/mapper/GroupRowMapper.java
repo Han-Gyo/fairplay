@@ -18,7 +18,7 @@ public class GroupRowMapper implements RowMapper<Group>{
 		group.setDescription(rs.getString("description"));		// 그룹 설명
 		group.setCode(rs.getString("code"));					// 초대 코드
 		group.setMaxMember(rs.getInt("max_member"));			// 최대 인원
-		group.setPublicStatus(rs.getString("public_status"));	// 공개 여부
+		group.setPublicStatus(rs.getBoolean("public_status"));	// 공개 여부
 		group.setProfile_img(rs.getString("profile_img"));		// 이미지 파일명
 		group.setCreated_at(rs.getTimestamp("created_at"));		// 생성일시
 		group.setAdmin_comment(rs.getString("admin_comment"));	// 관리자 메시지

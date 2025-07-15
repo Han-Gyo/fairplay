@@ -29,7 +29,7 @@ public class GroupRepositoryImpl implements GroupRepository{
 		    group.getDescription(),   // 그룹 설명
 	        group.getCode(),          // 초대 코드
 	        group.getMaxMember(),    // 최대 인원
-	        group.getPublicStatus(),      // 공개 여부
+	        group.isPublicStatus(),      // 공개 여부
 	        group.getProfile_img(),   // 대표 이미지 파일명
 		    group.getAdmin_comment()  // 그룹장이 쓴 한 줄 메시지
 		);
@@ -61,13 +61,34 @@ public class GroupRepositoryImpl implements GroupRepository{
 
 	@Override
 	public void update(Group group) {
-		// TODO Auto-generated method stub
-		
+	    String sql = "UPDATE `group` SET "
+	            + "name = ?, "
+	            + "description = ?, "
+	            + "code = ?, "
+	            + "max_member = ?, "
+	            + "public_status = ?, "
+	            + "profile_img = ?, "
+	            + "admin_comment = ? "
+	            + "WHERE id = ?";
+
+	    jdbcTemplate.update(sql,
+	        group.getName(),
+	        group.getDescription(),
+	        group.getCode(),
+	        group.getMaxMember(),
+	        group.isPublicStatus(),
+	        group.getProfile_img(),
+	        group.getAdmin_comment(),
+	        group.getId()   // WHERE용 id
+	    );
 	}
 
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
+		String sql = "DELETE FROM `group` WHERE id = ?";
+		
+		// JdbcTemplate를 사용해 SQL 실행, id 값 바인딩
+		jdbcTemplate.update(sql, id);
 		
 	}
 	

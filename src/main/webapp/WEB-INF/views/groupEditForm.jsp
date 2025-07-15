@@ -19,17 +19,24 @@
 
         <label>공개 여부</label>
         <div class="radio-group">
-            <label><input type="radio" name="publicStatus" value="true" ${group.publicStatus eq 'true' ? 'checked' : ''}/> 공개</label>
-            <label><input type="radio" name="publicStatus" value="false" ${group.publicStatus eq 'false' ? 'checked' : ''}/> 비공개</label>
-        </div>
+		    <label>
+			    <input type="radio" name="publicStatus" value="true"
+			           <c:if test="${group.publicStatus}">checked</c:if>> 공개
+			</label>
+			<label>
+			    <input type="radio" name="publicStatus" value="false"
+			           <c:if test="${!group.publicStatus}">checked</c:if>> 비공개
+			</label>
+		</div>
+
 
         <label>초대 코드</label>
         <input type="text" name="code" value="${group.code}" required maxlength="8" />
 
         <label>프로필 이미지</label>
-        <input type="file" name="profile_img" />
+        <input type="file" name="file" />
 
-        <label>관리자 한마디</label>
+        <label>그룹장 한마디</label>
         <input type="text" name="admin_comment" value="${group.admin_comment}" />
 
         <div class="btn-group">

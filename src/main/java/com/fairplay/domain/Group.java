@@ -12,7 +12,7 @@ public class Group {
     private String description;         // 그룹 설명
     private String code;                // 초대 코드
     private Integer maxMember;          // 최대 인원
-    private String publicStatus;        // 공개 여부
+    private boolean publicStatus;       // 공개 여부
     private MultipartFile file;			// 업로드 받는 파일 (폼에서 전달)
     private String profile_img;         // DB에 저장할 파일명
     private Timestamp created_at;       // 생성일시 (DB의 DATETIME과 연결됨)
@@ -49,10 +49,10 @@ public class Group {
 	public void setMaxMember(Integer maxMember) {
 		this.maxMember = maxMember;
 	}
-	public String getPublicStatus() {
+	public boolean isPublicStatus() {
 		return publicStatus;
 	}
-	public void setPublicStatus(String publicStatus) {
+	public void setPublicStatus(boolean publicStatus) {
 		this.publicStatus = publicStatus;
 	}
 	public String getProfile_img() {

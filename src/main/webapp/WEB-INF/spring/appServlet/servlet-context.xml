@@ -22,7 +22,9 @@
 	     http://localhost:8080/ch0201/resources/images/p1234.jpg
 	 -->
 	<resources mapping="/resources/**" location="/resources/" />
-
+	
+	<resources mapping="/upload/**" location="file:///C:/upload/" />
+	
 	<!-- 뷰리졸브 객체 add라는 문자열을 받으면 /WEB-INF/views/add.jsp 라는 경로를 반환해준다 -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/WEB-INF/views/" />

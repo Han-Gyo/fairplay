@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <html>
 <head>
@@ -77,29 +78,43 @@
     <div class="row"><span class="label">공개 여부:</span> 
         <span class="value">
             <c:choose>
-			  <c:when test="${group.publicStatus eq 'true'}">공개</c:when>
+			  <c:when test="${group.publicStatus}">공개</c:when>
 			  <c:otherwise>비공개</c:otherwise>
 			</c:choose>
+
         </span>
     </div>
     <div class="row"><span class="label">초대 코드:</span> <span class="value">${group.code}</span></div>
     <div class="row"><span class="label">대표 이미지:</span> 
         <span class="value">
             <c:if test="${not empty group.profile_img}">
-                <img src="/upload/${group.profile_img}" alt="프로필 이미지" width="100" />
-            </c:if>
+			    <img src="${pageContext.request.contextPath}/upload/${group.profile_img}" alt="프로필 이미지" width="100" />
+			</c:if>
             <c:if test="${empty group.profile_img}">
-                없음
+                <img src="${pageContext.request.contextPath}/resources/img/default-group.png" alt="기본 이미지" width="100"/>
             </c:if>
         </span>
     </div>
     <div class="row"><span class="label">관리자 한마디:</span> <span class="value">${group.admin_comment}</span></div>
-    <div class="row"><span class="label">생성일:</span> <span class="value">${group.created_at}</span></div>
+    <div class="row">
+    	<span class="label">생성일:</span> 
+    	<span class="value">
+    		<fmt:formatDate value="${group.created_at}" pattern="yyyy-MM-dd HH:mm" />
+		</span>
+	</div>
 
     <div class="btn-group">
-        <a href="${pageContext.request.contextPath}/group/groups"><button class="btn btn-list">목록으로</button></a>
-        <a href="${pageContext.request.contextPath}/group/edit?id=${group.id}"><button class="btn btn-edit">수정</button></a>
-    </div>
+	    <a href="${pageContext.request.contextPath}/group/groups">
+	        <button class="btn btn-list">목록으로</button>
+	    </a>
+	    <a href="${pageContext.request.contextPath}/group/edit?id=${group.id}">
+	        <button class="btn btn-edit">수정</button>
+	    </a>
+	    <a href="${pageContext.request.contextPath}/group/delete?id=${group.id}" 
+	       onclick="return confirm('정말 삭제할까요?');">
+	        <button class="btn btn-delete">삭제</button>
+	    </a>
+	</div>
 </div>
 
 </body>

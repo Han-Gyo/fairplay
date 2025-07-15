@@ -62,22 +62,13 @@
             transition: all 0.2s ease-in-out;
         }
 
-        .btn-edit {
-            background-color: #28a745;
+        .btn-detail {
+            background-color: #007bff;
             color: white;
         }
 
-        .btn-edit:hover {
-            background-color: #218838;
-        }
-
-        .btn-delete {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .btn-delete:hover {
-            background-color: #c82333;
+        .btn-detail:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -94,8 +85,7 @@
                 <th>공개 여부</th>
                 <th>초대 코드</th>
                 <th>생성일</th>
-                <th>수정</th>
-                <th>삭제</th>
+                <th>상세보기</th> <!-- ✅ 수정 -->
             </tr>
         </thead>
         <tbody>
@@ -104,21 +94,17 @@
                     <td>${group.name}</td>
                     <td>${group.description}</td>
                     <td>
-					    <c:choose>
-						  <c:when test="${group.publicStatus eq 'true'}">공개</c:when>
-						  <c:otherwise>비공개</c:otherwise>
-						</c:choose>
-					</td>
+                        <c:choose>
+                            <c:when test="${group.publicStatus}">공개</c:when>
+                            <c:otherwise>비공개</c:otherwise>
+                        </c:choose>
+                    </td>
                     <td>${group.code}</td>
                     <td>${group.created_at}</td>
                     <td>
-                        <a href="${pageContext.request.contextPath}/group/edit?id=${group.id}">
-                            <button class="btn btn-edit">수정</button>
-                        </a>
-                    </td>
-                    <td>
-                        <a href="${pageContext.request.contextPath}/group/delete?id=${group.id}" onclick="return confirm('정말 삭제할까요?');">
-                            <button class="btn btn-delete">삭제</button>
+                        <!-- ✅ 상세보기 버튼만 남김 -->
+                        <a href="${pageContext.request.contextPath}/group/detail?id=${group.id}">
+                            <button class="btn btn-detail">상세보기</button>
                         </a>
                     </td>
                 </tr>

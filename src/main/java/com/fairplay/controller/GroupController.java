@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,34 +37,30 @@ public class GroupController {
 	@PostMapping("/create")
 	public String createGroup(@ModelAttribute Group group) {
 	    
-	    // 1. 업로드된 파일 꺼내오기 (폼에서 전달된 파일은 DTO의 file 필드에 바인딩됨)
-	    MultipartFile file = group.getFile();
+	    MultipartFile file = group.getFile(); // DTO에서 전달받은 파일 추출
 
-	    // 2. 파일이 존재하고 비어있지 않은 경우 처리
 	    if (file != null && !file.isEmpty()) {
-	        // 2-1. 원래 파일 이름 추출
-	        String fileName = file.getOriginalFilename();
+	        // ✅ 1. 원본 파일명 추출
+	        String originalName = file.getOriginalFilename();
 
-	        // 2-2. 저장할 경로 지정 (서버의 C:/upload 디렉토리에 저장)
-	        Path savePath = Paths.get("C:/upload/" + fileName);
+	        // ✅ 2. UUID + 안전한 파일명으로 변환 (한글/공백 문제 방지)
+	        String safeFileName = UUID.randomUUID().toString() + "_" + originalName.replaceAll("[^a-zA-Z0-9.]", "_");
+
+	        // ✅ 3. 실제 저장 경로 지정
+	        Path savePath = Paths.get("C:/upload/" + safeFileName);
 
 	        try {
-	            // 2-3. 실제 파일 저장
-	            file.transferTo(savePath.toFile());
-
-	            // 2-4. 저장된 파일명을 DB에 넣기 위해 DTO의 profile_img 필드에 설정
-	            group.setProfile_img(fileName);
+	            file.transferTo(savePath.toFile()); // ✅ 4. 파일 저장
+	            group.setProfile_img(safeFileName); // ✅ 5. DB에 저장할 파일명 설정
 	        } catch (IOException e) {
 	            e.printStackTrace(); // 에러 발생 시 로그 출력
 	        }
 	    }
 
-	    // 3. 서비스 호출 → DB에 그룹 정보 저장 (파일명 포함)
-	    groupService.save(group);
-
-	    // 4. 저장 후 그룹 목록 페이지로 리다이렉트
-	    return "redirect:/group/groups";
+	    groupService.save(group); // 그룹 정보 저장 (DB insert)
+	    return "redirect:/group/groups"; // 저장 후 그룹 목록으로 이동
 	}
+
 	
 	// 전체 그룹 목록을 조회하여 뷰에 전달 (Read_all)
 	@GetMapping("/groups")
@@ -119,30 +116,35 @@ public class GroupController {
 		}
 	
 		
-	// 수정된 그룹 데이터를 DB에 반영하고 전체 그룹 목록 페이지로 리다이렉트
+	// 수정된 그룹 데이터를 DB에 반영하고 전체 그룹 목록 페이지로 리다이렉트 (Update)
 	@PostMapping("/update")
-	public String update(@ModelAttribute Group group, @RequestParam("profile_img") MultipartFile file) {
-		
-		// 파일 업로드가 있을 경우 처리
-		if (!file.isEmpty()) {
-			String fileName = file.getOriginalFilename();
-			Path savePath = Paths.get("C:/upload/" + fileName);
-			
+	public String update(@ModelAttribute Group group) {
+
+		MultipartFile file = group.getFile(); // DTO에서 전달받은 파일 추출
+
+		if (file != null && !file.isEmpty()) {
+			String originalName = file.getOriginalFilename();
+			String safeFileName = UUID.randomUUID().toString() + "_" + originalName.replaceAll("[^a-zA-Z0-9.]", "_");
+			Path savePath = Paths.get("C:/upload/" + safeFileName);
+
 			try {
-				file.transferTo(savePath.toFile());			// 실제 파일 저장
-				group.setProfile_img(fileName);				// DB에 저장할 파일명 설정
-			} catch(IOException e) {
+				file.transferTo(savePath.toFile());              // ✅ 1. 파일 저장
+				group.setProfile_img(safeFileName);              // ✅ 2. DB에 저장할 파일명 설정
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
-		// 서비스 호출
-		groupService.update(group);
-		
-		// 그룹 목록으로 이동
+
+		groupService.update(group); // DB 업데이트 실행
+		return "redirect:/group/groups"; // 수정 후 목록 페이지로 이동
+	}
+
+	
+	// 그룹 삭제 요청 처리 (Delete)
+	@GetMapping("delete")
+	String delete(@RequestParam("id")int id) {
+		groupService.delete(id);
 		return "redirect:/group/groups";
 	}
-	
-	
 
 }

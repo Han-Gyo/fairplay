@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.fairplay.domain.Group;
 import com.fairplay.repository.GroupRepository;
 
+// 그룹 관련 서비스 로직 구현 클래스
 @Service
 public class GroupServiceImpl implements GroupService{
 	
@@ -44,13 +45,17 @@ public class GroupServiceImpl implements GroupService{
 
 	@Override
 	public void update(Group group) {
-		// TODO Auto-generated method stub
+		//그룹수정 요청으로 전달된 group 데이터를 저장 (Update)
+		groupRepository.update(group);
 		
 	}
 
+	// 그룹 삭제 요청을 처리하는 서비스 로직 (Delete)
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
+		
+		// 전달받은 그룹 ID를 기반으로 Repository에 삭제 요청
+		groupRepository.delete(id);
 		
 	}
 	
