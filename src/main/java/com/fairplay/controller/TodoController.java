@@ -87,7 +87,6 @@ public class TodoController {
 	    todo.setDue_date(due_date);
 	    todo.setDifficulty_point(difficulty_point);
 	    todo.setCompleted(completed);
-	    todo.setCompleted(false);
 
 	    
 	    System.out.println("🧾 받은 title: " + title);
