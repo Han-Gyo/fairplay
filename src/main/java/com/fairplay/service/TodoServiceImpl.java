@@ -23,7 +23,7 @@ public class TodoServiceImpl implements TodoService{
 	// ✅ 할 일 추가
 	@Override
 	public void addTodo(Todo todo) {
-		todo.setCompleted(false);
+		// todo.setCompleted(false);
 		todoRepository.insert(todo);
 		
 		System.out.println("할 일 추가됨 : " + todo.getTitle());

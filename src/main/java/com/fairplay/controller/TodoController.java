@@ -86,7 +86,8 @@ public class TodoController {
 	    todo.setAssigned_to(assigned_to);
 	    todo.setDue_date(due_date);
 	    todo.setDifficulty_point(difficulty_point);
-	    todo.setCompleted(false);
+	    todo.setCompleted(completed);
+
 	    
 	    System.out.println("🧾 받은 title: " + title);
 	    System.out.println("📌 받은 group_id: " + group_id);
