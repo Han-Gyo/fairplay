@@ -23,7 +23,7 @@ public class TodoServiceImpl implements TodoService{
 	// ✅ 할 일 추가
 	@Override
 	public void addTodo(Todo todo) {
-		todo.setCompleted(false);
+		// todo.setCompleted(false);
 		todoRepository.insert(todo);
 		
 		System.out.println("할 일 추가됨 : " + todo.getTitle());
@@ -46,6 +46,7 @@ public class TodoServiceImpl implements TodoService{
 		todoRepository.complete(id);
 		System.out.println("✅ 완료 처리된 ID: " + id);
 	}
+	// ✅ 특정 ID로 할 일 하나 조회
 	@Override
 	public Todo findById(int id) {
 		return todoRepository.findById(id);
