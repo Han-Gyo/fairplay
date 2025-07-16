@@ -103,7 +103,7 @@
 		</span>
 	</div>
 	
-	<a href="${pageContext.request.contextPath}/groupMember/create">
+	<a href="${pageContext.request.contextPath}/groupmember/create">
 	    <button type="button" class="btn btn-success">✅ 이 그룹에 가입하기</button>
 	</a>
 
@@ -117,6 +117,10 @@
 	    <a href="${pageContext.request.contextPath}/group/delete?id=${group.id}" 
 	       onclick="return confirm('정말 삭제할까요?');">
 	        <button class="btn btn-delete">삭제</button>
+	        
+	    <a href="${pageContext.request.contextPath}/groupmember/list?groupId=${group.id}">
+	        <button class="btn btn-primary">📋 멤버 보기</button>
+	    </a>
 	    </a>
 	</div>
 </div>

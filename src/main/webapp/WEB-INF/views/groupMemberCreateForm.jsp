@@ -32,7 +32,7 @@
             display: block;
         }
 
-        input, select {
+        input {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -56,6 +56,12 @@
         .btn-submit:hover {
             background-color: #218838;
         }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -63,20 +69,22 @@
 <div class="form-box">
     <h2>👥 그룹 멤버 등록</h2>
 
-    <form action="${pageContext.request.contextPath}/groupMember/create" method="post">
+    <!-- 에러 메시지 출력 -->
+    <c:if test="${not empty error}">
+        <div class="error-message">${error}</div>
+    </c:if>
+
+    <form action="${pageContext.request.contextPath}/groupmember/create" method="post">
         <label for="groupId">그룹 ID</label>
         <input type="number" id="groupId" name="groupId" required />
 
         <label for="memberId">회원 ID</label>
         <input type="number" id="memberId" name="memberId" required />
 
-        <label for="role">역할</label>
-        <select id="role" name="role" required>
-            <option value="MEMBER">MEMBER</option>
-            <option value="LEADER">LEADER</option>
-        </select>
+        <label for="code">초대 코드</label>
+        <input type="text" id="code" name="code" required placeholder="초대 코드를 입력하세요" />
 
-        <button type="submit" class="btn-submit">등록하기</button>
+        <button type="submit" class="btn-submit">가입하기</button>
     </form>
 </div>
 
