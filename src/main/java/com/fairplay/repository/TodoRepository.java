@@ -9,5 +9,5 @@ public interface TodoRepository {
 	void update(Todo todo);		// 수정
 	void deleteById(int id);	// 삭제
 	void complete(int id);		// 완료
-	Todo findById(int id);
+	Todo findById(int id);		// 특정 할 일 조회
 }
