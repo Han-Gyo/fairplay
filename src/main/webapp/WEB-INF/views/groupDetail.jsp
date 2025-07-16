@@ -102,6 +102,10 @@
     		<fmt:formatDate value="${group.created_at}" pattern="yyyy-MM-dd HH:mm" />
 		</span>
 	</div>
+	
+	<a href="${pageContext.request.contextPath}/groupMember/create">
+	    <button type="button" class="btn btn-success">✅ 이 그룹에 가입하기</button>
+	</a>
 
     <div class="btn-group">
 	    <a href="${pageContext.request.contextPath}/group/groups">
