@@ -12,20 +12,33 @@
 <!-- enctype 추가! 파일 업로드 시 필수 -->
 <form action="${pageContext.request.contextPath}/history/create" method="post" enctype="multipart/form-data">
 
-    <!-- 할 일 ID (테스트용이라면 수동 입력 or hidden 처리) -->
-    <label>할 일 ID:</label>
-    <input type="number" name="todo_id" required /><br><br>
-
-    <!-- 수행자 ID -->
-    <label>수행자 ID:</label>
-    <input type="number" name="member_id" required /><br><br>
+		<!-- ✅ 할 일 선택 -->
+		<label>할 일 : </label>
+		<select name="todo_id" required>
+		    <c:forEach var="todo" items="${todoList}">
+		        <option value="${todo.id}" 
+		                <c:if test="${todo.id == selectedTodoId}">selected</c:if>>
+		            ${todo.title}
+		        </option>
+		    </c:forEach>
+		</select>
+		<br><br>
+		
+		<!-- ✅ 수행자 선택 -->
+		<label>수행자 : </label>
+		<select name="member_id" required>
+		    <c:forEach var="member" items="${memberList}">
+		        <option value="${member.id}">${member.nickname}</option>
+		    </c:forEach>
+		</select>
+		<br><br>
 
     <!-- 완료 날짜 -->
-    <label>완료 날짜:</label>
+    <label>완료 날짜 : </label>
     <input type="date" name="completed_at" required /><br><br>
 
     <!-- 점수 -->
-    <label>노력 점수 (1~5):</label>
+    <label>점수 (1~5) : </label>
     <select name="score">
         <c:forEach begin="1" end="5" var="i">
             <option value="${i}">${i}</option>
@@ -33,11 +46,11 @@
     </select><br><br>
 
     <!-- 메모 -->
-    <label>메모:</label><br>
+    <label>메모 : </label><br>
     <textarea name="memo" rows="4" cols="40"></textarea><br><br>
 
 		<!-- 인증샷 업로드 -->
-		<label>인증샷 : </label><br>
+		<label>인증샷</label><br>
 		<input type="file" name="photo" accept="image/*" /><br><br>
 		
     <!-- 제출 -->

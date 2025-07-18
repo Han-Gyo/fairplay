@@ -17,6 +17,13 @@ public class HistoryServiceImpl implements HistoryService{
 	public List<History> getAllHistories() {
 		return historyRepository.findAll();
 	}
+	
+	
+	@Override
+	public List<History> getAllHistoriesWithDetails() {
+		return historyRepository.findAllWithDetails();
+	}
+
 
 	@Override
 	public void addHistory(History history) {
@@ -55,4 +62,14 @@ public class HistoryServiceImpl implements HistoryService{
 		historyRepository.delete(id);
 	}
 
+
+	@Override
+	public History getHistoryByIdWithDetails(int id) {
+		 return historyRepository.findByIdWithDetails(id);
+	}
+	
+	@Override
+	public List<History> getHistoriesByTodoIdWithDetails(int todo_id) {
+		return historyRepository.findByTodoIdWithDetails(todo_id);
+	}
 }

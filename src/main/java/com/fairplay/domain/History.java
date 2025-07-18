@@ -3,19 +3,19 @@ package com.fairplay.domain;
 import java.util.Date;
 
 public class History {
-	private int id;
-	private int member_id;
-	private int todo_id;
-	private Date completed_at;
-	private String photo;
-	private String memo;
-	private Integer score;
-	private boolean check;
-	private Integer check_member;
-	public History() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	private int id;                	// 기록 ID
+	private int member_id;         	// 회원 ID
+	private int todo_id;           	// 할 일 ID
+	private Date completed_at;     	// 완료 날짜
+	private String photo;          	// 인증 사진
+	private String memo;           	// 메모 내용
+	private Integer score;         	// 점수
+	private boolean check;         	// 확인 여부
+	private Integer check_member;  	// 확인한 사람 ID
+	private Todo todo;				// Todo 객체 전체
+	private Member member;			// Member 객체 전체
+	public History() {}
+	
 	public History(int id, int member_id, int todo_id, Date completed_at, String photo, String memo, int score,
 			boolean check, Integer check_member) {
 		super();
@@ -29,6 +29,7 @@ public class History {
 		this.check = check;
 		this.check_member = check_member;
 	}
+	
 	public int getId() {
 		return id;
 	}
@@ -83,10 +84,28 @@ public class History {
 	public void setCheck_member(Integer check_member) {
 		this.check_member = check_member;
 	}
+
+	public Todo getTodo() {
+		return todo;
+	}
+
+	public void setTodo(Todo todo) {
+		this.todo = todo;
+	}
+
+	public Member getMember() {
+		return member;
+	}
+
+	public void setMember(Member member) {
+		this.member = member;
+	}
+
 	@Override
 	public String toString() {
 		return "History [id=" + id + ", member_id=" + member_id + ", todo_id=" + todo_id + ", completed_at="
 				+ completed_at + ", photo=" + photo + ", memo=" + memo + ", score=" + score + ", check=" + check
-				+ ", check_member=" + check_member + "]";
+				+ ", check_member=" + check_member + ", todo=" + todo + ", member=" + member + "]";
 	}
+
 }

@@ -41,10 +41,8 @@
             </c:choose>
           <td>
             <!-- 완료 버튼 -->
-            <form action="${pageContext.request.contextPath}/todos/complete" method="post" style="display:inline;">
-              <input type="hidden" name="id" value="${todo.id}" />
-              <button type="submit">완료</button>
-            </form>
+            <button type="button" onclick="completeTodo(${todo.id})">완료</button>
+            
 
             <!-- 수정 버튼 -->
             <form action="${pageContext.request.contextPath}/todos/update" method="get" style="display:inline;">
@@ -69,4 +67,33 @@
     </a>
   </div>
 </body>
+
+<script>
+const contextPath = "${pageContext.request.contextPath}";
+console.log("🔥 contextPath:", contextPath);
+function completeTodo(todo_id) {
+		console.log("✅ 전달된 todo_id:", todo_id);
+    const confirmResult = confirm("기록도 같이 남기시겠어요?");
+
+    if (confirmResult) {
+        // ✅ 확인 누르면 historyCreate 페이지로 이동 (todoId 쿼리로 넘김)
+    	window.location.href = contextPath + "/history/create?todo_id=" + todo_id;
+    } else {
+        // 할 일 완료 처리
+        fetch("/fairplay/todos/complete?id=" + todo_id, {
+            method: "POST"
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("서버 응답 오류");
+            }
+            alert("ToDo가 완료 처리되었습니다.");
+            location.reload();
+        })
+        .catch(error => {
+            alert("오류 발생: " + error.message);
+        });
+    }
+}
+</script>
 </html>
