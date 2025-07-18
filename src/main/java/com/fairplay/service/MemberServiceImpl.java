@@ -54,11 +54,18 @@ public class MemberServiceImpl implements MemberService{
 
 
 	@Override
-	public void delete(int id) {
+	public void deactivate(int id) {
 		
 		// Repository에 위임
-		memberRepository.delete(id);
+		memberRepository.deactivate(id);
 		
+	}
+
+
+	@Override
+	public Member findByUserId(String user_id) {
+		
+		return memberRepository.findByUserId(user_id);
 	}
 	
 	

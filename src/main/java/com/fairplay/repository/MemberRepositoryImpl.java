@@ -17,20 +17,20 @@ public class MemberRepositoryImpl implements MemberRepository{
 	
 	@Override
 	public void save(Member member) {
-		// 회원 정보를 DB에 저장하는 SQL문
-		String sql = "INSERT INTO member (id, username, password, nickname, email, address, phone, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		
-		// JdbcTemplate을 통해 INSERT 실행 (물음표에 파라미터 순서대로 바인딩됨)
-		jdbcTemplate.update(sql, 
-			member.getId(),
-			member.getUsername(),
-			member.getPassword(),
-			member.getNickname(),
-			member.getEmail(),
-			member.getAddress(),
-			member.getPhone(),
-			member.getStatus()
-		);
+	    // 회원 정보를 DB에 저장하는 SQL문 (id는 auto_increment라 제외)
+	    String sql = "INSERT INTO member (user_id, password, real_name, nickname, email, address, phone, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+	    // JdbcTemplate을 통해 INSERT 실행
+	    jdbcTemplate.update(sql, 
+	        member.getUser_id(),
+	        member.getPassword(),
+	        member.getReal_name(),  
+	        member.getNickname(),
+	        member.getEmail(),
+	        member.getAddress(),
+	        member.getPhone(),
+	        member.getStatus()
+	    );
 	}
 
 	
@@ -58,10 +58,10 @@ public class MemberRepositoryImpl implements MemberRepository{
 	@Override
 	public void update(Member member) {
 		
-		String sql = "UPDATE member SET username = ?, nickname = ?, email = ?, address = ?, phone = ? WHERE id = ?";
+		String sql = "UPDATE member SET user_id = ?, nickname = ?, email = ?, address = ?, phone = ? WHERE id = ?";
 		
 		jdbcTemplate.update(sql,
-			member.getUsername(),
+			member.getUser_id(),
 			member.getNickname(),
 			member.getEmail(),
 			member.getAddress(),
@@ -74,9 +74,16 @@ public class MemberRepositoryImpl implements MemberRepository{
 
 
 	@Override
-	public void delete(int id) {
-		String sql = "delete from member where id =?";
+	public void deactivate(int id) {
+		String sql = "update member set status = 'INACTIVE' where id =?";
 		jdbcTemplate.update(sql, id);
+	}
+
+
+	@Override
+	public Member findByUserId(String user_id) {
+		String sql = "select * from member where user_id =?";
+		return jdbcTemplate.queryForObject(sql, new MemberRowMapper(), user_id);
 	}
 	
 	

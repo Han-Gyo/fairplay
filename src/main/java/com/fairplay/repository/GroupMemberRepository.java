@@ -1,4 +1,4 @@
-package com.fairplay.repository;
+ package com.fairplay.repository;
 
 import java.util.List;
 

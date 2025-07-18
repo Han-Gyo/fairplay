@@ -74,7 +74,7 @@
             
                 <tr>
                     <!-- ID 제거 -->
-                    <td>${member.username}</td>
+                    <td>${member.user_id}</td>
                     <td>${member.password}</td>
                     <td>${member.nickname}</td>
                     <td>${member.email}</td>

@@ -14,5 +14,7 @@ public interface MemberRepository {
 	
 	void update(Member member);
 	
-	void delete(int id);
+	void deactivate(int id);
+	
+	Member findByUserId(String user_id);
 }
