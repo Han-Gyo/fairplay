@@ -20,10 +20,12 @@
             <form action="${pageContext.request.contextPath}/member/update" method="post">
                 <!-- ID는 사용자에게 안 보이게 hidden 처리 -->
                 <input type="hidden" name="id" value="${member.id}">
+                
+                <input type="hidden" name="from" value="mypage" />
 
                 <div class="mb-3">
-                    <label for="username" class="form-label">아이디 (로그인용)</label>
-                    <input type="text" class="form-control" id="username" name="username" value="${member.username}" required>
+                    <label for="user_id" class="form-label">아이디 (로그인용)</label>
+                    <input type="text" class="form-control" id="user_id" name="user_id" value="${member.user_id}" required>
                 </div>
 
                 <div class="mb-3">
@@ -48,7 +50,7 @@
 
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-success">수정 완료</button>
-                    <a href="/fairplay/member/list" class="btn btn-secondary">목록으로</a>
+                    <a href="/fairplay/member/members" class="btn btn-secondary">목록으로</a>
                 </div>
             </form>
         </div>

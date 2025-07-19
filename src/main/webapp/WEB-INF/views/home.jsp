@@ -53,14 +53,35 @@
         <a href="${pageContext.request.contextPath}/history/all">📋 History 전체 조회</a>
         <a href="${pageContext.request.contextPath}/history/create">📝 History 등록</a>
         <a href="${pageContext.request.contextPath}/todos">🧹 Todo 목록</a>
-        <a href="${pageContext.request.contextPath}/member/create">👤 회원 가입</a>
-        <a href="${pageContext.request.contextPath}/member/members">👥 회원 목록</a>
+        <c:if test="${loginMember == null}">
+		    <a href="${pageContext.request.contextPath}/member/create">👤 회원 가입</a>
+		    <a href="${pageContext.request.contextPath}/member/login">🔐 로그인</a>
+		</c:if>
+        
         <a href="${pageContext.request.contextPath}/group/create">🏠 그룹 등록</a>
         <a href="${pageContext.request.contextPath}/group/groups">👥 그룹 목록</a>
         <a href="${pageContext.request.contextPath}/groupmember/create">🔗 그룹멤버 등록</a>
-        <a href="${pageContext.request.contextPath}/member/login">로그인</a>
-        <a href="${pageContext.request.contextPath}/member/mypage">👤 마이페이지</a><br>
+
+		<c:if test="${loginMember != null}">
+		    <a href="${pageContext.request.contextPath}/member/mypage">👤 마이페이지</a>
+		
+		    <c:if test="${loginMember.role == 'ADMIN'}">
+		        <a href="${pageContext.request.contextPath}/member/members">👑 전체 회원 목록</a>
+		    </c:if>
+		
+		    <a href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a>
+		</c:if>
+		
+		
     </div>
 
+		<script>
+		    function confirmLogout() {
+		        if (confirm("정말 로그아웃 하시겠습니까?")) {
+		            // 확인 누르면 로그아웃 요청
+		            window.location.href = '${pageContext.request.contextPath}/member/logout';
+		        }
+		    }
+		</script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package com.fairplay.domain;
+ package com.fairplay.domain;
 import java.sql.Timestamp;
 
 import org.springframework.web.multipart.MultipartFile;
