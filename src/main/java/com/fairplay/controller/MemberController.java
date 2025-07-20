@@ -128,7 +128,7 @@ public class MemberController {
 			return "redirect:/login"; // 로그인 안 되어 있으면 로그인 페이지로
 		}
 		
-		// 탈퇴한 회원이면 접근 제한
+		// 탈퇴한 회원이면 접근 제한 (탈퇴 분기 조건식)
 		if (!"ACTIVE".equals(loginMember.getStatus())) {
 			session.invalidate();	// 세션도 종료시켜버림
 			return "redirect:/";	// 홈으로 강제 이동
@@ -168,7 +168,7 @@ public class MemberController {
 		return "home";
 	}
 	
-	
+	// 로그아웃
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 	    session.invalidate(); // 세션 삭제
