@@ -15,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,12 +42,31 @@ public class HistoryController {
 	
 	// ✅ 전체 히스토리 보기
 	@GetMapping("/all")
-	public String listAllHistories(Model model) {
-	    //List<History> allHistories = historyService.getAllHistories();
-	    List<History> allHistories = historyService.getAllHistoriesWithDetails();
-	    System.out.println("▶ 전체 히스토리 개수: " + allHistories.size());
-	    model.addAttribute("historyList", allHistories);
-	    return "histories";
+	public String listAllHistories(@RequestParam(value = "todo_id", required = false) Integer todoId, Model model) {
+	    
+	    List<History> historyList;
+
+	    // 👉 필터링이 들어온 경우: 해당 todoId에 해당하는 히스토리만 조회
+	    if (todoId != null) {
+	        historyList = historyService.getHistoriesByTodoIdWithDetails(todoId);
+
+	        // 선택된 항목 표시용 (선택된 제목 띄우고 싶으면 아래 주석 해제해도 돼!)
+	        Todo selectedTodo = todoService.findById(todoId);
+	        model.addAttribute("selectedTodo", selectedTodo);
+	    } else {
+	        // 👉 필터 없으면 전체 조회
+	        historyList = historyService.getAllHistoriesWithDetails();
+	    }
+
+	    // ✅ 네비게이션에 보여줄 전체 todo 목록 조회
+	    List<Todo> todoList = todoService.getTodoList();
+
+	    // ✅ JSP에 전달
+	    model.addAttribute("historyList", historyList);
+	    model.addAttribute("todoList", todoList);
+	    model.addAttribute("selectedTodoId", todoId); // 선택 강조용
+
+	    return "histories"; // -> histories.jsp
 	}
 	
 	// ✅ 1. 기록 목록 (히스토리 리스트)
