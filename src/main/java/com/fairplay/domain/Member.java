@@ -37,7 +37,7 @@ public class Member {
 	
 	// 권한 : USER 또는 ADMIN
 	private String role;
-	
+
 	// 기본 생성자
 	public Member() {
 
@@ -134,7 +134,5 @@ public class Member {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	
-	
 	
 }

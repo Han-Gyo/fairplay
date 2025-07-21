@@ -14,7 +14,7 @@ public class TodoServiceImpl implements TodoService{
 	@Autowired
 	private TodoRepository todoRepository;
 
-	// ✅ 전체 목록 조회
+	// ✅ 전체 할 일 목록 조회
 	@Override
 	public List<Todo> getTodoList() {
 		System.out.println("📋 할 일 전체 목록 조회");
@@ -51,4 +51,5 @@ public class TodoServiceImpl implements TodoService{
 	public Todo findById(int id) {
 		return todoRepository.findById(id);
 	}
+	
 }
