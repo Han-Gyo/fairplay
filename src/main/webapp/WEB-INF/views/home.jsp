@@ -53,7 +53,8 @@
         <a href="${pageContext.request.contextPath}/history/all">📋 History 전체 조회</a>
         <a href="${pageContext.request.contextPath}/history/create">📝 History 등록</a>
         <a href="${pageContext.request.contextPath}/todos">🧹 Todo 목록</a>
-        <c:if test="${loginMember == null}">
+        <!-- 로그인 안 된 사용자에겐 로그인/회원가입 표시 -->
+		<c:if test="${empty sessionScope.member}">
 		    <a href="${pageContext.request.contextPath}/member/create">👤 회원 가입</a>
 		    <a href="${pageContext.request.contextPath}/member/login">🔐 로그인</a>
 		</c:if>
@@ -62,16 +63,20 @@
         <a href="${pageContext.request.contextPath}/group/groups">👥 그룹 목록</a>
         <a href="${pageContext.request.contextPath}/groupmember/create">🔗 그룹멤버 등록</a>
 
-		<c:if test="${loginMember != null}">
+		<!-- 로그인 + ACTIVE 상태인 회원만 마이페이지 가능 -->
+		<c:if test="${not empty sessionScope.member && sessionScope.member.status == 'ACTIVE'}">
 		    <a href="${pageContext.request.contextPath}/member/mypage">👤 마이페이지</a>
-		
-		    <c:if test="${loginMember.role == 'ADMIN'}">
-		        <a href="${pageContext.request.contextPath}/member/members">👑 전체 회원 목록</a>
-		    </c:if>
-		
-		    <a href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a>
 		</c:if>
 		
+		<!-- 로그인한 관리자라면 전체 회원 목록 표시 -->
+		<c:if test="${not empty sessionScope.member && sessionScope.member.role == 'ADMIN'}">
+		    <a href="${pageContext.request.contextPath}/member/members">👑 전체 회원 목록</a>
+		</c:if>
+		
+		<!-- 로그인되어 있으면 로그아웃 표시 -->
+		<c:if test="${not empty sessionScope.member}">
+		    <a href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a>
+		</c:if>
 		
     </div>
 

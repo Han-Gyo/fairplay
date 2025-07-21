@@ -2,6 +2,8 @@ package com.fairplay.domain;
 
 import java.time.LocalDateTime;
 
+import com.fairplay.enums.MemberStatus;
+
 // 사용자 정보를 담는 DTO 클래스
 public class Member {
 
@@ -30,7 +32,7 @@ public class Member {
 	private String phone;
 	
 	// 계정 상태 (ex: ACTIVE, BANNED)
-	private String status;
+	private MemberStatus status;
 	
 	// 가입일자
 	private LocalDateTime created_at;
@@ -103,11 +105,11 @@ public class Member {
 		this.phone = phone;
 	}
 
-	public String getStatus() {
+	public MemberStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(MemberStatus status) {
 		this.status = status;
 	}
 

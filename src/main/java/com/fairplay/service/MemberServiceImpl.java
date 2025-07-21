@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.fairplay.domain.Member;
+import com.fairplay.enums.MemberStatus;
 import com.fairplay.repository.MemberRepository;
 
 @Service
@@ -21,6 +22,9 @@ public class MemberServiceImpl implements MemberService{
 	// 회원가입 요청으로 전달된 member 데이터를 저장 (Create)
 	@Override
 	public void save(Member member) {
+		
+		// 🔄 회원 가입 시 기본 상태는 ACTIVE로 설정 (탈퇴 회원 방지용)
+		member.setStatus(MemberStatus.ACTIVE);
 		
 		// Repository에 위임
 		memberRepository.save(member);
