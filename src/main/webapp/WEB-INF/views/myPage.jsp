@@ -84,6 +84,9 @@
         <div class="info-line">전화번호: ${member.phone}</div>
         <div class="info-line">주소: ${member.address}</div>
         <div class="info-line">가입일: ${member.created_at}</div>
+        
+        <!-- 👇 enum 상태 확인용 -->
+    	<div class="info-line">회원 상태: ${member.status}</div>
 
         <div class="action-links">
             <a class="btn-custom" href="${pageContext.request.contextPath}/member/edit?id=${member.id}">정보 수정</a>

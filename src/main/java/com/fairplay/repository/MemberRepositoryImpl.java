@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.fairplay.domain.Member;
+import com.fairplay.enums.MemberStatus;
 
 @Repository
 public class MemberRepositoryImpl implements MemberRepository{
@@ -29,7 +30,7 @@ public class MemberRepositoryImpl implements MemberRepository{
 	        member.getEmail(),
 	        member.getAddress(),
 	        member.getPhone(),
-	        member.getStatus()
+	        member.getStatus().name()		// 👉 enum을 DB에 저장할 때 문자열로 변환
 	    );
 	}
 
@@ -58,7 +59,7 @@ public class MemberRepositoryImpl implements MemberRepository{
 	@Override
 	public void update(Member member) {
 		
-		String sql = "UPDATE member SET user_id = ?, nickname = ?, email = ?, address = ?, phone = ? WHERE id = ?";
+		String sql = "UPDATE member SET user_id = ?, nickname = ?, email = ?, address = ?, phone = ?, status = ? WHERE id = ?";
 		
 		jdbcTemplate.update(sql,
 			member.getUser_id(),
@@ -66,6 +67,7 @@ public class MemberRepositoryImpl implements MemberRepository{
 			member.getEmail(),
 			member.getAddress(),
 			member.getPhone(),
+			member.getStatus().name(),   // 👉 enum을 문자열로 저장
 			member.getId()
 		);
 		
@@ -75,8 +77,9 @@ public class MemberRepositoryImpl implements MemberRepository{
 
 	@Override
 	public void deactivate(int id) {
-		String sql = "update member set status = 'INACTIVE' where id =?";
-		jdbcTemplate.update(sql, id);
+		// 👉 enum을 사용해 상태를 'INACTIVE'로 설정 (소프트 삭제)
+		String sql = "UPDATE member SET status = ? WHERE id = ?";
+		jdbcTemplate.update(sql, MemberStatus.INACTIVE.name(), id);
 	}
 
 

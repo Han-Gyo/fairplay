@@ -47,6 +47,12 @@
                     <label for="address" class="form-label">주소</label>
                     <input type="text" class="form-control" id="address" name="address" value="${member.address}">
                 </div>
+                
+                <div class="mb-3">
+				    <label class="form-label">회원 상태</label>
+				    <input type="text" class="form-control" value="${member.status}" readonly>
+				</div>
+                
 
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-success">수정 완료</button>

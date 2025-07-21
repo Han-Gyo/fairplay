@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fairplay.domain.Member;
+import com.fairplay.enums.MemberStatus;
 import com.fairplay.service.MemberService;
 
 @Controller
@@ -89,13 +90,18 @@ public class MemberController {
 						 @RequestParam(required = false) String from,
 						 HttpSession session) {
 		
+		// ✅ 세션에 있는 로그인 회원의 상태를 유지시켜줌
+	    Member loginUser = (Member) session.getAttribute("loginMember");
+	    if (loginUser != null) {
+	        member.setStatus(loginUser.getStatus());  // ✅ 여기가 핵심!
+	    }
+		
 		memberService.update(member);
 		
-		// 세션에 로그인 사용자 정보 갱신
-		Member loginUser = (Member) session.getAttribute("loginMember");
-		if (loginUser != null && loginUser.getId() == member.getId()) {
-			session.setAttribute("loginMember", member);
-		}
+		// ✅ 세션 정보도 최신으로 갱신
+	    if (loginUser != null && loginUser.getId() == member.getId()) {
+	        session.setAttribute("loginMember", member);
+	    }
 		
 		// 분기 처리 : 마이페이지 수정 -> 마이페이지로
 		if ("mypage".equals(from)) {
@@ -112,7 +118,9 @@ public class MemberController {
 	@PostMapping("/deactivate")
 	public String deactivate(@RequestParam("id") int id, HttpSession session) {
 		memberService.deactivate(id);	// status -> 'INACTIVE'일 때 ↓
+		
 		session.invalidate();			// 로그아웃 처리 (세션 종료)
+		
 		return "redirect:/"; 			// 홈화면 리다이렉트
 	}
 	
@@ -120,27 +128,23 @@ public class MemberController {
 	// 마이페이지 진입
 	@GetMapping("/mypage")
 	public String myPage(HttpSession session, Model model) {
-		
-		// 로그인 여부 확인
-		Member loginMember = (Member) session.getAttribute("loginMember");
-		
-		if (loginMember == null) {
-			return "redirect:/login"; // 로그인 안 되어 있으면 로그인 페이지로
-		}
-		
-		// 탈퇴한 회원이면 접근 제한 (탈퇴 분기 조건식)
-		if (!"ACTIVE".equals(loginMember.getStatus())) {
-			session.invalidate();	// 세션도 종료시켜버림
-			return "redirect:/";	// 홈으로 강제 이동
-		}
-		
-		// 본인 정보만 모델에 담기
-		int memberId = loginMember.getId();
-		Member member = memberService.findById(memberId);
-		model.addAttribute("member", member);
-		
-		return "myPage";
+	    // 세션에서 로그인된 사용자 꺼냄
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+
+	    // 🔒 회원 상태가 ACTIVE가 아니면 (탈퇴회원 등) → 세션 만료 후 로그인으로 보냄
+	    if (loginMember == null || loginMember.getStatus() != MemberStatus.ACTIVE) {
+	        session.invalidate();
+	        return "redirect:/login";
+	    }
+
+	    // 정상 회원이면 마이페이지 정보 전달
+	    int memberId = loginMember.getId();
+	    Member member = memberService.findById(memberId);
+	    model.addAttribute("member", member);
+
+	    return "myPage";
 	}
+
 	
 	
 	// 로그인 폼 이동
@@ -154,18 +158,23 @@ public class MemberController {
 	// 로그인 처리
 	@PostMapping("/login")
 	public String login(@RequestParam String user_id, 
-			@RequestParam String password, 
-			HttpSession session, 
-			Model model) {
-		Member member = memberService.findByUserId(user_id);
-		
-		if (member == null || !member.getPassword().equals(password)){
-			model.addAttribute("loginError", "아이디 또는 비밀번호가 올바르지 않습니다.");
-			return "login";
-		}
-		
-		session.setAttribute("loginMember", member);
-		return "home";
+	                    @RequestParam String password, 
+	                    HttpSession session, Model model) {
+
+	    Member member = memberService.findByUserId(user_id);
+
+	    // 🔐 로그인 실패 조건: 존재하지 않거나, 비밀번호 틀리거나, 상태가 비정상
+	    if (member == null 
+	        || !member.getPassword().equals(password)
+	        || member.getStatus() != MemberStatus.ACTIVE) {
+
+	        model.addAttribute("loginError", "로그인할 수 없는 계정입니다.");
+	        return "login";
+	    }
+
+	    // ✅ 정상 로그인
+	    session.setAttribute("loginMember", member);
+	    return "home";
 	}
 	
 	// 로그아웃
