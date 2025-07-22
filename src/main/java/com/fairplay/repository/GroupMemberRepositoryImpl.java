@@ -75,6 +75,19 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 		jdbcTemplate.update(sql, id);
 		
 	}
+
+	@Override
+	public boolean isGroupMember(int groupId, int memberId) {
+		
+		// 주어진 그룹 ID와 멤버 ID가 모두 일치하는 데이터가 group_member 테이블에 존재하는지 확인하는 SQL
+		String sql = "select count(*) from group_member where group_id = ? and member_id = ?";
+		
+		// 쿼리 결과를 Integer 타입으로 받아옴 (조건에 맞는 레코드 수)
+		Integer count = jdbcTemplate.queryForObject(sql, Integer.class, groupId, memberId);
+		
+		// count가 null이 아니고 0보다 크면 -> 가입된 멤버로 판단하여 true 반환
+		return count != null && count > 0;
+	}
 	
 	
 	

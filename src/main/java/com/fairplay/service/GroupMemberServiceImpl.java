@@ -49,9 +49,12 @@ public class GroupMemberServiceImpl implements GroupMemberService{
 		gmRepo.delete(id);
 		
 	}
-	
-	
 
+	@Override
+	public boolean isGroupMember(int groupId, int memberId) {
+		
+		return gmRepo.isGroupMember(groupId, memberId);
+	}
 	
 	
 }

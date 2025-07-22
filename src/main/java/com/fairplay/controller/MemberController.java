@@ -174,7 +174,7 @@ public class MemberController {
 
 	    // ✅ 정상 로그인
 	    session.setAttribute("loginMember", member);
-	    return "home";
+	    return "redirect:/";  // 홈으로 리다이렉트
 	}
 	
 	// 로그아웃

@@ -22,6 +22,7 @@ public class GroupRowMapper implements RowMapper<Group>{
 		group.setProfile_img(rs.getString("profile_img"));		// 이미지 파일명
 		group.setCreated_at(rs.getTimestamp("created_at"));		// 생성일시
 		group.setAdmin_comment(rs.getString("admin_comment"));	// 관리자 메시지
+		group.setLeaderId(rs.getInt("leader_id"));				// 그룹장 ID
 		return group;
 	}
 	

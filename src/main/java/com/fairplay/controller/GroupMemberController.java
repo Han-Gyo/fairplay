@@ -2,6 +2,8 @@ package com.fairplay.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,51 +12,101 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fairplay.domain.Group;
 import com.fairplay.domain.GroupMember;
+import com.fairplay.domain.Member;
 import com.fairplay.service.GroupMemberService;
+import com.fairplay.service.GroupService;
 
 @Controller
 @RequestMapping("/groupmember")
 public class GroupMemberController {
 	
 	private final GroupMemberService groupMemberService;
+	private final GroupService groupService;
 	
 	// 생성자 주입
 	@Autowired
-	public GroupMemberController(GroupMemberService groupMemberService) {
+	public GroupMemberController(GroupMemberService groupMemberService,
+								 GroupService groupService) {
 		this.groupMemberService = groupMemberService;
+		this.groupService = groupService;
 	}
 	
 	
 	// 그룹 가입 폼 보기
 	@GetMapping("/create")
-	public String createForm() {
+	public String createForm(@RequestParam("groupId") int groupId,
+							 HttpSession session,
+							 RedirectAttributes redirectAttributes,
+							 Model model) {
+		
 		System.out.println("그룹 가입 폼 함수 입장");
+		
+		// 로그인 확인
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		if (loginMember == null) {
+			redirectAttributes.addFlashAttribute("msg", "로그인이 필요합니다.");
+			return "redirect:/member/login";
+		}
+		
+		// 그룹 정보 확인
+		Group group = groupService.findById(groupId);
+		if (group == null) {
+			redirectAttributes.addFlashAttribute("msg", "존재하지 않는 그룹입니다.");
+			return "redirect:/group/list";
+		}
+		
+		// 뷰로 group 데이터 전달
+		model.addAttribute("group", group);
 		return "groupMemberCreateForm";
 	}
 	
 	
 	// 그룹 가입 처리
 	@PostMapping("/create")
-	public String create(@ModelAttribute GroupMember groupMember) {
-		System.out.println("그룹 가입 처리 함수 입장");
-		
-		// 점수 필드 기본값 세팅
-		groupMember.setWeeklyScore(0);
-		groupMember.setTotalScore(0);
-		groupMember.setWarningCount(0);
-		
-		// 역할 MEMBER 강제 지정 (추후 확장 가능)
-		groupMember.setRole("MEMBER");
-		
-		// 그룹 가입 정보 저장
-		groupMemberService.save(groupMember);
-		
-		// 그룹 목록 페이지로 리다이렉트
-		return "redirect:/group/groups";
-		
+	public String createGroupMember(@RequestParam("groupId") int groupId,
+	                                @RequestParam(value = "inviteCode", required = false) String inviteCode,
+	                                HttpSession session,
+	                                RedirectAttributes redirectAttributes) {
+
+	    // 세션에서 로그인한 사용자 확인
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
+	        redirectAttributes.addFlashAttribute("msg", "로그인이 필요합니다.");
+	        return "redirect:/member/login";
+	    }
+
+	    // 그룹 정보 가져오기
+	    Group group = groupService.findById(groupId);
+	    if (group == null) {
+	        redirectAttributes.addFlashAttribute("msg", "존재하지 않는 그룹입니다.");
+	        return "redirect:/group/list";
+	    }
+
+	    // ❗ 초대코드가 null이면 빈 문자열로 처리 (null 예외 방지)
+	    if (inviteCode == null || !inviteCode.equals(group.getCode())) {
+	        redirectAttributes.addFlashAttribute("msg", "초대코드가 올바르지 않습니다.");
+	        return "redirect:/groupmember/create?groupId=" + groupId;
+	    }
+
+	    // 가입 처리
+	    GroupMember groupMember = new GroupMember();
+	    groupMember.setGroupId(groupId);
+	    groupMember.setMemberId(loginMember.getId());
+	    groupMember.setWeeklyScore(0);
+	    groupMember.setTotalScore(0);
+	    groupMember.setWarningCount(0);
+	    groupMember.setRole("MEMBER");
+
+	    groupMemberService.save(groupMember);
+
+	    redirectAttributes.addFlashAttribute("msg", "그룹에 성공적으로 가입되었습니다.");
+	    return "redirect:/group/detail?id=" + groupId;
 	}
+
 	
 	// 특정 그룹의 멤버 전체 조회 (Read_all)
 	@GetMapping("/list")

@@ -16,5 +16,6 @@ public interface GroupMemberRepository {
 	
 	void delete(int id);
 	
+	boolean isGroupMember(int groupId, int memberId);
 	
 }

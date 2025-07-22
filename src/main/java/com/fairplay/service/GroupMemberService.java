@@ -15,4 +15,6 @@ public interface GroupMemberService {
 	void update(GroupMember groupMember);			// 그룹멤버 정보 수정 (역할, 점수, 경고 등)
 	
 	void delete(int id);
+	
+	boolean isGroupMember(int groupId, int memberId);
 }

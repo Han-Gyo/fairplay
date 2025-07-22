@@ -21,17 +21,18 @@ public class GroupRepositoryImpl implements GroupRepository{
 	public void save(Group group) {
 		
 		// 그룹 정보를 DB에 저장하기 위한 SQL 구문 (id (AUTO_INCREMENT), created_at은 DB에서 자동 처리됨)
-		String sql = "INSERT INTO `group` (name, description, code, max_member, public_status, profile_img, admin_comment) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO `group` (name, description, code, max_member, public_status, profile_img, admin_comment, leader_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		
 		// JdbcTemplate를 사용하여 SQL 실행 각 물음표 자리에 순서대로 group 객체의 값이 매핑됨
 		jdbcTemplate.update(sql,
 		    group.getName(),          // 그룹 이름
 		    group.getDescription(),   // 그룹 설명
 	        group.getCode(),          // 초대 코드
-	        group.getMaxMember(),    // 최대 인원
-	        group.isPublicStatus(),      // 공개 여부
+	        group.getMaxMember(),     // 최대 인원
+	        group.isPublicStatus(),   // 공개 여부
 	        group.getProfile_img(),   // 대표 이미지 파일명
-		    group.getAdmin_comment()  // 그룹장이 쓴 한 줄 메시지
+		    group.getAdmin_comment(), // 그룹장이 쓴 한 줄 메시지
+		    group.getLeaderId()		  // 그룹 생성자 ID
 		);
 	}
 
