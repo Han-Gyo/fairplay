@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.fairplay.domain.GroupMember;
+import com.fairplay.domain.GroupMemberInfoDTO;
+import com.fairplay.mapper.GroupMemberInfoRowMapper;
 import com.fairplay.mapper.GroupMemberRowMapper;
 
 @Repository
@@ -52,6 +54,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 		// 이미 정의된 RowMapper 클래스 재사용
 		return jdbcTemplate.queryForObject(sql, new GroupMemberRowMapper(), id);
 	}
+	
 
 	@Override
 	public void update(GroupMember groupmember) {
@@ -87,6 +90,19 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 		
 		// count가 null이 아니고 0보다 크면 -> 가입된 멤버로 판단하여 true 반환
 		return count != null && count > 0;
+	}
+
+	@Override
+	public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
+		String sql = "SELECT gm.id, gm.group_id, m.nickname, m.real_name, " +
+	             	 "gm.role, gm.total_score, gm.weekly_score, gm.warning_count " +
+	             	 "FROM group_member gm " +
+	             	 "JOIN member m ON gm.member_id = m.id " +
+	             	 "WHERE gm.group_id = ?";
+
+
+						
+		return jdbcTemplate.query(sql, new GroupMemberInfoRowMapper(), groupId);
 	}
 	
 	

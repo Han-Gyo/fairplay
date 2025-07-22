@@ -73,42 +73,72 @@
 <div class="table-box">
     <h2>👥 그룹 멤버 목록</h2>
 
-    <table>
-        <thead>
-            <tr>
-                <th>회원 ID</th>
-                <th>역할</th>
-                <th>총 점수</th>
-                <th>주간 점수</th>
-                <th>경고 횟수</th>
-                <th>관리</th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:forEach var="member" items="${groupMembers}">
-                <tr>
-                    <td>${member.memberId}</td>
-                    <td>${member.role}</td>
-                    <td>${member.totalScore}</td>
-                    <td>${member.weeklyScore}</td>
-                    <td>${member.warningCount}</td>
-                    
-                    <!-- 임시: 수정/추방 버튼은 누구에게나 보이게 설정 -->
-					<td>
-					    <a href="${pageContext.request.contextPath}/groupmember/edit?id=${member.id}" class="action-link edit">수정</a>
-					    <a href="${pageContext.request.contextPath}/groupmember/delete?id=${member.id}&groupId=${member.groupId}" 
-					       onclick="return confirm('정말 추방하시겠습니까?');" class="action-link delete">추방</a>
-					</td>
-                    
-                </tr>
-            </c:forEach>
-        </tbody>
-    </table>
+    <c:choose>
+
+        <c:when test="${group.publicStatus}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>닉네임</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="member" items="${groupMembers}">
+                        <tr>
+                            <td>${member.nickname}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </c:when>
+
+        <c:otherwise>
+            <c:choose>
+                <c:when test="${isMember}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>닉네임</th>
+                                <th>실명</th>
+                                <th>역할</th>
+                                <th>총 점수</th>
+                                <th>주간 점수</th>
+                                <th>경고 횟수</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="member" items="${groupMembers}">
+                                <tr>
+                                    <td>${member.nickname}</td>
+                                    <td>${member.realName}</td>
+                                    <td>${member.role}</td>
+                                    <td>${member.totalScore}</td>
+                                    <td>${member.weeklyScore}</td>
+                                    <td>${member.warningCount}</td>
+                                    <td>
+                                        <a href="${pageContext.request.contextPath}/groupmember/edit?id=${member.id}" class="action-link edit">수정</a>
+                                        <a href="${pageContext.request.contextPath}/groupmember/delete?id=${member.id}&groupId=${member.groupId}" 
+                                           onclick="return confirm('정말 추방하시겠습니까?');" class="action-link delete">추방</a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:when>
+
+                <c:otherwise>
+                    <p>비공개 그룹의 멤버 목록은 가입자만 볼 수 있습니다.</p>
+                </c:otherwise>
+            </c:choose>
+        </c:otherwise>
+    </c:choose>
 
     <form action="${pageContext.request.contextPath}/group/groups">
         <button type="submit" class="btn-back">그룹 목록으로 돌아가기</button>
     </form>
 </div>
+
 
 </body>
 </html>

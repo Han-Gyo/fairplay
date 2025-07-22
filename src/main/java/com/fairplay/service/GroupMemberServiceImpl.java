@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fairplay.domain.GroupMember;
+import com.fairplay.domain.GroupMemberInfoDTO;
 import com.fairplay.repository.GroupMemberRepository;
 
 @Service
@@ -55,6 +56,13 @@ public class GroupMemberServiceImpl implements GroupMemberService{
 		
 		return gmRepo.isGroupMember(groupId, memberId);
 	}
+
+	// 그룹 ID로 닉네임/이름 포함한 멤버 정보 조회
+	@Override
+	public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
+		return gmRepo.findMemberInfoByGroupId(groupId);
+	}
+	
 	
 	
 }

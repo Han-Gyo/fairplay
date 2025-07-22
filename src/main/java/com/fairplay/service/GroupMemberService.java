@@ -3,6 +3,7 @@ package com.fairplay.service;
 import java.util.List;
 
 import com.fairplay.domain.GroupMember;
+import com.fairplay.domain.GroupMemberInfoDTO;
 
 public interface GroupMemberService {
 
@@ -17,4 +18,7 @@ public interface GroupMemberService {
 	void delete(int id);
 	
 	boolean isGroupMember(int groupId, int memberId);
+	
+	// 그룹 ID로 그룹 멤버 정보 (nickname, realName 포함된 DTO) 조회
+	List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId);
 }

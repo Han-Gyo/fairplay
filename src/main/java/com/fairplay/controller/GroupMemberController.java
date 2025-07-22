@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fairplay.domain.Group;
 import com.fairplay.domain.GroupMember;
+import com.fairplay.domain.GroupMemberInfoDTO;
 import com.fairplay.domain.Member;
 import com.fairplay.service.GroupMemberService;
 import com.fairplay.service.GroupService;
@@ -43,7 +44,7 @@ public class GroupMemberController {
 							 RedirectAttributes redirectAttributes,
 							 Model model) {
 		
-		System.out.println("그룹 가입 폼 함수 입장");
+		System.out.println("그룹 가입 폼 함수 입장"); // 문제 없으면 삭제
 		
 		// 로그인 확인
 		Member loginMember = (Member) session.getAttribute("loginMember");
@@ -110,15 +111,34 @@ public class GroupMemberController {
 	
 	// 특정 그룹의 멤버 전체 조회 (Read_all)
 	@GetMapping("/list")
-	public String list(@RequestParam("groupId")int groupId, Model model) {
+	public String list(@RequestParam("groupId")int groupId,
+					   HttpSession session,
+					   Model model) {
 		
-		// Service를 통해 그룹 ID로 멤버 리스트 조회
-		List<GroupMember> groupMembers = groupMemberService.findByGroupId(groupId);
+		// 그룹 정보 조회
+		Group group = groupService.findById(groupId);
+		if (group == null) {
+			return "redirect:/group/groups";	// 잘못된 그룹 ID 조회 경우 목록으로 리다이렉트
+		}
 		
-		// 조회된 리스트를 모델에 담아 뷰로 전달
-		model.addAttribute("groupMembers", groupMembers);
+		// 닉네임/실명 포함된 멤버 정보 조회 (DTO 기반)
+		List<GroupMemberInfoDTO> groupMembers = groupMemberService.findMemberInfoByGroupId(groupId);
+		model.addAttribute("groupMembers", groupMembers);	// 전체 멤버 리스트 전달
+		model.addAttribute("group", group);	// 그룹 정보 전달
 		
-		return "groupMemberList";
+		// 로그인 사용자 정보 추출
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		// JSP에서 조건 분기용
+		model.addAttribute("loginMember", loginMember);
+		
+		// 로그인 사용자가 해당 그룹에 가입한 상태인지 확인
+		boolean isMember = false;
+		if (loginMember != null) {
+			isMember = groupMemberService.isGroupMember(groupId, loginMember.getId());
+		}
+		model.addAttribute("isMember", isMember);	// JSP 조건 판단용
+		
+		return "groupMemberList";	// 뷰 페이지로 이동
 		
 	}
 	

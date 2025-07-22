@@ -1,10 +1,14 @@
 package com.fairplay.repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.fairplay.domain.Group;
@@ -19,21 +23,30 @@ public class GroupRepositoryImpl implements GroupRepository{
 
 	@Override
 	public void save(Group group) {
-		
-		// 그룹 정보를 DB에 저장하기 위한 SQL 구문 (id (AUTO_INCREMENT), created_at은 DB에서 자동 처리됨)
-		String sql = "INSERT INTO `group` (name, description, code, max_member, public_status, profile_img, admin_comment, leader_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		
-		// JdbcTemplate를 사용하여 SQL 실행 각 물음표 자리에 순서대로 group 객체의 값이 매핑됨
-		jdbcTemplate.update(sql,
-		    group.getName(),          // 그룹 이름
-		    group.getDescription(),   // 그룹 설명
-	        group.getCode(),          // 초대 코드
-	        group.getMaxMember(),     // 최대 인원
-	        group.isPublicStatus(),   // 공개 여부
-	        group.getProfile_img(),   // 대표 이미지 파일명
-		    group.getAdmin_comment(), // 그룹장이 쓴 한 줄 메시지
-		    group.getLeaderId()		  // 그룹 생성자 ID
-		);
+	    
+	    // 그룹 정보를 DB에 저장하기 위한 SQL 구문 (id는 AUTO_INCREMENT, created_at은 DB에서 자동 처리됨)
+	    String sql = "INSERT INTO `group` (name, description, code, max_member, public_status, profile_img, admin_comment, leader_id) " +
+	                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+	    // ✅ 자동 생성된 기본 키(id)를 반환받기 위한 KeyHolder 생성
+	    KeyHolder keyHolder = new GeneratedKeyHolder();
+
+	    // ✅ PreparedStatement를 생성하고, RETURN_GENERATED_KEYS 옵션으로 insert 후 생성된 ID를 가져옴
+	    jdbcTemplate.update(connection -> {
+	        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS); // ← 자동 생성된 ID를 얻기 위한 설정
+	        ps.setString(1, group.getName());              // 그룹 이름
+	        ps.setString(2, group.getDescription());       // 그룹 설명
+	        ps.setString(3, group.getCode());              // 초대 코드
+	        ps.setInt(4, group.getMaxMember());            // 최대 인원
+	        ps.setBoolean(5, group.isPublicStatus());      // 공개 여부
+	        ps.setString(6, group.getProfile_img());       // 대표 이미지 파일명
+	        ps.setString(7, group.getAdmin_comment());     // 그룹장이 쓴 한 줄 메시지
+	        ps.setInt(8, group.getLeaderId());             // 그룹 생성자 ID
+	        return ps;
+	    }, keyHolder);
+
+	    // ✅ insert 후 자동 생성된 그룹 ID 값을 Group 객체에 설정 → 이후 서비스에서 group.getId()로 사용 가능
+	    group.setId(keyHolder.getKey().intValue());
 	}
 
 	@Override

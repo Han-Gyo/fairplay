@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fairplay.domain.Group;
+import com.fairplay.domain.GroupMember;
 import com.fairplay.domain.Member;
 import com.fairplay.service.GroupMemberService;
 import com.fairplay.service.GroupService;
@@ -49,7 +50,7 @@ public class GroupController {
 		// 그룹장 ID 설정
 		group.setLeaderId(loginMember.getId());
 		
-		// 파일 업로드 처리 (네 기존 코드 유지)
+		// 파일 업로드 처리
 	    MultipartFile file = group.getFile(); // DTO에서 전달받은 파일 추출
 
 	    if (file != null && !file.isEmpty()) {
@@ -70,7 +71,8 @@ public class GroupController {
 	        }
 	    }
 
-	    groupService.save(group); // 그룹 정보 저장 (DB insert)
+	    // 그룹 정보 저장 (DB insert) + 자동 그룹장 등록은 서비스 내부에서 처리됨
+	    groupService.save(group);
 	    
 	    return "redirect:/group/groups"; // 저장 후 그룹 목록으로 이동
 	}
