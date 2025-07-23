@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
     <title>가계부 목록</title>
@@ -8,7 +10,7 @@
 <h1>💸 가계부 전체 목록</h1>
 
 <!-- 등록 버튼 -->
-<a href="/wallet/create">+ 새 항목 등록</a>
+<a href="${pageContext.request.contextPath}/wallet/create">+ 새 항목 등록</a>
 
 <!-- 항목 리스트 테이블 -->
 <table border="1" cellpadding="8" cellspacing="0">
@@ -24,8 +26,8 @@
             <th>구매처</th>
             <th>유형</th>
             <th>구매일</th>
-            <th>비고</th>
-            <th>액션</th>
+            <th>메모</th>
+            <th>관리</th>
         </tr>
     </thead>
     <tbody>
@@ -47,8 +49,8 @@
                 <td>${item.purchase_date}</td>
                 <td>${item.memo}</td>
                 <td>
-                    <a href="/wallet/edit?id=${item.id}">✏️수정</a>
-                    <a href="/wallet/delete?id=${item.id}&memberId=${memberId}" onclick="return confirm('정말 삭제할까요?');">🗑️삭제</a>
+                    <a href="${pageContext.request.contextPath}/wallet/edit?id=${item.id}">✏️수정</a>
+                    <a href="${pageContext.request.contextPath}/wallet/delete?id=${item.id}&member_id=${member_id}" onclick="return confirm('정말 삭제할까요?');">🗑️삭제</a>
                 </td>
             </tr>
         </c:forEach>
@@ -56,9 +58,9 @@
 </table>
 
 <!-- 단가 비교 검색 -->
-<form action="/wallet/compare" method="get">
+<form action="${pageContext.request.contextPath}/wallet/compare" method="get">
     <input type="hidden" name="member_id" value="${member_id}" />
-    <input type="text" name="itemName" placeholder="비교할 품목명 입력" required/>
+    <input type="text" name="item_name" placeholder="비교할 품목명 입력" required/>
     <button type="submit">📊 단가 비교</button>
 </form>
 

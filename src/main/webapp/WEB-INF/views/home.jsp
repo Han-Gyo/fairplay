@@ -78,7 +78,8 @@
 		    <a href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a>
 		</c:if>
 		
-		<a href="${pageContext.request.contextPath}/wallet/create">💸 가계부</a>
+		<a href="${pageContext.request.contextPath}/wallet">💸 내 가계부</a>
+		<a href="${pageContext.request.contextPath}/wallet/create">💸 가계부 작성</a>
 		
     </div>
 

@@ -80,7 +80,7 @@ public class WalletRepositoryImpl implements WalletRepository{
 	@Override
 	public List<Wallet> comparePriceByItemName(int memberId, String itemName) {
 		String sql = "SELECT * FROM wallet " +
-                "WHERE member_id = ? AND item_name = ? AND type = 'EXPENSE' " +
+                "WHERE member_id = ? AND item_name = ? AND type = '지출' " +
                 "ORDER BY (price / NULLIF(unit_count, 0)) ASC";
 
 		return jdbcTemplate.query(sql, walletRowMapper(), memberId, itemName);

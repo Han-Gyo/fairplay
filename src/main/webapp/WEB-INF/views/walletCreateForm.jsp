@@ -52,8 +52,8 @@
     <div>
         <label>유형:</label>
         <select name="type">
-            <option value="EXPENSE" ${wallet.type == 'EXPENSE' ? 'selected' : ''}>지출</option>
-            <option value="INCOME" ${wallet.type == 'INCOME' ? 'selected' : ''}>수입</option>
+            <option value="지출" ${wallet.type == '지출' ? 'selected' : ''}>지출</option>
+            <option value="수입" ${wallet.type == '수입' ? 'selected' : ''}>수입</option>
         </select>
     </div>
 
@@ -70,7 +70,7 @@
 
     <div>
         <button type="submit">${wallet.id == 0 ? "등록" : "수정 완료"}</button>
-        <a href="/wallet">뒤로가기</a>
+        <a href="${pageContext.request.contextPath}/wallet">뒤로가기</a>
     </div>
 
 </form>

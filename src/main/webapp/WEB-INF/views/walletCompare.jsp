@@ -2,14 +2,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>단가 비교 - ${itemName}</title>
+    <title>단가 비교 - ${item_name}</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<h1>📊 "${itemName}" 단가 비교</h1>
+<h1>📊 "${item_name}" 단가 비교</h1>
 
-<a href="/wallet?memberId=${param.memberId}">← 목록으로 돌아가기</a>
+<a href="${pageContext.request.contextPath}/wallet?member_id=${param.member_id}">← 목록으로 돌아가기</a>
 
 <!-- 차트를 그릴 캔버스 -->
 <canvas id="compareChart" width="600" height="400"></canvas>
