@@ -84,17 +84,39 @@
 
         </span>
     </div>
-    <div class="row"><span class="label">초대 코드:</span> <span class="value">${group.code}</span></div>
-    <div class="row"><span class="label">대표 이미지:</span> 
-        <span class="value">
-            <c:if test="${not empty group.profile_img}">
-			    <img src="${pageContext.request.contextPath}/upload/${group.profile_img}" alt="프로필 이미지" width="100" />
-			</c:if>
-            <c:if test="${empty group.profile_img}">
-                <img src="${pageContext.request.contextPath}/resources/img/default-group.png" alt="기본 이미지" width="100"/>
-            </c:if>
-        </span>
-    </div>
+    
+	<!-- ✅ 초대코드 마스킹 + 복사 기능 (그룹장만 노출) -->
+	<c:if test="${loginMember.id == group.leaderId}">
+	    <div class="row">
+	        <span class="label">초대 코드:</span>
+	        <span class="value">
+	            <input type="password" id="inviteCode" value="${group.code}" readonly 
+	                   style="border: none; background: transparent; width: 100px;" />
+	            <button type="button" onclick="copyInviteCode()">복사</button>
+	        </span>
+	    </div>
+	</c:if>
+	
+    <div class="row">
+	    <span class="label">대표 이미지:</span>
+	    <span class="value">
+	        <c:choose>
+	            
+	            <c:when test="${not empty group.profile_img}">
+	                <img src="${pageContext.request.contextPath}/upload/${group.profile_img}" 
+	                     alt="대표 이미지" width="100" style="cursor: pointer;"
+	                     onclick="window.open(this.src, '_blank')" />
+	            </c:when>
+	
+	            
+	            <c:otherwise>
+	                <img src="${pageContext.request.contextPath}/resources/img/default-group.png" 
+	                     alt="기본 이미지" width="100" />
+	            </c:otherwise>
+	        </c:choose>
+	    </span>
+	</div>
+
     <div class="row"><span class="label">관리자 한마디:</span> <span class="value">${group.admin_comment}</span></div>
     <div class="row">
     	<span class="label">생성일:</span> 
@@ -103,27 +125,62 @@
 		</span>
 	</div>
 	
-	<a href="${pageContext.request.contextPath}/groupmember/create">
+	<a href="${pageContext.request.contextPath}/groupmember/create?groupId=${group.id}">
 	    <button type="button" class="btn btn-success">✅ 이 그룹에 가입하기</button>
 	</a>
 
     <div class="btn-group">
+	    <!-- 목록으로 이동 -->
 	    <a href="${pageContext.request.contextPath}/group/groups">
 	        <button class="btn btn-list">목록으로</button>
 	    </a>
+	
+	    <!-- 그룹 수정 -->
 	    <a href="${pageContext.request.contextPath}/group/edit?id=${group.id}">
 	        <button class="btn btn-edit">수정</button>
 	    </a>
+	
+	    <!-- 그룹 삭제 -->
 	    <a href="${pageContext.request.contextPath}/group/delete?id=${group.id}" 
 	       onclick="return confirm('정말 삭제할까요?');">
 	        <button class="btn btn-delete">삭제</button>
+	    </a>
+	
+	    <!-- ✅ 멤버 보기: 공개 그룹은 누구나 / 비공개는 로그인 + 가입자만 -->
+	    <c:choose>
 	        
-	    <a href="${pageContext.request.contextPath}/groupmember/list?groupId=${group.id}">
-	        <button class="btn btn-primary">📋 멤버 보기</button>
-	    </a>
-	    </a>
+	        <c:when test="${group.publicStatus}">
+	            <a href="${pageContext.request.contextPath}/groupmember/list?groupId=${group.id}">
+	                <button class="btn btn-primary">📋 멤버 보기</button>
+	            </a>
+	        </c:when>
+	
+	        
+	        <c:otherwise>
+	            <c:if test="${not empty loginMember and isMember}">
+	                <a href="${pageContext.request.contextPath}/groupmember/list?groupId=${group.id}">
+	                    <button class="btn btn-primary">📋 멤버 보기</button>
+	                </a>
+	            </c:if>
+	        </c:otherwise>
+	    </c:choose>
 	</div>
+
 </div>
+
+
+
+<script>
+    function copyInviteCode() {
+        const input = document.getElementById("inviteCode");
+        input.type = 'text'; // 비밀번호 필드를 일반 텍스트로 바꿔서 복사 가능하게
+        input.select();
+        input.setSelectionRange(0, 99999); // 모바일 호환
+        document.execCommand("copy");
+        alert("초대코드가 복사되었습니다!");
+        input.type = 'password'; // 다시 비밀번호 필드로 변경
+    }
+</script>
 
 </body>
 </html>
