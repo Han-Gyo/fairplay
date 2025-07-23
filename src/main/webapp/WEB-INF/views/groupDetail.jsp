@@ -117,7 +117,25 @@
 	    </span>
 	</div>
 
-    <div class="row"><span class="label">관리자 한마디:</span> <span class="value">${group.admin_comment}</span></div>
+	<div class="row">
+	    <span class="label">그룹 인원:</span>
+	    <span class="value">👥 ${currentMemberCount} / ${group.maxMember}</span>
+	</div>
+	
+    <%
+	    com.fairplay.domain.Group g = (com.fairplay.domain.Group) request.getAttribute("group");
+	    String adminComment = "";
+	    if (g != null && g.getAdmin_comment() != null) {
+	    	adminComment = g.getAdmin_comment().replaceAll("\r\n", "<br/>");
+	    }
+	    request.setAttribute("formattedComment", adminComment);
+	%>
+
+	<div class="row">
+	    <span class="label">관리자 한마디:</span>
+	    <span class="value">${formattedComment}</span>
+	</div>
+	
     <div class="row">
     	<span class="label">생성일:</span> 
     	<span class="value">

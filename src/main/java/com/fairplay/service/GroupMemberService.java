@@ -21,4 +21,7 @@ public interface GroupMemberService {
 	
 	// 그룹 ID로 그룹 멤버 정보 (nickname, realName 포함된 DTO) 조회
 	List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId);
+	
+	// 현재 인원 수 조회용 메서드
+	int countByGroupId(int groupId);
 }

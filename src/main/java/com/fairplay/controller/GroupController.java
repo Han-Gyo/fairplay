@@ -3,7 +3,9 @@ package com.fairplay.controller;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fairplay.domain.Group;
-import com.fairplay.domain.GroupMember;
 import com.fairplay.domain.Member;
 import com.fairplay.service.GroupMemberService;
 import com.fairplay.service.GroupService;
@@ -81,16 +82,25 @@ public class GroupController {
 	// 전체 그룹 목록을 조회하여 뷰에 전달 (Read_all)
 	@GetMapping("/groups")
 	public String groupList(Model model) {
-		
-		// 전체 그룹 데이터 조회
-		List<Group> groups = groupService.readAll();
-		
-		// 모델에 그룹 리스트 데이터 추가
-		model.addAttribute("groups", groups);
-		
-		// 그룹 목록 JSP 뷰 반환
-		return "groups";
+
+	    // 전체 그룹 데이터 조회
+	    List<Group> groups = groupService.readAll();
+
+	    // 각 그룹별 현재 가입 인원 수 조회 (group_id → count)
+	    Map<Integer, Integer> currentMemberCountMap = new HashMap<>();
+	    for (Group group : groups) {
+	        int count = groupMemberService.countByGroupId(group.getId());
+	        currentMemberCountMap.put(group.getId(), count);
+	    }
+
+	    // 모델에 그룹 리스트 + 현재 인원 수 map 추가
+	    model.addAttribute("groups", groups);
+	    model.addAttribute("memberCounts", currentMemberCountMap); // JSP에서 memberCounts[group.id]로 접근
+
+	    // 그룹 목록 JSP 뷰 반환
+	    return "groups";
 	}
+
 	
 	// 특정 그룹을 조회하여 수정 폼 이동(Update용 Read_one)
 	@GetMapping("/edit")
@@ -141,6 +151,10 @@ public class GroupController {
 			
 			model.addAttribute("isMember", isMember);	// 멤버 보기 버튼 조건 분기에 사용
 			
+			// 현재 인원 수 모델에 담기
+			int currentMemberCount = groupMemberService.countByGroupId(group.getId());
+			model.addAttribute("currentMemberCount", currentMemberCount);
+			
 			// 상세 보기 페이지 반환
 			return "groupDetail";
 		}
@@ -152,6 +166,9 @@ public class GroupController {
 
 		MultipartFile file = group.getFile(); // DTO에서 전달받은 파일 추출
 
+		// ✅ 기존 그룹 정보 가져오기
+	    Group existingGroup = groupService.findById(group.getId());
+	    
 		if (file != null && !file.isEmpty()) {
 			String originalName = file.getOriginalFilename();
 			String safeFileName = UUID.randomUUID().toString() + "_" + originalName.replaceAll("[^a-zA-Z0-9.]", "_");
@@ -163,6 +180,9 @@ public class GroupController {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		} else {
+			// 파일이 비어 있으면 기존 이미지 유지
+			 group.setProfile_img(existingGroup.getProfile_img());
 		}
 
 		groupService.update(group); // DB 업데이트 실행

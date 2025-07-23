@@ -62,6 +62,13 @@ public class GroupMemberServiceImpl implements GroupMemberService{
 	public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
 		return gmRepo.findMemberInfoByGroupId(groupId);
 	}
+
+	@Override
+	public int countByGroupId(int groupId) {
+	    return gmRepo.countByGroupId(groupId); // Repository에 구현 필요
+	}
+
+	
 	
 	
 	

@@ -103,9 +103,11 @@
         		<td><input type="file" name="file" /></td>
             </tr>
             <tr>
-                <th>관리자 한마디</th>
-                <td><input type="text" name="admin_comment" /></td>
-            </tr>
+			    <th>관리자 한마디</th>
+			    <td>
+			        <textarea name="admin_comment" rows="4" cols="50" required>${group.admin_comment}</textarea>
+			    </td>
+			</tr>
         </table>
 
         <input type="submit" value="그룹 생성하기" />

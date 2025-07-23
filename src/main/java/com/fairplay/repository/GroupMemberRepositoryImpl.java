@@ -104,6 +104,12 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 						
 		return jdbcTemplate.query(sql, new GroupMemberInfoRowMapper(), groupId);
 	}
+
+	@Override
+	public int countByGroupId(int groupId) {
+		String sql = "SELECT COUNT(*) FROM group_member WHERE group_id = ?";
+		return jdbcTemplate.queryForObject(sql, Integer.class, groupId);
+	}
 	
 	
 	
