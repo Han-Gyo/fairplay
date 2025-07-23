@@ -10,5 +10,6 @@ public interface TodoService {
 	void deleteTodo(int id);                    // 할 일 삭제
 	void completeTodo(int id);                  // 할 일 완료 처리
 	Todo findById(int id);                      // ID로 할 일 조회
+	boolean assignTodo(int todoId, int memberId); // 신청 처리
 }
 

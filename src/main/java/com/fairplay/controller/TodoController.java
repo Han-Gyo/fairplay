@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fairplay.domain.Member;
 import com.fairplay.domain.Todo;
@@ -130,6 +133,30 @@ public class TodoController {
 		System.out.println("✅ 완료 요청 ID: " + id);
 		todoService.completeTodo(id);
 		return "redirect:/todos";
+	}
+	
+	// ✅ 7. 선착순 신청 기능
+	@PostMapping("/assign")
+	public String assignTodo(@RequestParam("todoId")int todoId, HttpSession session, RedirectAttributes redirectAttributes) {
+		
+		// 세션에서 로그인 정보 가져오기
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		if (loginMember == null) {
+			redirectAttributes.addFlashAttribute("msg", "로그인 후 이용해주세요!");
+		}
+		
+		int memberId = loginMember.getId();
+		
+	    // 신청 처리
+	    boolean success = todoService.assignTodo(todoId, memberId);
+
+	    if (!success) {
+	        redirectAttributes.addFlashAttribute("msg", "이미 누군가 신청했어요!");
+	    } else {
+	        redirectAttributes.addFlashAttribute("msg", "신청 완료!");
+	    }
+
+	    return "redirect:/todos";
 	}
 	
 }

@@ -52,4 +52,19 @@ public class TodoServiceImpl implements TodoService{
 		return todoRepository.findById(id);
 	}
 	
+	@Override
+	public boolean assignTodo(int todoId, int memberId) {
+	    // 1. 해당 할 일 조회
+	    Todo todo = todoRepository.findById(todoId);
+	    
+	    // 2. 이미 신청된 경우 → 신청 불가
+	    if (todo.getAssigned_to() != null || "신청완료".equals(todo.getStatus())) {
+	        return false;
+	    }
+
+	    // 3. 신청 처리 → 전용 메서드로 끝!
+	    todoRepository.updateAssignedStatus(todoId, memberId);
+	    
+	    return true;
+	}
 }

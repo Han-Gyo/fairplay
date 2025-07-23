@@ -49,11 +49,29 @@
                 <span class="not-done">⏳ 미완료</span>
               </c:otherwise>
             </c:choose>
+             
+            <!-- 🙋 선착순 신청 처리 -->
+					  <br/>
+					  <c:choose>
+					    <!-- 아직 미신청인 경우 → 버튼 표시 -->
+					    <c:when test="${todo.status == '미신청'}">
+					      <form action="${pageContext.request.contextPath}/todos/assign" method="post" style="display:inline;">
+					        <input type="hidden" name="todo_id" value="${todo.id}" />
+					        <button type="submit">🙋 내가 할게요!</button>
+					      </form>
+					    </c:when>
+					
+					    <!-- 이미 신청된 경우 → 신청자 표시 -->
+					    <c:otherwise>
+					      🙆 신청자: <strong>${memberMap[todo.assigned_to]}</strong>
+					    </c:otherwise>
+					  </c:choose>
+					</td>
           <td>
+          
             <!-- 완료 버튼 -->
             <button type="button" onclick="completeTodo(${todo.id})">완료</button>
             
-
             <!-- 수정 버튼 -->
             <form action="${pageContext.request.contextPath}/todos/update" method="get" style="display:inline;">
               <input type="hidden" name="id" value="${todo.id}" />

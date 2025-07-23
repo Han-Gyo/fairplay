@@ -10,4 +10,5 @@ public interface TodoRepository {
 	void deleteById(int id);           		// ID로 할 일 삭제
 	void complete(int id);             		// ID로 할 일 완료 처리
 	Todo findById(int id);             		// ID로 할 일 조회
+	void updateAssignedStatus(int todoId, int memberId);
 }
