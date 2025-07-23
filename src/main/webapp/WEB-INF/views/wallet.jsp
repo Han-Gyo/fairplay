@@ -1,13 +1,23 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ include file="/WEB-INF/views/nav.jsp" %>
 <html>
 <head>
-    <title>가계부 목록</title>
+<title>가계부 목록</title>
+<style>
+	a {
+		color : black;
+		text-decoration : none;
+	}
+	a:hover {
+		color : pink;
+	}
+</style>
 </head>
 <body>
 
-<h1>💸 가계부 전체 목록</h1>
+<h1><a href="${pageContext.request.contextPath}/">💸 가계부 전체 목록</a></h1>
 
 <!-- 등록 버튼 -->
 <a href="${pageContext.request.contextPath}/wallet/create">+ 새 항목 등록</a>

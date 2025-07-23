@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ include file="/WEB-INF/views/nav.jsp" %>
 <html>
 <head>
     <title>Fairplay - Home</title>
