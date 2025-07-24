@@ -10,7 +10,9 @@ public class Todo {
 	private String status;        			// 🔥 상태: "신청완료", "미신청"
 	private Date due_date; 					// 마감 기한
 	private boolean completed; 				// 완료 여부 (기본값: false)
-	private int difficulty_point; 			// 노동 강도 (1~5점)
+	private int difficulty_point; 			// 할 일 난이도 점수 (1~5)
+	private Integer assignedMemberId; 		// 담당자 ID (추가 정보용, 뷰용일 수 있음)
+	private String assignedMemberNickname; 	// 담당자 닉네임 (뷰에 출력용)
 	
 	// 기본 생성자
 	public Todo() {}
@@ -79,11 +81,22 @@ public class Todo {
 		this.difficulty_point = difficulty_point;
 	}
 
-	@Override
-	public String toString() {
-		return "Todo [id=" + id + ", group_id=" + group_id + ", title=" + title + ", assigned_to=" + assigned_to
-				+ ", status=" + status + ", due_date=" + due_date + ", completed=" + completed + ", difficulty_point="
-				+ difficulty_point + "]";
+	public Integer getAssignedMemberId() {
+		return assignedMemberId;
 	}
+
+	public void setAssignedMemberId(Integer assignedMemberId) {
+		this.assignedMemberId = assignedMemberId;
+	}
+
+	public String getAssignedMemberNickname() {
+		return assignedMemberNickname;
+	}
+
+	public void setAssignedMemberNickname(String assignedMemberNickname) {
+		this.assignedMemberNickname = assignedMemberNickname;
+	}
+
+
 	
 }
