@@ -143,9 +143,26 @@
 		</span>
 	</div>
 	
-	<a href="${pageContext.request.contextPath}/groupmember/create?groupId=${group.id}">
-	    <button type="button" class="btn btn-success">✅ 이 그룹에 가입하기</button>
-	</a>
+	<!-- ✅ 그룹 가입 버튼 조건 처리 -->
+<c:choose>
+
+    <c:when test="${empty loginMember}">
+        <a href="${pageContext.request.contextPath}/member/setRedirect?redirectURI=/group/detail?id=${group.id}">
+            <button type="button" class="btn btn-primary">로그인 후 가입하기</button>
+        </a>
+    </c:when>
+
+    <c:when test="${isMember}">
+        <button type="button" class="btn btn-secondary" disabled>이미 가입된 그룹입니다</button>
+    </c:when>
+
+    <c:otherwise>
+        <a href="${pageContext.request.contextPath}/groupmember/create?groupId=${group.id}">
+            <button type="button" class="btn btn-success">✅ 이 그룹에 가입하기</button>
+        </a>
+    </c:otherwise>
+
+</c:choose>
 
     <div class="btn-group">
 	    <!-- 목록으로 이동 -->

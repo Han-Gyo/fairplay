@@ -184,4 +184,15 @@ public class MemberController {
 	    return "redirect:/";  // 홈으로 리다이렉트
 	}
 
+	// 로그인 전 사용자가 접근한 URI를 세션에 저장해두는 메서드
+	@GetMapping("/setRedirect")
+	public String setRedirect(@RequestParam String redirectURI, HttpSession session) {
+
+	    // 사용자가 원래 가려던 URI를 세션에 저장
+	    session.setAttribute("redirectURI", redirectURI);
+
+	    // 로그인 페이지로 이동
+	    return "redirect:/member/login";
+	}
+	
 }
