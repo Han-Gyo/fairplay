@@ -30,6 +30,8 @@
 			</label>
 		</div>
 
+		<label for="maxMember">최대 인원 수</label>
+		<input type="number" name="maxMember" id="maxMember" value="${group.maxMember}" min="1" required />
 
         <label>초대 코드</label>
         <input type="text" name="code" value="${group.code}" required maxlength="8" />
@@ -37,12 +39,12 @@
         <label>프로필 이미지</label>
         <input type="file" name="file" />
 
-        <label>그룹장 한마디</label>
-        <input type="text" name="admin_comment" value="${group.admin_comment}" />
+        <label for="admin_comment">그룹장 한마디</label>
+		<textarea name="admin_comment" id="admin_comment" rows="4" cols="50" required>${group.admin_comment}</textarea>
 
         <div class="btn-group">
             <input type="submit" class="btn btn-save" value="저장" />
-            <a href="/group/groups"><button type="button" class="btn btn-cancel">취소</button></a>
+            <a href="${pageContext.request.contextPath}/group/detail?id=${group.id}" class="btn btn-cancel">취소</a>
         </div>
     </form>
 </div>

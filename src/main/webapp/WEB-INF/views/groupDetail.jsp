@@ -118,7 +118,25 @@
 	    </span>
 	</div>
 
-    <div class="row"><span class="label">관리자 한마디:</span> <span class="value">${group.admin_comment}</span></div>
+	<div class="row">
+	    <span class="label">그룹 인원:</span>
+	    <span class="value">👥 ${currentMemberCount} / ${group.maxMember}</span>
+	</div>
+	
+    <%
+	    com.fairplay.domain.Group g = (com.fairplay.domain.Group) request.getAttribute("group");
+	    String adminComment = "";
+	    if (g != null && g.getAdmin_comment() != null) {
+	    	adminComment = g.getAdmin_comment().replaceAll("\r\n", "<br/>");
+	    }
+	    request.setAttribute("formattedComment", adminComment);
+	%>
+
+	<div class="row">
+	    <span class="label">관리자 한마디:</span>
+	    <span class="value">${formattedComment}</span>
+	</div>
+	
     <div class="row">
     	<span class="label">생성일:</span> 
     	<span class="value">
@@ -126,9 +144,26 @@
 		</span>
 	</div>
 	
-	<a href="${pageContext.request.contextPath}/groupmember/create?groupId=${group.id}">
-	    <button type="button" class="btn btn-success">✅ 이 그룹에 가입하기</button>
-	</a>
+	<!-- ✅ 그룹 가입 버튼 조건 처리 -->
+<c:choose>
+
+    <c:when test="${empty loginMember}">
+        <a href="${pageContext.request.contextPath}/member/setRedirect?redirectURI=/group/detail?id=${group.id}">
+            <button type="button" class="btn btn-primary">로그인 후 가입하기</button>
+        </a>
+    </c:when>
+
+    <c:when test="${isMember}">
+        <button type="button" class="btn btn-secondary" disabled>이미 가입된 그룹입니다</button>
+    </c:when>
+
+    <c:otherwise>
+        <a href="${pageContext.request.contextPath}/groupmember/create?groupId=${group.id}">
+            <button type="button" class="btn btn-success">✅ 이 그룹에 가입하기</button>
+        </a>
+    </c:otherwise>
+
+</c:choose>
 
     <div class="btn-group">
 	    <!-- 목록으로 이동 -->

@@ -85,30 +85,41 @@
                 <th>공개 여부</th>
                 <th>초대 코드</th>
                 <th>생성일</th>
-                <th>상세보기</th> <!-- ✅ 수정 -->
+                <th>인원</th>
+                <th>상세보기</th>
             </tr>
         </thead>
         <tbody>
             <c:forEach var="group" items="${groups}">
-                <tr>
-                    <td>${group.name}</td>
-                    <td>${group.description}</td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${group.publicStatus}">공개</c:when>
-                            <c:otherwise>비공개</c:otherwise>
-                        </c:choose>
-                    </td>
-                    <td>${group.code}</td>
-                    <td>${group.created_at}</td>
-                    <td>
-                        <!-- ✅ 상세보기 버튼만 남김 -->
-                        <a href="${pageContext.request.contextPath}/group/detail?id=${group.id}">
-                            <button class="btn btn-detail">상세보기</button>
-                        </a>
-                    </td>
-                </tr>
-            </c:forEach>
+			    <tr>
+			        <td>${group.name}</td>
+			        <td>${group.description}</td>
+			        
+			        <!-- 공개 여부 -->
+			        <td>
+			            <c:choose>
+			                <c:when test="${group.publicStatus}">공개</c:when>
+			                <c:otherwise>비공개</c:otherwise>
+			            </c:choose>
+			        </td>
+			        
+			        <td>${group.code}</td>
+			        <td>${group.created_at}</td>
+			        
+			        <!-- ✅ 👥 현재 / 최대 인원 -->
+			        <td>
+			            👥 ${memberCounts[group.id]} / ${group.maxMember}
+			        </td>
+			        
+			        <!-- 상세보기 버튼 -->
+			        <td>
+			            <a href="${pageContext.request.contextPath}/group/detail?id=${group.id}">
+			                <button class="btn btn-detail">상세보기</button>
+			            </a>
+			        </td>
+			    </tr>
+			</c:forEach>
+
         </tbody>
     </table>
 </div>
