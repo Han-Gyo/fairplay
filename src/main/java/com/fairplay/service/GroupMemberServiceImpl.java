@@ -96,6 +96,18 @@ public class GroupMemberServiceImpl implements GroupMemberService{
 		return gmRepo.findRoleByMemberIdAndGroupId(memberId, groupId);
 	}
 
+	// 그룹 내에서 리더를 제외한 멤버 목록 조회 (위임 대상용)
+	@Override
+	public List<GroupMemberInfoDTO> findMembersExcludingLeader(int groupId) {
+		return gmRepo.findMembersExcludingLeader(groupId);
+	}
+
+	// 리더 위임 처리
+	@Override
+	public void updateRoleToLeader(int groupId, int memberId) {
+		gmRepo.updateRoleToLeader(groupId, memberId);
+	}
+
 	
 	
 	

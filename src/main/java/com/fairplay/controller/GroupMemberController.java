@@ -226,12 +226,56 @@ public class GroupMemberController {
 	        return "redirect:/group/detail?id=" + groupId;
 	    }
 
-	    // 조건 충족 시 탈퇴 처리
-	    groupMemberService.leaveGroup(memberId, groupId);
-	    ra.addFlashAttribute("msg", "그룹에서 탈퇴되었습니다.");
+	    // 리더이면서 혼자일 경우 -> 그룹 삭제
+	    if ("LEADER".equals(role) && memberCount == 1) {
+	    	
+	        groupService.delete(groupId); // 그룹 삭제
+	    }
 
-	    return "redirect:/group/groups"; // 탈퇴 후 그룹 목록 페이지로 이동
+	    // 공통 탈퇴 처리
+	    groupMemberService.leaveGroup(memberId, groupId); 
+
+	    ra.addFlashAttribute("msg", "그룹에서 탈퇴되었습니다.");
+	    return "redirect:/group/groups";
 	}
 
+	
+	// 위임 대상 선택 폼 이동
+	@GetMapping("/transferForm")
+	public String showTransferForm(@RequestParam("groupId") int groupId, Model model) {
+		
+		// 그룹 정보
+		Group group = groupService.findById(groupId);
+		model.addAttribute("group", group);
+		
+		// 그룹 내 일반 멤버 목록 (리더 제외)
+		List<GroupMemberInfoDTO> members = groupMemberService.findMembersExcludingLeader(groupId);
+		model.addAttribute("members", members);
+		
+		return "transferForm";
+	}
+	
+	// 위임 대상 선택 후 처리
+	@PostMapping("/transferAndLeave")
+	public String transferLeaderAndLeave(@RequestParam("groupId") int groupId,
+										 @RequestParam("newLeaderId") int newLeaderId,
+										 HttpSession session,
+										 RedirectAttributes ra) {
+		
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		int currentLeaderId = loginMember.getId();
+		
+		// 리더 권한 위임
+		groupMemberService.updateRoleToLeader(groupId, newLeaderId);
+		
+		// group 테이블의 leader_id 업데이트
+		groupService.updateLeader(groupId, newLeaderId);
+		
+		// 기존 그룹장 탈퇴 (group_member 행 삭제)
+		groupMemberService.leaveGroup(currentLeaderId, groupId);
+		
+		ra.addFlashAttribute("msg", "리더 권한을 위임하고 그룹을 탈퇴했습니다.");
+		return "redirect:/group/groups";
+	}
 	
 }

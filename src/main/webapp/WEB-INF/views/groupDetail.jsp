@@ -204,7 +204,7 @@
 	    </c:choose>
 	</div>
 	
-	<!-- ✅ 일반 멤버는 탈퇴 가능 (그룹장이 아닌 경우에만 보임) -->
+	<!-- ✅ 일반 멤버 탈퇴 (바로 탈퇴) -->
 	<c:if test="${not empty loginMember and isMember and loginMember.id != group.leaderId}">
 	    <form action="${pageContext.request.contextPath}/groupmember/delete" method="post" style="margin-top: 10px;">
 	        <input type="hidden" name="groupId" value="${group.id}" />
@@ -212,15 +212,24 @@
 	        <button type="submit" class="btn btn-warning">그룹 탈퇴</button>
 	    </form>
 	</c:if>
-	
-	<!-- ✅ 그룹장 탈퇴 버튼 (혼자일 때만 보이게) -->
-	<c:if test="${not empty loginMember 
-	             and isMember 
+
+	<!-- ✅ 그룹장 & 멤버 2명 이상 → 위임 후 탈퇴 -->
+	<c:if test="${not empty loginMember and isMember and loginMember.id == group.leaderId and currentMemberCount > 1}">
+	    <form action="${pageContext.request.contextPath}/groupmember/transferForm" method="get"
+	          onsubmit="return confirm('다른 멤버에게 리더를 위임하고 탈퇴하시겠습니까?')">
+	        <input type="hidden" name="groupId" value="${group.id}" />
+	        <button type="submit" class="btn btn-danger">리더 위임 후 탈퇴</button>
+	    </form>
+	</c:if>
+
+	<!-- ✅ 그룹장이고 혼자 있는 경우 → 그룹 삭제 후 탈퇴 -->
+	<c:if test="${not empty loginMember and isMember 
 	             and loginMember.id == group.leaderId 
 	             and currentMemberCount == 1}">
-	    <form action="${pageContext.request.contextPath}/groupmember/leave" method="post" style="margin-top: 10px;">
+	    <form action="${pageContext.request.contextPath}/groupmember/leave" method="post" onsubmit="return confirm('그룹에 혼자 남아있습니다. 그룹을 삭제하고 탈퇴하시겠습니까?')">
 	        <input type="hidden" name="groupId" value="${group.id}" />
-	        <button type="submit" class="btn btn-danger">그룹 탈퇴</button>
+	        <input type="hidden" name="memberId" value="${loginMember.id}" />
+	        <button type="submit" class="btn btn-danger">그룹 삭제 후 탈퇴</button>
 	    </form>
 	</c:if>
 	
@@ -238,6 +247,32 @@
         document.execCommand("copy");
         alert("초대코드가 복사되었습니다!");
         input.type = 'password'; // 다시 비밀번호 필드로 변경
+    }
+    
+    function handleLeave() {
+        const loginId = ${loginMember.id};
+        const leaderId = ${group.leaderId};
+        const memberCount = ${currentMemberCount};
+
+        const form = document.getElementById("leaveForm");
+
+        if (loginId === leaderId) {
+            if (memberCount === 1) {
+                // 혼자인 그룹장 → 바로 탈퇴
+                form.action = "${pageContext.request.contextPath}/groupmember/leave";
+                form.submit();
+            } else {
+                // 멤버가 1명 이상 있을 경우 → 위임 안내
+                const confirmTransfer = confirm("다른 멤버가 있어 리더 위임 후 탈퇴해야 합니다.\n위임 페이지로 이동할까요?");
+                if (confirmTransfer) {
+                    location.href = "${pageContext.request.contextPath}/groupmember/transferForm?groupId=${group.id}";
+                }
+            }
+        } else {
+            // 일반 멤버 → 기존 탈퇴
+            form.action = "${pageContext.request.contextPath}/groupmember/delete";
+            form.submit();
+        }
     }
 </script>
 

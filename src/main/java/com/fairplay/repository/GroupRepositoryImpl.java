@@ -113,6 +113,14 @@ public class GroupRepositoryImpl implements GroupRepository{
 		String sql = "DELETE FROM `group` WHERE id = ?";
 		jdbcTemplate.update(sql, groupId);
 	}
+
+	@Override
+	public void updateLeader(int groupId, int newLeaderId) {
+		// 그룹 테이블에서 leader_id 컬럼을 새로운 멤버 ID로 업데이트
+		String sql = "UPDATE `group` SET leader_id = ? WHERE id = ?";
+		jdbcTemplate.update(sql, newLeaderId, groupId);
+		
+	}
 	
 	
 	

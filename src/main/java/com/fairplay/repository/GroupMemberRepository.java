@@ -31,4 +31,9 @@ public interface GroupMemberRepository {
 	// 그룹 내에서 해당 멤버의 역할 조회
 	String findRoleByMemberIdAndGroupId(int memberId, int groupId);
 	
+	// 그룹 내에서 LEADER가 아닌 멤버 리스트 조회 (리더 위임 대상)
+	List<GroupMemberInfoDTO> findMembersExcludingLeader(int groupId);
+	
+	// 새로운 리더로 역할 변경
+	void updateRoleToLeader(int groupId, int memberId);
 }
