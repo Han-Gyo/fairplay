@@ -102,9 +102,11 @@ public class GroupController {
 	}
 
 	
-	// 특정 그룹을 조회하여 수정 폼 이동(Update용 Read_one)
+	// 특정 그룹을 조회하여 수정 폼 이동(Update용 Read_one 그룹장만 접근 가능하게)
 	@GetMapping("/edit")
-	public String findById(@RequestParam("id")int id, Model model) {
+	public String findById(@RequestParam("id")int id,
+						   HttpSession session,
+						   Model model) {
 		
 		// id 기반으로 그룹 데이터 조회
 		Group group = groupService.findById(id);
@@ -114,7 +116,15 @@ public class GroupController {
 		    return "redirect:/group/groups";
 		}
 		
-		// JSP로 해당 객체 데이터 전달
+		// 로그인한 사용자 정보
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		
+		// 그룹장이 아닌 경우 접근 차단
+		if (loginMember == null || loginMember.getId() != group.getLeaderId()) {
+			return "redirect:/group/detail?id=" + id;	// 상세 페이지로 되돌림
+		}
+		
+		// JSP로 해당 객체 데이터 전달 (모델에 그룹 데이터 전달)
 		model.addAttribute("group", group);
 		
 		// 수정 폼 페이지 반환
@@ -123,41 +133,41 @@ public class GroupController {
 	}
 	
 	// 특정 그룹을 조회하여 상세 보기 페이지로 이동(View용 Read_one)
-		@GetMapping("/detail")
-		public String viewDetail(@RequestParam("id")int id,
-								 HttpSession session,		// 세션에서 로그인 회원 추출용
-								 Model model) {
-			
-			// id 기반으로 그룹 데이터 조회
-			Group group = groupService.findById(id);
-			
-			// 해당 id가 없을 경우 목록으로 리다이렉트
-			if (group == null) {
-				return "redirect:/group/groups";
-			}
-			
-			// 조회된 객체를 모델에 담아 뷰로 전달
-			model.addAttribute("group", group);
-			
-			// 로그인한 사용자 정보 가져오기
-			Member loginMember = (Member) session.getAttribute("loginMember");
-			model.addAttribute("loginMember", loginMember);	// JSP에서도 loginMember 사용할 수 있게 모델에 담음
-			
-			// 해당 그룹에 로그인 사용자가 가입했는지 여부 판단
-			boolean isMember = false;
-			if (loginMember != null) {
-				isMember = groupMemberService.isGroupMember(group.getId(), loginMember.getId());
-			}
-			
-			model.addAttribute("isMember", isMember);	// 멤버 보기 버튼 조건 분기에 사용
-			
-			// 현재 인원 수 모델에 담기
-			int currentMemberCount = groupMemberService.countByGroupId(group.getId());
-			model.addAttribute("currentMemberCount", currentMemberCount);
-			
-			// 상세 보기 페이지 반환
-			return "groupDetail";
+	@GetMapping("/detail")
+	public String viewDetail(@RequestParam("id")int id,
+							 HttpSession session,		// 세션에서 로그인 회원 추출용
+							 Model model) {
+		
+		// id 기반으로 그룹 데이터 조회
+		Group group = groupService.findById(id);
+		
+		// 해당 id가 없을 경우 목록으로 리다이렉트
+		if (group == null) {
+			return "redirect:/group/groups";
 		}
+		
+		// 조회된 객체를 모델에 담아 뷰로 전달
+		model.addAttribute("group", group);
+		
+		// 로그인한 사용자 정보 가져오기
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		model.addAttribute("loginMember", loginMember);	// JSP에서도 loginMember 사용할 수 있게 모델에 담음
+		
+		// 해당 그룹에 로그인 사용자가 가입했는지 여부 판단
+		boolean isMember = false;
+		if (loginMember != null) {
+			isMember = groupMemberService.isGroupMember(group.getId(), loginMember.getId());
+		}
+		
+		model.addAttribute("isMember", isMember);	// 멤버 보기 버튼 조건 분기에 사용
+		
+		// 현재 인원 수 모델에 담기
+		int currentMemberCount = groupMemberService.countByGroupId(group.getId());
+		model.addAttribute("currentMemberCount", currentMemberCount);
+		
+		// 상세 보기 페이지 반환
+		return "groupDetail";
+	}
 	
 		
 	// 수정된 그룹 데이터를 DB에 반영하고 전체 그룹 목록 페이지로 리다이렉트 (Update)
@@ -192,7 +202,21 @@ public class GroupController {
 	
 	// 그룹 삭제 요청 처리 (Delete)
 	@GetMapping("delete")
-	String delete(@RequestParam("id")int id) {
+	String delete(@RequestParam("id")int id, HttpSession session) {
+		
+		// 그룹 정보 조회
+		Group group = groupService.findById(id);
+		
+		// 로그인한 사용자 정보 가져오기
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		
+		// 그룹장이 아닌 경우 삭제 차단
+		if (loginMember == null || group.getLeaderId() != loginMember.getId()) {
+			// 권한 없는 사용자 -> 그룹 상세 페이지로 리다이뤡트
+			return "redirect:/group/detail?id=" +id;
+		}
+		
+		// 그룹장 본인일 경우 삭제 진행
 		groupService.delete(id);
 		return "redirect:/group/groups";
 	}

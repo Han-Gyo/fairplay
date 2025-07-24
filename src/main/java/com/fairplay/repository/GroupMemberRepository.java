@@ -15,7 +15,7 @@ public interface GroupMemberRepository {
 	
 	void update(GroupMember groupmember);
 	
-	void delete(int id);
+	void delete(int groupId, int memberId);
 	
 	boolean isGroupMember(int groupId, int memberId);
 	
@@ -25,5 +25,10 @@ public interface GroupMemberRepository {
 	// 현재 인원 수 조회용 메서드
 	int countByGroupId(int groupId);
 
+	// 그룹장 탈퇴 전용 처리
+	void deleteByMemberIdAndGroupId(int memberId, int groupId);
+	
+	// 그룹 내에서 해당 멤버의 역할 조회
+	String findRoleByMemberIdAndGroupId(int memberId, int groupId);
 	
 }

@@ -170,16 +170,19 @@
 	        <button class="btn btn-list">목록으로</button>
 	    </a>
 	
-	    <!-- 그룹 수정 -->
-	    <a href="${pageContext.request.contextPath}/group/edit?id=${group.id}">
-	        <button class="btn btn-edit">수정</button>
-	    </a>
-	
-	    <!-- 그룹 삭제 -->
-	    <a href="${pageContext.request.contextPath}/group/delete?id=${group.id}" 
-	       onclick="return confirm('정말 삭제할까요?');">
-	        <button class="btn btn-delete">삭제</button>
-	    </a>
+	    <c:if test="${not empty loginMember and loginMember.id == group.leaderId}">
+		    <!-- 그룹 수정 -->
+		    <a href="${pageContext.request.contextPath}/group/edit?id=${group.id}">
+		        <button class="btn btn-edit">수정</button>
+		    </a>
+		
+		    <!-- 그룹 삭제 -->
+		    <a href="${pageContext.request.contextPath}/group/delete?id=${group.id}" 
+		       onclick="return confirm('정말 삭제할까요?');">
+		        <button class="btn btn-delete">삭제</button>
+		    </a>
+		</c:if>
+
 	
 	    <!-- ✅ 멤버 보기: 공개 그룹은 누구나 / 비공개는 로그인 + 가입자만 -->
 	    <c:choose>
@@ -200,7 +203,28 @@
 	        </c:otherwise>
 	    </c:choose>
 	</div>
-
+	
+	<!-- ✅ 일반 멤버는 탈퇴 가능 (그룹장이 아닌 경우에만 보임) -->
+	<c:if test="${not empty loginMember and isMember and loginMember.id != group.leaderId}">
+	    <form action="${pageContext.request.contextPath}/groupmember/delete" method="post" style="margin-top: 10px;">
+	        <input type="hidden" name="groupId" value="${group.id}" />
+	        <input type="hidden" name="memberId" value="${loginMember.id}" />
+	        <button type="submit" class="btn btn-warning">그룹 탈퇴</button>
+	    </form>
+	</c:if>
+	
+	<!-- ✅ 그룹장 탈퇴 버튼 (혼자일 때만 보이게) -->
+	<c:if test="${not empty loginMember 
+	             and isMember 
+	             and loginMember.id == group.leaderId 
+	             and currentMemberCount == 1}">
+	    <form action="${pageContext.request.contextPath}/groupmember/leave" method="post" style="margin-top: 10px;">
+	        <input type="hidden" name="groupId" value="${group.id}" />
+	        <button type="submit" class="btn btn-danger">그룹 탈퇴</button>
+	    </form>
+	</c:if>
+	
+	
 </div>
 
 
