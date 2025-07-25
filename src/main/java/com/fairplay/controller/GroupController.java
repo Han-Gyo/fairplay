@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fairplay.domain.Group;
+import com.fairplay.domain.GroupMember;
+import com.fairplay.domain.Member;
+import com.fairplay.service.GroupMemberService;
 import com.fairplay.service.GroupService;
 
 @Controller
@@ -25,6 +30,8 @@ public class GroupController {
 	
 	@Autowired
 	private GroupService groupService;
+	@Autowired
+	private GroupMemberService groupMemberService;
 	
 	// 그룹 등록 폼 페이지로 이동 (Create)
 	@GetMapping("/create")
@@ -35,8 +42,15 @@ public class GroupController {
 	
 	// 그룹등록 폼 제출 시 그룹 등록 처리 (Create)
 	@PostMapping("/create")
-	public String createGroup(@ModelAttribute Group group) {
+	public String createGroup(@ModelAttribute Group group, HttpSession session) {
 	    
+		// 로그인한 사용자 정보 가져오기
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		
+		// 그룹장 ID 설정
+		group.setLeaderId(loginMember.getId());
+		
+		// 파일 업로드 처리
 	    MultipartFile file = group.getFile(); // DTO에서 전달받은 파일 추출
 
 	    if (file != null && !file.isEmpty()) {
@@ -57,7 +71,9 @@ public class GroupController {
 	        }
 	    }
 
-	    groupService.save(group); // 그룹 정보 저장 (DB insert)
+	    // 그룹 정보 저장 (DB insert) + 자동 그룹장 등록은 서비스 내부에서 처리됨
+	    groupService.save(group);
+	    
 	    return "redirect:/group/groups"; // 저장 후 그룹 목록으로 이동
 	}
 
@@ -98,7 +114,9 @@ public class GroupController {
 	
 	// 특정 그룹을 조회하여 상세 보기 페이지로 이동(View용 Read_one)
 		@GetMapping("/detail")
-		public String viewDetail(@RequestParam("id")int id, Model model) {
+		public String viewDetail(@RequestParam("id")int id,
+								 HttpSession session,		// 세션에서 로그인 회원 추출용
+								 Model model) {
 			
 			// id 기반으로 그룹 데이터 조회
 			Group group = groupService.findById(id);
@@ -110,6 +128,18 @@ public class GroupController {
 			
 			// 조회된 객체를 모델에 담아 뷰로 전달
 			model.addAttribute("group", group);
+			
+			// 로그인한 사용자 정보 가져오기
+			Member loginMember = (Member) session.getAttribute("loginMember");
+			model.addAttribute("loginMember", loginMember);	// JSP에서도 loginMember 사용할 수 있게 모델에 담음
+			
+			// 해당 그룹에 로그인 사용자가 가입했는지 여부 판단
+			boolean isMember = false;
+			if (loginMember != null) {
+				isMember = groupMemberService.isGroupMember(group.getId(), loginMember.getId());
+			}
+			
+			model.addAttribute("isMember", isMember);	// 멤버 보기 버튼 조건 분기에 사용
 			
 			// 상세 보기 페이지 반환
 			return "groupDetail";

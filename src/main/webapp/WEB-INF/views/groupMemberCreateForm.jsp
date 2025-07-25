@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ include file="/WEB-INF/views/nav.jsp" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -67,25 +68,23 @@
 <body>
 
 <div class="form-box">
-    <h2>👥 그룹 멤버 등록</h2>
+    <h2>👥 그룹 가입</h2>
 
     <!-- 에러 메시지 출력 -->
-    <c:if test="${not empty error}">
-        <div class="error-message">${error}</div>
+    <c:if test="${not empty msg}">
+        <div class="error-message">${msg}</div>
     </c:if>
 
     <form action="${pageContext.request.contextPath}/groupmember/create" method="post">
-        <label for="groupId">그룹 ID</label>
-        <input type="number" id="groupId" name="groupId" required />
-
-        <label for="memberId">회원 ID</label>
-        <input type="number" id="memberId" name="memberId" required />
-
-        <label for="code">초대 코드</label>
-        <input type="text" id="code" name="code" required placeholder="초대 코드를 입력하세요" />
-
-        <button type="submit" class="btn-submit">가입하기</button>
-    </form>
+	    <!-- 그룹 ID를 히든으로 넘김 -->
+	    <input type="hidden" name="groupId" value="${group.id}" />
+	
+	    <!-- ✅ 공개/비공개 상관없이 무조건 초대코드 입력 -->
+	    <label for="inviteCode">초대코드</label>
+	    <input type="text" id="inviteCode" name="inviteCode" required placeholder="초대코드를 입력하세요" />
+	
+	    <button type="submit">가입하기</button>
+	</form>
 </div>
 
 </body>

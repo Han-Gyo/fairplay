@@ -2,6 +2,8 @@ package com.fairplay.domain;
 
 import java.time.LocalDateTime;
 
+import com.fairplay.enums.MemberStatus;
+
 // 사용자 정보를 담는 DTO 클래스
 public class Member {
 
@@ -9,10 +11,13 @@ public class Member {
 	private int id;
 	
 	// 사용자 로그인용 아이디
-	private String username;
+	private String user_id;
 	
 	// 로그인 비밀번호
 	private String password;
+	
+	// 사용자 실명
+	private String real_name;
 	
 	// 화면에 표시할 닉네임
 	private String nickname;
@@ -27,11 +32,14 @@ public class Member {
 	private String phone;
 	
 	// 계정 상태 (ex: ACTIVE, BANNED)
-	private String status;
+	private MemberStatus status;
 	
 	// 가입일자
 	private LocalDateTime created_at;
 	
+	// 권한 : USER 또는 ADMIN
+	private String role;
+
 	// 기본 생성자
 	public Member() {
 
@@ -49,12 +57,12 @@ public class Member {
 		this.id = id;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getUser_id() {
+		return user_id;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
 	}
 
 	public String getPassword() {
@@ -97,11 +105,11 @@ public class Member {
 		this.phone = phone;
 	}
 
-	public String getStatus() {
+	public MemberStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(MemberStatus status) {
 		this.status = status;
 	}
 
@@ -111,6 +119,22 @@ public class Member {
 
 	public void setCreated_at(LocalDateTime created_at) {
 		this.created_at = created_at;
+	}
+
+	public String getReal_name() {
+		return real_name;
+	}
+
+	public void setReal_name(String real_name) {
+		this.real_name = real_name;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 	
 }

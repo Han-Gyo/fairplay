@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ include file="/WEB-INF/views/nav.jsp" %>
 <html>
 <head>
     <title>Fairplay - Home</title>
@@ -53,14 +54,43 @@
         <a href="${pageContext.request.contextPath}/history/all">📋 History 전체 조회</a>
         <a href="${pageContext.request.contextPath}/history/create">📝 History 등록</a>
         <a href="${pageContext.request.contextPath}/todos">🧹 Todo 목록</a>
-        <a href="${pageContext.request.contextPath}/member/create">👤 회원 가입</a>
-        <a href="${pageContext.request.contextPath}/member/members">👥 회원 목록</a>
+        <!-- 로그인 안 된 사용자에겐 로그인/회원가입 표시 -->
+		<c:if test="${empty sessionScope.member}">
+		    <a href="${pageContext.request.contextPath}/member/create">👤 회원 가입</a>
+		    <a href="${pageContext.request.contextPath}/member/login">🔐 로그인</a>
+		</c:if>
+        
         <a href="${pageContext.request.contextPath}/group/create">🏠 그룹 등록</a>
         <a href="${pageContext.request.contextPath}/group/groups">👥 그룹 목록</a>
         <a href="${pageContext.request.contextPath}/groupmember/create">🔗 그룹멤버 등록</a>
-        <a href="${pageContext.request.contextPath}/member/login">로그인</a>
-        <a href="${pageContext.request.contextPath}/member/mypage">👤 마이페이지</a><br>
+
+		<!-- 로그인 + ACTIVE 상태인 회원만 마이페이지 가능 -->
+		<c:if test="${not empty sessionScope.member && sessionScope.member.status == 'ACTIVE'}">
+		    <a href="${pageContext.request.contextPath}/member/mypage">👤 마이페이지</a>
+		</c:if>
+		
+		<!-- 로그인한 관리자라면 전체 회원 목록 표시 -->
+		<c:if test="${not empty sessionScope.member && sessionScope.member.role == 'ADMIN'}">
+		    <a href="${pageContext.request.contextPath}/member/members">👑 전체 회원 목록</a>
+		</c:if>
+		
+		<!-- 로그인되어 있으면 로그아웃 표시 -->
+		<c:if test="${not empty sessionScope.member}">
+		    <a href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a>
+		</c:if>
+		
+		<a href="${pageContext.request.contextPath}/wallet">💸 내 가계부</a>
+		<a href="${pageContext.request.contextPath}/wallet/create">💸 가계부 작성</a>
+		
     </div>
 
+		<script>
+		    function confirmLogout() {
+		        if (confirm("정말 로그아웃 하시겠습니까?")) {
+		            // 확인 누르면 로그아웃 요청
+		            window.location.href = '${pageContext.request.contextPath}/member/logout';
+		        }
+		    }
+		</script>
 </body>
 </html>

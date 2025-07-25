@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ include file="/WEB-INF/views/nav.jsp" %>
 <html>
 <head>
     <title>회원가입</title>
@@ -38,11 +39,14 @@
 <h2>회원가입</h2>
 
 <form method="post" action="${pageContext.request.contextPath}/member/create">
-    <label for="username">아이디</label>
-    <input type="text" name="username" />
+    <label for="user_id">아이디</label>
+    <input type="text" name="user_id" />
 
     <label for="password">비밀번호</label>
     <input type="password" name="password" />
+    
+    <label for="real_name">실명</label>
+    <input type="text" name="real_name" />
 
     <label for="nickname">닉네임</label>
     <input type="text" name="nickname" />

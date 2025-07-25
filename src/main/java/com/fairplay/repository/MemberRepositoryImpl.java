@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.fairplay.domain.Member;
+import com.fairplay.enums.MemberStatus;
 
 @Repository
 public class MemberRepositoryImpl implements MemberRepository{
@@ -17,20 +18,20 @@ public class MemberRepositoryImpl implements MemberRepository{
 	
 	@Override
 	public void save(Member member) {
-		// 회원 정보를 DB에 저장하는 SQL문
-		String sql = "INSERT INTO member (id, username, password, nickname, email, address, phone, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		
-		// JdbcTemplate을 통해 INSERT 실행 (물음표에 파라미터 순서대로 바인딩됨)
-		jdbcTemplate.update(sql, 
-			member.getId(),
-			member.getUsername(),
-			member.getPassword(),
-			member.getNickname(),
-			member.getEmail(),
-			member.getAddress(),
-			member.getPhone(),
-			member.getStatus()
-		);
+	    // 회원 정보를 DB에 저장하는 SQL문 (id는 auto_increment라 제외)
+	    String sql = "INSERT INTO member (user_id, password, real_name, nickname, email, address, phone, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+	    // JdbcTemplate을 통해 INSERT 실행
+	    jdbcTemplate.update(sql, 
+	        member.getUser_id(),
+	        member.getPassword(),
+	        member.getReal_name(),  
+	        member.getNickname(),
+	        member.getEmail(),
+	        member.getAddress(),
+	        member.getPhone(),
+	        member.getStatus().name()		// 👉 enum을 DB에 저장할 때 문자열로 변환
+	    );
 	}
 
 	
@@ -58,14 +59,15 @@ public class MemberRepositoryImpl implements MemberRepository{
 	@Override
 	public void update(Member member) {
 		
-		String sql = "UPDATE member SET username = ?, nickname = ?, email = ?, address = ?, phone = ? WHERE id = ?";
+		String sql = "UPDATE member SET user_id = ?, nickname = ?, email = ?, address = ?, phone = ?, status = ? WHERE id = ?";
 		
 		jdbcTemplate.update(sql,
-			member.getUsername(),
+			member.getUser_id(),
 			member.getNickname(),
 			member.getEmail(),
 			member.getAddress(),
 			member.getPhone(),
+			member.getStatus().name(),   // 👉 enum을 문자열로 저장
 			member.getId()
 		);
 		
@@ -74,9 +76,17 @@ public class MemberRepositoryImpl implements MemberRepository{
 
 
 	@Override
-	public void delete(int id) {
-		String sql = "delete from member where id =?";
-		jdbcTemplate.update(sql, id);
+	public void deactivate(int id) {
+		// 👉 enum을 사용해 상태를 'INACTIVE'로 설정 (소프트 삭제)
+		String sql = "UPDATE member SET status = ? WHERE id = ?";
+		jdbcTemplate.update(sql, MemberStatus.INACTIVE.name(), id);
+	}
+
+
+	@Override
+	public Member findByUserId(String user_id) {
+		String sql = "select * from member where user_id =?";
+		return jdbcTemplate.queryForObject(sql, new MemberRowMapper(), user_id);
 	}
 	
 	

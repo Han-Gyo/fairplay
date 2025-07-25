@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.fairplay.domain.GroupMember;
+import com.fairplay.domain.GroupMemberInfoDTO;
+import com.fairplay.mapper.GroupMemberInfoRowMapper;
 import com.fairplay.mapper.GroupMemberRowMapper;
 
 @Repository
@@ -52,6 +54,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 		// 이미 정의된 RowMapper 클래스 재사용
 		return jdbcTemplate.queryForObject(sql, new GroupMemberRowMapper(), id);
 	}
+	
 
 	@Override
 	public void update(GroupMember groupmember) {
@@ -74,6 +77,32 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 		
 		jdbcTemplate.update(sql, id);
 		
+	}
+
+	@Override
+	public boolean isGroupMember(int groupId, int memberId) {
+		
+		// 주어진 그룹 ID와 멤버 ID가 모두 일치하는 데이터가 group_member 테이블에 존재하는지 확인하는 SQL
+		String sql = "select count(*) from group_member where group_id = ? and member_id = ?";
+		
+		// 쿼리 결과를 Integer 타입으로 받아옴 (조건에 맞는 레코드 수)
+		Integer count = jdbcTemplate.queryForObject(sql, Integer.class, groupId, memberId);
+		
+		// count가 null이 아니고 0보다 크면 -> 가입된 멤버로 판단하여 true 반환
+		return count != null && count > 0;
+	}
+
+	@Override
+	public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
+		String sql = "SELECT gm.id, gm.group_id, m.nickname, m.real_name, " +
+	             	 "gm.role, gm.total_score, gm.weekly_score, gm.warning_count " +
+	             	 "FROM group_member gm " +
+	             	 "JOIN member m ON gm.member_id = m.id " +
+	             	 "WHERE gm.group_id = ?";
+
+
+						
+		return jdbcTemplate.query(sql, new GroupMemberInfoRowMapper(), groupId);
 	}
 	
 	

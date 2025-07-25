@@ -1,4 +1,4 @@
-package com.fairplay.domain;
+ package com.fairplay.domain;
 import java.sql.Timestamp;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +17,7 @@ public class Group {
     private String profile_img;         // DB에 저장할 파일명
     private Timestamp created_at;       // 생성일시 (DB의 DATETIME과 연결됨)
     private String admin_comment;       // 그룹장이 쓴 한 줄 메시지
+    private int leaderId;				// 그룹 생성자 ID
     
     
 	public int getId() {
@@ -79,6 +80,13 @@ public class Group {
 	public void setFile(MultipartFile file) {
 		this.file = file;
 	}
+	public int getLeaderId() {
+		return leaderId;
+	}
+	public void setLeaderId(int leaderId) {
+		this.leaderId = leaderId;
+	}
+	
 
     
 }

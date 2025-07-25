@@ -1,6 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ include file="/WEB-INF/views/nav.jsp" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -66,14 +68,32 @@
 				.actions button:hover {
 				    background-color: #d32f2f;
 				}
+				a {
+					color : black;
+					text-decoration : none;
+				}
+				a:hover {
+					color : pink;
+				}
     </style>
 </head>
 <body>
 
-<h2>📋 전체 수행 히스토리</h2>
+<h1><a href="${pageContext.request.contextPath}/">📋 전체 수행 히스토리</a></h1>
 
 <a href="${pageContext.request.contextPath}/todos">← 할 일 목록으로</a>
+<!-- 필터용 네비게이션 -->
+<div style="margin-bottom: 10px;">
+    <a href="${pageContext.request.contextPath}/history/all" 
+       style="${empty selectedTodoId ? 'font-weight:bold' : ''}">[전체보기]</a>
 
+    <c:forEach var="todo" items="${todoList}">
+        <a href="${pageContext.request.contextPath}/history/all?todo_id=${todo.id}" 
+           style="${selectedTodoId == todo.id ? 'font-weight:bold;color:blue;' : ''}">
+           ${todo.title}
+        </a>
+    </c:forEach>
+</div>
 <table>
     <thead>
         <tr>

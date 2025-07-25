@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%@ include file="/WEB-INF/views/nav.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -74,7 +74,7 @@
             
                 <tr>
                     <!-- ID 제거 -->
-                    <td>${member.username}</td>
+                    <td>${member.user_id}</td>
                     <td>${member.password}</td>
                     <td>${member.nickname}</td>
                     <td>${member.email}</td>
