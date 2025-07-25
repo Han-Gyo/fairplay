@@ -19,4 +19,5 @@ public interface TodoRepository {
 	void resetAssignedStatus(int todoId);                 	// 담당자 해제 (신청 취소)
 	List<Todo> findByAssignedMember(int memberId);       	// 특정 사용자의 할 일 조회
 	List<Todo> findCompletedTodos();
+	List<Todo> findNotDone(int memberId);
 }

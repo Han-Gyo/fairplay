@@ -199,7 +199,7 @@ public class TodoController {
 		}
 
 	    int memberId = loginMember.getId();
-	    List<Todo> myTodoList = todoService.getTodosByMemberId(memberId);
+	    List<Todo> myTodoList = todoService.findNotDone(memberId);
 
 	    model.addAttribute("myTodoList", myTodoList);
 	    return "myTodos";  

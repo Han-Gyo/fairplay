@@ -120,5 +120,11 @@ public class TodoRepositoryImpl implements TodoRepository{
 		System.out.println("✅ [DB] 완료된 할 일 목록 조회됨");
 		return template.query(sql, todoRowMapper);
 	}
+
+	@Override
+	public List<Todo> findNotDone(int memberId) {
+		String sql = "SELECT * FROM todo WHERE assigned_to = ? AND completed = false";
+		return template.query(sql, todoRowMapper, memberId);
+	}
 	
 }

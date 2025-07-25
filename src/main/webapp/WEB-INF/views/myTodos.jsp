@@ -61,28 +61,14 @@
 					      </form>
 					
 					      <!-- 완료 버튼 -->
-					      <form action="${pageContext.request.contextPath}/todos/myTodos" method="post" style="display:inline;">
-              <input type="hidden" name="id" value="${todo.id}" />
-              <button type="submit">완료</button>
-            </form>
+								<button type="button" onclick="completeTodo(${todo.id}, this)">완료</button>
 					
 					      <!-- 수정 버튼 -->
 					      <form action="${pageContext.request.contextPath}/todos/update" method="get" style="display:inline;">
 					        <input type="hidden" name="id" value="${todo.id}" />
 					        <button type="submit">수정</button>
 					      </form>
-					
-					      <!-- 삭제 버튼 -->
-					      <form action="${pageContext.request.contextPath}/todos/delete" method="post" style="display:inline;">
-					        <input type="hidden" name="id" value="${todo.id}" />
-					        <button type="submit" onclick="return confirm('정말 삭제할까요?')">삭제</button>
-					      </form>
-					
 					    </c:when>
-					    <c:otherwise>
-					      <!-- ✅ 완료된 항목은 포기/삭제 불가 -->
-					      <span style="color:gray;">✅ 완료된 항목은 수정 불가</span>
-					    </c:otherwise>
 					  </c:choose>
 					</td>
         </tr>
@@ -96,30 +82,31 @@
 
 <script>
 const contextPath = "${pageContext.request.contextPath}";
-console.log("🔥 contextPath:", contextPath);
-function completeTodo(todo_id) {
-		console.log("✅ 전달된 todo_id:", todo_id);
-    const confirmResult = confirm("기록도 같이 남기시겠어요?");
 
-    if (confirmResult) {
-        // ✅ 확인 누르면 historyCreate 페이지로 이동 (todoId 쿼리로 넘김)
-    	window.location.href = contextPath + "/history/create?todo_id=" + todo_id;
-    } else {
-        // 할 일 완료 처리
-        fetch("/fairplay/todos/complete?id=" + todo_id, {
-            method: "POST"
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("서버 응답 오류");
-            }
-            alert("ToDo가 완료 처리되었습니다.");
-            location.reload();
-        })
-        .catch(error => {
-            alert("오류 발생: " + error.message);
-        });
-    }
+function completeTodo(todo_id, btnElement) {
+  const confirmResult = confirm("기록도 같이 남기시겠어요?");
+  
+  if (confirmResult) {
+    // ✅ 기록 페이지로 이동
+    window.location.href = contextPath + "/history/create?todo_id=" + todo_id;
+  } else {
+    // ✅ 백엔드에 완료 처리 요청
+    fetch(contextPath + "/todos/complete?id=" + todo_id, {
+      method: "POST"
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("서버 응답 오류");
+
+      // ✅ 성공 시 해당 행 삭제
+      const tr = btnElement.closest("tr");
+      if (tr) tr.remove();
+
+      alert("ToDo가 완료 처리되었습니다.");
+    })
+    .catch(error => {
+      alert("오류 발생: " + error.message);
+    });
+  }
 }
 </script>
 </html>

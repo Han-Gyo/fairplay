@@ -78,7 +78,6 @@
                 <a href="${pageContext.request.contextPath}/todos">📋 Todo 목록</a>
                 <a href="${pageContext.request.contextPath}/todos/myTodos">✅ MyTodo 목록</a>
                 <a href="${pageContext.request.contextPath}/todos/create">✅ Todo 등록</a>
-                <a href="${pageContext.request.contextPath}/todos/completed">✅ Todo 완료된 목록 </a>
             </div>
         </div>
 

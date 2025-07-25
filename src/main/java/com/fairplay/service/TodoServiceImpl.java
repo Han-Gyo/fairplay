@@ -91,6 +91,10 @@ public class TodoServiceImpl implements TodoService{
 		todoRepository.resetAssignedStatus(todoId);
 		System.out.println("🔁 담당자 해제됨 → 다시 공용 할 일로 이동됨 (todo_id: " + todoId + ")");
 	}
+	@Override
+	public List<Todo> findNotDone(int memberId) {
+		return todoRepository.findNotDone(memberId);
+	}
 	
 	
 	

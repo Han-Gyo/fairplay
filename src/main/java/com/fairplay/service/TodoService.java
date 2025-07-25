@@ -19,5 +19,6 @@ public interface TodoService {
 	void unassignTodo(int todoId);                // 신청 취소 (담당자 해제)
 	List<Todo> getTodosByMemberId(int memberId);  // 특정 사용자가 신청한 할 일 목록
 	List<Todo> getCompletedTodos();
+	List<Todo> findNotDone(int memberId);
 }
 

@@ -98,8 +98,8 @@
     <thead>
         <tr>
             <th>번호</th>
-            <th>할 일 ID</th>
-            <th>수행자</th>
+            <th>할 일</th>
+            <th>담당자</th>
             <th>완료일</th>
             <th>점수</th>
             <th class="memo">메모</th>
