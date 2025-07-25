@@ -69,7 +69,7 @@
 
   <!-- ✅ 오른쪽: 내가 맡은 진행중 할 일 -->
   <div style="flex: 1;">
-    <h2>🚧 내가 맡은 진행중인 할 일</h2>
+    <h2>🚧 진행중인 할 일</h2>
     <table>
       <thead>
         <tr>
@@ -88,10 +88,15 @@
               <td>${todo.difficulty_point}</td>
               <td>🚧 진행중</td>
               <td>
-                <form action="${pageContext.request.contextPath}/todos/complete" method="post">
-                  <input type="hidden" name="id" value="${todo.id}" />
-                  <button type="button" onclick="completeTodo(${todo.id})">✔ 완료하기</button>
-                </form>
+              	<!-- 포기하기 버튼 -->
+							  <form action="${pageContext.request.contextPath}/todos/unassign" method="post" style="margin-top:5px; display:inline;">
+							    <input type="hidden" name="id" value="${todo.id}" />
+							    <button type="submit" onclick="return confirm('이 할 일을 포기하고 공용 리스트로 돌릴까요?')">🚫 포기하기</button>
+							  </form>
+              	<form action="${pageContext.request.contextPath}/todos/complete" method="post" style="display:inline;">
+                	<input type="hidden" name="id" value="${todo.id}" />
+                	<button type="button" onclick="completeTodo(${todo.id})">✔ 완료하기</button>
+              	</form>
               </td>
             </tr>
             <c:set var="index" value="${index + 1}" />

@@ -231,11 +231,10 @@ public class TodoController {
 		if (!todo.isCompleted()) {
 			// 완료되지 않았으면 공용리스트로 복귀
 			todoService.unassignTodo(id);
-			return "redirect:/todos/myTodos";
+			return "redirect:/todos";
 		} else {
 			// 완료된 건 유지 (삭제x)
-			return "redirect:/todos/myTodos";
+			return "redirect:/todos";
 		}
 	}
-
 }

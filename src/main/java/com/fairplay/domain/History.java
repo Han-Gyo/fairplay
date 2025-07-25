@@ -14,10 +14,11 @@ public class History {
 	private Integer check_member;  	// 확인한 사람 ID
 	private Todo todo;				// Todo 객체 전체
 	private Member member;			// Member 객체 전체
+	
 	public History() {}
 	
-	public History(int id, int member_id, int todo_id, Date completed_at, String photo, String memo, int score,
-			boolean check, Integer check_member) {
+	public History(int id, int member_id, int todo_id, Date completed_at, String photo, String memo, Integer score,
+			boolean check, Integer check_member, Todo todo, Member member) {
 		super();
 		this.id = id;
 		this.member_id = member_id;
@@ -28,8 +29,12 @@ public class History {
 		this.score = score;
 		this.check = check;
 		this.check_member = check_member;
+		this.todo = todo;
+		this.member = member;
+
 	}
-	
+
+
 	public int getId() {
 		return id;
 	}

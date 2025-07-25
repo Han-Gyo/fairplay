@@ -22,6 +22,32 @@
     <p>인증사진</p>
     <img src="${pageContext.request.contextPath}/upload/${history.photo}" alt="인증사진" width="300"/>
 </c:if>
+<hr>
+<h3>💬 댓글</h3>
+
+<!-- 🔄 댓글 목록 -->
+<c:forEach var="comment" items="${commentList}">
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        <p><strong>${comment.nickname}</strong> (${comment.createdAt})</p>
+        <p>${comment.content}</p>
+
+        <!-- 댓글 작성자거나 관리자일 경우 삭제 가능 -->
+        <c:if test="${loginMember.id == comment.memberId || loginMember.role == 'ADMIN'}">
+            <form action="${pageContext.request.contextPath}/history/comments/delete" method="post" style="display:inline;">
+                <input type="hidden" name="id" value="${comment.id}" />
+                <input type="hidden" name="history_id" value="${history.id}" />
+                <button type="submit" onclick="return confirm('댓글을 삭제할까요?')">🗑 삭제</button>
+            </form>
+        </c:if>
+    </div>
+</c:forEach>
+
+<!-- ✏️ 댓글 작성 폼 -->
+<form action="${pageContext.request.contextPath}/history/comments/add" method="post">
+    <input type="hidden" name="history_id" value="${history.id}" />
+    <textarea name="content" rows="3" cols="50" placeholder="댓글을 입력하세요" required></textarea><br>
+    <button type="submit">➕ 댓글 작성</button>
+</form>
 
 <br>
 <a href="${pageContext.request.contextPath}/history/all">← 전체 히스토리로 돌아가기</a>

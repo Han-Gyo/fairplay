@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fairplay.domain.History;
+import com.fairplay.domain.HistoryComment;
 import com.fairplay.domain.Member;
 import com.fairplay.domain.Todo;
+import com.fairplay.service.HistoryCommentService;
 import com.fairplay.service.HistoryService;
 import com.fairplay.service.MemberService;
 import com.fairplay.service.TodoService;
@@ -39,6 +41,9 @@ public class HistoryController {
 	
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private HistoryCommentService commentService;
 	
 	// ✅ 전체 히스토리 보기
 	@GetMapping("/all")
@@ -206,8 +211,11 @@ public class HistoryController {
     
     // ✅ 히스토리 상세 보기
     @GetMapping("/detail")
-    public String detailHistory(@RequestParam("id") int id, Model model) {
-    	History history = historyService.getHistoryByIdWithDetails(id);
+    public String detailHistory(@RequestParam("history_id") int historyId, Model model) {
+    	History history = historyService.getHistoryByIdWithDetails(historyId);
+    	List<HistoryComment> commentList = commentService.getCommentsByHistoryId(historyId);
+    	model.addAttribute("commentList", commentList);
+
         model.addAttribute("history", history);
         return "historyDetail";
     }
