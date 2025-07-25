@@ -74,26 +74,9 @@
     <h2>👥 그룹 멤버 목록</h2>
 
     <c:choose>
-
         <c:when test="${group.publicStatus}">
-            <table>
-                <thead>
-                    <tr>
-                        <th>닉네임</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="member" items="${groupMembers}">
-                        <tr>
-                            <td>${member.nickname}</td>
-                        </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
-        </c:when>
-
-        <c:otherwise>
             <c:choose>
+
                 <c:when test="${isMember}">
                     <table>
                         <thead>
@@ -118,12 +101,12 @@
                                     <td>${member.warningCount}</td>
                                     <td>
                                         <c:if test="${loginMember.id == group.leaderId && member.id != group.leaderId}">
-										    <form action="${pageContext.request.contextPath}/groupmember/delete" method="post" style="display:inline;">
-										        <input type="hidden" name="groupId" value="${group.id}" />
-										        <input type="hidden" name="memberId" value="${member.memberId}" />
-										        <button type="submit" class="action-link delete" onclick="return confirm('정말 추방하시겠습니까?');">추방</button>
-										    </form>
-										</c:if>
+                                            <form action="${pageContext.request.contextPath}/groupmember/delete" method="post" style="display:inline;">
+                                                <input type="hidden" name="groupId" value="${group.id}" />
+                                                <input type="hidden" name="memberId" value="${member.memberId}" />
+                                                <button type="submit" class="action-link delete" onclick="return confirm('정말 추방하시겠습니까?');">추방</button>
+                                            </form>
+                                        </c:if>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -131,6 +114,30 @@
                     </table>
                 </c:when>
 
+                <c:otherwise>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>닉네임</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="member" items="${groupMembers}">
+                                <tr>
+                                    <td>${member.nickname}</td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:otherwise>
+            </c:choose>
+        </c:when>
+
+        <c:otherwise>
+            <c:choose>
+                <c:when test="${isMember}">
+                </c:when>
+                
                 <c:otherwise>
                     <p>비공개 그룹의 멤버 목록은 가입자만 볼 수 있습니다.</p>
                 </c:otherwise>
@@ -142,6 +149,7 @@
         <button type="submit" class="btn-back">그룹 목록으로 돌아가기</button>
     </form>
 </div>
+
 
 
 </body>
