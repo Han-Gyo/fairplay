@@ -2,6 +2,7 @@ package com.fairplay.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 import org.springframework.jdbc.core.RowMapper;
 
@@ -20,7 +21,7 @@ public class GroupRowMapper implements RowMapper<Group>{
 		group.setMaxMember(rs.getInt("max_member"));			// 최대 인원
 		group.setPublicStatus(rs.getBoolean("public_status"));	// 공개 여부
 		group.setProfile_img(rs.getString("profile_img"));		// 이미지 파일명
-		group.setCreated_at(rs.getTimestamp("created_at"));		// 생성일시
+		group.setCreated_at(rs.getObject("created_at", LocalDateTime.class));		// 생성일시
 		group.setAdmin_comment(rs.getString("admin_comment"));	// 관리자 메시지
 		group.setLeaderId(rs.getInt("leader_id"));				// 그룹장 ID
 		return group;

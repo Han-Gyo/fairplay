@@ -104,7 +104,7 @@
 			        </td>
 			        
 			        <td>${group.code}</td>
-			        <td>${group.created_at}</td>
+			        <td>${group.formattedCreatedAt}</td>
 			        
 			        <!-- ✅ 👥 현재 / 최대 인원 -->
 			        <td>

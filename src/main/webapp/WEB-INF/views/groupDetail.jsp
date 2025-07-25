@@ -138,9 +138,7 @@
 	
     <div class="row">
     	<span class="label">생성일:</span> 
-    	<span class="value">
-    		<fmt:formatDate value="${group.created_at}" pattern="yyyy-MM-dd HH:mm" />
-		</span>
+    	<span class="value">${group.formattedCreatedAt}</span>
 	</div>
 	
 	<!-- ✅ 그룹 가입 버튼 조건 처리 -->
