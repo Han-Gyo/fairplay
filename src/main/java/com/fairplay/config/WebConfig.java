@@ -9,10 +9,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc  // ✅ 빠지면 적용 안 됨
 public class WebConfig implements WebMvcConfigurer {
 
+	// 정적 리소스 매핑
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
     	// 브라우저에서 /upload/** 요청 → 실제 C:/upload/ 경로에서 파일을 제공함
         registry.addResourceHandler("/upload/**")
                 .addResourceLocations("file:///C:/upload/"); // ✅ 마지막에 / 꼭 있어야 함
+        
+        registry.addResourceHandler("/resources/**")
+        .addResourceLocations("/resources/");  // /webapp/resources/
     }
 }

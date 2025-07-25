@@ -17,4 +17,7 @@ public interface MemberService {
 	void deactivate(int id);
 	
 	Member findByUserId(String user_id);
+	
+	// 아이디 중복 여부를 확인하는 서비스 메서드
+	boolean isDuplicatedId(String userId);
 }

@@ -88,8 +88,20 @@ public class MemberRepositoryImpl implements MemberRepository{
 		String sql = "select * from member where user_id =?";
 		return jdbcTemplate.queryForObject(sql, new MemberRowMapper(), user_id);
 	}
-	
-	
-	
 
+	@Override
+	public boolean existsByUserId(String userId) {
+		// SQL : user_id 기준으로 카운트 조회
+		String sql = "SELECT COUNT(*) FROM member WHERE user_id =?";
+		
+		// queryForObject로 결과 1개(Integer) 받아오기
+		Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+		
+		System.out.println("💾 DB 조회 결과 count: " + count); // 로그 추가
+		
+		// count가 1 이상이면 true 반환 (중복 있음)
+		return count != null && count > 0; // 존재하면 true 
+	}
+	
+	
 }

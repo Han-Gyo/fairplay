@@ -71,6 +71,17 @@ public class MemberServiceImpl implements MemberService{
 		
 		return memberRepository.findByUserId(user_id);
 	}
+
+
+	// 아이디 중복 검사
+	@Override
+	public boolean isDuplicatedId(String userId) {
+		
+		System.out.println("🛠 Service: 중복 확인 userId = " + userId);
+		
+		// Repository에서 DB 조회하여 true/false 리턴
+		return memberRepository.existsByUserId(userId);
+	}
 	
 	
 	

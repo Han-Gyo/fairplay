@@ -17,4 +17,7 @@ public interface MemberRepository {
 	void deactivate(int id);
 	
 	Member findByUserId(String user_id);
+	
+	// user_id가 DB에 존재하는지 여부를 boolean으로 반환
+	boolean existsByUserId(String userId);
 }

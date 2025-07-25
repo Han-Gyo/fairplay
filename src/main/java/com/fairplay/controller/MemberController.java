@@ -1,6 +1,8 @@
  package com.fairplay.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fairplay.domain.Member;
 import com.fairplay.enums.MemberStatus;
@@ -195,4 +198,27 @@ public class MemberController {
 	    return "redirect:/member/login";
 	}
 	
+	// 아이디 중복 확인 요청 처리 (AJAX 비동기 요청)
+	@GetMapping("/checkId")
+	@ResponseBody
+	public Map<String, String> checkId(@RequestParam("user_id") String userId) {
+	    System.out.println("🔍 checkId() 진입");
+	    System.out.println("📥 전달받은 userId: " + userId);
+	    
+	    boolean isDuplicate = memberService.isDuplicatedId(userId);
+
+	    Map<String, String> result = new HashMap<>();
+	    if (isDuplicate) {
+	        result.put("result", "duplicate");
+	    } else {
+	        result.put("result", "available");
+	    }
+	    return result;
+	}
+
+
+
+
+
+
 }
