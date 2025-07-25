@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ include file="/WEB-INF/views/nav.jsp" %>
 <html>
 <head>
     <title>Fairplay - Home</title>
@@ -79,7 +80,8 @@
 		    <a href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a>
 		</c:if>
 		
-		<a href="${pageContext.request.contextPath}/wallet/create">💸 가계부</a>
+		<a href="${pageContext.request.contextPath}/wallet">💸 내 가계부</a>
+		<a href="${pageContext.request.contextPath}/wallet/create">💸 가계부 작성</a>
 		
     </div>
 
