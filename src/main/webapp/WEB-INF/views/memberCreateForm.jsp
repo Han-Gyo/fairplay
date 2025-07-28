@@ -17,18 +17,29 @@
 	<button type="button" onclick="checkId()">중복확인</button>
 	<div id="idError"></div>
 
-    <label for="password">비밀번호</label>
-    <input type="password" id="password" name="password" required />
-
-    <label for="passwordCheck">비밀번호 확인</label>
-    <input type="password" id="passwordCheck" required />
-    <div id="pwError" class="error"></div>
+    <!-- 비밀번호 -->
+	<label for="password">비밀번호</label>
+	<input type="password" id="password" name="password" required />
+	
+	<!-- 비밀번호 확인 -->
+	<label for="passwordCheck">비밀번호 확인</label>
+	<input type="password" id="passwordCheck" required />
+	
+	<!-- 비밀번호 검사 결과 메시지 -->
+	<div id="pwError" class="check-msg"></div>
 
     <label for="real_name">실명</label>
     <input type="text" name="real_name" required />
 
-    <label for="nickname">닉네임</label>
-    <input type="text" name="nickname" required />
+    <!-- 닉네임 입력창 + 중복확인 버튼 -->
+	<label for="nickname">닉네임</label>
+	<input type="text" id="nickname" name="nickname" required />
+	
+	<!-- 중복 확인 버튼 클릭 시 checkNickname() 호출 -->
+	<button type="button" onclick="checkNickname()">중복확인</button>
+	
+	<!-- 결과 메시지를 표시할 영역 -->
+	<div id="nicknameCheckResult" class="check-msg"></div>
 
     <label for="email">이메일</label>
     <input type="email" id="email" name="email" required />
@@ -39,8 +50,18 @@
     <button type="button" class="inline-btn" onclick="verifyCode()">확인</button>
     <div id="emailMsg" class="error"></div>
 
-    <label for="address">주소</label>
-    <input type="text" name="address" />
+	<!-- 우편번호 -->
+	<label for="zipcode">우편번호</label>
+	<input type="text" id="zipcode" name="zipcode" readonly />
+	<button type="button" onclick="execDaumPostcode()">주소 검색</button>
+	
+	<!-- 기본 주소 -->
+	<label for="address">기본 주소</label>
+	<input type="text" id="address" name="address" readonly />
+	
+	<!-- 상세 주소 -->
+	<label for="addressDetail">상세 주소</label>
+	<input type="text" id="addressDetail" name="addressDetail" placeholder="상세주소 입력" />
 
     <label for="phone">휴대폰 번호</label>
     <input type="text" name="phone" />
@@ -54,6 +75,29 @@
     <button type="submit" class="submit-btn">가입하기</button>
 </form>
 
+<!-- 📌 Daum 주소 검색 API 스크립트 먼저 포함 -->
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+<!-- 📌 주소 검색 실행 함수 정의 -->
+<script>
+function execDaumPostcode() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            var addr = '';
+
+            if (data.userSelectedType === 'R') {
+                addr = data.roadAddress;
+            } else {
+                addr = data.jibunAddress;
+            }
+
+            document.getElementById('zipcode').value = data.zonecode;
+            document.getElementById("address").value = addr;
+            document.getElementById("addressDetail").focus();
+        }
+    }).open();
+}
+</script>
 
 <!-- 외부 JS 연결 -->
 <script src="${pageContext.request.contextPath}/resources/js/memberCreateForm.js" defer></script>

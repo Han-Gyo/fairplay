@@ -89,6 +89,7 @@ public class MemberRepositoryImpl implements MemberRepository{
 		return jdbcTemplate.queryForObject(sql, new MemberRowMapper(), user_id);
 	}
 
+	// 사용자 아이디 중복 여부 확인
 	@Override
 	public boolean existsByUserId(String userId) {
 		// SQL : user_id 기준으로 카운트 조회
@@ -102,6 +103,19 @@ public class MemberRepositoryImpl implements MemberRepository{
 		// count가 1 이상이면 true 반환 (중복 있음)
 		return count != null && count > 0; // 존재하면 true 
 	}
+
+
+	// 닉네임 존재 여부 확인
+	@Override
+	public boolean existsByNickname(String nickname) {
+		// 닉네임으로 중복 여부 조회 쿼리 실행
+		String sql = "SELECT COUNT(*) FROM member WHERE nickname = ?";
+		Integer count = jdbcTemplate.queryForObject(sql, Integer.class, nickname);
+		
+		// 1개 이상 존재하면 중복
+		return count != null && count > 0;
+	}
+	
 	
 	
 }

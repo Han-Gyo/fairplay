@@ -67,3 +67,14 @@ input, select, button {
     color: green;
     font-size: 0.9em;
 }
+
+.check-msg {
+    margin-top: 5px;
+    font-size: 13px;
+}
+.error {
+    color: red;
+}
+.success {
+    color: green;
+}

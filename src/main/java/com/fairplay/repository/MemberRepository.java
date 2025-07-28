@@ -20,4 +20,7 @@ public interface MemberRepository {
 	
 	// user_id가 DB에 존재하는지 여부를 boolean으로 반환
 	boolean existsByUserId(String userId);
+	
+	// 닉네임 존재 여부 확인
+	boolean existsByNickname(String nickname);
 }

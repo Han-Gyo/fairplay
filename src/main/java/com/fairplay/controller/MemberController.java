@@ -199,11 +199,11 @@ public class MemberController {
 	}
 	
 	// 아이디 중복 확인 요청 처리 (AJAX 비동기 요청)
-	@GetMapping("/checkId")
+	@GetMapping(value = "/checkId", produces = "application/json")
 	@ResponseBody
 	public Map<String, String> checkId(@RequestParam("user_id") String userId) {
-	    System.out.println("🔍 checkId() 진입");
-	    System.out.println("📥 전달받은 userId: " + userId);
+	    System.out.println(" checkId() 진입");
+	    System.out.println(" 전달받은 userId: " + userId);
 	    
 	    boolean isDuplicate = memberService.isDuplicatedId(userId);
 
@@ -216,6 +216,22 @@ public class MemberController {
 	    return result;
 	}
 
+	// 닉네임 중복 확인 요청 처리
+	@GetMapping(value = "/checkNickname", produces = "application/json")
+	@ResponseBody
+	public Map<String, String> checkNickname(@RequestParam("nickname") String nickname){
+		
+		System.out.println("checkNickname() 진입: " + nickname);
+		
+		// 서비스 계층을 통해 닉네임 중복 여부 확인
+		boolean isDuplicate = memberService.isDuplicatedNickname(nickname);
+		
+		// 클라이언트에 JSON 형태로 결과 반환
+		Map<String, String> result = new HashMap<>();
+		result.put("result", isDuplicate ? "duplicate" : "available");
+		
+		return result;
+	}
 
 
 

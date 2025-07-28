@@ -82,6 +82,14 @@ public class MemberServiceImpl implements MemberService{
 		// Repository에서 DB 조회하여 true/false 리턴
 		return memberRepository.existsByUserId(userId);
 	}
+
+
+	// 닉네임 중복 검사
+	@Override
+	public boolean isDuplicatedNickname(String nickname) {
+		// 레파지토리 계층에서 닉네임 존재 여부 조회
+		return memberRepository.existsByNickname(nickname);
+	}
 	
 	
 	

@@ -20,4 +20,7 @@ public interface MemberService {
 	
 	// 아이디 중복 여부를 확인하는 서비스 메서드
 	boolean isDuplicatedId(String userId);
+	
+	// 닉네임 중복 여부 확인 메서드
+	boolean isDuplicatedNickname(String nickname);
 }
