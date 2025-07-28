@@ -41,14 +41,23 @@
 	<!-- 결과 메시지를 표시할 영역 -->
 	<div id="nicknameCheckResult" class="check-msg"></div>
 
-    <label for="email">이메일</label>
-    <input type="email" id="email" name="email" required />
-    <button type="button" class="inline-btn" onclick="sendCode()">인증번호 전송</button>
+	<!-- 이메일 입력 -->
+	<label for="email">이메일</label>
+	<input type="email" id="email" name="email" required>
+	
+	<!-- 인증번호 전송 버튼 (항상 활성화 상태 유지) -->
+	<button type="button" onclick="sendEmailCode()" id="sendCodeBtn">인증번호 전송</button>
+	
+	<!-- 타이머 표시 -->
+	<div id="timerDisplay" style="margin-top: 5px; font-weight: bold; color: red;"></div>
+	
+	<!-- 인증번호 입력 -->
+	<input type="text" id="emailCode" placeholder="인증번호 입력">
+	<button type="button" onclick="verifyEmailCode()" id="verifyBtn">인증번호 확인</button>
+	
+	<!-- 인증 결과 메시지 -->
+	<div id="emailResult" style="margin-top: 5px; color: green;"></div>
 
-    <label for="emailCode">인증번호 입력</label>
-    <input type="text" id="emailCode" />
-    <button type="button" class="inline-btn" onclick="verifyCode()">확인</button>
-    <div id="emailMsg" class="error"></div>
 
 	<!-- 우편번호 -->
 	<label for="zipcode">우편번호</label>
@@ -63,8 +72,16 @@
 	<label for="addressDetail">상세 주소</label>
 	<input type="text" id="addressDetail" name="addressDetail" placeholder="상세주소 입력" />
 
-    <label for="phone">휴대폰 번호</label>
-    <input type="text" name="phone" />
+	<label for="phone">휴대폰 번호</label>
+	<div>
+	    <select name="phone1" required>
+	        <option value="010">010</option>
+	        <option value="011">011</option>
+	        <option value="016">016</option>
+	    </select> -
+	    <input type="text" name="phone2" maxlength="4" pattern="\d{3,4}" required /> -
+	    <input type="text" name="phone3" maxlength="4" pattern="\d{4}" required />
+	</div>
 
     <label for="status">계정 상태</label>
     <select name="status">

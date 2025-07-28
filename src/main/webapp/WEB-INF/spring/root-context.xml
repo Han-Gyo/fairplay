@@ -10,8 +10,8 @@
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 	    <property name="host" value="smtp.gmail.com" />
 	    <property name="port" value="587" />
-	    <property name="username" value="your_email@gmail.com" />
-	    <property name="password" value="your_app_password" /> <!-- 앱 비밀번호 넣기 -->
+	    <property name="username" value="tjgksry3940@gmail.com" />
+	    <property name="password" value="lyxr sttm murh enur" /> <!-- 앱 비밀번호 넣기 -->
 	
 	    <property name="javaMailProperties">
 	        <props>

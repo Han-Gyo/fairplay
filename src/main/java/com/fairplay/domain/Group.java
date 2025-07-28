@@ -16,7 +16,7 @@ public class Group {
     private boolean publicStatus;       	// 공개 여부
     private MultipartFile file;				// 업로드 받는 파일 (폼에서 전달)
     private String profile_img;         	// DB에 저장할 파일명
-    private LocalDateTime created_at;       	// 생성일시 (DB의 DATETIME과 연결됨)
+    private LocalDateTime created_at;       // 생성일시 (DB의 DATETIME과 연결됨)
     private String admin_comment;       	// 그룹장이 쓴 한 줄 메시지
     private int leaderId;					// 그룹 생성자 ID
     private String formattedAdminComment;	// JSP 출력용: admin_comment에 줄바꿈 <br/> 처리된 값 (DB에는 저장되지 않음)

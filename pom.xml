@@ -262,8 +262,25 @@
 		</dependency>
         
         
-         
-        
+    <dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-context-support</artifactId>
+	    <version>${org.springframework-version}</version> 
+	</dependency>
+    
+    <!-- JavaMail API (Jakarta Mail 또는 javax.mail) -->
+	<dependency>
+	    <groupId>com.sun.mail</groupId>
+	    <artifactId>jakarta.mail</artifactId>
+	    <version>1.6.7</version>
+	</dependency>  
+	
+	<dependency>
+	    <groupId>org.springframework.security</groupId>
+	    <artifactId>spring-security-crypto</artifactId>
+	    <version>${security-version}</version>
+	</dependency>  
+    
   </dependencies>
   
 	<build>

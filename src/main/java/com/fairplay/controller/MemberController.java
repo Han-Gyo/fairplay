@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,10 @@ public class MemberController {
 	@Autowired
 	private MemberService memberService;
 	
+	// 비밀번호 암호화 처리 객체
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	// 회원 등록 폼 페이지로 이동 (Create)
 	@GetMapping("/create")
 	public String createForm() {
@@ -39,16 +45,31 @@ public class MemberController {
 	
 	// 회원가입 폼 제출 시 회원 등록 처리 (Create)
 	@PostMapping("/create")
-	public String createMember(@ModelAttribute Member member) {
-		
-		// 일반 사용자는 항상 USER 고정 시키기
-		member.setRole("USER");
-		
-		// Service 계층에 회원 정보 저장 요청
-		memberService.save(member);
-		
-		// 회원 목록 페이지로 리다이렉트
-		return "redirect:/member/login";
+	public String createMember(@ModelAttribute Member member,
+	                           HttpServletRequest request) {
+	    
+	    // 비밀번호 암호화
+	    String rawPassword = member.getPassword();
+		String encodedPassword = passwordEncoder.encode(rawPassword);
+	    member.setPassword(encodedPassword);
+
+	    // 회원 상태는 무조건 ACTIVE
+	    member.setStatus(MemberStatus.ACTIVE);
+
+	    // 일반 사용자는 항상 USER
+	    member.setRole("USER");
+
+	    // 휴대폰 번호가 3-4-4로 나눠져 있을 경우 (선택사항)
+	    String phone = request.getParameter("phone1") + "-" +
+	                   request.getParameter("phone2") + "-" +
+	                   request.getParameter("phone3");
+	    member.setPhone(phone);
+
+	    // 저장 요청
+	    memberService.save(member);
+
+	    // 로그인 페이지로 리다이렉트
+	    return "redirect:/member/login";
 	}
 	
 	// 전체 회원 목록을 조회하여 뷰에 전달 (Read_all)
