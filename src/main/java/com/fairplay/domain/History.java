@@ -14,10 +14,12 @@ public class History {
 	private Integer check_member;  	// 확인한 사람 ID
 	private Todo todo;				// Todo 객체 전체
 	private Member member;			// Member 객체 전체
+	private boolean newComment; // 새 댓글 여부 
+	
 	public History() {}
 	
-	public History(int id, int member_id, int todo_id, Date completed_at, String photo, String memo, int score,
-			boolean check, Integer check_member) {
+	public History(int id, int member_id, int todo_id, Date completed_at, String photo, String memo, Integer score,
+			boolean check, Integer check_member, Todo todo, Member member, boolean newComment) {
 		super();
 		this.id = id;
 		this.member_id = member_id;
@@ -28,8 +30,12 @@ public class History {
 		this.score = score;
 		this.check = check;
 		this.check_member = check_member;
+		this.todo = todo;
+		this.member = member;
+		this.newComment = newComment;
 	}
-	
+
+
 	public int getId() {
 		return id;
 	}
@@ -101,11 +107,20 @@ public class History {
 		this.member = member;
 	}
 
+	public boolean isNewComment() {
+		return newComment;
+	}
+
+	public void setNewComment(boolean newComment) {
+		this.newComment = newComment;
+	}
+
 	@Override
 	public String toString() {
 		return "History [id=" + id + ", member_id=" + member_id + ", todo_id=" + todo_id + ", completed_at="
 				+ completed_at + ", photo=" + photo + ", memo=" + memo + ", score=" + score + ", check=" + check
-				+ ", check_member=" + check_member + ", todo=" + todo + ", member=" + member + "]";
+				+ ", check_member=" + check_member + ", todo=" + todo + ", member=" + member + ", newComment="
+				+ newComment + "]";
 	}
 
 }

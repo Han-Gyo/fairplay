@@ -26,13 +26,14 @@ public class TodoRepositoryImpl implements TodoRepository{
 	private RowMapper<Todo> todoRowMapper = new RowMapper<Todo>() {
 		public Todo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			Todo todo = new Todo();
-			todo.setId(rs.getInt("id"));							 // 기본 키
-			todo.setGroup_id(rs.getInt("group_id"));				 // 그룹 ID
-			todo.setTitle(rs.getString("title"));					 // 제목
-			todo.setAssigned_to(rs.getInt("assigned_to"));			 // 담당자 ID
-			todo.setDue_date(rs.getTimestamp("due_date"));			 // 마감일 (timestamp)
-			todo.setCompleted(rs.getBoolean("completed"));			 // 완료 여부
-			todo.setDifficulty_point(rs.getInt("difficulty_point")); // 난이도 점수
+			todo.setId(rs.getInt("id"));							 	// 기본 키
+			todo.setGroup_id(rs.getInt("group_id"));				 	// 그룹 ID
+			todo.setTitle(rs.getString("title"));					 	// 제목
+			todo.setAssigned_to((Integer) rs.getObject("assigned_to"));	// 담당자 ID
+			todo.setStatus(rs.getString("status"));
+			todo.setDue_date(rs.getTimestamp("due_date"));			 	// 마감일 (timestamp)
+			todo.setCompleted(rs.getBoolean("completed"));			 	// 완료 여부
+			todo.setDifficulty_point(rs.getInt("difficulty_point")); 	// 난이도 점수
 			return todo;
 		}
 	};
@@ -42,6 +43,12 @@ public class TodoRepositoryImpl implements TodoRepository{
 	public List<Todo> findAll() {
 		String sql = "SELECT * FROM todo ORDER BY id DESC";
 		return template.query(sql, todoRowMapper);
+	}
+	
+	@Override
+	public List<Todo> findByAssignedMember(int memberId) {
+		String sql = "SELECT * FROM todo WHERE assigned_to = ? ORDER BY id DESC";
+		return template.query(sql, todoRowMapper, memberId);
 	}
 	
 	// 할 일 등록
@@ -72,7 +79,14 @@ public class TodoRepositoryImpl implements TodoRepository{
 			todo.getId()					// 수정 대상 ID
 		);
 	}
-
+	
+	@Override
+	public void updateAssignedStatus(int todoId, int memberId) {
+		System.out.println("🔧 [DB] updateAssignedStatus 실행됨! todo_id = " + todoId + ", memberId = " + memberId);
+		String sql = "UPDATE todo SET assigned_to = ?, status = ? WHERE id = ?";
+	    template.update(sql, memberId, "신청완료", todoId);
+	}
+	
 	// 할 일 삭제 (ID 기준)
 	@Override
 	public void deleteById(int id) {
@@ -93,6 +107,24 @@ public class TodoRepositoryImpl implements TodoRepository{
 		String sql = "SELECT * FROM todo WHERE id = ?";
 		return template.queryForObject(sql, todoRowMapper, id);
 	}
+	// ✅ [신청 취소] 담당자 해제 + 상태 초기화
+	@Override
+	public void resetAssignedStatus(int todoId) {
+		String sql = "UPDATE todo SET assigned_to = NULL, status ='미신청' WHERE id =?";
+		template.update(sql, todoId);
+	}
 
+	@Override
+	public List<Todo> findCompletedTodos() {
+		String sql = "SELECT * FROM todo WHERE completed = true ORDER BY id DESC";
+		System.out.println("✅ [DB] 완료된 할 일 목록 조회됨");
+		return template.query(sql, todoRowMapper);
+	}
+
+	@Override
+	public List<Todo> findNotDone(int memberId) {
+		String sql = "SELECT * FROM todo WHERE assigned_to = ? AND completed = false";
+		return template.query(sql, todoRowMapper, memberId);
+	}
 	
 }

@@ -49,7 +49,7 @@
 	
 	<beans:bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<beans:property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
-		<beans:property name="url" value="jdbc:mysql://localhost:3306/fairplay_db?serverTimezone=UTC"/>
+		<beans:property name="url" value="jdbc:mysql://localhost:3306/fairplay_db?serverTimezone=Asia/Seoul"/>
 		<beans:property name="username" value="root"/>
 		<!-- value 값은 mysql 에서 설정한 비밀번호와 같아야한다. -->
 		<beans:property name="password" value="1234"/> 

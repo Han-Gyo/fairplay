@@ -1,5 +1,6 @@
 package com.fairplay.service;
 
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,30 @@ public class HistoryServiceImpl implements HistoryService{
 	
 	
 	@Override
-	public List<History> getAllHistoriesWithDetails() {
-		return historyRepository.findAllWithDetails();
+	public History getHistoryByIdWithDetails(int id) {
+	    History history = historyRepository.findByIdWithDetails(id);
+
+	    Date latestCommentDate = historyRepository.findLatestCommentDateByHistoryId(history.getId());
+	    if (latestCommentDate != null && latestCommentDate.after(history.getCompleted_at())) {
+	        history.setNewComment(true);
+	    }
+
+	    return history;
 	}
 
+	@Override
+	public List<History> getAllHistoriesWithDetails() {
+	    List<History> historyList = historyRepository.findAllWithDetails();
 
+	    for (History history : historyList) {
+	        Date latestCommentDate = historyRepository.findLatestCommentDateByHistoryId(history.getId());
+	        if (latestCommentDate != null && latestCommentDate.after(history.getCompleted_at())) {
+	            history.setNewComment(true);
+	        }
+	    }
+
+	    return historyList;
+	}
 	@Override
 	public void addHistory(History history) {
 		// 기록 추가
@@ -62,14 +82,9 @@ public class HistoryServiceImpl implements HistoryService{
 		historyRepository.delete(id);
 	}
 
-
-	@Override
-	public History getHistoryByIdWithDetails(int id) {
-		 return historyRepository.findByIdWithDetails(id);
-	}
-	
 	@Override
 	public List<History> getHistoriesByTodoIdWithDetails(int todo_id) {
 		return historyRepository.findByTodoIdWithDetails(todo_id);
 	}
+
 }

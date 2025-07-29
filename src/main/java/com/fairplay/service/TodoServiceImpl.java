@@ -52,4 +52,50 @@ public class TodoServiceImpl implements TodoService{
 		return todoRepository.findById(id);
 	}
 	
+	@Override
+	public boolean assignTodo(int todoId, int memberId) {
+	    Todo todo = todoRepository.findById(todoId);
+
+	    // 1. 이미 누가 신청했는지 확인
+	    if (todo.getAssigned_to() != null) {
+	        if (todo.getAssigned_to() == memberId) {
+	            // 내가 이미 신청했는데 status만 '미신청'이면 → 갱신 필요
+	            if ("미신청".equals(todo.getStatus())) {
+	                System.out.println("♻️ 이미 신청했지만 상태는 미신청 → 상태만 갱신");
+	                todoRepository.updateAssignedStatus(todoId, memberId);
+	            }
+	            return true;  // 내가 이미 맡은 할 일이라면 OK
+	        } else {
+	            return false; // 다른 사람이 신청했음
+	        }
+	    }
+	    
+	    // 2. 신청 처리
+	    todoRepository.updateAssignedStatus(todoId, memberId);
+	    return true;
+	}
+	
+	@Override
+	public List<Todo> getTodosByMemberId(int memberId) {
+	    return todoRepository.findByAssignedMember(memberId);
+	}
+	
+	@Override
+	public List<Todo> getCompletedTodos() {
+		System.out.println("📋 완료된 할 일 목록 조회 실행됨");
+		return todoRepository.findCompletedTodos();
+	}
+	
+	@Override
+	public void unassignTodo(int todoId) {
+		todoRepository.resetAssignedStatus(todoId);
+		System.out.println("🔁 담당자 해제됨 → 다시 공용 할 일로 이동됨 (todo_id: " + todoId + ")");
+	}
+	@Override
+	public List<Todo> findNotDone(int memberId) {
+		return todoRepository.findNotDone(memberId);
+	}
+	
+	
+	
 }

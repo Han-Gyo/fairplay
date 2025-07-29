@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fairplay.domain.History;
+import com.fairplay.domain.HistoryComment;
 import com.fairplay.domain.Member;
 import com.fairplay.domain.Todo;
+import com.fairplay.service.HistoryCommentService;
 import com.fairplay.service.HistoryService;
 import com.fairplay.service.MemberService;
 import com.fairplay.service.TodoService;
@@ -39,6 +41,9 @@ public class HistoryController {
 	
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private HistoryCommentService commentService;
 	
 	// ✅ 전체 히스토리 보기
 	@GetMapping("/all")
@@ -102,7 +107,6 @@ public class HistoryController {
 	    HttpServletRequest request,  // ★ 추가: 저장 경로 구하기 위함
 	    @RequestParam("todo_id") int todoId,
 	    @RequestParam("member_id") int memberId,
-	    @RequestParam("completed_at") @DateTimeFormat(pattern = "yyyy-MM-dd") Date completedAt,
 	    @RequestParam("score") int score,
 	    @RequestParam("memo") String memo,
 	    @RequestParam(value = "photo", required = false) MultipartFile photo
@@ -112,7 +116,7 @@ public class HistoryController {
         History history = new History();
         history.setTodo_id(todoId);
         history.setMember_id(memberId);
-        history.setCompleted_at(completedAt);
+        history.setCompleted_at(new Date()); 
         history.setScore(score);
         history.setMemo(memo);
 
@@ -163,7 +167,6 @@ public class HistoryController {
             @RequestParam("id") int id,
             @RequestParam("todo_id") int todoId,
             @RequestParam("member_id") int memberId,
-            @RequestParam("completed_at") @DateTimeFormat(pattern = "yyyy-MM-dd") Date completedAt,
             @RequestParam("score") int score,
             @RequestParam("memo") String memo,
             @RequestParam(value = "photo", required = false) MultipartFile photo
@@ -172,7 +175,7 @@ public class HistoryController {
         history.setId(id);
         history.setTodo_id(todoId);
         history.setMember_id(memberId);
-        history.setCompleted_at(completedAt);
+        history.setCompleted_at(new Date()); 
         history.setScore(score);
         history.setMemo(memo);
 
@@ -206,8 +209,11 @@ public class HistoryController {
     
     // ✅ 히스토리 상세 보기
     @GetMapping("/detail")
-    public String detailHistory(@RequestParam("id") int id, Model model) {
-    	History history = historyService.getHistoryByIdWithDetails(id);
+    public String detailHistory(@RequestParam("history_id") int historyId, Model model) {
+    	History history = historyService.getHistoryByIdWithDetails(historyId);
+    	List<HistoryComment> commentList = commentService.getCommentsByHistoryId(historyId);
+    	model.addAttribute("commentList", commentList);
+
         model.addAttribute("history", history);
         return "historyDetail";
     }

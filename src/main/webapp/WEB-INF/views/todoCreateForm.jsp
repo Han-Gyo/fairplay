@@ -19,6 +19,7 @@
 
 담당자 : 
 <select name="assigned_to"> <%-- 담당자 선택 드롭다운 --%>
+	<option value="">-- 담당자 선택 안 함 --</option>
   <c:forEach var="member" items="${memberList}"> <%-- 서버에서 전달된 memberList를 반복 --%>
     <option value="${member.id}">${member.nickname}</option> <%-- 각 멤버의 id(선택값)와 닉네임(보이는값) 출력 --%>
   </c:forEach>

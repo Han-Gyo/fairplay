@@ -98,8 +98,8 @@
     <thead>
         <tr>
             <th>번호</th>
-            <th>할 일 ID</th>
-            <th>수행자</th>
+            <th>할 일</th>
+            <th>담당자</th>
             <th>완료일</th>
             <th>점수</th>
             <th class="memo">메모</th>
@@ -110,7 +110,12 @@
         <c:forEach var="history" items="${historyList}" varStatus="status">
             <tr>
                 <td>${status.count}</td>
-                <td><a href="${pageContext.request.contextPath}/history/detail?id=${history.id}">${history.todo.title}</a></td>
+                <td>
+                	<a href="${pageContext.request.contextPath}/history/detail?history_id=${history.id}">${history.todo.title}</a>
+                	<c:if test="${history.newComment}">
+								    <span style="color:red; font-weight:bold;">🆕</span>
+								  </c:if>
+                </td>
                 <td>${history.member.nickname}</td>
                 <td>
                     <fmt:formatDate value="${history.completed_at}" pattern="yyyy-MM-dd" />
@@ -141,6 +146,5 @@
         </c:forEach>
     </tbody>
 </table>
-
 </body>
 </html>
