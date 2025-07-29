@@ -187,19 +187,19 @@ public class MemberController {
 
 	    Member member = memberService.findByUserId(user_id);
 
-	    // 🔐 로그인 실패 조건: 존재하지 않거나, 비밀번호 틀리거나, 상태가 비정상
+	    // BCrypt 암호화된 비밀번호 비교
 	    if (member == null 
-	        || !member.getPassword().equals(password)
+	        || !passwordEncoder.matches(password, member.getPassword()) 
 	        || member.getStatus() != MemberStatus.ACTIVE) {
 
 	        model.addAttribute("loginError", "로그인할 수 없는 계정입니다.");
 	        return "login";
 	    }
 
-	    // ✅ 정상 로그인
 	    session.setAttribute("loginMember", member);
-	    return "redirect:/";  // 홈으로 리다이렉트
+	    return "redirect:/";
 	}
+
 	
 	// 로그아웃
 	@GetMapping("/logout")

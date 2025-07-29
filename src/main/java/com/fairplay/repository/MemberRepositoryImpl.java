@@ -3,6 +3,7 @@ package com.fairplay.repository;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -114,6 +115,34 @@ public class MemberRepositoryImpl implements MemberRepository{
 		
 		// 1개 이상 존재하면 중복
 		return count != null && count > 0;
+	}
+
+
+	@Override
+	public Member findByUserIdAndEmail(String userId, String email) {
+		String sql = "SELECT * FROM member WHERE user_id = ? AND email = ?";
+		
+		try {
+			return jdbcTemplate.queryForObject(sql, new MemberRowMapper(), userId, email);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+
+	// 이메일로 회원 조회
+	@Override
+	public Member findByEmail(String email) {
+		String sql = "SELECT * FROM member WHERE email = ?";
+		return jdbcTemplate.queryForObject(sql, new MemberRowMapper(), email);
+	}
+
+
+	// 비밀번호로만 업데이트
+	@Override
+	public int updatePassword(Member member) {
+		String sql = "UPDATE member SET password = ? WHERE id = ?";
+		return jdbcTemplate.update(sql, member.getPassword(), member.getId());
 	}
 	
 	
