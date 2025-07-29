@@ -1,5 +1,6 @@
 package com.fairplay.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,6 +130,16 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 		});
 		
 	}
+	
+	@Override
+	public Date findLatestCommentDateByHistoryId(int historyId) {
+	    String sql = "SELECT MAX(created_at) FROM history_comment WHERE history_id = ?";
+	    try {
+	        return jdbcTemplate.queryForObject(sql, Date.class, historyId);
+	    } catch (Exception e) {
+	        return null;
+	    }
+	}
 
 	@Override
 	public History findByIdWithDetails(int id) {
@@ -204,7 +215,7 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	        history.setId(rs.getInt("history_id"));
 	        history.setMember_id(rs.getInt("member_id"));
 	        history.setTodo_id(rs.getInt("todo_id"));
-	        history.setCompleted_at(rs.getTimestamp("completed_at"));
+	        history.setCompleted_at(new java.sql.Timestamp(System.currentTimeMillis())); 
 	        history.setPhoto(rs.getString("photo"));
 	        history.setMemo(rs.getString("memo"));
 	        history.setScore(rs.getInt("score"));

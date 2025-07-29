@@ -1,5 +1,6 @@
 package com.fairplay.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import com.fairplay.domain.History;
@@ -15,4 +16,5 @@ public interface HistoryRepository {
 	void save(History history); 						// 기록 하나 추가 (insert)
 	void update (History history); 						// 기록 수정
 	void delete (int id);								// 기록 삭제
+	Date findLatestCommentDateByHistoryId(int historyId);
 }

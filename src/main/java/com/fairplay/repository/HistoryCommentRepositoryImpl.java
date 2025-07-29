@@ -37,8 +37,19 @@ public class HistoryCommentRepositoryImpl implements HistoryCommentRepository {
 
         return jdbcTemplate.query(sql, new Object[]{historyId}, commentRowMapper());
     }
+    
+    
 
-    // ✅ 댓글 삭제
+    @Override
+	public void update(HistoryComment comment) {
+		String sql ="UPDATE history_comment SET content = ?, updated_at = ? WHERE id = ?";
+		jdbcTemplate.update(sql,
+				comment.getContent(),
+				comment.getUpdatedAt(),
+				comment.getId());	
+	}
+
+	// ✅ 댓글 삭제
     @Override
     public void delete(int id) {
         String sql = "DELETE FROM history_comment WHERE id = ?";
@@ -58,6 +69,15 @@ public class HistoryCommentRepositoryImpl implements HistoryCommentRepository {
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, commentRowMapper());
     }
 
+    @Override
+    public HistoryComment getLatestCommentByHistoryId(int historyId) {
+        String sql = "SELECT hc.*, m.nickname FROM history_comment hc " +
+                     "JOIN member m ON hc.member_id = m.id " +
+                     "WHERE hc.history_id = ? " +
+                     "ORDER BY hc.created_at DESC LIMIT 1";
+
+        return jdbcTemplate.queryForObject(sql, new Object[]{historyId}, commentRowMapper());
+    }
     // ✅ RowMapper
     private RowMapper<HistoryComment> commentRowMapper() {
         return new RowMapper<HistoryComment>() {
@@ -69,8 +89,8 @@ public class HistoryCommentRepositoryImpl implements HistoryCommentRepository {
                 comment.setMemberId(rs.getInt("member_id"));
                 comment.setContent(rs.getString("content"));
                 comment.setNickname(rs.getString("nickname"));
-                comment.setCreatedAt(rs.getDate("created_at"));
-                comment.setUpdatedAt(rs.getDate("updated_at"));
+                comment.setCreatedAt(rs.getTimestamp("created_at"));
+                comment.setUpdatedAt(rs.getTimestamp("updated_at"));
                 return comment;
             }
         };

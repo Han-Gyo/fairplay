@@ -107,7 +107,6 @@ public class HistoryController {
 	    HttpServletRequest request,  // ★ 추가: 저장 경로 구하기 위함
 	    @RequestParam("todo_id") int todoId,
 	    @RequestParam("member_id") int memberId,
-	    @RequestParam("completed_at") @DateTimeFormat(pattern = "yyyy-MM-dd") Date completedAt,
 	    @RequestParam("score") int score,
 	    @RequestParam("memo") String memo,
 	    @RequestParam(value = "photo", required = false) MultipartFile photo
@@ -117,7 +116,7 @@ public class HistoryController {
         History history = new History();
         history.setTodo_id(todoId);
         history.setMember_id(memberId);
-        history.setCompleted_at(completedAt);
+        history.setCompleted_at(new Date()); 
         history.setScore(score);
         history.setMemo(memo);
 
@@ -168,7 +167,6 @@ public class HistoryController {
             @RequestParam("id") int id,
             @RequestParam("todo_id") int todoId,
             @RequestParam("member_id") int memberId,
-            @RequestParam("completed_at") @DateTimeFormat(pattern = "yyyy-MM-dd") Date completedAt,
             @RequestParam("score") int score,
             @RequestParam("memo") String memo,
             @RequestParam(value = "photo", required = false) MultipartFile photo
@@ -177,7 +175,7 @@ public class HistoryController {
         history.setId(id);
         history.setTodo_id(todoId);
         history.setMember_id(memberId);
-        history.setCompleted_at(completedAt);
+        history.setCompleted_at(new Date()); 
         history.setScore(score);
         history.setMemo(memo);
 

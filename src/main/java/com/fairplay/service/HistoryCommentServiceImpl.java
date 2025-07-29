@@ -22,6 +22,11 @@ public class HistoryCommentServiceImpl implements HistoryCommentService{
 	public List<HistoryComment> getCommentsByHistoryId(int historyId) {
 		return commentRepository.findByHistoryId(historyId);
 	}
+	
+	@Override
+	public void updateComment(HistoryComment comment) {
+		commentRepository.update(comment);
+	}
 
 	@Override
 	public void deleteComment(int id, int requesterId, String role) {
@@ -44,6 +49,11 @@ public class HistoryCommentServiceImpl implements HistoryCommentService{
 	@Override
 	public HistoryComment getCommentById(int id) {
 		return commentRepository.findById(id);
+	}
+
+	@Override
+	public HistoryComment getLatestCommentByHistoryId(int historyId) {
+		return commentRepository.getLatestCommentByHistoryId(historyId);
 	}
 	
 }

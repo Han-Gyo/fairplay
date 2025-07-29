@@ -1,6 +1,6 @@
 package com.fairplay.domain;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class HistoryComment {
 	private int id;             // 댓글 ID
@@ -71,7 +71,8 @@ public class HistoryComment {
 	@Override
 	public String toString() {
 		return "HistoryComment [id=" + id + ", historyId=" + historyId + ", memberId=" + memberId + ", content="
-				+ content + ", nickname=" + nickname + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
+				+ content + ", nickname=" + nickname + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
+				+ "]";
 	}
 	
 }
