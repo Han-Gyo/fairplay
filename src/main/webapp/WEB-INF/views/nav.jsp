@@ -109,17 +109,25 @@
         </div>
     </div>
 
-    <div class="right">
-        <c:if test="${empty sessionScope.member}">
-            <a href="${pageContext.request.contextPath}/member/login">🔐 로그인</a>
-            <a href="${pageContext.request.contextPath}/member/create">👤 회원가입</a>
-        </c:if>
-
-        <c:if test="${not empty sessionScope.member}">
-            <a href="${pageContext.request.contextPath}/member/mypage">🙋 마이페이지</a>
-            <a href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a>
-        </c:if>
-    </div>
+	<div class="right">
+	    <c:choose>
+	    
+	        <c:when test="${empty sessionScope.loginMember}">
+	            <a href="${pageContext.request.contextPath}/member/login">🔐 로그인</a>
+	            <a href="${pageContext.request.contextPath}/member/create">👤 회원가입</a>
+	            <a href="${pageContext.request.contextPath}/forgot">🔑 비밀번호 찾기</a>
+	        </c:when>
+	
+	        <c:otherwise>
+	            <span style="color:hotpink; font-weight:bold;">
+	               ♥ ${sessionScope.loginMember.nickname}님 안녕하세요 ♥
+	            </span>
+	            <a href="${pageContext.request.contextPath}/member/mypage">🙋 마이페이지</a>
+	            <a href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a>
+	            
+	        </c:otherwise>
+	    </c:choose>
+	</div>
 </div>
 
 <script>

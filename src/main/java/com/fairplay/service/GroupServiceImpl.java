@@ -76,6 +76,11 @@ public class GroupServiceImpl implements GroupService{
 		groupRepository.delete(id);
 		
 	}
+
+	@Override
+	public void updateLeader(int groupId, int newLeaderId) {
+		groupRepository.updateLeader(groupId, newLeaderId);
+	}
 	
 	
 }

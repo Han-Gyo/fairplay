@@ -157,14 +157,125 @@ public class GroupMemberController {
 		return "redirect:/groupmember/list?groupId=" + groupMember.getGroupId();
 	}
 	
-	// 특정 그룹 멤버 추방 (Delete)
-	@GetMapping("delete")
-	public String delete(@RequestParam("id")int id, @RequestParam("groupId") int groupId) {
+	// 그룹장이 다른 멤버를 강퇴하거나 본인이 스스로 탈퇴할 수 있도록 처리 (Delete)
+	@PostMapping("delete")
+	public String delete(@RequestParam int groupId,
+						 @RequestParam int memberId,
+						 HttpSession session) {
 		
-		// 삭제 로직 실행
-		groupMemberService.delete(id);
+		// id 값들 제대로 받아왔는지 확인 문제 없으면 삭제
+		System.out.println("삭제 요청 들어옴" + "groupId = " + groupId);
+		System.out.println("삭제 요청 들어옴" + "memberId = " + memberId);
 		
-		// 2. 삭제 후, 해당 그룹의 멤버 목록 페이지로 리다이렉트 → groupId를 다시 전달해야 해당 그룹 멤버 목록을 조회할 수 있음
+		// 로그인 여부 체크
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		if (loginMember == null) {
+			// 로그인하지 않은 사용자는 로그인 페이지로 이동
+			return "redirect:/member/login";
+		}
+		
+		// 그룹 정보 조회 (리더 ID 확인용)
+		Group group = groupService.findById(groupId);
+		
+		// 본인 탈퇴인지 확인
+		boolean isSelf = loginMember.getId() == memberId;
+		
+		// 그룹장(리더)이 다른 멤버를 강퇴하는 경우인지 확인
+		boolean isLeaderKick = loginMember.getId() == group.getLeaderId();
+		
+		
+		// 위 두 조건에 해당하지 않으면 -> 무단 접근으로 간주하고 -> 차단
+		if (!isSelf && !isLeaderKick) {
+			return "redirect:/group/detail?id=" + groupId;
+		}
+		
+		// 탈퇴 또는 강퇴 처리
+		groupMemberService.delete(groupId, memberId);
+		
+		// 본인이 스스로 탈퇴한 경우 -> 홈으로 이동
+		if (isSelf) {
+			return "redirect:/";
+		}
+		
+		
+		// 그룹장이 다른 멤버를 강퇴한 경우 -> 그룹 멤버 목록 페이지로 이동
 		return "redirect:/groupmember/list?groupId=" + groupId;
 	}
+	
+	
+	 
+	// 그룹장이면서 멤버가 1명일 경우에만 탈퇴 가능 (그룹장 혼자 그룹에 있을 때)
+	@PostMapping("/leave")
+	public String leaveGroup(@RequestParam("groupId") int groupId,
+	                         HttpSession session,
+	                         RedirectAttributes ra) {
+
+	    // 세션에서 로그인한 사용자 정보 가져오기
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    int memberId = loginMember.getId();
+
+	    // 현재 사용자의 그룹 내 역할 조회 (LEADER or MEMBER)
+	    String role = groupMemberService.findRoleByMemberIdAndGroupId(memberId, groupId);
+
+	    // 현재 그룹 멤버 수 조회
+	    int memberCount = groupMemberService.countByGroupId(groupId);
+
+	    // 그룹장인데 다른 멤버가 있는 경우 → 탈퇴 불가
+	    if ("LEADER".equals(role) && memberCount > 1) {
+	        ra.addFlashAttribute("msg", "그룹장이 탈퇴하려면 먼저 다른 멤버에게 리더를 위임해야 합니다.");
+	        return "redirect:/group/detail?id=" + groupId;
+	    }
+
+	    // 리더이면서 혼자일 경우 -> 그룹 삭제
+	    if ("LEADER".equals(role) && memberCount == 1) {
+	    	
+	        groupService.delete(groupId); // 그룹 삭제
+	    }
+
+	    // 공통 탈퇴 처리
+	    groupMemberService.leaveGroup(memberId, groupId); 
+
+	    ra.addFlashAttribute("msg", "그룹에서 탈퇴되었습니다.");
+	    return "redirect:/group/groups";
+	}
+
+	
+	// 위임 대상 선택 폼 이동
+	@GetMapping("/transferForm")
+	public String showTransferForm(@RequestParam("groupId") int groupId, Model model) {
+		
+		// 그룹 정보
+		Group group = groupService.findById(groupId);
+		model.addAttribute("group", group);
+		
+		// 그룹 내 일반 멤버 목록 (리더 제외)
+		List<GroupMemberInfoDTO> members = groupMemberService.findMembersExcludingLeader(groupId);
+		model.addAttribute("members", members);
+		
+		return "transferForm";
+	}
+	
+	// 위임 대상 선택 후 처리
+	@PostMapping("/transferAndLeave")
+	public String transferLeaderAndLeave(@RequestParam("groupId") int groupId,
+										 @RequestParam("newLeaderId") int newLeaderId,
+										 HttpSession session,
+										 RedirectAttributes ra) {
+		
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		int currentLeaderId = loginMember.getId();
+		
+		// 리더 권한 위임
+		groupMemberService.updateRoleToLeader(groupId, newLeaderId);
+		
+		// group 테이블의 leader_id 업데이트
+		groupService.updateLeader(groupId, newLeaderId);
+		
+		// 기존 그룹장 탈퇴 (group_member 행 삭제)
+		groupMemberService.leaveGroup(currentLeaderId, groupId);
+		
+		ra.addFlashAttribute("msg", "리더 권한을 위임하고 그룹을 탈퇴했습니다.");
+		return "redirect:/group/groups";
+	}
+	
 }

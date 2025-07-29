@@ -71,11 +71,11 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 	}
 
 	@Override
-	public void delete(int id) {
+	public void delete(int groupId, int memberId) {
 		
-		String sql = "delete from group_member where id = ?";
+		String sql = "delete from group_member where group_id = ? AND member_id = ?";
 		
-		jdbcTemplate.update(sql, id);
+		jdbcTemplate.update(sql, groupId, memberId);
 		
 	}
 
@@ -94,7 +94,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 
 	@Override
 	public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
-		String sql = "SELECT gm.id, gm.group_id, m.nickname, m.real_name, " +
+		String sql = "SELECT gm.id, gm.group_id, gm.member_id, m.nickname, m.real_name, " +
 	             	 "gm.role, gm.total_score, gm.weekly_score, gm.warning_count " +
 	             	 "FROM group_member gm " +
 	             	 "JOIN member m ON gm.member_id = m.id " +
@@ -110,8 +110,38 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 		String sql = "SELECT COUNT(*) FROM group_member WHERE group_id = ?";
 		return jdbcTemplate.queryForObject(sql, Integer.class, groupId);
 	}
-	
-	
+
+	// 그룹장 탈퇴 전용 처리
+	@Override
+	public void deleteByMemberIdAndGroupId(int memberId, int groupId) {
+		String sql = "DELETE FROM group_member WHERE member_id = ? AND group_id = ?";
+	    jdbcTemplate.update(sql, memberId, groupId);
+	}
+
+	// 그룹 내 역할 조회
+	@Override
+	public String findRoleByMemberIdAndGroupId(int memberId, int groupId) {
+		String sql = "SELECT role FROM group_member WHERE member_id = ? AND group_id = ?";
+	    return jdbcTemplate.queryForObject(sql, String.class, memberId, groupId);
+	}
+
+	// 그룹 내에서 리더를 제외한 멤버 목록 조회 (위임 대상)
+	@Override
+	public List<GroupMemberInfoDTO> findMembersExcludingLeader(int groupId) {
+		String sql = "SELECT gm.id, gm.group_id, gm.member_id, m.nickname, m.real_name, " +
+	             "gm.role, gm.total_score, gm.weekly_score, gm.warning_count " +
+	             "FROM group_member gm " +
+	             "JOIN member m ON gm.member_id = m.id " +
+	             "WHERE gm.group_id = ? AND gm.role != 'LEADER'";
+
+		return jdbcTemplate.query(sql, new GroupMemberInfoRowMapper(), groupId);
+	}
+
+	@Override
+	public void updateRoleToLeader(int groupId, int memberId) {
+		String sql = "UPDATE group_member SET role = 'LEADER' WHERE group_id = ? AND member_id = ?";
+		jdbcTemplate.update(sql, groupId, memberId);
+	}
 	
 
 }

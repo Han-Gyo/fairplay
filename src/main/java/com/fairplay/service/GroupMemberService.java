@@ -15,7 +15,7 @@ public interface GroupMemberService {
 	
 	void update(GroupMember groupMember);			// 그룹멤버 정보 수정 (역할, 점수, 경고 등)
 	
-	void delete(int id);
+	void delete(int groupId, int memberId);
 	
 	boolean isGroupMember(int groupId, int memberId);
 	
@@ -24,4 +24,16 @@ public interface GroupMemberService {
 	
 	// 현재 인원 수 조회용 메서드
 	int countByGroupId(int groupId);
+	
+	// 그룹장 전용 탈퇴 처리 
+	void leaveGroup(int memberId, int groupId);
+	
+	// 특정 멤버의 그룹 내 역할 조회 (LEADER or MEMBER)
+	String findRoleByMemberIdAndGroupId(int memberId, int groupId);
+	
+	// 그룹 내에서 리더를 제외한 멤버 목록 조회 (리더 위임 대상 추출용)
+	List<GroupMemberInfoDTO> findMembersExcludingLeader(int groupId);
+	
+	// 새로운 리더로 역할 변경
+	void updateRoleToLeader(int groupId, int memberId);
 }

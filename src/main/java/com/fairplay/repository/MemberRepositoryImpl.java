@@ -3,6 +3,7 @@ package com.fairplay.repository;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -88,8 +89,62 @@ public class MemberRepositoryImpl implements MemberRepository{
 		String sql = "select * from member where user_id =?";
 		return jdbcTemplate.queryForObject(sql, new MemberRowMapper(), user_id);
 	}
-	
-	
-	
 
+	// 사용자 아이디 중복 여부 확인
+	@Override
+	public boolean existsByUserId(String userId) {
+		// SQL : user_id 기준으로 카운트 조회
+		String sql = "SELECT COUNT(*) FROM member WHERE user_id =?";
+		
+		// queryForObject로 결과 1개(Integer) 받아오기
+		Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+		
+		System.out.println("💾 DB 조회 결과 count: " + count); // 로그 추가
+		
+		// count가 1 이상이면 true 반환 (중복 있음)
+		return count != null && count > 0; // 존재하면 true 
+	}
+
+
+	// 닉네임 존재 여부 확인
+	@Override
+	public boolean existsByNickname(String nickname) {
+		// 닉네임으로 중복 여부 조회 쿼리 실행
+		String sql = "SELECT COUNT(*) FROM member WHERE nickname = ?";
+		Integer count = jdbcTemplate.queryForObject(sql, Integer.class, nickname);
+		
+		// 1개 이상 존재하면 중복
+		return count != null && count > 0;
+	}
+
+
+	@Override
+	public Member findByUserIdAndEmail(String userId, String email) {
+		String sql = "SELECT * FROM member WHERE user_id = ? AND email = ?";
+		
+		try {
+			return jdbcTemplate.queryForObject(sql, new MemberRowMapper(), userId, email);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+
+	// 이메일로 회원 조회
+	@Override
+	public Member findByEmail(String email) {
+		String sql = "SELECT * FROM member WHERE email = ?";
+		return jdbcTemplate.queryForObject(sql, new MemberRowMapper(), email);
+	}
+
+
+	// 비밀번호로만 업데이트
+	@Override
+	public int updatePassword(Member member) {
+		String sql = "UPDATE member SET password = ? WHERE id = ?";
+		return jdbcTemplate.update(sql, member.getPassword(), member.getId());
+	}
+	
+	
+	
 }

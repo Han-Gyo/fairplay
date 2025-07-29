@@ -1,0 +1,61 @@
+@charset "UTF-8";
+/* transfer.css */
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #d6d4f5, #e0f7fa);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 80px auto;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.radio-card {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.radio-card:hover {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: #7b61ff;
+}
+
+.radio-card input[type="radio"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background: #7b61ff;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-submit:hover {
+    background: #5f44e0;
+}

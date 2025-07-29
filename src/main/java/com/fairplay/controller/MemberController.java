@@ -1,10 +1,14 @@
  package com.fairplay.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fairplay.domain.Member;
 import com.fairplay.enums.MemberStatus;
@@ -25,6 +30,10 @@ public class MemberController {
 	@Autowired
 	private MemberService memberService;
 	
+	// 비밀번호 암호화 처리 객체
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	// 회원 등록 폼 페이지로 이동 (Create)
 	@GetMapping("/create")
 	public String createForm() {
@@ -36,16 +45,31 @@ public class MemberController {
 	
 	// 회원가입 폼 제출 시 회원 등록 처리 (Create)
 	@PostMapping("/create")
-	public String createMember(@ModelAttribute Member member) {
-		
-		// 일반 사용자는 항상 USER 고정 시키기
-		member.setRole("USER");
-		
-		// Service 계층에 회원 정보 저장 요청
-		memberService.save(member);
-		
-		// 회원 목록 페이지로 리다이렉트
-		return "redirect:/member/login";
+	public String createMember(@ModelAttribute Member member,
+	                           HttpServletRequest request) {
+	    
+	    // 비밀번호 암호화
+	    String rawPassword = member.getPassword();
+		String encodedPassword = passwordEncoder.encode(rawPassword);
+	    member.setPassword(encodedPassword);
+
+	    // 회원 상태는 무조건 ACTIVE
+	    member.setStatus(MemberStatus.ACTIVE);
+
+	    // 일반 사용자는 항상 USER
+	    member.setRole("USER");
+
+	    // 휴대폰 번호가 3-4-4로 나눠져 있을 경우 (선택사항)
+	    String phone = request.getParameter("phone1") + "-" +
+	                   request.getParameter("phone2") + "-" +
+	                   request.getParameter("phone3");
+	    member.setPhone(phone);
+
+	    // 저장 요청
+	    memberService.save(member);
+
+	    // 로그인 페이지로 리다이렉트
+	    return "redirect:/member/login";
 	}
 	
 	// 전체 회원 목록을 조회하여 뷰에 전달 (Read_all)
@@ -163,19 +187,19 @@ public class MemberController {
 
 	    Member member = memberService.findByUserId(user_id);
 
-	    // 🔐 로그인 실패 조건: 존재하지 않거나, 비밀번호 틀리거나, 상태가 비정상
+	    // BCrypt 암호화된 비밀번호 비교
 	    if (member == null 
-	        || !member.getPassword().equals(password)
+	        || !passwordEncoder.matches(password, member.getPassword()) 
 	        || member.getStatus() != MemberStatus.ACTIVE) {
 
 	        model.addAttribute("loginError", "로그인할 수 없는 계정입니다.");
 	        return "login";
 	    }
 
-	    // ✅ 정상 로그인
 	    session.setAttribute("loginMember", member);
-	    return "redirect:/";  // 홈으로 리다이렉트
+	    return "redirect:/";
 	}
+
 	
 	// 로그아웃
 	@GetMapping("/logout")
@@ -195,4 +219,43 @@ public class MemberController {
 	    return "redirect:/member/login";
 	}
 	
+	// 아이디 중복 확인 요청 처리 (AJAX 비동기 요청)
+	@GetMapping(value = "/checkId", produces = "application/json")
+	@ResponseBody
+	public Map<String, String> checkId(@RequestParam("user_id") String userId) {
+	    System.out.println(" checkId() 진입");
+	    System.out.println(" 전달받은 userId: " + userId);
+	    
+	    boolean isDuplicate = memberService.isDuplicatedId(userId);
+
+	    Map<String, String> result = new HashMap<>();
+	    if (isDuplicate) {
+	        result.put("result", "duplicate");
+	    } else {
+	        result.put("result", "available");
+	    }
+	    return result;
+	}
+
+	// 닉네임 중복 확인 요청 처리
+	@GetMapping(value = "/checkNickname", produces = "application/json")
+	@ResponseBody
+	public Map<String, String> checkNickname(@RequestParam("nickname") String nickname){
+		
+		System.out.println("checkNickname() 진입: " + nickname);
+		
+		// 서비스 계층을 통해 닉네임 중복 여부 확인
+		boolean isDuplicate = memberService.isDuplicatedNickname(nickname);
+		
+		// 클라이언트에 JSON 형태로 결과 반환
+		Map<String, String> result = new HashMap<>();
+		result.put("result", isDuplicate ? "duplicate" : "available");
+		
+		return result;
+	}
+
+
+
+
+
 }

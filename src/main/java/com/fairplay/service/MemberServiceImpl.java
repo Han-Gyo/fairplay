@@ -2,6 +2,8 @@ package com.fairplay.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fairplay.domain.Member;
@@ -11,12 +13,16 @@ import com.fairplay.repository.MemberRepository;
 @Service
 public class MemberServiceImpl implements MemberService{
 	
-	private final MemberRepository memberRepository;
+	@Autowired
+	private MemberRepository memberRepository;
 	
-	// 생성자 주입 방식으로 Repository 의존성 주입 (final 선언해서 생성자 만들어서 초기화)
-	public MemberServiceImpl(MemberRepository memberRepository) {
-		this.memberRepository=memberRepository;
-	}
+	@Autowired
+	private MailService mailService;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	
 
 
 	// 회원가입 요청으로 전달된 member 데이터를 저장 (Create)
@@ -70,6 +76,79 @@ public class MemberServiceImpl implements MemberService{
 	public Member findByUserId(String user_id) {
 		
 		return memberRepository.findByUserId(user_id);
+	}
+
+
+	// 아이디 중복 검사
+	@Override
+	public boolean isDuplicatedId(String userId) {
+		
+		System.out.println("🛠 Service: 중복 확인 userId = " + userId);
+		
+		// Repository에서 DB 조회하여 true/false 리턴
+		return memberRepository.existsByUserId(userId);
+	}
+
+
+	// 닉네임 중복 검사
+	@Override
+	public boolean isDuplicatedNickname(String nickname) {
+		// 레파지토리 계층에서 닉네임 존재 여부 조회
+		return memberRepository.existsByNickname(nickname);
+	}
+
+	
+	// 아이디 + 이메일로 회원 정보 조회
+	@Override
+	public Member findByUserIdAndEmail(String userId, String email) {
+		
+		return memberRepository.findByUserIdAndEmail(userId, email) ;
+	}
+
+
+	// 이메일을 기반으로 임시 비밀번호 생성, 암호화 후 저장 + 메일 전송
+	@Override
+	public void sendTempPassword(String userId, String email) {
+	    // 아이디 + 이메일로 사용자 조회
+	    Member member = memberRepository.findByUserIdAndEmail(userId, email);
+	    if (member == null) {
+	        throw new RuntimeException("입력하신 정보가 정확하지 않습니다.");
+	    }
+
+	    // 임시 비밀번호 생성
+	    String tempPw = generateTempPassword();
+	    String encodedPw = passwordEncoder.encode(tempPw);
+	    
+
+	    // 암호화 후 DB 저장
+	    member.setPassword(encodedPw);
+	    
+	    // 수정된 행 수 확인
+	    int result = memberRepository.updatePassword(member);
+	    if (result == 0) {
+	    	throw new RuntimeException("비밀번호 업데이트 실패");
+	    }
+
+	    // 메일 발송
+	    String subject = "[FairPlay] 임시 비밀번호 안내";
+	    String text = "임시 비밀번호는 다음과 같습니다: " + tempPw + "\n로그인 후 반드시 비밀번호를 변경해주세요.";
+	    try {
+	        mailService.sendSimpleMessage(email, subject, text);
+	    } catch (Exception e) {
+	        throw new RuntimeException("메일 발송 실패");
+	    }
+	}
+	
+	
+	// 임시 비밀번호 생성 메서드
+	private String generateTempPassword() {
+	    String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+	    StringBuilder sb = new StringBuilder();
+	    for (int i = 0; i < 10; i++) {
+	        int index = (int) (Math.random() * chars.length());
+	        sb.append(chars.charAt(index));
+	    }
+	    return sb.toString();
 	}
 	
 	

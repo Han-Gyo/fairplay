@@ -1,0 +1,80 @@
+@charset "UTF-8";
+/* memberCreateForm.css */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Nanum Gothic', sans-serif;
+    background: linear-gradient(135deg, #fce3ec, #ffe6f7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+form {
+    width: 400px;
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 40px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    color: #333;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.inline-btn {
+    width: auto;
+    margin-left: 10px;
+    padding: 6px 12px;
+}
+
+.submit-btn {
+    margin-top: 20px;
+    background-color: #ff8ec7;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.submit-btn:hover {
+    background-color: #e471b0;
+}
+
+.error {
+    color: red;
+    font-size: 0.9em;
+}
+
+
+.success {
+    color: green;
+    font-size: 0.9em;
+}
+
+.check-msg {
+    margin-top: 5px;
+    font-size: 13px;
+}
+.error {
+    color: red;
+}
+.success {
+    color: green;
+}
