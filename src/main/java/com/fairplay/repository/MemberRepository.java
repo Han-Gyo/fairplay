@@ -32,4 +32,8 @@ public interface MemberRepository {
 	
 	// 비밀번호만 수정
 	int updatePassword(Member member);
+	
+	// 회원의 비밀번호를 ID 기준으로 수정하는 메서드
+	void updatePassword(int id, String encodedPassword);
+	
 }

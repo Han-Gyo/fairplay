@@ -144,6 +144,16 @@ public class MemberRepositoryImpl implements MemberRepository{
 		String sql = "UPDATE member SET password = ? WHERE id = ?";
 		return jdbcTemplate.update(sql, member.getPassword(), member.getId());
 	}
+
+
+	// 회원의 비밀번호를 ID 기준으로 수정
+	@Override
+	public void updatePassword(int id, String encodedPassword) {
+		String sql = "UPDATE member SET password = ? WHERE id = ?";
+		jdbcTemplate.update(sql, encodedPassword, id);
+	}
+	
+	
 	
 	
 	

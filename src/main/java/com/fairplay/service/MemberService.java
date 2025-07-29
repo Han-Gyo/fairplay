@@ -31,4 +31,10 @@ public interface MemberService {
 	// 이메일을 통해 임시 비밀번호 발송 + 저장
 	void sendTempPassword(String userId, String email);
 	
+	// 회원 ID로 비밀번호 확인 (현재 비밀번호 체크)
+	boolean checkPassword(int memberId, String inputPassword);
+	
+	// 회원 ID 기준으로 새 비밀번호 변경
+	void changePassword(int memberId, String newPassword);
+	
 }

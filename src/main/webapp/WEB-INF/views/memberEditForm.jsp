@@ -17,7 +17,9 @@
         <div class="card-header bg-primary text-white">
             <h4 class="mb-0">회원 정보 수정</h4>
         </div>
+        
         <div class="card-body">
+        
             <form action="${pageContext.request.contextPath}/member/update" method="post">
                 <!-- ID는 사용자에게 안 보이게 hidden 처리 -->
                 <input type="hidden" name="id" value="${member.id}">
@@ -60,6 +62,39 @@
                     <a href="/fairplay/member/members" class="btn btn-secondary">목록으로</a>
                 </div>
             </form>
+            
+            <!-- ✅ 여기서부터 비밀번호 변경 폼 시작 -->
+			<hr class="my-4">
+			<h5>비밀번호 변경</h5>
+			
+			<form action="${pageContext.request.contextPath}/mypage/changePw" method="post">
+			    <c:if test="${not empty error}">
+			        <div class="alert alert-danger">${error}</div>
+			    </c:if>
+			    <c:if test="${not empty message}">
+			        <div class="alert alert-success">${message}</div>
+			    </c:if>
+			
+			    <div class="mb-3">
+			        <label for="currentPassword" class="form-label">현재 비밀번호</label>
+			        <input type="password" class="form-control" id="currentPassword" name="currentPassword" required />
+			    </div>
+			
+			    <div class="mb-3">
+			        <label for="newPassword" class="form-label">새 비밀번호</label>
+			        <input type="password" class="form-control" id="newPassword" name="newPassword" required />
+			    </div>
+			
+			    <div class="mb-3">
+			        <label for="confirmPassword" class="form-label">새 비밀번호 확인</label>
+			        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required />
+			    </div>
+			
+			    <div class="d-flex justify-content-end">
+			        <button type="submit" class="btn btn-warning">비밀번호 변경</button>
+			    </div>
+			</form>
+			
         </div>
     </div>
 </div>

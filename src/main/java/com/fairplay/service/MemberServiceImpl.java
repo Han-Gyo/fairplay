@@ -138,19 +138,39 @@ public class MemberServiceImpl implements MemberService{
 	        throw new RuntimeException("메일 발송 실패");
 	    }
 	}
+
+
+	// 현재 비밀번호 일치 여부 확인
+	@Override
+	public boolean checkPassword(int memberId, String inputPassword) {
+		Member member = memberRepository.findById(memberId);
+		if (member == null) {
+		return false;
+		}
+		
+		// 암호화된 비밀번호와 일치하는지 검사
+		return passwordEncoder.matches(inputPassword, member.getPassword());
+	}
+
+
+	// 새 비밀번호 암호화 후 저장
+	@Override
+	public void changePassword(int memberId, String newPassword) {
+		String encodedPw = passwordEncoder.encode(newPassword);
+		memberRepository.updatePassword(memberId, encodedPw);
+	}
 	
 	
-	// 임시 비밀번호 생성 메서드
+	
 	private String generateTempPassword() {
-	    String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+	    String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	    StringBuilder sb = new StringBuilder();
-	    for (int i = 0; i < 10; i++) {
-	        int index = (int) (Math.random() * chars.length());
-	        sb.append(chars.charAt(index));
+	    for (int i = 0; i < 8; i++) {
+	        int idx = (int) (Math.random() * chars.length());
+	        sb.append(chars.charAt(idx));
 	    }
 	    return sb.toString();
 	}
-	
 	
 	
 	
