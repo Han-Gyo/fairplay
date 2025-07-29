@@ -1,0 +1,14 @@
+body {
+    background-color: #f0f8ff;
+}
+
+.card {
+    max-width: 500px;
+    margin: 0 auto;
+    border-radius: 15px;
+}
+
+.card-header {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
