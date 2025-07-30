@@ -112,7 +112,14 @@ public class MemberController {
 	@PostMapping("/update")
 	public String update(@ModelAttribute Member member,
 						 @RequestParam(required = false) String from,
-						 HttpSession session) {
+						 HttpSession session, 
+						 HttpServletRequest request) {
+		
+		// 전화번호 합치기
+	    String phone = request.getParameter("phone1") + "-" +
+	                   request.getParameter("phone2") + "-" +
+	                   request.getParameter("phone3");
+	    member.setPhone(phone);
 		
 		// ✅ 세션에 있는 로그인 회원의 상태를 유지시켜줌
 	    Member loginUser = (Member) session.getAttribute("loginMember");

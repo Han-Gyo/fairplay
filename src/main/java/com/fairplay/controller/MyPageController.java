@@ -1,5 +1,8 @@
 package com.fairplay.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.fairplay.domain.Member;
 import com.fairplay.enums.MemberStatus;
@@ -72,4 +77,31 @@ public class MyPageController {
         model.addAttribute("message", "비밀번호가 성공적으로 변경되었습니다.");
         return "memberEditForm";
     }
+    
+    
+    // 마이페이지에서 닉네임 중복 검사
+    @GetMapping(value = "/checkNicknameAjax", produces = "application/json")
+    @ResponseBody
+    public Map<String, String> checkNicknameAjax(@RequestParam("nickname") String nickname,
+                                                 HttpSession session) {
+
+        Member loginMember = (Member) session.getAttribute("loginMember");
+
+        Map<String, String> result = new HashMap<>();
+
+        if (loginMember == null) {
+            result.put("result", "unauthorized");
+            return result;
+        }
+
+        boolean isDuplicate = !nickname.equals(loginMember.getNickname())
+                            && memberService.isDuplicatedNickname(nickname);
+
+        result.put("result", isDuplicate ? "duplicate" : "available");
+        return result;
+    }
+
+
+
+
 }

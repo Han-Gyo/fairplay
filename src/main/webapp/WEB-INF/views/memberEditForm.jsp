@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ include file="/WEB-INF/views/nav.jsp" %>
 <!DOCTYPE html>
 <html>
@@ -10,7 +11,8 @@
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body class="bg-light" data-context-path="${pageContext.request.contextPath}">
+
 
 <div class="container mt-5">
     <div class="card shadow-lg">
@@ -20,7 +22,7 @@
         
         <div class="card-body">
         
-            <form action="${pageContext.request.contextPath}/member/update" method="post">
+            <form id="editForm" action="${pageContext.request.contextPath}/member/update" method="post">
 			    <!-- ID는 사용자에게 안 보이게 hidden 처리 -->
 			    <input type="hidden" name="id" value="${member.id}">
 			    <input type="hidden" name="from" value="mypage" />
@@ -32,9 +34,13 @@
 			    </div>
 			
 			    <div class="mb-3">
-			        <label for="nickname" class="form-label">닉네임</label>
-			        <input type="text" class="form-control" id="nickname" name="nickname" value="${member.nickname}" required>
-			    </div>
+				    <label for="nickname" class="form-label">닉네임</label>
+				    <div class="input-group">
+				        <input type="text" class="form-control" id="nickname" name="nickname" value="${member.nickname}" required>
+				        <button type="button" class="btn btn-outline-secondary" id="checkNicknameBtn">중복 확인</button>
+				    </div>
+				    <div id="nicknameCheckResult" class="form-text mt-1"></div>
+				</div>
 			
 			    <div class="mb-3">
 			        <label for="email" class="form-label">이메일</label>
@@ -42,9 +48,23 @@
 			    </div>
 			
 			    <div class="mb-3">
-			        <label for="phone" class="form-label">휴대폰 번호</label>
-			        <input type="text" class="form-control" id="phone" name="phone" value="${member.phone}">
-			    </div>
+				    <label for="phone" class="form-label">휴대폰 번호</label>
+				    <div class="d-flex gap-2">
+				        <!-- 앞자리 select 박스 -->
+				        <select class="form-select" id="phone1" name="phone1" style="width: 100px;" required>
+				            <option value="010" ${fn:contains(member.phone, '010') ? 'selected' : ''}>010</option>
+				            <option value="011" ${fn:contains(member.phone, '011') ? 'selected' : ''}>011</option>
+				            <option value="016" ${fn:contains(member.phone, '016') ? 'selected' : ''}>016</option>
+				        </select>
+				
+				        <!-- 중간/끝 번호 -->
+				        <input type="text" class="form-control" id="phone2" name="phone2"
+				               value="${fn:split(member.phone, '-')[1]}" maxlength="4" required />
+				        <input type="text" class="form-control" id="phone3" name="phone3"
+				               value="${fn:split(member.phone, '-')[2]}" maxlength="4" required />
+				    </div>
+				</div>
+
 			
 			    <div class="mb-3">
 			        <label for="address" class="form-label">주소</label>
@@ -100,5 +120,12 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JS 파일 연결 -->
+<script>
+    const contextPath = '${pageContext.request.contextPath}';
+</script>
+<script src="<c:url value='/resources/js/memberEditForm.js' />"></script>
+
 </body>
 </html>
