@@ -21,47 +21,46 @@
         <div class="card-body">
         
             <form action="${pageContext.request.contextPath}/member/update" method="post">
-                <!-- ID는 사용자에게 안 보이게 hidden 처리 -->
-                <input type="hidden" name="id" value="${member.id}">
-                
-                <input type="hidden" name="from" value="mypage" />
+			    <!-- ID는 사용자에게 안 보이게 hidden 처리 -->
+			    <input type="hidden" name="id" value="${member.id}">
+			    <input type="hidden" name="from" value="mypage" />
+			
+			    <!-- ✅ 실명 필드 추가 -->
+			    <div class="mb-3">
+			        <label for="real_name" class="form-label">이름 (실명)</label>
+			        <input type="text" class="form-control" id="real_name" name="real_name" value="${member.real_name}" required />
+			    </div>
+			
+			    <div class="mb-3">
+			        <label for="nickname" class="form-label">닉네임</label>
+			        <input type="text" class="form-control" id="nickname" name="nickname" value="${member.nickname}" required>
+			    </div>
+			
+			    <div class="mb-3">
+			        <label for="email" class="form-label">이메일</label>
+			        <input type="email" class="form-control" id="email" name="email" value="${member.email}" required>
+			    </div>
+			
+			    <div class="mb-3">
+			        <label for="phone" class="form-label">휴대폰 번호</label>
+			        <input type="text" class="form-control" id="phone" name="phone" value="${member.phone}">
+			    </div>
+			
+			    <div class="mb-3">
+			        <label for="address" class="form-label">주소</label>
+			        <input type="text" class="form-control" id="address" name="address" value="${member.address}">
+			    </div>
+			
+			    
+			    <!-- 🔒 status는 수정은 불가하지만 서버로 넘겨야 함 -->
+				<input type="hidden" name="status" value="${member.status}" />
+			
+			    <div class="d-flex justify-content-between">
+			        <button type="submit" class="btn btn-success">수정 완료</button>
+			        <a href="/fairplay/member/members" class="btn btn-secondary">목록으로</a>
+			    </div>
+			</form>
 
-                <div class="mb-3">
-                    <label for="user_id" class="form-label">아이디 (로그인용)</label>
-                    <input type="text" class="form-control" id="user_id" name="user_id" value="${member.user_id}" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="nickname" class="form-label">닉네임</label>
-                    <input type="text" class="form-control" id="nickname" name="nickname" value="${member.nickname}" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="email" class="form-label">이메일</label>
-                    <input type="email" class="form-control" id="email" name="email" value="${member.email}" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="phone" class="form-label">휴대폰 번호</label>
-                    <input type="text" class="form-control" id="phone" name="phone" value="${member.phone}">
-                </div>
-
-                <div class="mb-3">
-                    <label for="address" class="form-label">주소</label>
-                    <input type="text" class="form-control" id="address" name="address" value="${member.address}">
-                </div>
-                
-                <div class="mb-3">
-				    <label class="form-label">회원 상태</label>
-				    <input type="text" class="form-control" value="${member.status}" readonly>
-				</div>
-                
-
-                <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-success">수정 완료</button>
-                    <a href="/fairplay/member/members" class="btn btn-secondary">목록으로</a>
-                </div>
-            </form>
             
             <!-- ✅ 여기서부터 비밀번호 변경 폼 시작 -->
 			<hr class="my-4">

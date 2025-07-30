@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.fairplay.domain.Member;
 import com.fairplay.enums.MemberStatus;
+import com.fairplay.mapper.MemberRowMapper;
 
 @Repository
 public class MemberRepositoryImpl implements MemberRepository{
@@ -60,10 +61,10 @@ public class MemberRepositoryImpl implements MemberRepository{
 	@Override
 	public void update(Member member) {
 		
-		String sql = "UPDATE member SET user_id = ?, nickname = ?, email = ?, address = ?, phone = ?, status = ? WHERE id = ?";
+		String sql = "UPDATE member SET real_name = ?, nickname = ?, email = ?, address = ?, phone = ?, status = ? WHERE id = ?";
 		
 		jdbcTemplate.update(sql,
-			member.getUser_id(),
+			member.getReal_name(),
 			member.getNickname(),
 			member.getEmail(),
 			member.getAddress(),
