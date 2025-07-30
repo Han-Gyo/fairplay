@@ -1,76 +1,77 @@
-@charset "UTF-8";
-/* memberCreateForm.css */
 body {
     margin: 0;
     padding: 0;
     font-family: 'Nanum Gothic', sans-serif;
     background: linear-gradient(135deg, #fce3ec, #ffe6f7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-form {
-    width: 400px;
-    background: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 40px;
-}
-
-label {
-    display: block;
-    margin-top: 15px;
+/* 상단 제목 정렬 */
+h2 {
+    margin-top: 40px;
+    font-size: 28px;
     color: #333;
 }
 
+/* 회원가입 폼 */
+form {
+    width: 400px;
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 30px 30px 40px 30px;
+    margin-top: 20px;
+}
+
+/* 라벨 */
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 인풋, 셀렉트, 버튼 공통 */
 input, select, button {
     width: 100%;
     padding: 8px;
-    box-sizing: border-box;
     margin-top: 5px;
     border-radius: 6px;
     border: 1px solid #ccc;
+    box-sizing: border-box;
 }
 
-.inline-btn {
-    width: auto;
-    margin-left: 10px;
-    padding: 6px 12px;
+/* 인라인 버튼들 묶기 */
+.inline-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
+/* submit 전용 버튼 */
 .submit-btn {
-    margin-top: 20px;
+    margin-top: 25px;
     background-color: #ff8ec7;
     color: white;
     border: none;
     padding: 10px;
     cursor: pointer;
     border-radius: 8px;
+    font-weight: bold;
 }
-
 .submit-btn:hover {
     background-color: #e471b0;
 }
 
-.error {
-    color: red;
-    font-size: 0.9em;
-}
-
-
-.success {
-    color: green;
-    font-size: 0.9em;
-}
-
+/* 메시지 출력용 */
 .check-msg {
-    margin-top: 5px;
     font-size: 13px;
+    margin-top: 5px;
 }
 .error {
     color: red;
