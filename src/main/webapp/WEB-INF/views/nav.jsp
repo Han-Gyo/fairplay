@@ -115,6 +115,7 @@
 	        <c:when test="${empty sessionScope.loginMember}">
 	            <a href="${pageContext.request.contextPath}/member/login">🔐 로그인</a>
 	            <a href="${pageContext.request.contextPath}/member/create">👤 회원가입</a>
+	            <a href="${pageContext.request.contextPath}/forgot/forgotId">🆔 아이디찾기</a>
 	            <a href="${pageContext.request.contextPath}/forgot">🔑 비밀번호 찾기</a>
 	        </c:when>
 	

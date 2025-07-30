@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.fairplay.domain.Member;
 import com.fairplay.enums.MemberStatus;
+import com.fairplay.mapper.MemberRowMapper;
 
 @Repository
 public class MemberRepositoryImpl implements MemberRepository{
@@ -60,10 +61,10 @@ public class MemberRepositoryImpl implements MemberRepository{
 	@Override
 	public void update(Member member) {
 		
-		String sql = "UPDATE member SET user_id = ?, nickname = ?, email = ?, address = ?, phone = ?, status = ? WHERE id = ?";
+		String sql = "UPDATE member SET real_name = ?, nickname = ?, email = ?, address = ?, phone = ?, status = ? WHERE id = ?";
 		
 		jdbcTemplate.update(sql,
-			member.getUser_id(),
+			member.getReal_name(),
 			member.getNickname(),
 			member.getEmail(),
 			member.getAddress(),
@@ -144,6 +145,27 @@ public class MemberRepositoryImpl implements MemberRepository{
 		String sql = "UPDATE member SET password = ? WHERE id = ?";
 		return jdbcTemplate.update(sql, member.getPassword(), member.getId());
 	}
+
+
+	// 회원의 비밀번호를 ID 기준으로 수정
+	@Override
+	public void updatePassword(int id, String encodedPassword) {
+		String sql = "UPDATE member SET password = ? WHERE id = ?";
+		jdbcTemplate.update(sql, encodedPassword, id);
+	}
+
+
+	// 실명 + 이메일로 회원 조회 (아이디 찾기용)
+	@Override
+	public Member findByRealNameAndEmail(String realName, String email) {
+	    String sql = "SELECT * FROM member WHERE real_name = ? AND email = ?";
+	    
+	    List<Member> result = jdbcTemplate.query(sql, new MemberRowMapper(), realName, email);
+	    
+	    return result.isEmpty() ? null : result.get(0);
+	}
+	
+	
 	
 	
 	
