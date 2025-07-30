@@ -107,6 +107,15 @@
                 <a href="${pageContext.request.contextPath}/group/groups">👥 그룹 목록</a>
             </div>
         </div>
+        
+        <!-- 📊 점수 드롭다운 -->
+				<div class="dropdown">
+				    <a href="javascript:void(0);">📊 점수</a>
+				    <div class="dropdown-content">
+				        <a href="${pageContext.request.contextPath}/history/monthly-score?group_id=1">📅 월간 점수 보기</a>
+				        <!-- 추후: 전체 통계 페이지 추가도 고려 가능 -->
+				    </div>
+				</div>
     </div>
 
 	<div class="right">
@@ -120,7 +129,7 @@
 	        </c:when>
 	
 	        <c:otherwise>
-	            <span style="color:hotpink; font-weight:bold;">
+	            <span style="color:pink; font-weight:bold;">
 	               ♥ ${sessionScope.loginMember.nickname}님 안녕하세요 ♥
 	            </span>
 	            <a href="${pageContext.request.contextPath}/member/mypage">🙋 마이페이지</a>

@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -20,10 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fairplay.domain.GroupMonthlyScore;
 import com.fairplay.domain.History;
 import com.fairplay.domain.HistoryComment;
 import com.fairplay.domain.Member;
+import com.fairplay.domain.MemberMonthlyScore;
 import com.fairplay.domain.Todo;
+import com.fairplay.service.GroupMemberService;
 import com.fairplay.service.HistoryCommentService;
 import com.fairplay.service.HistoryService;
 import com.fairplay.service.MemberService;
@@ -44,6 +46,9 @@ public class HistoryController {
 	
 	@Autowired
 	private HistoryCommentService commentService;
+	
+	@Autowired
+	private GroupMemberService groupMemberService;
 	
 	// ✅ 전체 히스토리 보기
 	@GetMapping("/all")
@@ -207,7 +212,7 @@ public class HistoryController {
         return "redirect:/history?todo_id=" + todo_id;
     }
     
-    // ✅ 히스토리 상세 보기
+    // ✅ 7. 히스토리 상세 보기
     @GetMapping("/detail")
     public String detailHistory(@RequestParam("history_id") int historyId, Model model) {
     	History history = historyService.getHistoryByIdWithDetails(historyId);
@@ -217,6 +222,34 @@ public class HistoryController {
         model.addAttribute("history", history);
         return "historyDetail";
     }
+    
+    // ✅ 8. 점수 계산
+    @GetMapping("/monthly-score")
+    public String showMonthlyScore(
+    	@RequestParam("group_id") Integer groupId, 
+    	@RequestParam(value = "yearMonth", required = false) String yearMonth, 
+    	Model model) {
+    	
+    	// ✅ yearMonth 기본값 처리 
+    	if (yearMonth == null || yearMonth.isEmpty()) {
+    		java.time.LocalDate now = java.time.LocalDate.now();
+    		yearMonth = now.getYear() + "-" + String.format("%02d", now.getMonthValue());	// 예: 2025-07
+    	}
+    	
+    	System.out.println("📌 [Controller] groupId = " + groupId);
+        System.out.println("📌 [Controller] yearMonth = " + yearMonth);
+        
+    	// ✅ 서비스 호출 
+    	List<GroupMonthlyScore> groupScores = historyService.getGroupMonthlyScore(groupId, yearMonth);
+    	List<MemberMonthlyScore> memberScores = historyService.getMemberMonthlyScore(groupId, yearMonth);
+    	
+    	// ✅ 모델에 담기
+    	model.addAttribute("groupScores", groupScores);		// 단일 객체지만 리스트로 받아올 수도 있음
+    	model.addAttribute("memberScores", memberScores);
+    	model.addAttribute("yearMonth", yearMonth);			// 뷰에서 < 6월 7월 8월 > 표시용
+    	return "monthlyScore";
+    }
+    
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
