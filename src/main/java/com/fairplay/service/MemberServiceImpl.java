@@ -171,6 +171,22 @@ public class MemberServiceImpl implements MemberService{
 	    }
 	    return sb.toString();
 	}
+
+
+	// 이메일을 기반으로 회원 정보 조회 (비밀번호 찾기용)
+	@Override
+	public Member findByEmail(String email) {
+		
+		return memberRepository.findByEmail(email);
+	}
+
+
+	// 실명 + 이메일로 회원 조회 (아이디 찾기용)
+	@Override
+	public Member findByRealNameAndEmail(String realName, String email) {
+		
+		return memberRepository.findByRealNameAndEmail(realName, email);
+	}
 	
 	
 	

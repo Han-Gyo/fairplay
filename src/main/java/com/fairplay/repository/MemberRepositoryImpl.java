@@ -152,6 +152,17 @@ public class MemberRepositoryImpl implements MemberRepository{
 		String sql = "UPDATE member SET password = ? WHERE id = ?";
 		jdbcTemplate.update(sql, encodedPassword, id);
 	}
+
+
+	// 실명 + 이메일로 회원 조회 (아이디 찾기용)
+	@Override
+	public Member findByRealNameAndEmail(String realName, String email) {
+	    String sql = "SELECT * FROM member WHERE real_name = ? AND email = ?";
+	    
+	    List<Member> result = jdbcTemplate.query(sql, new MemberRowMapper(), realName, email);
+	    
+	    return result.isEmpty() ? null : result.get(0);
+	}
 	
 	
 	
