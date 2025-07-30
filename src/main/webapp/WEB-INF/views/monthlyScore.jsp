@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h2>📅 ${yearMonth} 점수 현황</h2>
+    <h2>📅 ${yearMonth} ${group.name} 그룹의 점수 현황</h2>
 
     <!-- 🔄 월 이동 버튼 -->
     <div>
@@ -35,48 +35,15 @@
 
     <!-- ✅ 그룹 점수 -->
     <c:forEach var="g" items="${groupScores}">
-        <p>총점: <strong>${g.totalScore}</strong>점</p>
-        <p>🏠 멤버: ${g.groupId}</p> 
+    <h3>${group.name} 그룹의 총 점수는 <strong>${g.totalScore}</strong>점 입니다.</h3>
     </c:forEach>
 
     <!-- ✅ 멤버 점수 차트 -->
     <h3>👥 멤버별 점수</h3>
-    <canvas id="memberChart" width="400" height="200"></canvas>
+        <c:forEach var="m" items="${memberScores}">
+			    <p>${m.nickname} <strong>${m.score}</strong>점</p>
+				</c:forEach>
 
-    <script>
-        // JSP 데이터를 JS로 전달
-        const memberLabels = [
-            <c:forEach var="m" items="${memberScores}" varStatus="status">
-                "${m.nickname}"<c:if test="${!status.last}">,</c:if>
-            </c:forEach>
-        ];
-        const memberScores = [
-            <c:forEach var="m" items="${memberScores}" varStatus="status">
-                ${m.score}<c:if test="${!status.last}">,</c:if>
-            </c:forEach>
-        ];
 
-        const ctx = document.getElementById('memberChart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: memberLabels,
-                datasets: [{
-                    label: '점수',
-                    data: memberScores,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
 </body>
 </html>
