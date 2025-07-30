@@ -4,7 +4,10 @@ import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fairplay.domain.GroupMonthlyScore;
 import com.fairplay.domain.History;
+import com.fairplay.domain.MemberMonthlyScore;
 import com.fairplay.repository.HistoryRepository;
 
 @Service
@@ -85,6 +88,20 @@ public class HistoryServiceImpl implements HistoryService{
 	@Override
 	public List<History> getHistoriesByTodoIdWithDetails(int todo_id) {
 		return historyRepository.findByTodoIdWithDetails(todo_id);
+	}
+
+
+	@Override
+	public List<GroupMonthlyScore> getGroupMonthlyScore(int groupId, String yearMonth) {
+		System.out.println("📌 [Service] 그룹 월간 점수 요청 - groupId: " + groupId + ", yearMonth: " + yearMonth);
+		return historyRepository.findGroupMonthlyScore(groupId, yearMonth);
+	}
+
+
+	@Override
+	public List<MemberMonthlyScore> getMemberMonthlyScore(int groupId, String yearMonth) {
+		System.out.println("📌 [Service] 멤버 월간 점수 요청 - groupId: " + groupId + ", yearMonth: " + yearMonth);
+		return historyRepository.findMemberMonthlyScore(groupId, yearMonth);
 	}
 
 }

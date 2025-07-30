@@ -1,15 +1,20 @@
 package com.fairplay.repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.fairplay.domain.GroupMonthlyScore;
 import com.fairplay.domain.History;
 import com.fairplay.domain.Member;
+import com.fairplay.domain.MemberMonthlyScore;
 import com.fairplay.domain.Todo;
 
 @Repository
@@ -236,5 +241,68 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 
 	        return history;
 	    }, todo_id);
+	}
+	
+	// ✅ 그룹별 월간 총점 조회
+	@Override
+	public List<GroupMonthlyScore> findGroupMonthlyScore(int groupId, String yearMonth) {
+		
+		System.out.println("📌 [Repository] SQL 실행 - 그룹 월간 점수");
+	    System.out.println("    ▶ groupId: " + groupId);
+	    System.out.println("    ▶ yearMonth: " + yearMonth);
+	    
+		String sql = "SELECT " +
+	            "t.group_id, " +
+	            "DATE_FORMAT(h.completed_at, '%Y-%m'), " +  // alias 제거
+	            "SUM(t.difficulty_point) " +
+	            "FROM history h " +
+	            "JOIN todo t ON h.todo_id = t.id " +
+	            "WHERE t.group_id = ? " +
+	            "AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
+	            "GROUP BY t.group_id, DATE_FORMAT(h.completed_at, '%Y-%m')"; // alias 안씀
+
+	    return jdbcTemplate.query(sql, new Object[]{groupId, yearMonth}, new RowMapper<GroupMonthlyScore>() {
+	        @Override
+	        public GroupMonthlyScore mapRow(ResultSet rs, int rowNum) throws SQLException {
+	            return new GroupMonthlyScore(
+	                rs.getInt(1),        // group_id
+	                rs.getString(2),     // yearMonth (DATE_FORMAT 결과)
+	                rs.getInt(3)         // total_score
+	            );
+	        }
+	    });
+	}
+	
+	// ✅ 멤버별 월간 점수 조회
+	@Override
+	public List<MemberMonthlyScore> findMemberMonthlyScore(int groupId, String yearMonth) {
+	    System.out.println("🛠 [Repository] 멤버 월간 점수 SQL 실행");
+	    System.out.println("  ▶ groupId: " + groupId);
+	    System.out.println("  ▶ yearMonth: " + yearMonth);
+
+	    String sql = 
+	    	    "SELECT h.member_id, " +
+	    	    "       m.nickname, " +
+	    	    "       SUM(t.difficulty_point) AS score, " +
+	    	    "       DATE_FORMAT(h.completed_at, '%Y-%m') " + 
+	    	    "FROM history h " +
+	    	    "JOIN todo t ON h.todo_id = t.id " +
+	    	    "JOIN member m ON h.member_id = m.id " +
+	    	    "WHERE t.group_id = ? " +
+	    	    "  AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
+	    	    "GROUP BY h.member_id, m.nickname, DATE_FORMAT(h.completed_at, '%Y-%m') " +
+	    	    "ORDER BY score DESC";
+
+	    return jdbcTemplate.query(sql, new Object[]{groupId, yearMonth}, new RowMapper<MemberMonthlyScore>() {
+	        @Override
+	        public MemberMonthlyScore mapRow(ResultSet rs, int rowNum) throws SQLException {
+	            return new MemberMonthlyScore(
+	                rs.getInt(1),
+	                rs.getString(2),
+	                rs.getInt(3),
+	                rs.getString(4) 
+	            );
+	        }
+	    });
 	}
 }

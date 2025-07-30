@@ -119,7 +119,7 @@
 	        </c:when>
 	
 	        <c:otherwise>
-	            <span style="color:hotpink; font-weight:bold;">
+	            <span style="color:pink; font-weight:bold;">
 	               ♥ ${sessionScope.loginMember.nickname}님 안녕하세요 ♥
 	            </span>
 	            <a href="${pageContext.request.contextPath}/member/mypage">🙋 마이페이지</a>
