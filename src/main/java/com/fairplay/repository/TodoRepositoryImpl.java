@@ -54,15 +54,17 @@ public class TodoRepositoryImpl implements TodoRepository{
 	// 할 일 등록
 	@Override
 	public void insert(Todo todo) {
-		String sql = "INSERT INTO todo (title, group_id, assigned_to, due_date, difficulty_point, completed) VALUES (?, ?, ?, ?, ?, ?)";
-		template.update(sql,
-			todo.getTitle(),           // 제목
-			todo.getGroup_id(),        // 그룹 ID
-			todo.getAssigned_to(),     // 담당자 ID
-			todo.getDue_date(),        // 마감일
-			todo.getDifficulty_point(),// 난이도
-			todo.isCompleted()         // 완료 여부
-		);
+	    String sql = "INSERT INTO todo (title, group_id, assigned_to, due_date, difficulty_point, completed, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+	    System.out.println("🧾 [DB 저장 전] status 확인: " + todo.getStatus());
+	    template.update(sql,
+	        todo.getTitle(),            // 제목
+	        todo.getGroup_id(),         // 그룹 ID
+	        todo.getAssigned_to(),      // 담당자 ID
+	        todo.getDue_date(),         // 마감일
+	        todo.getDifficulty_point(), // 난이도
+	        todo.isCompleted(),         // 완료 여부
+	        todo.getStatus()            // 상태 (진행중 or 미신청)
+	    );
 	}
 	
 	// 할 일 수정
