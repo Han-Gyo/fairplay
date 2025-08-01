@@ -68,7 +68,7 @@
 
 		<!-- 로그인 + ACTIVE 상태인 회원만 마이페이지 가능 -->
 		<c:if test="${not empty sessionScope.member && sessionScope.member.status == 'ACTIVE'}">
-		    <a href="${pageContext.request.contextPath}/member/mypage">👤 마이페이지</a>
+		    <a href="${pageContext.request.contextPath}/mypage">👤 마이페이지</a>
 		</c:if>
 		
 		<!-- 로그인한 관리자라면 전체 회원 목록 표시 -->

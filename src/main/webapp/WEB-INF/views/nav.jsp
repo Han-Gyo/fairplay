@@ -142,7 +142,7 @@
 	            <span style="color:pink; font-weight:bold;">
 	               ♥ ${sessionScope.loginMember.nickname}님 안녕하세요 ♥
 	            </span>
-	            <a href="${pageContext.request.contextPath}/member/mypage">🙋 마이페이지</a>
+	            <a href="${pageContext.request.contextPath}/mypage">🙋 마이페이지</a>
 	            <a href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a>
 	            
 	        </c:otherwise>

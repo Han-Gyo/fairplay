@@ -27,20 +27,27 @@ public class MyPageController {
     private MemberService memberService;
     
 
-    // 마이페이지 진입
+    // 🔹 마이페이지 진입 (/mypage)
     @GetMapping
     public String myPage(HttpSession session, Model model) {
+
+        // 로그인 정보 확인
         Member loginMember = (Member) session.getAttribute("loginMember");
 
+        // 🔒 비로그인 또는 탈퇴 회원은 로그인으로 보냄
         if (loginMember == null || loginMember.getStatus() != MemberStatus.ACTIVE) {
             session.invalidate();
             return "redirect:/login";
         }
 
-        Member member = memberService.findById(loginMember.getId());
+        // 로그인한 회원 정보 조회 (DB 최신 데이터)
+        int memberId = loginMember.getId();
+        Member member = memberService.findById(memberId);
+
+        // 모델에 담아서 JSP에 전달
         model.addAttribute("member", member);
 
-        return "myPage"; // 이건 memberEditForm.jsp일 수도 있음 (실제로는 수정 폼)
+        return "myPage"; // → /WEB-INF/views/myPage.jsp
     }
 
     @PostMapping("/changePw")
