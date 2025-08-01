@@ -23,11 +23,21 @@ public class TodoServiceImpl implements TodoService{
 	// ✅ 할 일 추가
 	@Override
 	public void addTodo(Todo todo) {
-		// todo.setCompleted(false);
-		todoRepository.insert(todo);
-		
-		System.out.println("할 일 추가됨 : " + todo.getTitle());
+		// 👉 담당자 지정 여부에 따라 상태 자동 설정
+	    if (todo.getAssigned_to() != null) {
+	        todo.setStatus("신청완료");
+	    } else {
+	        todo.setStatus("미신청");
+	    }
+
+	    todoRepository.insert(todo);
+
+	    // 로그 찍기
+	    System.out.println("📌 등록된 할 일 제목: " + todo.getTitle());
+	    System.out.println("📌 담당자 ID: " + todo.getAssigned_to());
+	    System.out.println("📌 할 일 상태: " + todo.getStatus());
 	}
+	
 	// ✅ 할 일 수정
 	@Override
 	public void updateTodo(Todo todo) {

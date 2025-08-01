@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fairplay.domain.Group;
 import com.fairplay.domain.GroupMonthlyScore;
 import com.fairplay.domain.History;
 import com.fairplay.domain.HistoryComment;
@@ -26,6 +27,7 @@ import com.fairplay.domain.Member;
 import com.fairplay.domain.MemberMonthlyScore;
 import com.fairplay.domain.Todo;
 import com.fairplay.service.GroupMemberService;
+import com.fairplay.service.GroupService;
 import com.fairplay.service.HistoryCommentService;
 import com.fairplay.service.HistoryService;
 import com.fairplay.service.MemberService;
@@ -48,7 +50,8 @@ public class HistoryController {
 	private HistoryCommentService commentService;
 	
 	@Autowired
-	private GroupMemberService groupMemberService;
+	private GroupService groupService;
+
 	
 	// ✅ 전체 히스토리 보기
 	@GetMapping("/all")
@@ -235,7 +238,9 @@ public class HistoryController {
     		java.time.LocalDate now = java.time.LocalDate.now();
     		yearMonth = now.getYear() + "-" + String.format("%02d", now.getMonthValue());	// 예: 2025-07
     	}
-    	
+    	// 🧠 그룹 정보 가져오기
+        Group group = groupService.findById(groupId);
+        
     	System.out.println("📌 [Controller] groupId = " + groupId);
         System.out.println("📌 [Controller] yearMonth = " + yearMonth);
         
@@ -247,6 +252,7 @@ public class HistoryController {
     	model.addAttribute("groupScores", groupScores);		// 단일 객체지만 리스트로 받아올 수도 있음
     	model.addAttribute("memberScores", memberScores);
     	model.addAttribute("yearMonth", yearMonth);			// 뷰에서 < 6월 7월 8월 > 표시용
+    	model.addAttribute("group", group);
     	return "monthlyScore";
     }
     

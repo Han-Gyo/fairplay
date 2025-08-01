@@ -5,11 +5,18 @@
     .navbar {
         background-color: #4a90e2;
         color: white;
-        padding: 10px 20px;
+        padding: 10px 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin: 0;
         font-family: 'Segoe UI', sans-serif;
+        
+        position: fixed;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    z-index: 1000;
     }
 
     .navbar a {
@@ -64,6 +71,9 @@
 
     .dropdown:hover .dropdown-content {
         display: block;
+    }
+    body {
+        padding-top: 50px; /* 네비 높이만큼 여백 주기 */
     }
 </style>
 

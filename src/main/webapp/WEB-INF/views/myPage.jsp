@@ -12,15 +12,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Nanum Gothic', sans-serif;
-            background: linear-gradient(135deg, #fce3ec, #ffe6f7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+				    margin: 0;
+				    padding: 0;
+				    font-family: 'Nanum Gothic', sans-serif;
+				    background: linear-gradient(135deg, #fce3ec, #ffe6f7);
+				    min-height: 100vh;  /* ✅ 화면 꽉 차게만 유지 */
+				}
 
         .glass-card {
             background: rgba(255, 255, 255, 0.25);
@@ -75,6 +72,7 @@
     </style>
 </head>
 <body>
+<div style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 80px);">
     <div class="glass-card">
         <h2>👤 마이페이지</h2>
 
@@ -99,5 +97,6 @@
             </form>
         </div>
     </div>
+</div>
 </body>
 </html>
