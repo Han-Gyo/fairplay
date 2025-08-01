@@ -132,14 +132,24 @@
   z-index: 1500;
   font-weight: bold;
   cursor: pointer;
+  align-items: center; 
+  text-align: center; 
 }
 
 .calendar-toggle a {
   border: none;
   text-decoration: none;
   outline: none;
+  font-size: 20px;
 }
-
+.calendar-toggle p {
+	font-size: 12px;
+	margin-top: -3px;
+	color: black;
+}
+.calendar-toggle p:hover {
+	color: darkgray;
+}
 #calendar-full {
   width: 100%;
   height: 100%;
@@ -224,7 +234,7 @@
 </div>
 
 <div class="calendar-toggle">
-  <a href="javascript:void(0);" onclick="openCalendarModal()">📅</a>
+  <a href="javascript:void(0);" onclick="openCalendarModal()">📅<p>Calender</p></a>
 </div>
 
 <!-- 모달 영역 추가 -->
