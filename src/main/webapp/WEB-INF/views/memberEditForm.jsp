@@ -22,7 +22,7 @@
         
         <div class="card-body">
         
-            <form id="editForm" action="${pageContext.request.contextPath}/member/update" method="post">
+            <form id="editForm" action="${pageContext.request.contextPath}/mypage/update" method="post" enctype="multipart/form-data">
 			    <!-- ID는 사용자에게 안 보이게 hidden 처리 -->
 			    <input type="hidden" name="id" value="${member.id}">
 			    <input type="hidden" name="from" value="mypage" />
@@ -41,6 +41,42 @@
 				    </div>
 				    <div id="nicknameCheckResult" class="form-text mt-1"></div>
 				</div>
+			
+				<!-- 🔄 프로필 이미지 변경 (JSTL 조건 처리 포함) -->
+				<div class="mb-3">
+				    <label class="form-label">프로필 이미지</label>
+				
+				    <div class="mb-2">
+				        <c:choose>
+				            <c:when test="${empty member.profileImage}">
+				                <!-- 기본 이미지 경로 -->
+				                <img id="profilePreview" 
+				                     src="${pageContext.request.contextPath}/resources/img/default-profile.png"
+				                     alt="기본 프로필 이미지" 
+				                     width="120" class="rounded-circle border shadow-sm" />
+				            </c:when>
+				            <c:otherwise>
+				                <!-- 업로드된 사용자 이미지 -->
+				                <img id="profilePreview" 
+								     src="${pageContext.request.contextPath}/upload/profile/${member.profileImage}?v=${System.currentTimeMillis()}" 
+								     alt="프로필 이미지"
+				                     width="120" class="rounded-circle border shadow-sm" />
+				            </c:otherwise>
+				        </c:choose>
+				    </div>
+				
+				    <!-- 이미지 업로드 input -->
+				    <input type="file" class="form-control" name="profileImageFile" accept="image/*" />
+				</div>
+				
+				<!-- 🔘 기본 이미지로 초기화 버튼 -->
+				<div class="mb-3">
+				    <input type="hidden" id="resetProfileImage" name="resetProfileImage" value="false" />
+				    <button type="button" class="btn btn-outline-danger" id="resetImageBtn">기본 이미지로 변경</button>
+				</div>
+
+
+			
 			
 			    <div class="mb-3">
 			        <label for="email" class="form-label">이메일</label>

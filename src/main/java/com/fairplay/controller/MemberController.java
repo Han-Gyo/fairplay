@@ -143,41 +143,6 @@ public class MemberController {
 		return "memberEditForm";
 	}
 	
-	// 수정된 회원 데이터를 DB에 반영하고 전체 회원 목록 또는 마이페이지로 리다이렉트
-	@PostMapping("/update")
-	public String update(@ModelAttribute Member member,
-						 @RequestParam(required = false) String from,
-						 HttpSession session, 
-						 HttpServletRequest request) {
-		
-		// 전화번호 합치기
-	    String phone = request.getParameter("phone1") + "-" +
-	                   request.getParameter("phone2") + "-" +
-	                   request.getParameter("phone3");
-	    member.setPhone(phone);
-		
-		// ✅ 세션에 있는 로그인 회원의 상태를 유지시켜줌
-	    Member loginUser = (Member) session.getAttribute("loginMember");
-	    if (loginUser != null) {
-	        member.setStatus(loginUser.getStatus());  // ✅ 여기가 핵심!
-	    }
-		
-		memberService.update(member);
-		
-		// ✅ 세션 정보도 최신으로 갱신
-	    if (loginUser != null && loginUser.getId() == member.getId()) {
-	        session.setAttribute("loginMember", member);
-	    }
-		
-		// 분기 처리 : 마이페이지 수정 -> 마이페이지로
-		if ("mypage".equals(from)) {
-			return "redirect:/member/mypage";
-		}
-		
-		
-		// 그 외(관리자 등)은 전체 회원 목록으로 이동
-		return "redirect:/member/members";
-	}
 	
 	
 	// 회원 탈퇴 (하드삭제x 소프트삭제o 사용자가 마음 돌리거나 법적으로 특정 기간동안 보관해야함.)

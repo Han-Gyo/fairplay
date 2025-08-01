@@ -13,6 +13,9 @@ public class WebConfig implements WebMvcConfigurer {
         // ✅ 최종 경로는 /upload/** → C:/upload/ 에서 파일 찾음
         registry.addResourceHandler("/upload/**")
                 .addResourceLocations("file:///C:/upload/");
+        
+        registry.addResourceHandler("/upload/profile/**")
+        .addResourceLocations("file:///C:/upload/profile/");
 
         // ✅ 나머지는 그대로 유지
         registry.addResourceHandler("/resources/**")

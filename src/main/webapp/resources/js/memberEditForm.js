@@ -95,4 +95,37 @@ document.addEventListener('DOMContentLoaded', function () {
                 resultDiv.style.color = "gray";
             });
     });
+	
+	// 프사 미리보기 기능	
+    const fileInput = document.getElementById('profileImageFile');
+    const previewImg = document.getElementById('profilePreview');
+
+    if (fileInput && previewImg) {
+        fileInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                previewImg.src = URL.createObjectURL(file);
+            }
+        });
+    }
+
+	// 기본 이미지 버튼 처리
+	const resetBtn = document.getElementById('resetImageBtn');
+	const resetInput = document.getElementById('resetProfileImage');
+
+	if (resetBtn && previewImg && resetInput) {
+	    resetBtn.addEventListener('click', function () {
+	        const defaultSrc = contextPath + '/resources/img/default-profile.png';
+	        previewImg.src = defaultSrc;
+
+	        // 서버로 기본 이미지로 초기화 요청 의사 전달
+	        resetInput.value = 'true';
+
+	        // 선택된 파일 초기화
+	        if (fileInput) {
+	            fileInput.value = ''; // 파일 input 리셋
+	        }
+	    });
+	}
+
 });

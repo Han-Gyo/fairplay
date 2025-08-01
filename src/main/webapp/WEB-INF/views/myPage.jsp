@@ -32,7 +32,7 @@
                  onclick="showImageModal(this.src)" />
           </c:when>
           <c:otherwise>
-            <img src="${pageContext.request.contextPath}/resources/images/default_profile.png"
+            <img src="${pageContext.request.contextPath}/resources/img/default-profile.png"
                  alt="기본 프로필 이미지" class="profile-img"
                  onclick="showImageModal(this.src)" />
           </c:otherwise>
