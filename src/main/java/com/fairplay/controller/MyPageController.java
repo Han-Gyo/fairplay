@@ -64,6 +64,9 @@ public class MyPageController {
 			             @RequestParam(required = false) MultipartFile profileImageFile,
 			             HttpServletRequest request,
 			             HttpSession session) {
+ 		
+ 		// 최종 저장할 프사 가지고 있는지 확인 로그 찍어보기
+ 		System.out.println("최종 저장할 프로필 이미지 파일명: " + member.getProfileImage());
 
 		// 전화번호 합치기
 		String phone = request.getParameter("phone1") + "-" +
@@ -79,16 +82,25 @@ public class MyPageController {
 		
 		// 프로필 이미지 처리
 		if ("true".equals(resetProfileImage)) {
-		// 기본 이미지로 초기화
-		member.setProfileImage(null); // DB에 null 저장해서 기본이미지로 fallback
+		    // 🔄 기본 이미지로 초기화 (null 저장하면 JSP에서 404 발생 가능 → 기본 이미지 파일명으로 대체)
+		    member.setProfileImage("default_profile.png"); 
 		} else if (profileImageFile != null && !profileImageFile.isEmpty()) {
-		// 새로운 이미지 업로드
-		String fileName = fileUploadUtil.saveFile(profileImageFile);
-		member.setProfileImage(fileName);
+		    // 📦 새로운 이미지 업로드 (파일명 정제 및 실패 대비)
+		    String fileName = fileUploadUtil.saveFile(profileImageFile);
+		    
+		    if (fileName != null) {
+		        member.setProfileImage(fileName); // ✅ 새 이미지 성공 시 저장
+		    } else {
+		        System.out.println("❌ 파일 저장 실패로 기존 이미지 유지");
+		        String currentImage = memberService.findById(member.getId()).getProfileImage();
+		        member.setProfileImage(currentImage); // ⛑ 실패 시 기존 이미지 유지
+		    }
 		} else {
-		// 아무것도 안 바꾼 경우 → 기존 이미지 유지
-		member.setProfileImage(loginUser.getProfileImage());
+		    // 🔄 아무것도 업로드 안 했을 때 → 기존 이미지 유지
+		    String currentImage = memberService.findById(member.getId()).getProfileImage();
+		    member.setProfileImage(currentImage);
 		}
+
 		
 		// DB 업데이트
 		memberService.update(member);

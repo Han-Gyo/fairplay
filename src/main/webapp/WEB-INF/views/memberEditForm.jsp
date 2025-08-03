@@ -48,25 +48,25 @@
 				
 				    <div class="mb-2">
 				        <c:choose>
-				            <c:when test="${empty member.profileImage}">
-				                <!-- 기본 이미지 경로 -->
-				                <img id="profilePreview" 
-				                     src="${pageContext.request.contextPath}/resources/img/default-profile.png"
-				                     alt="기본 프로필 이미지" 
-				                     width="120" class="rounded-circle border shadow-sm" />
-				            </c:when>
-				            <c:otherwise>
-				                <!-- 업로드된 사용자 이미지 -->
-				                <img id="profilePreview" 
-								     src="${pageContext.request.contextPath}/upload/profile/${member.profileImage}?v=${System.currentTimeMillis()}" 
-								     alt="프로필 이미지"
-				                     width="120" class="rounded-circle border shadow-sm" />
-				            </c:otherwise>
-				        </c:choose>
+						    <c:when test="${empty member.profileImage or member.profileImage eq 'default_profile.png'}">
+						        <!-- ✅ 기본 이미지 출력 -->
+						        <img id="profilePreview" 
+						             src="${pageContext.request.contextPath}/resources/img/default-profile.png"
+						             alt="기본 프로필 이미지" 
+						             width="120" class="rounded-circle border shadow-sm" />
+						    </c:when>
+						    <c:otherwise>
+						        <!-- ✅ 사용자 업로드 이미지 출력 -->
+						        <img id="profilePreview" 
+						             src="${pageContext.request.contextPath}/upload/profile/${member.profileImage}?v=${System.currentTimeMillis()}" 
+						             alt="프로필 이미지"
+						             width="120" class="rounded-circle border shadow-sm" />
+						    </c:otherwise>
+						</c:choose>
 				    </div>
 				
 				    <!-- 이미지 업로드 input -->
-				    <input type="file" class="form-control" name="profileImageFile" accept="image/*" />
+				    <input type="file" class="form-control" name="profileImageFile" id="profileImageFile" accept="image/*" />
 				</div>
 				
 				<!-- 🔘 기본 이미지로 초기화 버튼 -->

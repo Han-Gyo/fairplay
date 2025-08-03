@@ -10,26 +10,32 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class FileUploadUtil {
 
-    // 파일이 저장될 절대 경로
-    private final String uploadPath = "C:/upload/";
+    // 프로필 이미지 저장 경로
+    private final String uploadPath = "C:/upload/profile/";
 
-    // 실제 파일 저장 및 이름 반환
+    // 실제 파일 저장 및 새 파일명 반환
     public String saveFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
+            System.out.println("❌ 파일이 비어 있음");
             return null;
         }
 
         try {
+            // 🔸 파일명 정제 (한글, 특수문자 제거 → URL 오류 방지)
             String originalFileName = file.getOriginalFilename();
+            String safeFileName = originalFileName.replaceAll("[^a-zA-Z0-9.]", "_");
+
             String uuid = UUID.randomUUID().toString();
-            String newFileName = uuid + "_" + originalFileName;
+            String newFileName = uuid + "_" + safeFileName;
 
             File destination = new File(uploadPath + newFileName);
             file.transferTo(destination);
 
+            System.out.println("✅ 파일 저장 성공: " + newFileName);
             return newFileName;
         } catch (IOException e) {
-            throw new RuntimeException("파일 저장 중 오류 발생", e);
+            System.out.println("❌ 파일 저장 실패: " + e.getMessage());
+            return null;
         }
     }
 
