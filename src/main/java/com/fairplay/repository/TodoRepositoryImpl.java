@@ -1,7 +1,9 @@
 package com.fairplay.repository;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -12,6 +14,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.fairplay.domain.Todo;
+import com.fairplay.domain.TodoSimple;
 
 @Repository
 public class TodoRepositoryImpl implements TodoRepository{
@@ -127,6 +130,29 @@ public class TodoRepositoryImpl implements TodoRepository{
 	public List<Todo> findNotDone(int memberId) {
 		String sql = "SELECT * FROM todo WHERE assigned_to = ? AND completed = false";
 		return template.query(sql, todoRowMapper, memberId);
+	}
+
+	@Override
+	public List<TodoSimple> findTodosByDateAndMember(LocalDate date, int memberId) {
+	    String sql = """
+	        SELECT t.id, t.title, m.nickname
+	        FROM todo t
+	        JOIN member m ON t.assigned_to = m.id
+	        WHERE DATE(t.due_date) = ?
+	          AND t.group_id IN (
+	              SELECT gm.group_id FROM group_member gm WHERE gm.member_id = ?
+	          )
+	    """;
+
+	    return template.query(sql,
+	        (rs, rowNum) -> new TodoSimple(
+	            rs.getInt("id"),
+	            rs.getString("title"),
+	            rs.getString("nickname")
+	        ),
+	        Date.valueOf(date),
+	        memberId
+	    );
 	}
 	
 }

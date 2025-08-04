@@ -6,7 +6,7 @@
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js'></script>
-
+<script src="${pageContext.request.contextPath}/resources/js/calendarModal.js"></script>
 
 <style>
     .navbar {
@@ -238,69 +238,70 @@
 </div>
 
 <!-- 모달 영역 추가 -->
+<!-- ✅ 단 하나의 calendarModal -->
 <div id="calendarModal"
      style="display: none; position: fixed; z-index: 2000;
             top: 0; left: 0; width: 100%; height: 100%;
             overflow: hidden;
             background-color: rgba(0,0,0,0.5);">
-  <div style="background: white; width: 70%; height: 70%;
-              margin: 40px auto; padding: 20px;
-              position: relative; border-radius: 12px;">
+  
+  <div style="
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    width: 80%; max-width: 1000px;
+    max-height: 90%;
+    overflow-y: auto;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.2);">
+    
+    <!-- ❌ 닫기 버튼 -->
     <span onclick="closeModal()"
           style="position:absolute; top:10px; right:20px;
                  font-size:20px; cursor:pointer;">❌</span>
-    <div id="calendar-full" style="height: 100%;"></div>
+
+    <!-- ✅ FullCalendar 본체 -->
+    <div id="calendar-full" style="height: 400px;"></div>
+
+    <!-- ✅ 날짜 클릭 시 todo 표시되는 영역 -->
+    <div style="margin-top: 30px;">
+      <h5>📋 <span class="modal-date">선택 날짜</span>의 할 일</h5>
+      <ul id="todoList" style="padding-left: 20px;"></ul>
+    </div>
+
+    <!-- ✅ 아래에 일정 등록 폼 들어올 예정 -->
+    <hr />
+    <div id="scheduleFormSection">
+      <h5>📝 일정 등록</h5>
+		  <form id="scheduleForm">
+		    <input type="hidden" name="date" id="schedule-date" />
+		
+		    <label>제목:
+		      <input type="text" name="title" required />
+		    </label><br/>
+		
+		    <label>메모:
+		      <input type="text" name="memo" />
+		    </label><br/>
+		
+		    <label>공개여부:
+		      <select name="visibility">
+		        <option value="private">🔒 개인일정</option>
+		        <option value="group">👥 그룹일정</option>
+		      </select>
+		    </label><br/>
+		
+		    <button type="submit">등록</button>
+		  </form>
+    </div>
+
   </div>
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-
-    // 전역 변수로 캘린더 저장
-    let fullCal = null;
-
-    window.openCalendarModal = function () {
-      document.getElementById('calendarModal').style.display = 'block';
-
-      // 모달 열릴 때 캘린더가 없으면 새로 생성
-      if (!fullCal) {
-        fullCal = new FullCalendar.Calendar(document.getElementById('calendar-full'), {
-        	locale: 'ko',
-        	titleFormat: { year: 'numeric', month: 'long' },  
-          initialView: 'dayGridMonth',
-          height: 600,
-          selectable: true,
-          editable: true,
-          headerToolbar: {
-            left: 'prev,next',
-            center: 'title',
-            right: 'today'
-          }
-        });
-        fullCal.render();
-      }
-    };
-
-    window.closeModal = function () {
-      document.getElementById('calendarModal').style.display = 'none';
-    };
-
-    // 날짜 클릭 시 강제로 이동하며 열기 (필요 시)
-    window.openModal = function (dateStr) {
-      openCalendarModal();
-      if (fullCal) {
-        fullCal.gotoDate(dateStr);
-      }
-    };
-
-    window.confirmLogout = function () {
-      if (confirm("정말 로그아웃 하시겠습니까?")) {
-        window.location.href = '${pageContext.request.contextPath}/member/logout';
-      }
-    };
-
-  });
+  const contextPath = "${pageContext.request.contextPath}";
 </script>
-
 </body>
 </html>

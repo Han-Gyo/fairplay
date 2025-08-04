@@ -1,7 +1,9 @@
 package com.fairplay.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import com.fairplay.domain.Todo;
+import com.fairplay.domain.TodoSimple;
 
 public interface TodoRepository {
 	// ✅ 기본 CRUD
@@ -20,4 +22,5 @@ public interface TodoRepository {
 	List<Todo> findByAssignedMember(int memberId);       	// 특정 사용자의 할 일 조회
 	List<Todo> findCompletedTodos();
 	List<Todo> findNotDone(int memberId);
+	List<TodoSimple> findTodosByDateAndMember(LocalDate date, int memberId);
 }
