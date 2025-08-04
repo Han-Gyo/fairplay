@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fairplay.domain.Member;
 import com.fairplay.enums.MemberStatus;
@@ -120,41 +121,43 @@ public class MyPageController {
 		}
     
     
- 	// 비밀번호 변경
-    @PostMapping("/changePw")
-    public String changePassword(@RequestParam String currentPassword,
-                                  @RequestParam String newPassword,
-                                  @RequestParam String confirmPassword,
-                                  HttpSession session,
-                                  Model model) {
+ 	// 비밀번호 변경    (model을 사용하면 리다이렉트에서는 무효가 되기 때문에 리다이렉트어트리뷰츠 사용)
+ 	@PostMapping("/changePw")
+ 	public String changePassword(@RequestParam String currentPassword,
+ 	                             @RequestParam String newPassword,
+ 	                             @RequestParam String confirmPassword,
+ 	                             HttpSession session,
+ 	                             RedirectAttributes redirectAttributes) {
 
-        // 🔐 세션에서 로그인된 사용자 가져오기
-        Member loginMember = (Member) session.getAttribute("loginMember");
+ 	    // 🔐 세션에서 로그인된 사용자 가져오기
+ 	    Member loginMember = (Member) session.getAttribute("loginMember");
 
-        if (loginMember == null) {
-            model.addAttribute("error", "로그인이 필요합니다.");
-            return "redirect:/member/login";
-        }
+ 	    if (loginMember == null) {
+ 	        redirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
+ 	        return "redirect:/member/login";
+ 	    }
 
-        // 🔐 현재 비밀번호가 일치하지 않을 경우
-        if (!memberService.checkPassword(loginMember.getId(), currentPassword)) {
-            model.addAttribute("error", "현재 비밀번호가 틀렸습니다.");
-            return "memberEditForm"; // 같은 뷰로 이동
-        }
+ 	    // 🔐 현재 비밀번호가 일치하지 않을 경우
+ 	    if (!memberService.checkPassword(loginMember.getId(), currentPassword)) {
+ 	        redirectAttributes.addFlashAttribute("error", "현재 비밀번호가 틀렸습니다.");
+ 	        return "redirect:/mypage/edit?id=" + loginMember.getId();
+ 	    }
 
-        // 🔐 새 비밀번호와 확인 비밀번호가 일치하지 않을 경우
-        if (!newPassword.equals(confirmPassword)) {
-            model.addAttribute("error", "새 비밀번호가 일치하지 않습니다.");
-            return "memberEditForm";
-        }
+ 	    // 🔐 새 비밀번호와 확인 비밀번호가 일치하지 않을 경우
+ 	    if (!newPassword.equals(confirmPassword)) {
+ 	        redirectAttributes.addFlashAttribute("error", "새 비밀번호가 일치하지 않습니다.");
+ 	        return "redirect:/mypage/edit?id=" + loginMember.getId();
+ 	    }
 
-        // 🔐 비밀번호 변경 실행
-        memberService.changePassword(loginMember.getId(), newPassword);
+ 	    // 🔐 비밀번호 변경 실행
+ 	    memberService.changePassword(loginMember.getId(), newPassword);
 
-        // ✅ 성공 메시지 전달
-        model.addAttribute("message", "비밀번호가 성공적으로 변경되었습니다.");
-        return "memberEditForm";
-    }
+ 	    // ✅ 성공 메시지 전달
+ 	    redirectAttributes.addFlashAttribute("message", "비밀번호가 성공적으로 변경되었습니다.");
+
+ 	    return "redirect:/member/edit?id=" + loginMember.getId();
+ 	}
+
     
     
     // 마이페이지에서 닉네임 중복 검사

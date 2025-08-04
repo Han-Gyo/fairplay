@@ -103,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (fileInput && previewImg) {
         fileInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
+			console.log("선택된 파일:", file); // 로그 찍어보기
             if (file) {
                 previewImg.src = URL.createObjectURL(file);
             }
@@ -127,5 +128,24 @@ document.addEventListener('DOMContentLoaded', function () {
 	        }
 	    });
 	}
+	
+	// 🔍 프사 클릭 시 확대 모달 띄우기
+	const imageModal = document.getElementById('imageModal');
+	const modalImage = document.getElementById('modalImage');
+
+	if (previewImg && imageModal && modalImage) {
+	    previewImg.addEventListener('click', function () {
+	        if (previewImg.src) {
+	            modalImage.src = previewImg.src;
+	            imageModal.style.display = 'flex';
+	        }
+	    });
+
+	    imageModal.addEventListener('click', function () {
+	        imageModal.style.display = 'none';
+	        modalImage.src = ''; // 모달 닫을 때 이미지도 초기화
+	    });
+	}
+
 
 });
