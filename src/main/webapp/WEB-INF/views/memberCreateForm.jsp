@@ -90,11 +90,6 @@
 	    <input type="text" name="phone3" maxlength="4" pattern="\d{4}" required />
 	</div>
 
-    <label for="status">계정 상태</label>
-    <select name="status">
-        <option value="ACTIVE">활성</option>
-        <option value="INACTIVE">휴면</option>
-    </select>
 
     <button type="submit" class="submit-btn">가입하기</button>
 </form>

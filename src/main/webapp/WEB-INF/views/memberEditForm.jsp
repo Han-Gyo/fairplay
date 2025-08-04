@@ -102,10 +102,22 @@
 				</div>
 
 			
-			    <div class="mb-3">
-			        <label for="address" class="form-label">주소</label>
-			        <input type="text" class="form-control" id="address" name="address" value="${member.address}">
-			    </div>
+			    <!-- ✅ 주소 검색 필드 -->
+				<div class="mb-3">
+				    <label for="address" class="form-label">주소</label>
+				    
+				    <div class="input-group mb-2">
+				        <input type="text" id="postcode" class="form-control" placeholder="우편번호" readonly style="max-width:150px;">
+				        <button type="button" class="btn btn-outline-primary" onclick="execDaumPostcode()">주소 검색</button>
+				    </div>
+				    
+				    <input type="text" id="roadAddress" class="form-control mb-2" placeholder="도로명 주소" readonly>
+				    <input type="text" id="detailAddress" class="form-control" placeholder="상세 주소">
+				
+				    <!-- 최종적으로 서버에 전송될 통합 주소 -->
+				    <input type="hidden" id="address" name="address" value="${member.address}" />
+				</div>
+
 			
 			    
 			    <!-- 🔒 status는 수정은 불가하지만 서버로 넘겨야 함 -->
@@ -171,6 +183,10 @@
          style="max-width:90%; max-height:90%; border:4px solid white;
                 border-radius:1rem; box-shadow:0 0 10px black;" />
 </div>
+
+<!-- ✅ Daum 주소 API 로딩 (JSP에만 포함해야 함!) -->
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
 
 </body>
 </html>

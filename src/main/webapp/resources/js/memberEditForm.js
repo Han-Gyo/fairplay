@@ -147,5 +147,39 @@ document.addEventListener('DOMContentLoaded', function () {
 	    });
 	}
 
-
 });
+
+
+
+// 📍 주소 검색 API 실행 함수
+function execDaumPostcode() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            const roadAddr = data.roadAddress;
+            const zonecode = data.zonecode;
+
+            document.getElementById('postcode').value = zonecode;
+            document.getElementById('roadAddress').value = roadAddr;
+            document.getElementById('detailAddress').focus();
+
+            document.getElementById('address').value = `(${zonecode}) ${roadAddr}`;
+        }
+    }).open();
+}
+
+// 📍 상세주소 입력 시 전체 주소 갱신
+document.addEventListener('DOMContentLoaded', function () {
+    const detailInput = document.getElementById('detailAddress');
+    const roadInput = document.getElementById('roadAddress');
+    const zoneInput = document.getElementById('postcode');
+    const fullInput = document.getElementById('address');
+
+    if (detailInput && roadInput && zoneInput && fullInput) {
+        detailInput.addEventListener('input', function () {
+            fullInput.value = `(${zoneInput.value}) ${roadInput.value} ${detailInput.value}`;
+        });
+    }
+});
+
+
+
