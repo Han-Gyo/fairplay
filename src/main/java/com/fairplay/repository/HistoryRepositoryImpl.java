@@ -251,24 +251,29 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	    System.out.println("    ▶ groupId: " + groupId);
 	    System.out.println("    ▶ yearMonth: " + yearMonth);
 	    
-		String sql = "SELECT " +
-	            "t.group_id, " +
-	            "DATE_FORMAT(h.completed_at, '%Y-%m'), " +  // alias 제거
-	            "SUM(t.difficulty_point) " +
-	            "FROM history h " +
-	            "JOIN todo t ON h.todo_id = t.id " +
-	            "WHERE t.group_id = ? " +
-	            "AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
-	            "GROUP BY t.group_id, DATE_FORMAT(h.completed_at, '%Y-%m')"; // alias 안씀
+	    String sql = "SELECT " +
+	    	    "t.group_id, " +
+	    	    "g.name, " +  // ✅ group name 추가
+	    	    "DATE_FORMAT(h.completed_at, '%Y-%m'), " +
+	    	    "SUM(t.difficulty_point) " +
+	    	    "FROM history h " +
+	    	    "JOIN todo t ON h.todo_id = t.id " +
+	    	    "JOIN `group` g ON t.group_id = g.id " + // ✅ group 조인
+	    	    "WHERE t.group_id = ? " +
+	    	    "AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
+	    	    "GROUP BY t.group_id, g.name, DATE_FORMAT(h.completed_at, '%Y-%m')";
+
 
 	    return jdbcTemplate.query(sql, new Object[]{groupId, yearMonth}, new RowMapper<GroupMonthlyScore>() {
 	        @Override
 	        public GroupMonthlyScore mapRow(ResultSet rs, int rowNum) throws SQLException {
-	            return new GroupMonthlyScore(
-	                rs.getInt(1),        // group_id
-	                rs.getString(2),     // yearMonth (DATE_FORMAT 결과)
-	                rs.getInt(3)         // total_score
-	            );
+	        	return new GroupMonthlyScore(
+	        		    rs.getInt(1),        // group_id
+	        		    rs.getString(2),     // ✅ group_name ← 주석 수정
+	        		    rs.getString(3),     // ✅ year_month
+	        		    rs.getInt(4)         // ✅ total_score
+	        		);
+
 	        }
 	    });
 	}

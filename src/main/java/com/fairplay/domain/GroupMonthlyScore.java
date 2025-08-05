@@ -2,14 +2,16 @@ package com.fairplay.domain;
 
 public class GroupMonthlyScore {
 	private Integer groupId;		// 그룹ID
+	private String groupName;		// 그룹명 (시각화용 라벨 필드)
 	private String yearMonth;		// 년-월 
 	private Integer totalScore;		// 해당 월의 총점
 	
 	public GroupMonthlyScore() {}
 	
-	public GroupMonthlyScore(Integer groupId, String yearMonth, Integer totalScore) {
+	public GroupMonthlyScore(Integer groupId, String groupName, String yearMonth, Integer totalScore) {
 		super();
 		this.groupId = groupId;
+		this.groupName = groupName;
 		this.yearMonth = yearMonth;
 		this.totalScore = totalScore;
 	}
@@ -31,6 +33,13 @@ public class GroupMonthlyScore {
 	public void setTotalScore(Integer totalScore) {
 		this.totalScore = totalScore;
 	}
+	public String getGroupName() {
+		return groupName;
+	}
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+	
 	@Override
 	public String toString() {
 		return "GroupMonthlyScore [groupId=" + groupId + ", yearMonth=" + yearMonth + ", totalScore=" + totalScore

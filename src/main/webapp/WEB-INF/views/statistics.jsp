@@ -23,6 +23,10 @@
 
         <!-- 차트 영역 -->
         <canvas id="scoreChart" width="800" height="400"></canvas>
+        
+        <!-- ⬇ 그룹 총점 차트 추가 -->
+		<h3 style="margin-top: 40px;">이번 달 우리 그룹 총점</h3>
+		<canvas id="groupTotalChart" width="600" height="300"></canvas>
     </div>
 
     <!-- JS -->
