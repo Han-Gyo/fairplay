@@ -1,5 +1,7 @@
 package com.fairplay.repository;
 
-public class ScheduleRepository {
+import com.fairplay.domain.Schedule;
 
+public interface ScheduleRepository {
+	void insert(Schedule schedule);
 }

@@ -2,10 +2,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-<!-- FullCalendar Core -->
+
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> <!-- jQuery 먼저 -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> <!-- bootstrap 미리 -->
+
 <script src="${pageContext.request.contextPath}/resources/js/calendarModal.js"></script>
 
 <style>
@@ -71,16 +76,17 @@
     }
 
     .dropdown-content a:hover {
-        background-color: #f1f1f1;
-        color: #4a90e2;
-        font-weight: bold;
+       background-color: #f1f1f1;
+       color: #4a90e2;
+       font-weight: bold;
     }
 
     .dropdown:hover .dropdown-content {
-        display: block;
+       display: block;
     }
     body {
-        padding-top: 50px; /* 네비 높이만큼 여백 주기 */
+    	font-family: 'Segoe UI', sans-serif;
+      padding-top: 50px; /* 네비 높이만큼 여백 주기 */
     }
     .fc-header-toolbar {
 		  margin-top: 60px !important;  /* ← 여백 충분히 줘서 X랑 안 겹치게 */
@@ -95,66 +101,72 @@
 		  box-shadow: 0 0 12px rgba(0,0,0,0.15);
 		}
 		/* 이전/다음/오늘 버튼 */
-.fc .fc-button {
-  background-color: #ffb6c1;     /* 연핑크 */
-  border: none;
-  color: white;
-  font-weight: bold;
-  border-radius: 8px;
-}
-
-.fc .fc-button:hover {
-  background-color: #ff8da7;     /* 좀 더 진한 핑크 */
-}
-
-/* 활성화된 view 버튼 (month/week 등) */
-.fc .fc-button.fc-button-active {
-  background-color: #ff69b4;     /* 진핑크 하이라이트 */
-  border: none;
-}
-.fc-toolbar-title {
-  color: #e75480;     /* 예쁜 진한 연핑크 계열 */
-  font-size: 24px;
-  font-weight: bold;
-}
-.fc-daygrid-day:hover {
-  background-color: #ffe4e9;  /* 셀 hover 시 연핑크 강조 */
-}
-
-.fc-day-today {
-  background-color: #ffeef2 !important;  /* 오늘 날짜 배경 */
-  border: 1px solid #ffb6c1 !important;
-}
-.calendar-toggle {
-  position: fixed;
-  top: 60px; /* 네비바 바로 아래로 */
-  right: 20px;
-  z-index: 1500;
-  font-weight: bold;
-  cursor: pointer;
-  align-items: center; 
-  text-align: center; 
-}
-
-.calendar-toggle a {
-  border: none;
-  text-decoration: none;
-  outline: none;
-  font-size: 20px;
-}
-.calendar-toggle p {
-	font-size: 12px;
-	margin-top: -3px;
-	color: black;
-}
-.calendar-toggle p:hover {
-	color: darkgray;
-}
-#calendar-full {
-  width: 100%;
-  height: 100%;
-  min-height: 500px;
-}
+	.fc .fc-button {
+	  background-color: #ffb6c1;     /* 연핑크 */
+	  border: none;
+	  color: white;
+	  font-weight: bold;
+	  border-radius: 8px;
+	}
+	
+	.fc .fc-button:hover {
+	  background-color: #ff8da7;     /* 좀 더 진한 핑크 */
+	}
+	
+	/* 활성화된 view 버튼 (month/week 등) */
+	.fc .fc-button.fc-button-active {
+	  background-color: #ff69b4;     /* 진핑크 하이라이트 */
+	  border: none;
+	}
+	.fc-toolbar-title {
+	  color: #e75480;     /* 예쁜 진한 연핑크 계열 */
+	  font-size: 24px;
+	  font-weight: bold;
+	}
+	.fc-daygrid-day:hover {
+	  background-color: #ffe4e9;  /* 셀 hover 시 연핑크 강조 */
+	}
+	
+	.fc-day-today {
+	  background-color: #ffeef2 !important;  /* 오늘 날짜 배경 */
+	  border: 1px solid #ffb6c1 !important;
+	}
+	.calendar-toggle {
+	  position: fixed;
+	  top: 60px; /* 네비바 바로 아래로 */
+	  right: 20px;
+	  z-index: 1500;
+	  font-weight: bold;
+	  cursor: pointer;
+	  align-items: center; 
+	  text-align: center; 
+	}
+	
+	.calendar-toggle a {
+	  border: none;
+	  text-decoration: none;
+	  outline: none;
+	  font-size: 20px;
+	}
+	.calendar-toggle p {
+		font-size: 12px;
+		margin-top: -3px;
+		color: black;
+	}
+	.calendar-toggle p:hover {
+		color: darkgray;
+	}
+	#calendar-full {
+	  width: 100%;
+	  height: 100%;
+	  min-height: 500px;
+	}
+	#scheduleModal {
+  z-index: 3000 !important;
+	}
+	.modal-backdrop {
+	  z-index: 2500 !important;
+	}
 </style>
 
 </head>
@@ -201,7 +213,7 @@
             </div>
         </div>
         
-        <!-- 📊 점수 드롭다운 -->
+        <!-- 점수 드롭다운 -->
 				<div class="dropdown">
 				    <a href="javascript:void(0);">📊 점수</a>
 				    <div class="dropdown-content">
@@ -234,11 +246,11 @@
 </div>
 
 <div class="calendar-toggle">
-  <a href="javascript:void(0);" onclick="openCalendarModal()">📅<p>Calender</p></a>
+  <a href="javascript:void(0);" onclick="openCalendarModal()">📅<p>Calendar</p></a>
 </div>
 
 <!-- 모달 영역 추가 -->
-<!-- ✅ 단 하나의 calendarModal -->
+<!-- 단 하나의 calendarModal -->
 <div id="calendarModal"
      style="display: none; position: fixed; z-index: 2000;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -257,51 +269,71 @@
     border-radius: 20px;
     box-shadow: 0 0 12px rgba(0,0,0,0.2);">
     
-    <!-- ❌ 닫기 버튼 -->
+    <!-- 닫기 버튼 -->
     <span onclick="closeModal()"
           style="position:absolute; top:10px; right:20px;
                  font-size:20px; cursor:pointer;">❌</span>
 
-    <!-- ✅ FullCalendar 본체 -->
+    <!-- FullCalendar 본체 -->
     <div id="calendar-full" style="height: 400px;"></div>
 
-    <!-- ✅ 날짜 클릭 시 todo 표시되는 영역 -->
+    <!-- 날짜 클릭 시 todo 표시되는 영역 -->
     <div style="margin-top: 30px;">
       <h5>📋 <span class="modal-date">선택 날짜</span>의 할 일</h5>
       <ul id="todoList" style="padding-left: 20px;"></ul>
     </div>
 
-    <!-- ✅ 아래에 일정 등록 폼 들어올 예정 -->
+    <!-- 아래에 일정 등록 폼 들어올 예정 -->
     <hr />
-    <div id="scheduleFormSection">
-      <h5>📝 일정 등록</h5>
-		  <form id="scheduleForm">
-		    <input type="hidden" name="date" id="schedule-date" />
-		
-		    <label>제목:
-		      <input type="text" name="title" required />
-		    </label><br/>
-		
-		    <label>메모:
-		      <input type="text" name="memo" />
-		    </label><br/>
-		
-		    <label>공개여부:
-		      <select name="visibility">
-		        <option value="private">🔒 개인일정</option>
-		        <option value="group">👥 그룹일정</option>
-		      </select>
-		    </label><br/>
-		
-		    <button type="submit">등록</button>
-		  </form>
-    </div>
+  </div>
+</div>
 
+<div id="calendar"></div>
+
+<!-- 일정 등록 모달 -->
+<div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" id="scheduleForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="scheduleModalLabel">📌 일정 등록</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+        </div>
+        <div class="modal-body">
+          <!-- 날짜를 숨겨서 넘김 -->
+          <input type="hidden" name="date" id="selectedDate" />
+
+          <div class="mb-3">
+            <label class="form-label">제목</label>
+            <input type="text" class="form-control" name="title" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">메모</label>
+            <textarea class="form-control" name="memo" rows="3"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">공개 여부</label>
+            <select class="form-select" name="visibility">
+              <option value="PRIVATE">🔒 개인일정</option>
+              <option value="GROUP">👥 그룹공유</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">등록</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
 <script>
   const contextPath = "${pageContext.request.contextPath}";
+  console.log(contextPath);
 </script>
 </body>
 </html>

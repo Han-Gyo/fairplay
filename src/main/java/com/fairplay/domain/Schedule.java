@@ -1,53 +1,87 @@
 package com.fairplay.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Schedule {
-	private int member_id;
-	private int group_id;
+	private int memberId;
+	private int groupId;
 	private String title;
-	private LocalDate date;
+	private LocalDateTime startDate; 
+    private LocalDateTime endDate;
 	private String visibility;
+	private String memo;
 	
 	public Schedule() {}
-	
-	public Schedule(int member_id, int group_id, String title, LocalDate date, String visibility) {
+
+
+
+	public Schedule(int memberId, int groupId, String title, LocalDateTime startDate, LocalDateTime endDate,
+			String visibility, String memo) {
 		super();
-		this.member_id = member_id;
-		this.group_id = group_id;
+		this.memberId = memberId;
+		this.groupId = groupId;
 		this.title = title;
-		this.date = date;
+		this.startDate = startDate;
+		this.endDate = endDate;
 		this.visibility = visibility;
+		this.memo = memo;
 	}
-	
-	public int getMember_id() {
-		return member_id;
+
+
+
+	public int getMemberId() {
+		return memberId;
 	}
-	public void setMember_id(int member_id) {
-		this.member_id = member_id;
+
+	public void setMemberId(int memberId) {
+		this.memberId = memberId;
 	}
-	public int getGroup_id() {
-		return group_id;
+
+	public int getGroupId() {
+		return groupId;
 	}
-	public void setGroup_id(int group_id) {
-		this.group_id = group_id;
+
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
 	}
+
 	public String getTitle() {
 		return title;
 	}
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public LocalDate getDate() {
-		return date;
+
+	public LocalDateTime getStartDate() {
+		return startDate;
 	}
-	public void setDate(LocalDate date) {
-		this.date = date;
+
+	public void setStartDate(LocalDateTime startDate) {
+		this.startDate = startDate;
 	}
+
+	public LocalDateTime getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDateTime endDate) {
+		this.endDate = endDate;
+	}
+
 	public String getVisibility() {
 		return visibility;
 	}
+
 	public void setVisibility(String visibility) {
 		this.visibility = visibility;
+	}
+
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
 	}
 }

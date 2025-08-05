@@ -19,27 +19,30 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 				dateClick: function (info) {
 				  const clickedDate = info.dateStr;
-					document.querySelector('#schedule-date').value = clickedDate;
 
-				  // 모달 내부에 날짜 표시할 .modal-date 요소가 있다면 여기에 날짜 삽입
+				  // Bootstrap 모달에 있는 hidden input에 날짜 전달
+				  document.getElementById('selectedDate').value = clickedDate;
+
+				  // 모달 열기
+				  const scheduleModal = new bootstrap.Modal(document.getElementById('scheduleModal'));
+				  scheduleModal.show();
+
+				  // 할 일 조회 (그대로 유지)
 				  const dateSpan = document.querySelector('#calendarModal .modal-date');
 				  if (dateSpan) {
 				    dateSpan.textContent = clickedDate;
 				  }
 
-				  // ✅ Ajax로 할 일 조회
 				  $.ajax({
 				    url: '/calendar/todo-list',
 				    method: 'GET',
 				    data: { date: clickedDate },
 				    success: function (todos) {
-				      console.log("✅ 불러온 할 일 목록:", todos);
-
 				      const list = document.getElementById("todoList");
-				      list.innerHTML = ""; // 초기화
+				      list.innerHTML = "";
 
 				      if (!todos || todos.length === 0) {
-				        list.innerHTML = "<li>📭 등록된 할 일이 없어요!</li>";
+				        list.innerHTML = "<li>등록된 할 일이 없어요!</li>";
 				        return;
 				      }
 
@@ -47,17 +50,18 @@ document.addEventListener('DOMContentLoaded', function () {
 				        const li = document.createElement("li");
 				        li.innerHTML = `
 				          <a href="${contextPath}/todos/myTodos?date=${clickedDate}">
-				            🧹 ${todo.title} (${todo.nickname})
+				            ${todo.title} (${todo.nickname})
 				          </a>
 				        `;
 				        list.appendChild(li);
 				      });
 				    },
 				    error: function () {
-				      alert("❌ 할 일 조회 실패!");
+				      alert("할 일 조회 실패!");
 				    }
 				  });
 				}
+
       });
 
       fullCal.render();
@@ -74,29 +78,44 @@ document.addEventListener('DOMContentLoaded', function () {
       fullCal.gotoDate(dateStr);
     }
   };
-	
-	$('#scheduleForm').on('submit', function(e) {
-	  e.preventDefault(); // 기본 제출 막기
-
-	  const formData = $(this).serialize(); // 폼 데이터
-
-	  $.ajax({
-	    url: contextPath + '/schedule/create',
-	    method: 'POST',
-	    data: formData,
-	    success: function() {
-	      alert("일정 등록 완료!");
-	      $('#scheduleForm')[0].reset();
-	    },
-	    error: function() {
-	      alert("등록 실패 ㅠㅠ");
-	    }
-	  });
-	});
 
   window.confirmLogout = function () {
     if (confirm("정말 로그아웃 하시겠습니까?")) {
       window.location.href = contextPath + '/member/logout';
     }
   };
+});
+
+// 일정 등록 처리
+$(document).on("submit", "#scheduleForm", function (e) {
+  e.preventDefault();
+
+  const data = {
+    title: $("input[name='title']").val(),
+    startDate: $("#selectedDate").val() + "T00:00:00",
+    endDate: $("#selectedDate").val() + "T23:59:59",
+    visibility: $("select[name='visibility']").val(),
+    memo: $("textarea[name='memo']").val(),
+    groupId: 1 
+  };
+
+  $.ajax({
+    type: "POST",
+    url: contextPath + "/schedule/create",
+    contentType: "application/json",
+    data: JSON.stringify(data),
+    success: function (res) {
+      if (res === "success") {
+        alert("일정이 등록되었습니다!");
+        const modalInstance = bootstrap.Modal.getInstance(document.getElementById('scheduleModal'));
+        modalInstance.hide(); // 모달 닫기
+        location.reload();
+      } else {
+        alert("등록 실패: " + res);
+      }
+    },
+    error: function () {
+      alert("서버 오류!");
+    }
+  });
 });
