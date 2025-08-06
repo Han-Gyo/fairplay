@@ -2,11 +2,19 @@ package com.fairplay.domain;
 
 import java.time.LocalDateTime;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class Schedule {
 	private int memberId;
 	private int groupId;
 	private String title;
-	private LocalDateTime startDate; 
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) // for form data
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")      // for JSON
+	private LocalDateTime startDate;
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) // for form data
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")      // for JSON
     private LocalDateTime endDate;
 	private String visibility;
 	private String memo;
@@ -74,7 +82,7 @@ public class Schedule {
 	}
 
 	public void setVisibility(String visibility) {
-		this.visibility = visibility;
+		this.visibility = visibility.toLowerCase();
 	}
 
 	public String getMemo() {

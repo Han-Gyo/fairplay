@@ -6,10 +6,10 @@
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> <!-- jQuery 먼저 -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js'></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> <!-- bootstrap 미리 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="${pageContext.request.contextPath}/resources/js/calendarModal.js"></script>
 
@@ -85,7 +85,6 @@
        display: block;
     }
     body {
-    	font-family: 'Segoe UI', sans-serif;
       padding-top: 50px; /* 네비 높이만큼 여백 주기 */
     }
     .fc-header-toolbar {
@@ -93,80 +92,113 @@
 		}
 		#calendarModal {
 		  background-color: rgba(255, 192, 203, 0.2); /* 연핑크 반투명 */
+		  overflow: hidden;
 		}
 		#calendarModal .modal-content {
 		  background: #fff0f5; /* 연한 핑크톤 배경 */
 		  border-radius: 20px;
 		  padding: 30px;
 		  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+		  
+		  text-align: center;
+		  max-height: 80vh;
+		  overflow-y: auto;
+		  
+		  position: absolute;
+		  top: 50%;
+		  left: 50%;
+		  transform: translate(-50%, -50%);
 		}
 		/* 이전/다음/오늘 버튼 */
-	.fc .fc-button {
-	  background-color: #ffb6c1;     /* 연핑크 */
-	  border: none;
-	  color: white;
-	  font-weight: bold;
-	  border-radius: 8px;
+		.fc .fc-button {
+		  background-color: #ffb6c1;     /* 연핑크 */
+		  border: none;
+		  color: white;
+		  font-weight: bold;
+		  border-radius: 8px;
+		}
+		
+		.fc .fc-button:hover {
+		  background-color: #ff8da7;     /* 좀 더 진한 핑크 */
+		}
+		
+		/* 활성화된 view 버튼 (month/week 등) */
+		.fc .fc-button.fc-button-active {
+		  background-color: #ff69b4;     /* 진핑크 하이라이트 */
+		  border: none;
+		}
+		.fc-toolbar-title {
+		  color: #e75480;     /* 예쁜 진한 연핑크 계열 */
+		  font-size: 24px;
+		  font-weight: bold;
+		}
+		.fc-daygrid-day:hover {
+		  background-color: #ffe4e9;  /* 셀 hover 시 연핑크 강조 */
+		}
+		
+		.fc-day-today {
+		  background-color: #ffeef2 !important;  /* 오늘 날짜 배경 */
+		  border: 1px solid #ffb6c1 !important;
+		}
+		.calendar-toggle {
+		  position: fixed;
+		  top: 60px; /* 네비바 바로 아래로 */
+		  right: 20px;
+		  z-index: 1500;
+		  font-weight: bold;
+		  cursor: pointer;
+		  align-items: center; 
+		  text-align: center; 
+		}
+		
+		.calendar-toggle a {
+		  border: none;
+		  text-decoration: none;
+		  outline: none;
+		  font-size: 20px;
+		}
+		.calendar-toggle p {
+			font-size: 12px;
+			margin-top: -3px;
+			color: black;
+		}
+		.calendar-toggle p:hover {
+			color: darkgray;
+		}
+		#calendar-full {
+		  width: 100%;
+		  height: 100%;
+		  min-height: 500px;
+		}
+		#scheduleModal {
+	  z-index: 3000 !important;
+		}
+		.modal-backdrop {
+		  z-index: 2500 !important;
+		}
+		#todoList, #schedule-container {
+	  text-align: left;
+	  padding-left: 20px;
+	  margin: 0 auto;
+	  max-width: 600px;  /* 너무 넓지 않게 */
 	}
-	
-	.fc .fc-button:hover {
-	  background-color: #ff8da7;     /* 좀 더 진한 핑크 */
-	}
-	
-	/* 활성화된 view 버튼 (month/week 등) */
-	.fc .fc-button.fc-button-active {
-	  background-color: #ff69b4;     /* 진핑크 하이라이트 */
-	  border: none;
-	}
-	.fc-toolbar-title {
-	  color: #e75480;     /* 예쁜 진한 연핑크 계열 */
-	  font-size: 24px;
-	  font-weight: bold;
-	}
-	.fc-daygrid-day:hover {
-	  background-color: #ffe4e9;  /* 셀 hover 시 연핑크 강조 */
-	}
-	
-	.fc-day-today {
-	  background-color: #ffeef2 !important;  /* 오늘 날짜 배경 */
-	  border: 1px solid #ffb6c1 !important;
-	}
-	.calendar-toggle {
-	  position: fixed;
-	  top: 60px; /* 네비바 바로 아래로 */
-	  right: 20px;
-	  z-index: 1500;
-	  font-weight: bold;
-	  cursor: pointer;
-	  align-items: center; 
-	  text-align: center; 
-	}
-	
-	.calendar-toggle a {
-	  border: none;
-	  text-decoration: none;
-	  outline: none;
-	  font-size: 20px;
-	}
-	.calendar-toggle p {
-		font-size: 12px;
-		margin-top: -3px;
-		color: black;
-	}
-	.calendar-toggle p:hover {
-		color: darkgray;
-	}
-	#calendar-full {
-	  width: 100%;
-	  height: 100%;
-	  min-height: 500px;
-	}
-	#scheduleModal {
-  z-index: 3000 !important;
-	}
-	.modal-backdrop {
-	  z-index: 2500 !important;
-	}
+	.calendar-custom-modal {
+  background: #fff0f5;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+
+  text-align: center;
+  max-height: 80vh;
+  overflow-y: auto;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 1000px;
+}
 </style>
 
 </head>
@@ -257,7 +289,8 @@
             overflow: hidden;
             background-color: rgba(0,0,0,0.5);">
   
-  <div style="
+  <div class="modal-content calendar-custom-modal"
+  	style="
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
@@ -282,8 +315,11 @@
       <h5>📋 <span class="modal-date">선택 날짜</span>의 할 일</h5>
       <ul id="todoList" style="padding-left: 20px;"></ul>
     </div>
+    <div style="margin-top: 30px;">
+		  <h5>🗓 <span class="modal-date">선택 날짜</span>의 일정</h5>
+		  <div id="schedule-container" style="padding-left: 20px;"></div>
+		</div>
 
-    <!-- 아래에 일정 등록 폼 들어올 예정 -->
     <hr />
   </div>
 </div>

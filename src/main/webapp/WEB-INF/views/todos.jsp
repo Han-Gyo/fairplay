@@ -26,11 +26,11 @@
   </script>
 </c:if>
 	
-<div>
-  <a href="${pageContext.request.contextPath}/todos/create">
-  	<button>➕ 새 할 일 등록</button>
-  </a>
-</div>
+<form action="${pageContext.request.contextPath}/todos/create" method="get" style="display:inline;">
+  <input type="hidden" name="groupId" value="${group.id}">
+  <button type="submit">➕ 새 할 일 등록</button>
+</form>
+
 <div style="display: flex; justify-content: space-between; gap: 30px; margin-top: 20px;">
   
   <!-- ✅ 왼쪽: 미신청 할 일 -->

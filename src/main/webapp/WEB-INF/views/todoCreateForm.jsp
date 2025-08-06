@@ -51,7 +51,7 @@
 		</select>
   </div><br>
 
-  <button type="submit">✅ 할 일 등록</button>
+  <button type="submit">할 일 등록</button>
 </form>
 </body>
 </html>

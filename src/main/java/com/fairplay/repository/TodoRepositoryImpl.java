@@ -58,7 +58,7 @@ public class TodoRepositoryImpl implements TodoRepository{
 	@Override
 	public void insert(Todo todo) {
 	    String sql = "INSERT INTO todo (title, group_id, assigned_to, due_date, difficulty_point, completed, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-	    System.out.println("🧾 [DB 저장 전] status 확인: " + todo.getStatus());
+	    System.out.println("[DB 저장 전] status 확인: " + todo.getStatus());
 	    template.update(sql,
 	        todo.getTitle(),            // 제목
 	        todo.getGroup_id(),         // 그룹 ID
