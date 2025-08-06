@@ -79,6 +79,16 @@
         </c:choose>
     </div>
 
+	<!-- ✅ 그룹 총점 그래프 -->
+	<div class="mt-4">
+	    <h3>🏆 그룹 총 점수 그래프</h3>
+	    <input type="hidden" id="groupId" value="${group.id}" />
+	    <input type="hidden" id="yearMonth" value="${yearMonth}" />
+	    <div style="width: 50%; margin: 0 auto;">
+	        <canvas id="groupChart"></canvas>
+	    </div>
+	</div>
+
     <!-- ✅ 그룹 총 점수 출력 -->
     <c:forEach var="g" items="${groupScores}">
         <h3>${group.name} 그룹의 총 점수는 <strong>${g.totalScore}</strong>점 입니다.</h3>
@@ -100,7 +110,8 @@
     </div>
 
     <!-- JS 연결 -->
-    <script src="${pageContext.request.contextPath}/resources/js/statisticsChart.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/js/statisticsGroupChart.js"></script> <!-- 그룹 -->
+    <script src="${pageContext.request.contextPath}/resources/js/statisticsChart.js"></script>	<!-- 멤버 -->
 
 </body>
 </html>
