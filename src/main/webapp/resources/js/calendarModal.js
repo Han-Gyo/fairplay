@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', function () {
         selectable: true,
         editable: true,
         headerToolbar: {
-          left: 'prev,next',
-          center: 'title',
-          right: 'today'
+        left: 'prev,next',
+        center: 'title',
+        right: 'today'
         },
 				dateClick: function (info) {
 				  const clickedDate = info.dateStr;
@@ -33,60 +33,33 @@ document.addEventListener('DOMContentLoaded', function () {
 				    dateSpan.textContent = clickedDate;
 				  }
 
-					$.ajax({
-						url: contextPath + "/todos/calendar/todo-list",
-						method: "GET",
-						data: { date: clickedDate },
-						success: function (todos) {
-							console.log("할 일 조회 응답:", todos);
-							const list = document.getElementById("todoList");
-							list.innerHTML = "";
+				  $.ajax({
+				    url: '/calendar/todo-list',
+				    method: 'GET',
+				    data: { date: clickedDate },
+				    success: function (todos) {
+				      const list = document.getElementById("todoList");
+				      list.innerHTML = "";
 
-							if (!todos || todos.length === 0) {
-								list.innerHTML = "<li>할 일이 없어요!</li>";
-								return;
-							}
+				      if (!todos || todos.length === 0) {
+				        list.innerHTML = "<li>등록된 할 일이 없어요!</li>";
+				        return;
+				      }
 
-							todos.forEach(todo => {
-								const li = document.createElement("li");
-								li.innerHTML = `📌 ${todo.title}`;
-								list.appendChild(li);
-							});
-						},
-						error: function () {
-							alert("할 일 조회 실패!");
-						}
-					});
-
-					
-					// 일정(schedule) 불러오기
-					$.ajax({
-					  url: '/schedule/by-date',
-					  method: 'GET',
-					  data: { date: clickedDate },
-					  success: function (scheduleList) {
-							console.log("일정 응답:", scheduleList);
-					    let html = '';
-
-					    if (!scheduleList || scheduleList.length === 0) {
-					      html = "<div>등록된 일정이 없어요!</div>";
-					    } else {
-					      scheduleList.forEach(sch => {
-					        html += `
-					          <div class="schedule-item">
-					            <strong>${sch.title}</strong><br>
-					            메모: ${sch.memo ?? '없음'}<br>
-					            공개범위: ${sch.scope ?? '없음'}
-					          </div><hr>
-					        `;
-					      });
-					    }
-
-					    $('#schedule-container').html(html);
-					  }
-					});
-
-
+				      todos.forEach(todo => {
+				        const li = document.createElement("li");
+				        li.innerHTML = `
+				          <a href="${contextPath}/todos/myTodos?date=${clickedDate}">
+				            ${todo.title} (${todo.nickname})
+				          </a>
+				        `;
+				        list.appendChild(li);
+				      });
+				    },
+				    error: function () {
+				      alert("할 일 조회 실패!");
+				    }
+				  });
 				}
 
       });
