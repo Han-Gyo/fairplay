@@ -31,9 +31,30 @@ public class NeededItemRepositoryImpl implements NeededItemRepository {
             item.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
             item.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
             item.setWriterNickname(rs.getString("nickname"));
+            item.setMemo(rs.getString("memo"));
             return item;
         }
     };
+    
+    // nickname 없이 필요한 컬럼만 설정 (단건 조회 등)
+    private RowMapper<NeededItemDTO> itemRowMapperWithoutNickname = new RowMapper<>() {
+        @Override
+        public NeededItemDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            NeededItemDTO item = new NeededItemDTO();
+            item.setId(rs.getLong("id"));
+            item.setGroupId(rs.getLong("group_id"));
+            item.setItemName(rs.getString("item_name"));
+            item.setQuantity(rs.getInt("quantity"));
+            item.setAddedBy(rs.getLong("added_by"));
+            item.setPurchased(rs.getBoolean("is_purchased"));
+            item.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+            item.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+            item.setMemo(rs.getString("memo"));
+            return item;
+        }
+    };
+    
+    
 
     // 그룹별 물품 전체 조회
     @Override
@@ -52,28 +73,31 @@ public class NeededItemRepositoryImpl implements NeededItemRepository {
     @Override
     public NeededItemDTO findById(Long id) {
         String sql = "SELECT * FROM needed_item WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, neededItemRowMapper, id);
+        return jdbcTemplate.queryForObject(sql, itemRowMapperWithoutNickname, id); 
     }
+
 
     // 항목 등록
     @Override
     public int save(NeededItemDTO item) {
-        String sql = "INSERT INTO needed_item (group_id, item_name, quantity, added_by) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO needed_item (group_id, item_name, quantity, added_by, memo) VALUES (?, ?, ?, ?, ?)";
         return jdbcTemplate.update(sql,
                 item.getGroupId(),
                 item.getItemName(),
                 item.getQuantity(),
-                item.getAddedBy()
+                item.getAddedBy(),
+                item.getMemo()
         );
     }
 
     // 항목 수정
     @Override
     public int update(NeededItemDTO item) {
-        String sql = "UPDATE needed_item SET item_name = ?, quantity = ?, updated_at = NOW() WHERE id = ?";
+        String sql = "UPDATE needed_item SET item_name = ?, quantity = ?, memo = ?, updated_at = NOW() WHERE id = ?";
         return jdbcTemplate.update(sql,
                 item.getItemName(),
                 item.getQuantity(),
+                item.getMemo(),
                 item.getId()
         );
     }

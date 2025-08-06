@@ -20,7 +20,9 @@
 
     <!-- 등록 버튼 -->
     <div class="add-btn-wrap">
-        <a href="${pageContext.request.contextPath}/needed/add?groupId=${groupId}" class="btn-add">+ 새 물품 추가</a>
+        <a href="${pageContext.request.contextPath}/needed/add?groupId=${groupId}" class="btn btn-primary">
+		    ➕ 새 물품 추가
+		</a>
     </div>
 
     <!-- 목록 테이블 -->
@@ -31,6 +33,7 @@
                 <th>수량</th>
                 <th>구매</th>
                 <th>작성자</th>
+                <th>메모</th>
                 <th>관리</th>
             </tr>
         </thead>
@@ -46,6 +49,7 @@
                                ${item.purchased ? 'checked' : ''} />
                     </td>
                     <td>${item.writerNickname}</td>
+                    <td>${item.memo}</td>
                     <td>
                         <a href="${pageContext.request.contextPath}/needed/edit?id=${item.id}" class="btn-small">수정</a>
                         <form action="${pageContext.request.contextPath}/needed/delete" method="post" style="display:inline;">

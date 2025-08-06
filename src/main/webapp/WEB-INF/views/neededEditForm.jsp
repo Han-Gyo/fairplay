@@ -32,6 +32,12 @@
             <label for="quantity">수량</label>
             <input type="number" id="quantity" name="quantity" value="${item.quantity}" min="1" required />
         </div>
+        
+        <!-- 메모 추가 -->
+	    <div class="form-group">
+	        <label for="memo">메모</label>
+	        <textarea id="memo" name="memo" rows="4">${item.memo}</textarea>
+	    </div>
 
         <div class="form-btns">
             <button type="submit" class="btn-submit">수정</button>

@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fairplay.domain.Group;
 import com.fairplay.domain.Member;
 import com.fairplay.domain.NeededItemDTO;
+import com.fairplay.service.GroupMemberService;
 import com.fairplay.service.NeededItemService;
 
 @Controller
@@ -24,24 +26,59 @@ public class NeededItemController {
 
     @Autowired
     private NeededItemService neededItemService;
-
+    @Autowired
+    private GroupMemberService groupMemberService;
+    
     // [GET] 물품 목록 조회
     @GetMapping("/list")
-    public String list(@RequestParam("groupId") Long groupId, Model model) {
+    public String list(@RequestParam("groupId") Long groupId,
+                       Model model,
+                       HttpSession session) {
+
+        // 로그인 사용자 확인
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            model.addAttribute("error", "로그인이 필요합니다.");
+            return "redirect:/login";
+        }
+
+        // 그룹 멤버 여부 확인 
+        boolean isMember = groupMemberService.isGroupMember(groupId, (long) loginMember.getId());
+        if (!isMember) {
+            model.addAttribute("error", "해당 그룹의 멤버만 접근 가능합니다.");
+            return "redirect:/group/list"; // 또는 에러 페이지
+        }
+
+        // 조건 통과 → 물품 목록 조회
         List<NeededItemDTO> items = neededItemService.getItemsByGroupId(groupId);
         model.addAttribute("items", items);
-        model.addAttribute("groupId", groupId); // 뷰에서 필요
-        return "neededList"; // → neededList.jsp
+        model.addAttribute("groupId", groupId);
+        return "neededList";
     }
+
 
     // [GET] 등록 폼으로 이동
     @GetMapping("/add")
-    public String showAddForm(@RequestParam("groupId") Long groupId, Model model) {
+    public String showAddForm(@RequestParam(value = "groupId", required = false) Long groupId,
+                              HttpSession session,
+                              Model model) {
+
+        Member loginMember = (Member) session.getAttribute("loginMember");
+
+        // 그룹 리스트 가져오기
+        List<Group> joinedGroups = groupMemberService.findGroupsByMemberId((long) loginMember.getId());
+        model.addAttribute("joinedGroups", joinedGroups);
+
+        // item 객체 생성 및 groupId 설정
         NeededItemDTO item = new NeededItemDTO();
-        item.setGroupId(groupId);  // 히든 처리할 groupId
+        if (groupId != null) {
+            item.setGroupId(groupId);
+        }
         model.addAttribute("item", item);
-        return "neededAddForm"; // → neededAddForm.jsp
+
+        return "neededAddForm";
     }
+
 
  // [POST] 등록 처리
     @PostMapping("/add")

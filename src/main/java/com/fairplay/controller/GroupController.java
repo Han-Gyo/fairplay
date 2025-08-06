@@ -156,7 +156,7 @@ public class GroupController {
 		// 해당 그룹에 로그인 사용자가 가입했는지 여부 판단
 		boolean isMember = false;
 		if (loginMember != null) {
-			isMember = groupMemberService.isGroupMember(group.getId(), loginMember.getId());
+			isMember = groupMemberService.isGroupMember( (long) group.getId(), (long) loginMember.getId());
 		}
 		
 		model.addAttribute("isMember", isMember);	// 멤버 보기 버튼 조건 분기에 사용
@@ -176,7 +176,7 @@ public class GroupController {
 
 		MultipartFile file = group.getFile(); // DTO에서 전달받은 파일 추출
 
-		// ✅ 기존 그룹 정보 가져오기
+		// 기존 그룹 정보 가져오기
 	    Group existingGroup = groupService.findById(group.getId());
 	    
 		if (file != null && !file.isEmpty()) {
@@ -185,8 +185,8 @@ public class GroupController {
 			Path savePath = Paths.get("C:/upload/" + safeFileName);
 
 			try {
-				file.transferTo(savePath.toFile());              // ✅ 1. 파일 저장
-				group.setProfile_img(safeFileName);              // ✅ 2. DB에 저장할 파일명 설정
+				file.transferTo(savePath.toFile());              // 1. 파일 저장
+				group.setProfile_img(safeFileName);              // 2. DB에 저장할 파일명 설정
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

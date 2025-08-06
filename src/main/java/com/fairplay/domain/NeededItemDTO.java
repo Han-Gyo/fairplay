@@ -13,6 +13,7 @@ public class NeededItemDTO {
     private LocalDateTime createdAt;  // 생성일
     private LocalDateTime updatedAt;  // 수정일
     private String writerNickname;	// 작성자 별명
+    private String memo;		  // 메모
 
     //  기본 생성자
     public NeededItemDTO() {}
@@ -20,7 +21,8 @@ public class NeededItemDTO {
     //  전체 필드 생성자 
     public NeededItemDTO(Long id, Long groupId, String itemName, int quantity,
                          Long addedBy, boolean isPurchased,
-                         LocalDateTime createdAt, LocalDateTime updatedAt, String writerNickname) {
+                         LocalDateTime createdAt, LocalDateTime updatedAt, String writerNickname,
+                         String memo) {
         this.id = id;
         this.groupId = groupId;
         this.itemName = itemName;
@@ -104,6 +106,14 @@ public class NeededItemDTO {
 
 	public void setWriterNickname(String writerNickname) {
 		this.writerNickname = writerNickname;
+	}
+
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
 	}
 
     

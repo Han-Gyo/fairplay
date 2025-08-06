@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fairplay.domain.Group;
 import com.fairplay.domain.GroupMember;
 import com.fairplay.domain.GroupMemberInfoDTO;
 import com.fairplay.repository.GroupMemberRepository;
@@ -57,7 +58,7 @@ public class GroupMemberServiceImpl implements GroupMemberService{
 	}
 
 	@Override
-	public boolean isGroupMember(int groupId, int memberId) {
+	public boolean isGroupMember(Long groupId, Long memberId) {
 		
 		return gmRepo.isGroupMember(groupId, memberId);
 	}
@@ -108,8 +109,12 @@ public class GroupMemberServiceImpl implements GroupMemberService{
 		gmRepo.updateRoleToLeader(groupId, memberId);
 	}
 
-	
-	
+	// 내가 가입한 그룹 리스트 반환 (그룹명, ID 포함)
+	@Override
+	public List<Group> findGroupsByMemberId(Long memberId) {
+		return gmRepo.findGroupsByMemberId(memberId);
+	}
+
 	
 	
 }
