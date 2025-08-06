@@ -1,11 +1,13 @@
 package com.fairplay.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fairplay.domain.Todo;
+import com.fairplay.domain.TodoSimple;
 import com.fairplay.repository.TodoRepository;
 
 @Service
@@ -105,7 +107,8 @@ public class TodoServiceImpl implements TodoService{
 	public List<Todo> findNotDone(int memberId) {
 		return todoRepository.findNotDone(memberId);
 	}
-	
-	
-	
+	@Override
+	public List<TodoSimple> getTodosByDate(LocalDate date, int memberId) {
+		return todoRepository.findTodosByDateAndMember(date, memberId);
+	}
 }

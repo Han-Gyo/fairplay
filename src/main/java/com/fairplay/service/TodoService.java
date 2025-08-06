@@ -1,7 +1,9 @@
 package com.fairplay.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import com.fairplay.domain.Todo;
+import com.fairplay.domain.TodoSimple;
 
 public interface TodoService {
 	// ✅ 기본 CRUD
@@ -20,5 +22,6 @@ public interface TodoService {
 	List<Todo> getTodosByMemberId(int memberId);  // 특정 사용자가 신청한 할 일 목록
 	List<Todo> getCompletedTodos();
 	List<Todo> findNotDone(int memberId);
+	List<TodoSimple> getTodosByDate(LocalDate date, int memberId);
 }
 
