@@ -1,0 +1,27 @@
+body {
+    font-family: 'Pretendard', sans-serif;
+    background-color: #f9f9f9;
+    margin: 30px;
+}
+
+.container {
+    width: 90%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border-radius: 12px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+#scoreChart {
+    max-width: 600px;
+    height: 300px;
+    display: block;
+    margin: 0 auto;
+}

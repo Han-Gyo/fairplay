@@ -25,6 +25,7 @@ public class MemberRowMapper implements RowMapper<Member>{
         member.setPassword(rs.getString("password"));
         member.setStatus(MemberStatus.valueOf(rs.getString("status")));
         member.setCreated_at(rs.getTimestamp("created_at").toLocalDateTime());
+        member.setProfileImage(rs.getString("profile_image"));
         return member;
     }
 	

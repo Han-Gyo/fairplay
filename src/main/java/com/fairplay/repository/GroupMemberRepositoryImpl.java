@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.fairplay.domain.Group;
 import com.fairplay.domain.GroupMember;
 import com.fairplay.domain.GroupMemberInfoDTO;
 import com.fairplay.mapper.GroupMemberInfoRowMapper;
@@ -80,7 +81,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 	}
 
 	@Override
-	public boolean isGroupMember(int groupId, int memberId) {
+	public boolean isGroupMember(Long groupId, Long memberId) {
 		
 		// 주어진 그룹 ID와 멤버 ID가 모두 일치하는 데이터가 group_member 테이블에 존재하는지 확인하는 SQL
 		String sql = "select count(*) from group_member where group_id = ? and member_id = ?";
@@ -141,6 +142,22 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 	public void updateRoleToLeader(int groupId, int memberId) {
 		String sql = "UPDATE group_member SET role = 'LEADER' WHERE group_id = ? AND member_id = ?";
 		jdbcTemplate.update(sql, groupId, memberId);
+	}
+
+	// 내가 가입한 그룹 리스트 반환 (그룹명, ID 포함)
+	@Override
+	public List<Group> findGroupsByMemberId(Long memberId) {
+	    String sql = "SELECT g.id, g.name " +
+	                 "FROM group_member gm " +
+	                 "JOIN `group` g ON gm.group_id = g.id " +
+	                 "WHERE gm.member_id = ?";
+	    
+	    return jdbcTemplate.query(sql, (rs, rowNum) -> {
+	        Group group = new Group();
+	        group.setId(rs.getInt("id"));
+	        group.setName(rs.getString("name"));
+	        return group;
+	    }, memberId);
 	}
 	
 

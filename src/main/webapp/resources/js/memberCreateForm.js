@@ -5,9 +5,21 @@ let timerInterval; // 전역으로 타이머 ID 관리
 
 // 아이디 중복 확인
 function checkId() {
-    const userId = document.getElementById('user_id').value;
+    const userId = document.getElementById('user_id').value.trim();
+	// 아이디 입력값 확인
+	console.log("💬 아이디 입력값: [" + userId + "]");
     const contextPath = document.getElementById('contextPath').value;
+	const idErrorDiv = document.getElementById('idError');
 
+	// 공백 검사 로직
+    if (userId === '') {
+        idErrorDiv.classList.add('error');
+        idErrorDiv.innerText = '아이디를 입력해주세요.';
+        idCheckResult = null; // 전역 변수 초기화
+        return;
+    }
+	
+	// fetch 요청
     fetch(contextPath + '/member/checkId?user_id=' + encodeURIComponent(userId), {
         method: 'GET',
         headers: {
@@ -19,7 +31,7 @@ function checkId() {
         const idErrorDiv = document.getElementById('idError');
         idErrorDiv.classList.remove('error', 'success');
 
-        idCheckResult = data.result; // ✅ 전역 변수 저장
+        idCheckResult = data.result; // 전역 변수 저장
 
         if (data.result === 'duplicate') {
             idErrorDiv.classList.add('error');
@@ -42,8 +54,16 @@ function checkId() {
 
 // 닉네임 중복 확인
 function checkNickname() {
-    const nickname = document.getElementById('nickname').value;
+    const nickname = document.getElementById('nickname').value.trim();
     const contextPath = document.getElementById('contextPath').value;
+	const nickDiv = document.getElementById('nicknameCheckResult');
+	
+	if (nickname === '') {
+        nickDiv.classList.add('error');
+        nickDiv.innerText = '닉네임을 입력해주세요.';
+        nicknameCheckResult = null;
+        return;
+    }
 
     fetch(contextPath + '/member/checkNickname?nickname=' + encodeURIComponent(nickname), {
         method: 'GET',
@@ -84,8 +104,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const pwCheck = document.getElementById('passwordCheck').value;
         const pwError = document.getElementById('pwError');
 		const emailResult = document.getElementById("emailResult").innerText;
+		const nickname = document.getElementById('nickname').value.trim();
+		
         pwError.classList.remove('error', 'success');
 
+		// 닉네임 공백 체크
+	    if (nickname === '') {
+	        e.preventDefault();
+	        const nickDiv = document.getElementById('nicknameCheckResult');
+	        nickDiv.classList.add('error');
+	        nickDiv.innerText = '닉네임은 필수 입력입니다.';
+	        return;
+	    }
+			
         // 비밀번호 불일치 시
         if (pw !== pwCheck) {
             e.preventDefault();

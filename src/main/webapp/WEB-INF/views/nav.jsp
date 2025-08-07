@@ -245,14 +245,27 @@
             </div>
         </div>
         
-        <!-- 점수 드롭다운 -->
-				<div class="dropdown">
-				    <a href="javascript:void(0);">📊 점수</a>
-				    <div class="dropdown-content">
-				        <a href="${pageContext.request.contextPath}/history/monthly-score?group_id=1">📅 월간 점수 보기</a>
-				        <!-- 추후: 전체 통계 페이지 추가도 고려 가능 -->
-				    </div>
-				</div>
+        <!-- 📊 점수 드롭다운 -->
+		<div class="dropdown">
+		    <a href="javascript:void(0);">📊 점수</a>
+		    <div class="dropdown-content">
+		        <a href="${pageContext.request.contextPath}/history/monthly-score?group_id=1">📅 월간 점수 보기</a>
+		        <!-- 추후: 전체 통계 페이지 추가도 고려 가능 -->
+		    </div>
+		</div>
+				
+		<!-- 📦 필요 물품 드롭다운 추가 -->
+		<c:if test="${not empty sessionScope.loginMember}">
+		    <!-- 📦 필요 물품 드롭다운 -->
+		    <div class="dropdown">
+		        <a href="javascript:void(0);">📦 필요 물품</a>
+		        <div class="dropdown-content">
+		            <a href="${pageContext.request.contextPath}/needed/list?groupId=1">📋 전체 물품 목록</a>
+		            <a href="${pageContext.request.contextPath}/needed/add?groupId=1">📝 물품 등록</a>
+		        </div>
+		    </div>
+		</c:if>
+		
     </div>
 
 	<div class="right">
@@ -269,7 +282,7 @@
 	            <span style="color:pink; font-weight:bold;">
 	               ♥ ${sessionScope.loginMember.nickname}님 안녕하세요 ♥
 	            </span>
-	            <a href="${pageContext.request.contextPath}/member/mypage">🙋 마이페이지</a>
+	            <a href="${pageContext.request.contextPath}/mypage">🙋 마이페이지</a>
 	            <a href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a>
 	            
 	        </c:otherwise>

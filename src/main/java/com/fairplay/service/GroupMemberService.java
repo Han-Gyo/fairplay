@@ -2,6 +2,7 @@ package com.fairplay.service;
 
 import java.util.List;
 
+import com.fairplay.domain.Group;
 import com.fairplay.domain.GroupMember;
 import com.fairplay.domain.GroupMemberInfoDTO;
 
@@ -17,7 +18,7 @@ public interface GroupMemberService {
 	
 	void delete(int groupId, int memberId);
 	
-	boolean isGroupMember(int groupId, int memberId);
+	boolean isGroupMember(Long groupId, Long memberId);
 	
 	// 그룹 ID로 그룹 멤버 정보 (nickname, realName 포함된 DTO) 조회
 	List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId);
@@ -36,4 +37,7 @@ public interface GroupMemberService {
 	
 	// 새로운 리더로 역할 변경
 	void updateRoleToLeader(int groupId, int memberId);
+	
+	// 내가 가입한 그룹 리스트 반환 (그룹명, ID 포함)
+	List<Group> findGroupsByMemberId(Long memberId);
 }

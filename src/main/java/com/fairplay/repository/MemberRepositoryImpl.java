@@ -21,7 +21,8 @@ public class MemberRepositoryImpl implements MemberRepository{
 	@Override
 	public void save(Member member) {
 	    // 회원 정보를 DB에 저장하는 SQL문 (id는 auto_increment라 제외)
-	    String sql = "INSERT INTO member (user_id, password, real_name, nickname, email, address, phone, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO member (user_id, password, real_name, nickname, email, address, phone, status, profile_image) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	    // JdbcTemplate을 통해 INSERT 실행
 	    jdbcTemplate.update(sql, 
@@ -32,7 +33,8 @@ public class MemberRepositoryImpl implements MemberRepository{
 	        member.getEmail(),
 	        member.getAddress(),
 	        member.getPhone(),
-	        member.getStatus().name()		// 👉 enum을 DB에 저장할 때 문자열로 변환
+	        member.getStatus().name(),		// 👉 enum을 DB에 저장할 때 문자열로 변환
+	        member.getProfileImage()
 	    );
 	}
 
@@ -61,7 +63,7 @@ public class MemberRepositoryImpl implements MemberRepository{
 	@Override
 	public void update(Member member) {
 		
-		String sql = "UPDATE member SET real_name = ?, nickname = ?, email = ?, address = ?, phone = ?, status = ? WHERE id = ?";
+		String sql = "UPDATE member SET real_name = ?, nickname = ?, email = ?, address = ?, phone = ?, status = ?, profile_image = ? WHERE id = ?";
 		
 		jdbcTemplate.update(sql,
 			member.getReal_name(),
@@ -70,6 +72,7 @@ public class MemberRepositoryImpl implements MemberRepository{
 			member.getAddress(),
 			member.getPhone(),
 			member.getStatus().name(),   // 👉 enum을 문자열로 저장
+			member.getProfileImage(),
 			member.getId()
 		);
 		

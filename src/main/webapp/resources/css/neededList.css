@@ -1,0 +1,59 @@
+.needed-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.needed-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.add-btn-wrap {
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+.btn-add {
+    background-color: #6C63FF;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.needed-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.needed-table th, .needed-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.needed-table tr.done {
+    background-color: #e0ffe0;
+    text-decoration: line-through;
+    color: gray;
+}
+
+.btn-small {
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    background-color: #eee;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+}
+
+.btn-small.red {
+    background-color: #ffb3b3;
+}

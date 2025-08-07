@@ -10,7 +10,10 @@
 
 <h2>회원가입</h2>
 
-<form id="signUpForm" method="post" action="${pageContext.request.contextPath}/member/create">
+<form id="signUpForm" method="post" 
+      action="${pageContext.request.contextPath}/member/create" 
+      enctype="multipart/form-data">
+      
     <label for="user_id">아이디</label>
     <input type="text" id="user_id" name="user_id" required />
     <input type="hidden" id="contextPath" value="${pageContext.request.contextPath}" />
@@ -40,6 +43,10 @@
 	
 	<!-- 결과 메시지를 표시할 영역 -->
 	<div id="nicknameCheckResult" class="check-msg"></div>
+
+	<!-- 프로필 이미지 -->
+	<label for="profileImageFile">프로필 이미지 (선택)</label>
+	<input type="file" name="profileImageFile" id="profileImageFile" accept="image/*" />
 
 	<!-- 이메일 입력 -->
 	<label for="email">이메일</label>
@@ -83,11 +90,6 @@
 	    <input type="text" name="phone3" maxlength="4" pattern="\d{4}" required />
 	</div>
 
-    <label for="status">계정 상태</label>
-    <select name="status">
-        <option value="ACTIVE">활성</option>
-        <option value="INACTIVE">휴면</option>
-    </select>
 
     <button type="submit" class="submit-btn">가입하기</button>
 </form>

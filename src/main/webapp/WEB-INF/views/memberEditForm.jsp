@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ include file="/WEB-INF/views/nav.jsp" %>
 <!DOCTYPE html>
 <html>
@@ -10,7 +11,8 @@
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body class="bg-light" data-context-path="${pageContext.request.contextPath}">
+
 
 <div class="container mt-5">
     <div class="card shadow-lg">
@@ -20,7 +22,7 @@
         
         <div class="card-body">
         
-            <form action="${pageContext.request.contextPath}/member/update" method="post">
+            <form id="editForm" action="${pageContext.request.contextPath}/mypage/update" method="post" enctype="multipart/form-data">
 			    <!-- ID는 사용자에게 안 보이게 hidden 처리 -->
 			    <input type="hidden" name="id" value="${member.id}">
 			    <input type="hidden" name="from" value="mypage" />
@@ -32,9 +34,49 @@
 			    </div>
 			
 			    <div class="mb-3">
-			        <label for="nickname" class="form-label">닉네임</label>
-			        <input type="text" class="form-control" id="nickname" name="nickname" value="${member.nickname}" required>
-			    </div>
+				    <label for="nickname" class="form-label">닉네임</label>
+				    <div class="input-group">
+				        <input type="text" class="form-control" id="nickname" name="nickname" value="${member.nickname}" required>
+				        <button type="button" class="btn btn-outline-secondary" id="checkNicknameBtn">중복 확인</button>
+				    </div>
+				    <div id="nicknameCheckResult" class="form-text mt-1"></div>
+				</div>
+			
+				<!-- 🔄 프로필 이미지 변경 (JSTL 조건 처리 포함) -->
+				<div class="mb-3">
+				    <label class="form-label">프로필 이미지</label>
+				
+				    <div class="mb-2">
+				        <c:choose>
+						    <c:when test="${empty member.profileImage or member.profileImage eq 'default_profile.png'}">
+						        <!-- ✅ 기본 이미지 출력 -->
+						        <img id="profilePreview" 
+						             src="${pageContext.request.contextPath}/resources/img/default-profile.png"
+						             alt="기본 프로필 이미지" 
+						             width="120" class="rounded-circle border shadow-sm" />
+						    </c:when>
+						    <c:otherwise>
+						        <!-- ✅ 사용자 업로드 이미지 출력 -->
+						        <img id="profilePreview" 
+						             src="${pageContext.request.contextPath}/upload/profile/${member.profileImage}?v=${System.currentTimeMillis()}" 
+						             alt="프로필 이미지"
+						             width="120" class="rounded-circle border shadow-sm" />
+						    </c:otherwise>
+						</c:choose>
+				    </div>
+				
+				    <!-- 이미지 업로드 input -->
+				    <input type="file" class="form-control" name="profileImageFile" id="profileImageFile" accept="image/*" />
+				</div>
+				
+				<!-- 🔘 기본 이미지로 초기화 버튼 -->
+				<div class="mb-3">
+				    <input type="hidden" id="resetProfileImage" name="resetProfileImage" value="false" />
+				    <button type="button" class="btn btn-outline-danger" id="resetImageBtn">기본 이미지로 변경</button>
+				</div>
+
+
+			
 			
 			    <div class="mb-3">
 			        <label for="email" class="form-label">이메일</label>
@@ -42,14 +84,40 @@
 			    </div>
 			
 			    <div class="mb-3">
-			        <label for="phone" class="form-label">휴대폰 번호</label>
-			        <input type="text" class="form-control" id="phone" name="phone" value="${member.phone}">
-			    </div>
+				    <label for="phone" class="form-label">휴대폰 번호</label>
+				    <div class="d-flex gap-2">
+				        <!-- 앞자리 select 박스 -->
+				        <select class="form-select" id="phone1" name="phone1" style="width: 100px;" required>
+				            <option value="010" ${fn:contains(member.phone, '010') ? 'selected' : ''}>010</option>
+				            <option value="011" ${fn:contains(member.phone, '011') ? 'selected' : ''}>011</option>
+				            <option value="016" ${fn:contains(member.phone, '016') ? 'selected' : ''}>016</option>
+				        </select>
+				
+				        <!-- 중간/끝 번호 -->
+				        <input type="text" class="form-control" id="phone2" name="phone2"
+				               value="${fn:split(member.phone, '-')[1]}" maxlength="4" required />
+				        <input type="text" class="form-control" id="phone3" name="phone3"
+				               value="${fn:split(member.phone, '-')[2]}" maxlength="4" required />
+				    </div>
+				</div>
+
 			
-			    <div class="mb-3">
-			        <label for="address" class="form-label">주소</label>
-			        <input type="text" class="form-control" id="address" name="address" value="${member.address}">
-			    </div>
+			    <!-- ✅ 주소 검색 필드 -->
+				<div class="mb-3">
+				    <label for="address" class="form-label">주소</label>
+				    
+				    <div class="input-group mb-2">
+				        <input type="text" id="postcode" class="form-control" placeholder="우편번호" readonly style="max-width:150px;">
+				        <button type="button" class="btn btn-outline-primary" onclick="execDaumPostcode()">주소 검색</button>
+				    </div>
+				    
+				    <input type="text" id="roadAddress" class="form-control mb-2" placeholder="도로명 주소" readonly>
+				    <input type="text" id="detailAddress" class="form-control" placeholder="상세 주소">
+				
+				    <!-- 최종적으로 서버에 전송될 통합 주소 -->
+				    <input type="hidden" id="address" name="address" value="${member.address}" />
+				</div>
+
 			
 			    
 			    <!-- 🔒 status는 수정은 불가하지만 서버로 넘겨야 함 -->
@@ -100,5 +168,25 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JS 파일 연결 -->
+<script>
+    const contextPath = '${pageContext.request.contextPath}';
+</script>
+<script src="<c:url value='/resources/js/memberEditForm.js' />"></script>
+
+<!-- 🔍 이미지 확대용 모달 -->
+<div id="imageModal" style="display:none; position:fixed; top:0; left:0;
+     width:100%; height:100%; background:rgba(0,0,0,0.6);
+     justify-content:center; align-items:center; z-index:9999;">
+    <img id="modalImage" src=""
+         style="max-width:90%; max-height:90%; border:4px solid white;
+                border-radius:1rem; box-shadow:0 0 10px black;" />
+</div>
+
+<!-- ✅ Daum 주소 API 로딩 (JSP에만 포함해야 함!) -->
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+
 </body>
 </html>

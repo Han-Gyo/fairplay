@@ -134,7 +134,7 @@ public class GroupMemberController {
 		// 로그인 사용자가 해당 그룹에 가입한 상태인지 확인
 		boolean isMember = false;
 		if (loginMember != null) {
-			isMember = groupMemberService.isGroupMember(groupId, loginMember.getId());
+			isMember = groupMemberService.isGroupMember((long) groupId, (long) loginMember.getId());
 		}
 		model.addAttribute("isMember", isMember);	// JSP 조건 판단용
 		

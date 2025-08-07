@@ -39,7 +39,12 @@ public class Member {
 	
 	// 권한 : USER 또는 ADMIN
 	private String role;
+	
+	// 프로필 사진
+	private String profileImage;
 
+	
+	
 	// 기본 생성자
 	public Member() {
 
@@ -136,5 +141,14 @@ public class Member {
 	public void setRole(String role) {
 		this.role = role;
 	}
+
+	public String getProfileImage() {
+		return profileImage;
+	}
+
+	public void setProfileImage(String profileImage) {
+		this.profileImage = profileImage;
+	}
+	
 	
 }

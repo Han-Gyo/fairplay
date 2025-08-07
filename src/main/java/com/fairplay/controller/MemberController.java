@@ -1,8 +1,11 @@
  package com.fairplay.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fairplay.domain.Member;
 import com.fairplay.enums.MemberStatus;
@@ -46,31 +50,62 @@ public class MemberController {
 	// 회원가입 폼 제출 시 회원 등록 처리 (Create)
 	@PostMapping("/create")
 	public String createMember(@ModelAttribute Member member,
-	                           HttpServletRequest request) {
-	    
-	    // 비밀번호 암호화
-	    String rawPassword = member.getPassword();
+            @RequestParam(value = "profileImageFile", required = false) MultipartFile profileImageFile,
+            HttpServletRequest request) {
+
+		// 업로드된 이미지 처리
+		if (profileImageFile != null && !profileImageFile.isEmpty()) {
+		// 저장 경로 설정
+		String uploadDir = "C:/upload/profile/"; // 환경에 맞게 수정
+		String originalFilename = profileImageFile.getOriginalFilename();
+		String savedFileName = UUID.randomUUID().toString() + "_" + originalFilename.replaceAll("[^a-zA-Z0-9.]", "_");
+		File dest = new File(uploadDir + savedFileName);
+		
+		try {
+		profileImageFile.transferTo(dest); // 실제 파일 저장
+		System.out.println("파일 저장 성공: " + savedFileName);
+		
+		// DB에는 "profile/" 경로 포함해서 저장
+		member.setProfileImage(savedFileName);
+		} catch (IOException e) {
+		e.printStackTrace();
+		System.out.println("파일 저장 실패: " + e.getMessage());
+		member.setProfileImage("default_profile.png");
+		}
+		} else {
+		member.setProfileImage("default_profile.png");
+		}
+		
+		// 이미지 업로드 디버깅 로그
+		System.out.println("파일 업로드 여부: " + profileImageFile);
+		if (profileImageFile != null) {
+		System.out.println("파일명: " + profileImageFile.getOriginalFilename());
+		System.out.println("isEmpty? " + profileImageFile.isEmpty());
+		}
+		
+		// 비밀번호 암호화
+		String rawPassword = member.getPassword();
 		String encodedPassword = passwordEncoder.encode(rawPassword);
-	    member.setPassword(encodedPassword);
-
-	    // 회원 상태는 무조건 ACTIVE
-	    member.setStatus(MemberStatus.ACTIVE);
-
-	    // 일반 사용자는 항상 USER
-	    member.setRole("USER");
-
-	    // 휴대폰 번호가 3-4-4로 나눠져 있을 경우 (선택사항)
-	    String phone = request.getParameter("phone1") + "-" +
-	                   request.getParameter("phone2") + "-" +
-	                   request.getParameter("phone3");
-	    member.setPhone(phone);
-
-	    // 저장 요청
-	    memberService.save(member);
-
-	    // 로그인 페이지로 리다이렉트
-	    return "redirect:/member/login";
-	}
+		member.setPassword(encodedPassword);
+		
+		// 회원 상태는 무조건 ACTIVE
+		member.setStatus(MemberStatus.ACTIVE);
+		
+		// 일반 사용자는 항상 USER
+		member.setRole("USER");
+		
+		// 휴대폰 번호가 3-4-4로 나눠져 있을 경우
+		String phone = request.getParameter("phone1") + "-" +
+		    request.getParameter("phone2") + "-" +
+		    request.getParameter("phone3");
+		member.setPhone(phone);
+		
+		// 저장 요청
+		memberService.save(member);
+		
+		// 로그인 페이지로 리다이렉트
+		return "redirect:/member/login";
+		}
 	
 	// 전체 회원 목록을 조회하여 뷰에 전달 (Read_all)
 	@GetMapping("/members")
@@ -108,34 +143,6 @@ public class MemberController {
 		return "memberEditForm";
 	}
 	
-	// 수정된 회원 데이터를 DB에 반영하고 전체 회원 목록 또는 마이페이지로 리다이렉트
-	@PostMapping("/update")
-	public String update(@ModelAttribute Member member,
-						 @RequestParam(required = false) String from,
-						 HttpSession session) {
-		
-		// ✅ 세션에 있는 로그인 회원의 상태를 유지시켜줌
-	    Member loginUser = (Member) session.getAttribute("loginMember");
-	    if (loginUser != null) {
-	        member.setStatus(loginUser.getStatus());  // ✅ 여기가 핵심!
-	    }
-		
-		memberService.update(member);
-		
-		// ✅ 세션 정보도 최신으로 갱신
-	    if (loginUser != null && loginUser.getId() == member.getId()) {
-	        session.setAttribute("loginMember", member);
-	    }
-		
-		// 분기 처리 : 마이페이지 수정 -> 마이페이지로
-		if ("mypage".equals(from)) {
-			return "redirect:/member/mypage";
-		}
-		
-		
-		// 그 외(관리자 등)은 전체 회원 목록으로 이동
-		return "redirect:/member/members";
-	}
 	
 	
 	// 회원 탈퇴 (하드삭제x 소프트삭제o 사용자가 마음 돌리거나 법적으로 특정 기간동안 보관해야함.)
@@ -147,29 +154,6 @@ public class MemberController {
 		
 		return "redirect:/"; 			// 홈화면 리다이렉트
 	}
-	
-	
-	// 마이페이지 진입
-	@GetMapping("/mypage")
-	public String myPage(HttpSession session, Model model) {
-	    // 세션에서 로그인된 사용자 꺼냄
-	    Member loginMember = (Member) session.getAttribute("loginMember");
-
-	    // 🔒 회원 상태가 ACTIVE가 아니면 (탈퇴회원 등) → 세션 만료 후 로그인으로 보냄
-	    if (loginMember == null || loginMember.getStatus() != MemberStatus.ACTIVE) {
-	        session.invalidate();
-	        return "redirect:/login";
-	    }
-
-	    // 정상 회원이면 마이페이지 정보 전달
-	    int memberId = loginMember.getId();
-	    Member member = memberService.findById(memberId);
-	    model.addAttribute("member", member);
-
-	    return "myPage";
-	}
-
-	
 	
 	// 로그인 폼 이동
 	@GetMapping("/login")
