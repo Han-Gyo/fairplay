@@ -69,11 +69,12 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	@Override
 	public void update(History history) {
 		// 기록 수정
-		String sql = "UPDATE history SET completed_at = ?, photo = ?, memo = ?, `check` = ?, check_member = ? WHERE id = ?";
+		String sql = "UPDATE history SET completed_at = ?, photo = ?, memo = ?, score = ?, `check` = ?, check_member = ? WHERE id = ?";
 		jdbcTemplate.update(sql,
 			history.getCompleted_at(),
 			history.getPhoto(),
 			history.getMemo(),
+			history.getScore(),
 			history.isCheck(),
 			history.getCheck_member(),
 			history.getId());
@@ -243,22 +244,22 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	    }, todo_id);
 	}
 	
-	// ✅ 그룹별 월간 총점 조회
+	// 그룹별 월간 총점 조회
 	@Override
 	public List<GroupMonthlyScore> findGroupMonthlyScore(int groupId, String yearMonth) {
 		
-		System.out.println("📌 [Repository] SQL 실행 - 그룹 월간 점수");
-	    System.out.println("    ▶ groupId: " + groupId);
-	    System.out.println("    ▶ yearMonth: " + yearMonth);
+		System.out.println("[Repository] SQL 실행 - 그룹 월간 점수");
+	    System.out.println("groupId: " + groupId);
+	    System.out.println("yearMonth: " + yearMonth);
 	    
 	    String sql = "SELECT " +
 	    	    "t.group_id, " +
-	    	    "g.name, " +  // ✅ group name 추가
+	    	    "g.name, " +  // group name 추가
 	    	    "DATE_FORMAT(h.completed_at, '%Y-%m'), " +
 	    	    "SUM(t.difficulty_point) " +
 	    	    "FROM history h " +
 	    	    "JOIN todo t ON h.todo_id = t.id " +
-	    	    "JOIN `group` g ON t.group_id = g.id " + // ✅ group 조인
+	    	    "JOIN `group` g ON t.group_id = g.id " + // group 조인
 	    	    "WHERE t.group_id = ? " +
 	    	    "AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
 	    	    "GROUP BY t.group_id, g.name, DATE_FORMAT(h.completed_at, '%Y-%m')";
@@ -269,21 +270,21 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	        public GroupMonthlyScore mapRow(ResultSet rs, int rowNum) throws SQLException {
 	        	return new GroupMonthlyScore(
 	        		    rs.getInt(1),        // group_id
-	        		    rs.getString(2),     // ✅ group_name ← 주석 수정
-	        		    rs.getString(3),     // ✅ year_month
-	        		    rs.getInt(4)         // ✅ total_score
+	        		    rs.getString(2),     // group_name ← 주석 수정
+	        		    rs.getString(3),     // year_month
+	        		    rs.getInt(4)         // total_score
 	        		);
 
 	        }
 	    });
 	}
 	
-	// ✅ 멤버별 월간 점수 조회
+	// 멤버별 월간 점수 조회
 	@Override
 	public List<MemberMonthlyScore> findMemberMonthlyScore(int groupId, String yearMonth) {
-	    System.out.println("🛠 [Repository] 멤버 월간 점수 SQL 실행");
-	    System.out.println("  ▶ groupId: " + groupId);
-	    System.out.println("  ▶ yearMonth: " + yearMonth);
+	    System.out.println("[Repository] 멤버 월간 점수 SQL 실행");
+	    System.out.println("groupId: " + groupId);
+	    System.out.println("yearMonth: " + yearMonth);
 
 	    String sql = 
 	    	    "SELECT h.member_id, " +

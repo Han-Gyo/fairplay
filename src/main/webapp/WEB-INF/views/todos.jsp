@@ -28,7 +28,7 @@
 	
 <c:if test="${role eq 'LEADER'}">
   <form action="${pageContext.request.contextPath}/todos/create" method="get" style="display:inline;">
-    <input type="hidden" name="groupId" value="${group.id}">
+    <input type="hidden" name="groupId" value="${sessionScope.currentGroupId}">
     <button type="submit">➕ 새 할 일 등록</button>
   </form>
 </c:if>
@@ -81,29 +81,34 @@
       <tbody>
       <c:set var="index" value="1" />
         <c:forEach var="todo" items="${todoList}">
-          <c:if test="${todo.status == '신청완료' && todo.assigned_to == loginMemberId && !todo.completed}">
-            <tr>
-            	<td>${index}</td>
-              <td>${todo.title}</td>
-              <td>${memberMap[todo.assigned_to]}</td>
-              <td><fmt:formatDate value="${todo.due_date}" pattern="yyyy-MM-dd" /></td>
-              <td>${todo.difficulty_point}</td>
-              <td>🚧 진행중</td>
-              <td>
-              	<!-- 포기하기 버튼 -->
-							  <form action="${pageContext.request.contextPath}/todos/unassign" method="post" style="margin-top:5px; display:inline;">
-							    <input type="hidden" name="id" value="${todo.id}" />
-							    <button type="submit" onclick="return confirm('이 할 일을 포기하고 공용 리스트로 돌릴까요?')">🚫 포기하기</button>
-							  </form>
-              	<form action="${pageContext.request.contextPath}/todos/complete" method="post" style="display:inline;">
-                	<input type="hidden" name="id" value="${todo.id}" />
-                	<button type="button" onclick="completeTodo(${todo.id})">✔ 완료하기</button>
-              	</form>
-              </td>
-            </tr>
-            <c:set var="index" value="${index + 1}" />
-          </c:if>
-        </c:forEach>
+			 		<!-- 전체 그룹원이 볼 수 있는 진행 중인 할 일만 출력 -->
+				  <c:if test="${todo.status == '신청완료' && !todo.completed}">
+				    <tr>
+				      <td>${index}</td>
+				      <td>${todo.title}</td>
+				      <td>${memberMap[todo.assigned_to]}</td>
+				      <td><fmt:formatDate value="${todo.due_date}" pattern="yyyy-MM-dd" /></td>
+				      <td>${todo.difficulty_point}</td>
+				      <td>🚧 진행중</td>
+				      <td>
+				        <!-- ✅ 본인이 담당자일 때만 포기/완료 버튼 노출 -->
+				        <c:if test="${todo.assigned_to == loginMemberId}">
+				          <!-- 포기하기 -->
+				          <form action="${pageContext.request.contextPath}/todos/unassign" method="post" style="margin-top:5px; display:inline;">
+				            <input type="hidden" name="id" value="${todo.id}" />
+				            <button type="submit" onclick="return confirm('이 할 일을 포기하고 공용 리스트로 돌릴까요?')">🚫 포기하기</button>
+				          </form>
+				          <!-- 완료하기 -->
+									<button type="button" onclick="completeTodo(${todo.id})" style="display:inline;">
+									  ✔ 완료하기
+									</button>
+
+				        </c:if>
+				      </td>
+				    </tr>
+				    <c:set var="index" value="${index + 1}" />
+				  </c:if>
+			</c:forEach>
       </tbody>
     </table>
   </div>
@@ -114,18 +119,17 @@
 
 
 <script>
-const contextPath = "${pageContext.request.contextPath}";
 console.log("🔥 contextPath:", contextPath);
 function completeTodo(todo_id) {
-		console.log("✅ 전달된 todo_id:", todo_id);
+		console.log("전달된 todo_id:", todo_id);
     const confirmResult = confirm("기록도 같이 남기시겠어요?");
 
     if (confirmResult) {
-        // ✅ 확인 누르면 historyCreate 페이지로 이동 (todoId 쿼리로 넘김)
+        // 확인 누르면 historyCreate 페이지로 이동 (todoId 쿼리로 넘김)
     	window.location.href = contextPath + "/history/create?todo_id=" + todo_id;
     } else {
         // 할 일 완료 처리
-        fetch("/fairplay/todos/complete?id=" + todo_id, {
+        fetch(contextPath+"/todos/complete?id=" + todo_id, {
             method: "POST"
         })
         .then(response => {

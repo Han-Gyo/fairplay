@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fairplay.domain.Group;
+import com.fairplay.domain.GroupMemberInfoDTO;
 import com.fairplay.domain.GroupMonthlyScore;
 import com.fairplay.domain.History;
 import com.fairplay.domain.HistoryComment;
@@ -51,210 +53,312 @@ public class HistoryController {
 	
 	@Autowired
 	private GroupService groupService;
+	
+	@Autowired
+	private GroupMemberService groupMemberService;
 
 	
-	// ✅ 전체 히스토리 보기
+	// 전체 히스토리 보기
 	@GetMapping("/all")
-	public String listAllHistories(@RequestParam(value = "todo_id", required = false) Integer todoId, Model model) {
-	    
-	    List<History> historyList;
+	public String listAllHistories(
+	        @RequestParam(value = "todo_id", required = false) Integer todoId,
+	        HttpSession session,
+	        Model model) {
 
-	    // 👉 필터링이 들어온 경우: 해당 todoId에 해당하는 히스토리만 조회
-	    if (todoId != null) {
-	        historyList = historyService.getHistoriesByTodoIdWithDetails(todoId);
-
-	        // 선택된 항목 표시용 (선택된 제목 띄우고 싶으면 아래 주석 해제해도 돼!)
-	        Todo selectedTodo = todoService.findById(todoId);
-	        model.addAttribute("selectedTodo", selectedTodo);
-	    } else {
-	        // 👉 필터 없으면 전체 조회
-	        historyList = historyService.getAllHistoriesWithDetails();
+	    // 로그인 사용자 확인
+	    Member loginUser = (Member) session.getAttribute("loginUser");
+	    if (loginUser == null) {
+	        return "redirect:/access-denied";
 	    }
 
-	    // ✅ 네비게이션에 보여줄 전체 todo 목록 조회
-	    List<Todo> todoList = todoService.getTodoList();
+	    Long loginUserId = Long.valueOf(loginUser.getId());
 
-	    // ✅ JSP에 전달
+	    List<History> historyList;
+
+	    if (todoId != null) {
+	        Todo todo = todoService.findById(todoId);
+	        Long groupId = Long.valueOf(todo.getGroup_id());
+
+	        // ✅ 그룹원 여부 확인
+	        if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
+	            return "redirect:/access-denied";
+	        }
+
+	        historyList = historyService.getHistoriesByTodoIdWithDetails(todoId);
+	        model.addAttribute("selectedTodo", todo);
+	    } else {
+	        // 전체 보기 막고 싶으면 여기서 차단해도 됨
+	        return "redirect:/access-denied";
+	        
+	        // or 그룹별 전체 보기 허용할 거면 아래와 같이 해도 됨:
+	        // historyList = historyService.getAllHistoriesWithDetails(); 
+	        // 단, 이 경우 로그인 사용자가 소속된 그룹만 필터링하는 방법도 가능
+	    }
+
+	    List<Todo> todoList = todoService.getTodoList();
 	    model.addAttribute("historyList", historyList);
 	    model.addAttribute("todoList", todoList);
-	    model.addAttribute("selectedTodoId", todoId); // 선택 강조용
+	    model.addAttribute("selectedTodoId", todoId);
 
-	    return "histories"; // -> histories.jsp
+	    return "histories";
 	}
 	
-	// ✅ 1. 기록 목록 (히스토리 리스트)
-    @GetMapping
-    public String listHistories (@RequestParam("todo_id") int todo_id, Model model) {
-    	List<History> historyList = historyService.getHistoriesByTodoIdWithDetails(todo_id);
-    	model.addAttribute("historyList", historyList);
-    	
-    	// 할일 title 전달
-    	Todo todo = todoService.findById(todo_id);
-    	model.addAttribute("todo", todo);
-    	
-    	return "histories";
-    }
+	// 1. 기록 목록 (히스토리 리스트)
+	@GetMapping
+	public String listHistories(@RequestParam("todo_id") int todo_id, HttpSession session, Model model) {
+	    
+	    // 세션에서 로그인 사용자 꺼냄
+	    Member loginUser = (Member) session.getAttribute("loginUser");
+	    if (loginUser == null) {
+	    	return "redirect:/access-denied";
+	    }
+	    
+	    // todo 및 그룹 ID 추출
+	    Todo todo = todoService.findById(todo_id);
+	    int groupId = todo.getGroup_id();
+	    
+	    // Long 타입으로 변환
+	    Long memberId = Long.valueOf(loginUser.getId());
+	    Long groupIdLong = Long.valueOf(groupId);
+	    
+	    // 그룹원이 아니면 접근 차단 (여기가 먼저!)
+	    if (!groupMemberService.isGroupMember(groupIdLong, memberId)) {
+	        return "redirect:/access-denied";
+	    }
+
+	    // 검증 통과 후 데이터 조회
+	    List<History> historyList = historyService.getHistoriesByTodoIdWithDetails(todo_id);
+	    model.addAttribute("historyList", historyList);
+	    model.addAttribute("todo", todo);
+	    
+	    System.out.println("그룹원 검증: memberId = " + memberId + ", groupId = " + groupIdLong);
+	    
+	    return "histories";
+	}
     
-    // ✅ 2. 기록 등록 폼
-    @GetMapping("/create")
-    public String addHistory(@RequestParam(required = false) Integer todo_id, Model model) {
-    	System.out.println("✅ 전달받은 todo_id: " + todo_id);
-    	List<Todo> todoList = todoService.getTodoList();
-    	List<Member> memberList = memberService.readAll();
-    	
-        model.addAttribute("history", new History());
-        model.addAttribute("todoList", todoList);
-        model.addAttribute("memberList", memberList);
-        model.addAttribute("selectedTodoId", todo_id);
-        return "historyCreateForm"; 
-    }
+    // 2. 기록 등록 폼
+	@GetMapping("/create")
+	public String addHistory(@RequestParam(required = false) Integer todo_id, HttpSession session, Model model) {
+	    Member loginUser = (Member) session.getAttribute("loginUser");
+	    if (loginUser == null) {
+	    	return "redirect:/access-denied";
+	    }
+
+	    if (todo_id != null) {
+	        Todo todo = todoService.findById(todo_id);
+	        Long groupId = Long.valueOf(todo.getGroup_id());
+	        Long memberId = Long.valueOf(loginUser.getId());
+
+	        if (!groupMemberService.isGroupMember(groupId, memberId)) {
+	            return "redirect:/access-denied";
+	        }
+
+	        model.addAttribute("selectedTodoId", todo_id);
+	        List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(todo.getGroup_id());
+	        model.addAttribute("memberList", memberList);
+	    } else {
+	        model.addAttribute("memberList", List.of());
+	    }
+
+	    model.addAttribute("history", new History());
+	    model.addAttribute("todoList", todoService.getTodoList());
+
+	    return "historyCreateForm";
+	}
+
+    // 3. 기록 등록 처리
+	public String addHistory(
+		    HttpServletRequest request,
+		    @RequestParam("todo_id") int todoId,
+		    @RequestParam("member_id") int memberId,
+		    @RequestParam("score") int score,
+		    @RequestParam("memo") String memo,
+		    @RequestParam(value = "photo", required = false) MultipartFile photo,
+		    HttpSession session
+		) {
+		    Member loginUser = (Member) session.getAttribute("loginUser");
+		    if (loginUser == null) {
+		    	return "redirect:/access-denied";
+		    }
+
+		    Todo todo = todoService.findById(todoId);
+		    Long groupId = Long.valueOf(todo.getGroup_id());
+		    Long loginUserId = Long.valueOf(loginUser.getId());
+
+		    if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
+		        return "redirect:/access-denied";
+		    }
+
+		    History history = new History();
+		    history.setTodo_id(todoId);
+		    history.setMember_id(memberId);
+		    history.setCompleted_at(new Date());
+		    history.setScore(score);
+		    history.setMemo(memo);
+
+		    if (photo != null && !photo.isEmpty()) {
+		        try {
+		            String fileName = photo.getOriginalFilename();
+		            File savedFile = new File("C:/upload/", fileName);
+		            photo.transferTo(savedFile);
+		            history.setPhoto(fileName);
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+		    }
+
+		    historyService.addHistory(history);
+		    todoService.completeTodo(todoId);
+
+		    return "redirect:/history?todo_id=" + todoId;
+		}
+
+    // 4. 기록 수정 폼
+	@GetMapping("/update")
+	public String updateHistory(@RequestParam("id") int id, HttpSession session, Model model) {
+	    Member loginUser = (Member) session.getAttribute("loginUser");
+	    if (loginUser == null) {
+	    	return "redirect:/access-denied";
+	    }
+
+	    History history = historyService.getHistoryByIdWithDetails(id);
+	    Todo todo = todoService.findById(history.getTodo_id());
+	    Long groupId = Long.valueOf(todo.getGroup_id());
+	    Long memberId = Long.valueOf(loginUser.getId());
+
+	    if (!groupMemberService.isGroupMember(groupId, memberId)) {
+	        return "redirect:/access-denied";
+	    }
+
+	    model.addAttribute("history", history);
+	    model.addAttribute("todoList", todoService.getTodoList());
+	    model.addAttribute("memberList", memberService.readAll());
+
+	    return "historyUpdateForm";
+	}
     
-    // ✅ 3. 기록 등록 처리
-    @PostMapping("/create")
-    public String addHistory(
-	    HttpServletRequest request,  // ★ 추가: 저장 경로 구하기 위함
-	    @RequestParam("todo_id") int todoId,
-	    @RequestParam("member_id") int memberId,
-	    @RequestParam("score") int score,
-	    @RequestParam("memo") String memo,
-	    @RequestParam(value = "photo", required = false) MultipartFile photo
-    ) {
-        System.out.println("📥 등록 요청 들어옴");
+    // 5. 수정 처리
+	public String updateHistory(
+		    HttpServletRequest request,
+		    @RequestParam("id") int id,
+		    @RequestParam("todo_id") int todoId,
+		    @RequestParam("member_id") int memberId,
+		    @RequestParam("score") int score,
+		    @RequestParam("memo") String memo,
+		    @RequestParam(value = "photo", required = false) MultipartFile photo,
+		    HttpSession session
+		) {
+		    Member loginUser = (Member) session.getAttribute("loginUser");
+		    if (loginUser == null) {
+		    	return "redirect:/access-denied";
+		    }
 
-        History history = new History();
-        history.setTodo_id(todoId);
-        history.setMember_id(memberId);
-        history.setCompleted_at(new Date()); 
-        history.setScore(score);
-        history.setMemo(memo);
+		    Todo todo = todoService.findById(todoId);
+		    Long groupId = Long.valueOf(todo.getGroup_id());
+		    Long loginUserId = Long.valueOf(loginUser.getId());
 
-        if (photo != null && !photo.isEmpty()) {
-            String fileName = photo.getOriginalFilename();
-            System.out.println("✔ 업로드된 파일명: " + fileName);
+		    if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
+		        return "redirect:/access-denied";
+		    }
 
-            // ✅ 1. 실제 저장 경로
-            String uploadDir = "C:/upload/";
-            File dir = new File(uploadDir);
-            if (!dir.exists()) dir.mkdirs(); // 폴더 없으면 자동 생성
+		    History history = new History();
+		    history.setId(id);
+		    history.setTodo_id(todoId);
+		    history.setMember_id(memberId);
+		    history.setCompleted_at(new Date());
+		    history.setScore(score);
+		    history.setMemo(memo);
 
-            try {
-                File savedFile = new File(uploadDir, fileName);
-                photo.transferTo(savedFile);  // ⭐ 실제 저장
-                history.setPhoto(fileName);   // DB에는 파일명만 저장
-            } catch (Exception e) {
-                e.printStackTrace(); // 업로드 실패 시 에러 확인
-            }
-        } else {
-            System.out.println("⚠ 사진 업로드 없음");
-        }
+		    if (photo != null && !photo.isEmpty()) {
+		        try {
+		            String fileName = photo.getOriginalFilename();
+		            File savedFile = new File("C:/upload/", fileName);
+		            photo.transferTo(savedFile);
+		            history.setPhoto(fileName);
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+		    }
 
-        historyService.addHistory(history);
-        todoService.completeTodo(todoId);
-        return "redirect:/history?todo_id=" + todoId;
-    }
+		    historyService.updateHistory(history);
+		    return "redirect:/history?todo_id=" + todoId;
+		}
 
+    // 6. 삭제
+	@PostMapping("/delete")
+	public String deleteHistory(@RequestParam("id") int id, @RequestParam("todo_id") int todo_id, HttpSession session) {
+	    Member loginUser = (Member) session.getAttribute("loginUser");
+	    if (loginUser == null) {
+	    	return "redirect:/access-denied";
+	    }
+
+	    Todo todo = todoService.findById(todo_id);
+	    Long groupId = Long.valueOf(todo.getGroup_id());
+	    Long memberId = Long.valueOf(loginUser.getId());
+
+	    if (!groupMemberService.isGroupMember(groupId, memberId)) {
+	        return "redirect:/access-denied";
+	    }
+
+	    historyService.deleteHistory(id);
+	    return "redirect:/history?todo_id=" + todo_id;
+	}
     
-    // ✅ 4. 기록 수정 폼
-    @GetMapping("/update")
-    public String updateHistory (@RequestParam("id") int id, Model model) {
-    	History history = historyService.getHistoryByIdWithDetails(id);
-    	
-    	List<Todo> todoList = todoService.getTodoList();
-        List<Member> memberList = memberService.readAll();
-    	
-    	model.addAttribute("todoList", todoList);
-        model.addAttribute("memberList", memberList);
-        model.addAttribute("history", history);
-        return "historyUpdateForm";
-    }
-    
-    // ✅ 5. 수정 처리
-    @PostMapping("/update")
-    public String updateHistory(
-            HttpServletRequest request,
-            @RequestParam("id") int id,
-            @RequestParam("todo_id") int todoId,
-            @RequestParam("member_id") int memberId,
-            @RequestParam("score") int score,
-            @RequestParam("memo") String memo,
-            @RequestParam(value = "photo", required = false) MultipartFile photo
-    ) {
-        History history = new History();
-        history.setId(id);
-        history.setTodo_id(todoId);
-        history.setMember_id(memberId);
-        history.setCompleted_at(new Date()); 
-        history.setScore(score);
-        history.setMemo(memo);
+    // 7. 히스토리 상세 보기
+	public String detailHistory(@RequestParam("history_id") int historyId, HttpSession session, Model model) {
+	    Member loginUser = (Member) session.getAttribute("loginUser");
+	    if (loginUser == null) {
+	    	return "redirect:/access-denied";
+	    }
 
-        if (photo != null && !photo.isEmpty()) {
-            String fileName = photo.getOriginalFilename();
-            String uploadDir = "C:/upload/";
-            File dir = new File(uploadDir);
-            if (!dir.exists()) dir.mkdirs();
+	    History history = historyService.getHistoryByIdWithDetails(historyId);
+	    Todo todo = todoService.findById(history.getTodo_id());
+	    Long groupId = Long.valueOf(todo.getGroup_id());
+	    Long memberId = Long.valueOf(loginUser.getId());
 
-            try {
-                File savedFile = new File(uploadDir, fileName);
-                photo.transferTo(savedFile);
-                history.setPhoto(fileName);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+	    if (!groupMemberService.isGroupMember(groupId, memberId)) {
+	        return "redirect:/access-denied";
+	    }
 
-        historyService.updateHistory(history);
+	    List<HistoryComment> commentList = commentService.getCommentsByHistoryId(historyId);
+	    model.addAttribute("commentList", commentList);
+	    model.addAttribute("history", history);
+	    return "historyDetail";
+	}
 
-        return "redirect:/history?todo_id=" + todoId;
-    }
+    // 8. 점수 계산
+	public String showMonthlyScore(
+		    @RequestParam("group_id") Integer groupId,
+		    @RequestParam(value = "yearMonth", required = false) String yearMonth,
+		    HttpSession session,
+		    Model model
+		) {
+		    Member loginUser = (Member) session.getAttribute("loginUser");
+		    if (loginUser == null) return "redirect:/";
 
-    
-    // ✅ 6. 삭제
-    @PostMapping("/delete")
-    public String deleteHistory(@RequestParam("id") int id, @RequestParam("todo_id") int todo_id) {
-        historyService.deleteHistory(id);
-        return "redirect:/history?todo_id=" + todo_id;
-    }
-    
-    // ✅ 7. 히스토리 상세 보기
-    @GetMapping("/detail")
-    public String detailHistory(@RequestParam("history_id") int historyId, Model model) {
-    	History history = historyService.getHistoryByIdWithDetails(historyId);
-    	List<HistoryComment> commentList = commentService.getCommentsByHistoryId(historyId);
-    	model.addAttribute("commentList", commentList);
+		    Long groupIdLong = Long.valueOf(groupId);
+		    Long memberId = Long.valueOf(loginUser.getId());
 
-        model.addAttribute("history", history);
-        return "historyDetail";
-    }
-    
-    // ✅ 8. 점수 계산
-    @GetMapping("/monthly-score")
-    public String showMonthlyScore(
-    	@RequestParam("group_id") Integer groupId, 
-    	@RequestParam(value = "yearMonth", required = false) String yearMonth, 
-    	Model model) {
-    	
-    	// ✅ yearMonth 기본값 처리 
-    	if (yearMonth == null || yearMonth.isEmpty()) {
-    		java.time.LocalDate now = java.time.LocalDate.now();
-    		yearMonth = now.getYear() + "-" + String.format("%02d", now.getMonthValue());	// 예: 2025-07
-    	}
-    	// 🧠 그룹 정보 가져오기
-        Group group = groupService.findById(groupId);
-        
-    	System.out.println("📌 [Controller] groupId = " + groupId);
-        System.out.println("📌 [Controller] yearMonth = " + yearMonth);
-        
-    	// ✅ 서비스 호출 
-    	List<GroupMonthlyScore> groupScores = historyService.getGroupMonthlyScore(groupId, yearMonth);
-    	List<MemberMonthlyScore> memberScores = historyService.getMemberMonthlyScore(groupId, yearMonth);
-    	
-    	// ✅ 모델에 담기
-    	model.addAttribute("groupScores", groupScores);		// 단일 객체지만 리스트로 받아올 수도 있음
-    	model.addAttribute("memberScores", memberScores);
-    	model.addAttribute("yearMonth", yearMonth);			// 뷰에서 < 6월 7월 8월 > 표시용
-    	model.addAttribute("group", group);
-    	return "monthlyScore";
-    }
+		    if (!groupMemberService.isGroupMember(groupIdLong, memberId)) {
+		        return "redirect:/access-denied";
+		    }
+
+		    if (yearMonth == null || yearMonth.isEmpty()) {
+		        java.time.LocalDate now = java.time.LocalDate.now();
+		        yearMonth = now.getYear() + "-" + String.format("%02d", now.getMonthValue());
+		    }
+
+		    Group group = groupService.findById(groupId);
+		    List<GroupMonthlyScore> groupScores = historyService.getGroupMonthlyScore(groupId, yearMonth);
+		    List<MemberMonthlyScore> memberScores = historyService.getMemberMonthlyScore(groupId, yearMonth);
+
+		    model.addAttribute("groupScores", groupScores);
+		    model.addAttribute("memberScores", memberScores);
+		    model.addAttribute("yearMonth", yearMonth);
+		    model.addAttribute("group", group);
+
+		    return "monthlyScore";
+		}
     
     @InitBinder
     public void initBinder(WebDataBinder binder) {

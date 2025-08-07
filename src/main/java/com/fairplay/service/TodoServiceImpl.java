@@ -111,4 +111,10 @@ public class TodoServiceImpl implements TodoService{
 	public List<TodoSimple> getTodosByDate(LocalDate date, int memberId) {
 		return todoRepository.findTodosByDateAndMember(date, memberId);
 	}
+	@Override
+	public List<Todo> findByGroupId(int groupId) {
+		return todoRepository.findByGroupId(groupId);
+	}
+	
+	
 }

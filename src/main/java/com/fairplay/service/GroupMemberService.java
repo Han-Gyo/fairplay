@@ -40,4 +40,5 @@ public interface GroupMemberService {
 	
 	// 내가 가입한 그룹 리스트 반환 (그룹명, ID 포함)
 	List<Group> findGroupsByMemberId(Long memberId);
+
 }
