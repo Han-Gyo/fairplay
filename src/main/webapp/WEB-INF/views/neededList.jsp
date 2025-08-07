@@ -17,6 +17,18 @@
 
 <div class="needed-container">
     <h2>📦 필요 물품 목록</h2>
+    
+    <!-- ✅ 그룹 선택 드롭다운 -->
+	<form method="get" action="${pageContext.request.contextPath}/needed/list" class="group-select-form">
+	    <label for="groupId">그룹 선택</label>
+	    <select name="groupId" id="groupId" onchange="this.form.submit()">
+	        <c:forEach var="group" items="${joinedGroups}">
+	            <option value="${group.id}" ${group.id == groupId ? 'selected' : ''}>
+	                ${group.name}
+	            </option>
+	        </c:forEach>
+	    </select>
+	</form>
 
     <!-- 등록 버튼 -->
     <div class="add-btn-wrap">

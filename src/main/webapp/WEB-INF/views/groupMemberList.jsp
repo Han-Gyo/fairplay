@@ -74,77 +74,74 @@
 <div class="table-box">
     <h2>👥 그룹 멤버 목록</h2>
 
-    <c:choose>
-        <c:when test="${group.publicStatus}">
-            <c:choose>
+<c:choose>
 
-                <c:when test="${isMember}">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>닉네임</th>
-                                <th>실명</th>
-                                <th>역할</th>
-                                <th>총 점수</th>
-                                <th>주간 점수</th>
-                                <th>경고 횟수</th>
-                                <th>관리</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach var="member" items="${groupMembers}">
-                                <tr>
-                                    <td>${member.nickname}</td>
-                                    <td>${member.realName}</td>
-                                    <td>${member.role}</td>
-                                    <td>${member.totalScore}</td>
-                                    <td>${member.weeklyScore}</td>
-                                    <td>${member.warningCount}</td>
-                                    <td>
-                                        <c:if test="${loginMember.id == group.leaderId && member.id != group.leaderId}">
-                                            <form action="${pageContext.request.contextPath}/groupmember/delete" method="post" style="display:inline;">
-                                                <input type="hidden" name="groupId" value="${group.id}" />
-                                                <input type="hidden" name="memberId" value="${member.memberId}" />
-                                                <button type="submit" class="action-link delete" onclick="return confirm('정말 추방하시겠습니까?');">추방</button>
-                                            </form>
-                                        </c:if>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </c:when>
+    <c:when test="${isMember}">
+        <table>
+            <thead>
+                <tr>
+                    <th>닉네임</th>
+                    <th>실명</th>
+                    <th>역할</th>
+                    <th>총 점수</th>
+                    <th>주간 점수</th>
+                    <th>경고 횟수</th>
+                    <th>관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="member" items="${groupMembers}">
+                    <tr>
+                        <td>${member.nickname}</td>
+                        <td>${member.realName}</td>
+                        <td>${member.role}</td>
+                        <td>${member.totalScore}</td>
+                        <td>${member.weeklyScore}</td>
+                        <td>${member.warningCount}</td>
+                        
+                        <td>
+						    <c:if test="${loginMember.id == group.leaderId || loginMember.id == member.id}">
+						        <a href="${pageContext.request.contextPath}/groupmember/edit?id=${member.id}">수정</a>
+						    </c:if>
+						</td>
+						
+                        <td>
+                             <c:if test="${loginMember.id == group.leaderId && member.id != group.leaderId}">
+					            <form action="${pageContext.request.contextPath}/groupmember/delete" method="post" style="display:inline;">
+					                <input type="hidden" name="groupId" value="${group.id}" />
+					                <input type="hidden" name="memberId" value="${member.memberId}" />
+					                <button type="submit" class="action-link delete" onclick="return confirm('정말 추방하시겠습니까?');">추방</button>
+					            </form>
+					        </c:if>
+					    </td>
+					</tr>
+                </c:forEach>
+            </tbody>
+        </table>
+    </c:when>
 
-                <c:otherwise>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>닉네임</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach var="member" items="${groupMembers}">
-                                <tr>
-                                    <td>${member.nickname}</td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </c:otherwise>
-            </c:choose>
-        </c:when>
+    <c:when test="${group.publicStatus}">
+        <table>
+            <thead>
+                <tr>
+                    <th>닉네임</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="member" items="${groupMembers}">
+                    <tr>
+                        <td>${member.nickname}</td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+    </c:when>
 
-        <c:otherwise>
-            <c:choose>
-                <c:when test="${isMember}">
-                </c:when>
-                
-                <c:otherwise>
-                    <p>비공개 그룹의 멤버 목록은 가입자만 볼 수 있습니다.</p>
-                </c:otherwise>
-            </c:choose>
-        </c:otherwise>
-    </c:choose>
+
+    <c:otherwise>
+        <p>비공개 그룹의 멤버 목록은 가입자만 볼 수 있습니다.</p>
+    </c:otherwise>
+</c:choose>
 
     <form action="${pageContext.request.contextPath}/group/groups">
         <button type="submit" class="btn-back">그룹 목록으로 돌아가기</button>

@@ -57,3 +57,18 @@
 .btn-small.red {
     background-color: #ffb3b3;
 }
+
+.group-select-form {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.group-select-form select {
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
