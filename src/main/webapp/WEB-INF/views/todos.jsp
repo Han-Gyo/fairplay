@@ -26,10 +26,12 @@
   </script>
 </c:if>
 	
-<form action="${pageContext.request.contextPath}/todos/create" method="get" style="display:inline;">
-  <input type="hidden" name="groupId" value="${group.id}">
-  <button type="submit">➕ 새 할 일 등록</button>
-</form>
+<c:if test="${role eq 'LEADER'}">
+  <form action="${pageContext.request.contextPath}/todos/create" method="get" style="display:inline;">
+    <input type="hidden" name="groupId" value="${group.id}">
+    <button type="submit">➕ 새 할 일 등록</button>
+  </form>
+</c:if>
 
 <div style="display: flex; justify-content: space-between; gap: 30px; margin-top: 20px;">
   

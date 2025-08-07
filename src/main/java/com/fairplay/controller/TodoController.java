@@ -29,6 +29,7 @@ import com.fairplay.domain.Group;
 import com.fairplay.domain.Member;
 import com.fairplay.domain.Todo;
 import com.fairplay.domain.TodoSimple;
+import com.fairplay.service.GroupMemberService;
 import com.fairplay.service.GroupService;
 import com.fairplay.service.MemberService;
 import com.fairplay.service.TodoService;
@@ -43,6 +44,8 @@ public class TodoController {
 	private MemberService memberService;
 	@Autowired
 	private GroupService groupService;
+	@Autowired
+	private GroupMemberService groupMemberService;
 	
 	// 날짜 바인딩 설정 (yyyy-MM-dd 형식 사용)
 	@InitBinder
@@ -54,10 +57,7 @@ public class TodoController {
 	
 	// 전체 할 일 목록 조회
 	@GetMapping
-	public String listTodos(@RequestParam("groupId") int groupId,
-				            HttpSession session,
-				            Model model,
-				            RedirectAttributes ra) {
+	public String listTodos(HttpSession session,Model model) {
 		// 전체 할 일 목록조회
 	    List<Todo> todoList = todoService.getTodoList();
 	    
@@ -65,13 +65,8 @@ public class TodoController {
 	    for (Todo t : todoList) {
 	        System.out.println(" - " + t.getTitle() + " / 상태: " + t.getStatus() + " / 담당자: " + t.getAssigned_to());
 	    }
-	    
-	    Group group = groupService.findById(groupId);
-	    if (group == null) {
-	        ra.addFlashAttribute("msg", "존재하지 않는 그룹입니다.");
-	        return "redirect:/"; // 혹은 그룹 목록 페이지 등
-	    }
-	    
+
+
 	    // 전체 멤버 목록조회
 	    List<Member> memberList = memberService.readAll();
 	    
@@ -98,40 +93,16 @@ public class TodoController {
 	    }
 	    model.addAttribute("todoList", todoList);
 	    model.addAttribute("memberMap", memberMap);
-	    model.addAttribute("group", group);
 
 	    return "todos";
 	}
 	
 	// 그룹장만 할 일 등록 폼 접근 가능
 	@GetMapping("/create")
-	public String addTodo(@RequestParam("groupId") int groupId,
-	                      Model model,
-	                      HttpSession session,
-	                      RedirectAttributes ra) {
-
-	    // 로그인 사용자 정보 꺼내기
-	    Member loginUser = (Member) session.getAttribute("loginMember");
-	    int memberId = loginUser.getId();
-
-	    // 그룹 정보 가져오기
-	    Group group = groupService.findById(groupId);
-
-	    // 로그 찍기
-	    System.out.println("[등록폼] 로그인 사용자 ID: " + memberId + ", 그룹장 ID: " + group.getLeaderId());
-
-	    // 그룹장 여부 확인
-	    if (group == null || group.getLeaderId() != memberId) {
-	        ra.addFlashAttribute("error", "그룹장만 할 일을 등록할 수 있습니다.");
-	        return "redirect:/todos/list";
-	    }
-
-	    // 할 일 등록 폼용 데이터 세팅
-	    List<Member> memberList = memberService.readAll(); // 담당자 선택용
-	    model.addAttribute("memberList", memberList);
-	    model.addAttribute("groupId", groupId); // 혹시 폼에서 groupId도 같이 넘겨야 할 경우 대비
-
-	    return "todoCreateForm";
+	public String addTodo(Model model) {
+		List<Member> memberList = memberService.readAll(); // 담당자 선택을 위한 멤버 목록
+		model.addAttribute("memberList", memberList); // 모델에 넣기
+		return "todoCreateForm";  
 	}
 	
 	// 할 일 실제 등록 처리
