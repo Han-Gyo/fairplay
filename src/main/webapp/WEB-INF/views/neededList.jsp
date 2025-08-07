@@ -3,78 +3,61 @@
 <%@ include file="/WEB-INF/views/nav.jsp" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>필요 물품 목록</title>
+  <meta charset="UTF-8">
+  <title>필요 물품 목록</title>
 
-    <!-- CSS 연결 -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/neededList.css">
-
-    <!-- JS 연결 -->
-    <script defer src="${pageContext.request.contextPath}/resources/js/neededList.js"></script>
+  <!-- CSS -->
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/needed.css">
+  <!-- Js -->
+  <script defer src="${pageContext.request.contextPath}/resources/js/needed.js"></script>
 </head>
-<body>
+<body class="needed-body">
 
-<div class="needed-container">
-    <h2>📦 필요 물품 목록</h2>
-    
-    <!-- ✅ 그룹 선택 드롭다운 -->
-	<form method="get" action="${pageContext.request.contextPath}/needed/list" class="group-select-form">
-	    <label for="groupId">그룹 선택</label>
-	    <select name="groupId" id="groupId" onchange="this.form.submit()">
-	        <c:forEach var="group" items="${joinedGroups}">
-	            <option value="${group.id}" ${group.id == groupId ? 'selected' : ''}>
-	                ${group.name}
-	            </option>
-	        </c:forEach>
-	    </select>
-	</form>
+  <div class="needed-container">
+    <h2 class="needed-title">📦 필요 물품 목록</h2>
 
-    <!-- 등록 버튼 -->
+    <!-- ✅ 그룹 선택 -->
+    <form method="get" action="${pageContext.request.contextPath}/needed/list" class="group-select-form">
+      <select name="groupId" id="groupId" onchange="this.form.submit()">
+        <c:forEach var="group" items="${joinedGroups}">
+          <option value="${group.id}" ${group.id == groupId ? 'selected' : ''}>${group.name}</option>
+        </c:forEach>
+      </select>
+    </form>
+
+    <!-- ✅ 추가 버튼 -->
     <div class="add-btn-wrap">
-        <a href="${pageContext.request.contextPath}/needed/add?groupId=${groupId}" class="btn btn-primary">
-		    ➕ 새 물품 추가
-		</a>
+      <a href="${pageContext.request.contextPath}/needed/add?groupId=${groupId}" class="btn-add">➕ 물품 등록</a>
     </div>
 
-    <!-- 목록 테이블 -->
-    <table class="needed-table">
-        <thead>
-            <tr>
-                <th>물품명</th>
-                <th>수량</th>
-                <th>구매</th>
-                <th>작성자</th>
-                <th>메모</th>
-                <th>관리</th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:forEach var="item" items="${items}">
-                <tr class="${item.purchased ? 'done' : ''}">
-                    <td>${item.itemName}</td>
-                    <td>${item.quantity}</td>
-                    <td>
-                        <input type="checkbox"
-                               class="purchase-check"
-                               data-id="${item.id}"
-                               ${item.purchased ? 'checked' : ''} />
-                    </td>
-                    <td>${item.writerNickname}</td>
-                    <td>${item.memo}</td>
-                    <td>
-                        <a href="${pageContext.request.contextPath}/needed/edit?id=${item.id}" class="btn-small">수정</a>
-                        <form action="${pageContext.request.contextPath}/needed/delete" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="${item.id}" />
-                            <input type="hidden" name="groupId" value="${groupId}" />
-                            <button type="submit" class="btn-small red">삭제</button>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
-        </tbody>
-    </table>
-</div>
+    <!-- ✅ 물품 카드 리스트 -->
+    <div class="needed-card-list">
+      <c:forEach var="item" items="${items}">
+        <div class="needed-card ${item.purchased ? 'purchased' : ''}">
+          <div class="item-header">
+            <h4>${item.itemName}</h4>
+            <label>
+              <input type="checkbox" class="purchase-check" data-id="${item.id}" ${item.purchased ? 'checked' : ''}>
+              구매 완료
+            </label>
+          </div>
+          <p><strong>수량:</strong> ${item.quantity}</p>
+          <p><strong>메모:</strong> ${item.memo}</p>
+          <p><strong>작성자:</strong> ${item.writerNickname}</p>
+          <div class="item-actions">
+            <a href="${pageContext.request.contextPath}/needed/edit?id=${item.id}" class="btn-small">수정</a>
+            <form action="${pageContext.request.contextPath}/needed/delete" method="post">
+              <input type="hidden" name="id" value="${item.id}">
+              <input type="hidden" name="groupId" value="${groupId}">
+              <button type="submit" class="btn-small red">삭제</button>
+            </form>
+          </div>
+        </div>
+      </c:forEach>
+    </div>
+  </div>
 
 </body>
 </html>

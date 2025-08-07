@@ -115,4 +115,12 @@ public class NeededItemRepositoryImpl implements NeededItemRepository {
         String sql = "UPDATE needed_item SET is_purchased = ?, updated_at = NOW() WHERE id = ?";
         return jdbcTemplate.update(sql, isPurchased, id);
     }
+    
+    @Override
+    public int updatePurchased(Long id, boolean purchased) {
+        // purchased 상태를 업데이트하는 SQL 쿼리 실행
+        String sql = "UPDATE needed_item SET purchased = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, purchased, id);
+    }
+
 }

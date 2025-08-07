@@ -49,4 +49,11 @@ public class NeededItemServiceImpl implements NeededItemService {
     public void togglePurchased(Long id, boolean isPurchased) {
         neededItemRepository.updatePurchasedStatus(id, isPurchased);
     }
+    
+    @Override
+    public boolean updatePurchasedStatus(Long id, boolean purchased) {
+        // 업데이트된 행의 개수가 0보다 크면 성공
+        return neededItemRepository.updatePurchased(id, purchased) > 0;
+    }
+
 }

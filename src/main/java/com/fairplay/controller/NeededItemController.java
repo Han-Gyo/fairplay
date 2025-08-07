@@ -1,6 +1,8 @@
 package com.fairplay.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -10,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -140,4 +143,28 @@ public class NeededItemController {
         neededItemService.togglePurchased(id, isPurchased);
         return "success";
     }
+    
+    // 구매 완료 상태 토글 처리 (AJAX)
+    @PostMapping("/togglePurchased")
+    @ResponseBody
+    public Map<String, Object> togglePurchased(@RequestBody Map<String, Object> requestData) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Long itemId = Long.valueOf(requestData.get("id").toString());
+            boolean purchased = Boolean.parseBoolean(requestData.get("purchased").toString());
+
+            boolean success = neededItemService.updatePurchasedStatus(itemId, purchased);
+
+            response.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace(); // 서버 콘솔에서 에러 확인용
+            response.put("success", false);
+            response.put("error", e.getMessage());
+        }
+
+        return response;
+    }
+
+
 }

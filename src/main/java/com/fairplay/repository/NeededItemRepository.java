@@ -22,4 +22,8 @@ public interface NeededItemRepository {
 
     // 구매 여부 업데이트 (isPurchased만 바꿀 때 사용)
     int updatePurchasedStatus(Long id, boolean isPurchased);
+    
+    // 구매 상태 업데이트 쿼리 메서드 정의
+    int updatePurchased(Long id, boolean purchased);
+
 }
