@@ -23,4 +23,8 @@ public interface NeededItemService {
 
     // 구매 여부 토글
     void togglePurchased(Long id, boolean isPurchased);
+    
+    // 물품 구매 여부 상태 업데이트 메서드 정의
+    boolean updatePurchasedStatus(Long id, boolean purchased);
+
 }

@@ -206,7 +206,11 @@
 
 <div class="navbar">
     <div class="left">
-        <a href="${pageContext.request.contextPath}/">🏠 Home</a>
+        <!-- ✅ 로고 -->
+		<a class="navbar-brand d-flex align-items-center" href="${pageContext.request.contextPath}/">
+		  <i class="fas fa-broom fa-lg me-2"></i> <!-- 빗자루 아이콘 -->
+		  <span style="font-weight: 600; font-size: 1.3rem;">FairPlay</span>
+		</a>
 
         <!-- Todo 드롭다운 -->
         <div class="dropdown">

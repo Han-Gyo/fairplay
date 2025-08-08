@@ -1,6 +1,8 @@
 package com.fairplay.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -10,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,30 +34,39 @@ public class NeededItemController {
     
     // [GET] 물품 목록 조회
     @GetMapping("/list")
-    public String list(@RequestParam("groupId") Long groupId,
+    public String list(@RequestParam(value = "groupId", required = false) Long groupId,
                        Model model,
                        HttpSession session) {
 
-        // 로그인 사용자 확인
         Member loginMember = (Member) session.getAttribute("loginMember");
         if (loginMember == null) {
             model.addAttribute("error", "로그인이 필요합니다.");
             return "redirect:/login";
         }
 
-        // 그룹 멤버 여부 확인 
+        // 1. 내가 속한 그룹 리스트 조회
+        List<Group> joinedGroups = groupMemberService.findGroupsByMemberId((long) loginMember.getId());
+        model.addAttribute("joinedGroups", joinedGroups);
+
+        // 2. groupId가 없는 경우 → 첫 번째 그룹 선택
+        if (groupId == null && !joinedGroups.isEmpty()) {
+            groupId = (long)joinedGroups.get(0).getId();  // 첫 번째 그룹 ID로 자동 설정
+        }
+
+        // 3. 해당 그룹 멤버인지 확인
         boolean isMember = groupMemberService.isGroupMember(groupId, (long) loginMember.getId());
         if (!isMember) {
             model.addAttribute("error", "해당 그룹의 멤버만 접근 가능합니다.");
-            return "redirect:/group/list"; // 또는 에러 페이지
+            return "redirect:/group/list";
         }
 
-        // 조건 통과 → 물품 목록 조회
+        // 4. 물품 목록 조회
         List<NeededItemDTO> items = neededItemService.getItemsByGroupId(groupId);
         model.addAttribute("items", items);
-        model.addAttribute("groupId", groupId);
+        model.addAttribute("groupId", groupId); // 선택된 그룹 ID도 같이 넘기기
         return "neededList";
     }
+
 
 
     // [GET] 등록 폼으로 이동
@@ -131,4 +143,28 @@ public class NeededItemController {
         neededItemService.togglePurchased(id, isPurchased);
         return "success";
     }
+    
+    // 구매 완료 상태 토글 처리 (AJAX)
+    @PostMapping("/togglePurchased")
+    @ResponseBody
+    public Map<String, Object> togglePurchased(@RequestBody Map<String, Object> requestData) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Long itemId = Long.valueOf(requestData.get("id").toString());
+            boolean purchased = Boolean.parseBoolean(requestData.get("purchased").toString());
+
+            boolean success = neededItemService.updatePurchasedStatus(itemId, purchased);
+
+            response.put("success", success);
+        } catch (Exception e) {
+            e.printStackTrace(); // 서버 콘솔에서 에러 확인용
+            response.put("success", false);
+            response.put("error", e.getMessage());
+        }
+
+        return response;
+    }
+
+
 }
