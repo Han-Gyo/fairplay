@@ -1,70 +1,71 @@
-// statisticsGroupChart.js
-// 역할: 그룹 월간 점수(일자별 합계 등) 차트를 렌더링
-// 백엔드에서 JSON 응답만 맞춰주면 그대로 동작함.
-// 예상 JSON 형식 예시:
-// { "labels": ["01","02","03",...], "data": [10, 20, 0, ...] }
-
 document.addEventListener('DOMContentLoaded', () => {
-  const ctxPath = document.body.dataset.contextPath || '';
-  const groupId = document.getElementById('groupId')?.value;
-  const yearMonth = document.getElementById('yearMonth')?.value;
-  const hook = document.getElementById('chartHooks');
-  const groupUrl = hook?.dataset.groupUrl || `${ctxPath}/history/monthly-score/group-data`;
+    const ctxPath = document.body.dataset.contextPath || '';
+    const groupId = document.getElementById('groupId')?.value;
+    const yearMonth = document.getElementById('yearMonth')?.value;
+    const hook = document.getElementById('chartHooks');
 
-  const canvas = document.getElementById('groupChart');
-  if (!canvas || !groupId || !yearMonth) return;
+    const groupUrl = hook?.dataset.groupUrl || `${ctxPath}/statistics/group-monthly-total`;
 
-  let groupChart;
+    // 차트 렌더 함수
+    const render = (labels, data) => {
+        const ctx = document.getElementById('groupChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '그룹 점수',
+                    data: data,
+                    backgroundColor: 'rgba(255, 159, 64, 0.5)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: '점수' }
+                    }
+                }
+            }
+        });
+    };
 
-  const render = (labels, data) => {
-    if (groupChart) groupChart.destroy();
-    const ctx = canvas.getContext('2d');
+    // JSON 요청 함수
+    const fetchJson = async (url) => {
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+    };
 
-    groupChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [{
-          label: '그룹 월간 점수',
-          data,
-          tension: 0.25,
-          borderWidth: 2,
-          pointRadius: 3,
-          // 색은 Chart.js 기본 팔레트 사용(너가 원하면 CSS 변수 연동 가능)
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: true },
-          tooltip: { mode: 'index', intersect: false }
-        },
-        scales: {
-          y: { beginAtZero: true, title: { display: true, text: '점수' } },
-          x: { title: { display: true, text: '일자' } }
+    // 데이터 로드
+    const load = async () => {
+        try {
+            const url = `${groupUrl}?groupId=${encodeURIComponent(groupId)}&yearMonth=${encodeURIComponent(yearMonth)}`;
+            const json = await fetchJson(url);
+
+            let labels = [], data = [];
+
+            if (json && Array.isArray(json.labels)) {
+                labels = json.labels;
+                data = json.data || [];
+            } else if (Array.isArray(json)) {
+                labels = json.map(d => d.day || '');
+                data = json.map(d => d.total || 0);
+            } else if (json && typeof json.totalScore !== 'undefined') {
+                // 단일 총점 API 대응
+                labels = [yearMonth];
+                data = [json.totalScore];
+            }
+
+            render(labels, data);
+        } catch (e) {
+            console.error('[GroupChart] load failed:', e);
+            render([], []);
         }
-      }
-    });
-  };
+    };
 
-  // ✅ 데이터 가져오기
-  const load = async () => {
-    try {
-      const url = `${groupUrl}?group_id=${encodeURIComponent(groupId)}&yearMonth=${encodeURIComponent(yearMonth)}`;
-      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-      if (!res.ok) throw new Error('group data http error');
-      const json = await res.json();
-
-      // 방어코드: 키 이름이 다를 수 있어 유연 처리
-      const labels = json.labels || json.days || [];
-      const data = json.data || json.values || [];
-      render(labels, data);
-    } catch (e) {
-      console.error('[GroupChart] load failed:', e);
-      // 최소 폴백: 비어있는 차트
-      render([], []);
-    }
-  };
-
-  load();
+    load();
 });
