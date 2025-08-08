@@ -117,8 +117,8 @@ public class HistoryController {
 	public String listHistories(@RequestParam("todo_id") int todo_id, HttpSession session, Model model) {
 	    
 	    // 세션에서 로그인 사용자 꺼냄
-	    Member loginUser = (Member) session.getAttribute("loginUser");
-	    if (loginUser == null) {
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
 	    	return "redirect:/";
 	    }
 	    
@@ -127,7 +127,7 @@ public class HistoryController {
 	    int groupId = todo.getGroup_id();
 	    
 	    // Long 타입으로 변환
-	    Long memberId = Long.valueOf(loginUser.getId());
+	    Long memberId = Long.valueOf(loginMember.getId());
 	    Long groupIdLong = Long.valueOf(groupId);
 	    
 	    // 그룹원이 아니면 접근 차단 (여기가 먼저!)
@@ -181,6 +181,7 @@ public class HistoryController {
 
 
     // 3. 기록 등록 처리
+	@PostMapping("/create")
 	public String addHistory(
 		    HttpServletRequest request,
 		    @RequestParam("todo_id") int todoId,
@@ -190,14 +191,14 @@ public class HistoryController {
 		    @RequestParam(value = "photo", required = false) MultipartFile photo,
 		    HttpSession session
 		) {
-		    Member loginUser = (Member) session.getAttribute("loginUser");
-		    if (loginUser == null) {
+		    Member loginMember = (Member) session.getAttribute("loginMember");
+		    if (loginMember == null) {
 		    	return "redirect:/";
 		    }
 
 		    Todo todo = todoService.findById(todoId);
 		    Long groupId = Long.valueOf(todo.getGroup_id());
-		    Long loginUserId = Long.valueOf(loginUser.getId());
+		    Long loginUserId = Long.valueOf(loginMember.getId());
 
 		    if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
 		        return "redirect:/";
@@ -230,15 +231,15 @@ public class HistoryController {
     // 4. 기록 수정 폼
 	@GetMapping("/update")
 	public String updateHistory(@RequestParam("id") int id, HttpSession session, Model model) {
-	    Member loginUser = (Member) session.getAttribute("loginUser");
-	    if (loginUser == null) {
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
 	    	return "redirect:/";
 	    }
 
 	    History history = historyService.getHistoryByIdWithDetails(id);
 	    Todo todo = todoService.findById(history.getTodo_id());
 	    Long groupId = Long.valueOf(todo.getGroup_id());
-	    Long memberId = Long.valueOf(loginUser.getId());
+	    Long memberId = Long.valueOf(loginMember.getId());
 
 	    if (!groupMemberService.isGroupMember(groupId, memberId)) {
 	        return "redirect:/";
@@ -252,6 +253,7 @@ public class HistoryController {
 	}
     
     // 5. 수정 처리
+	@PostMapping("/update")
 	public String updateHistory(
 		    HttpServletRequest request,
 		    @RequestParam("id") int id,
@@ -262,14 +264,14 @@ public class HistoryController {
 		    @RequestParam(value = "photo", required = false) MultipartFile photo,
 		    HttpSession session
 		) {
-		    Member loginUser = (Member) session.getAttribute("loginUser");
-		    if (loginUser == null) {
+		    Member loginMember = (Member) session.getAttribute("loginMember");
+		    if (loginMember == null) {
 		    	return "redirect:/";
 		    }
 
 		    Todo todo = todoService.findById(todoId);
 		    Long groupId = Long.valueOf(todo.getGroup_id());
-		    Long loginUserId = Long.valueOf(loginUser.getId());
+		    Long loginUserId = Long.valueOf(loginMember.getId());
 
 		    if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
 		        return "redirect:/";
@@ -301,14 +303,14 @@ public class HistoryController {
     // 6. 삭제
 	@PostMapping("/delete")
 	public String deleteHistory(@RequestParam("id") int id, @RequestParam("todo_id") int todo_id, HttpSession session) {
-	    Member loginUser = (Member) session.getAttribute("loginUser");
-	    if (loginUser == null) {
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
 	    	return "redirect:/";
 	    }
 
 	    Todo todo = todoService.findById(todo_id);
 	    Long groupId = Long.valueOf(todo.getGroup_id());
-	    Long memberId = Long.valueOf(loginUser.getId());
+	    Long memberId = Long.valueOf(loginMember.getId());
 
 	    if (!groupMemberService.isGroupMember(groupId, memberId)) {
 	        return "redirect:/";
@@ -319,16 +321,17 @@ public class HistoryController {
 	}
     
     // 7. 히스토리 상세 보기
+	@GetMapping("/detail")
 	public String detailHistory(@RequestParam("history_id") int historyId, HttpSession session, Model model) {
-	    Member loginUser = (Member) session.getAttribute("loginUser");
-	    if (loginUser == null) {
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
 	    	return "redirect:/";
 	    }
 
 	    History history = historyService.getHistoryByIdWithDetails(historyId);
 	    Todo todo = todoService.findById(history.getTodo_id());
 	    Long groupId = Long.valueOf(todo.getGroup_id());
-	    Long memberId = Long.valueOf(loginUser.getId());
+	    Long memberId = Long.valueOf(loginMember.getId());
 
 	    if (!groupMemberService.isGroupMember(groupId, memberId)) {
 	        return "redirect:/";
