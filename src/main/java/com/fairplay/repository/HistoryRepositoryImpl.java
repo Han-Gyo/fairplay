@@ -244,71 +244,67 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	    }, todo_id);
 	}
 	
-	// 그룹별 월간 총점 조회
+	// 그룹별 월간 총점 조회 (최종 점수 기준)
 	@Override
 	public List<GroupMonthlyScore> findGroupMonthlyScore(int groupId, String yearMonth) {
-		
-		System.out.println("[Repository] SQL 실행 - 그룹 월간 점수");
+
+	    System.out.println("[Repository] SQL 실행 - 그룹 월간 점수(최종 score 합산)");
 	    System.out.println("groupId: " + groupId);
 	    System.out.println("yearMonth: " + yearMonth);
-	    
-	    String sql = "SELECT " +
-	    	    "t.group_id, " +
-	    	    "g.name, " +  // group name 추가
-	    	    "DATE_FORMAT(h.completed_at, '%Y-%m'), " +
-	    	    "SUM(t.difficulty_point) " +
-	    	    "FROM history h " +
-	    	    "JOIN todo t ON h.todo_id = t.id " +
-	    	    "JOIN `group` g ON t.group_id = g.id " + // group 조인
-	    	    "WHERE t.group_id = ? " +
-	    	    "AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
-	    	    "GROUP BY t.group_id, g.name, DATE_FORMAT(h.completed_at, '%Y-%m')";
 
+	    String sql =
+	        "SELECT " +
+	        "  t.group_id, " +
+	        "  g.name, " +
+	        "  DATE_FORMAT(h.completed_at, '%Y-%m') AS ym, " +
+	        "  SUM(COALESCE(h.score, 0)) AS total_score " +       // 🔁 핵심: h.score 사용
+	        "FROM history h " +
+	        "JOIN todo t ON h.todo_id = t.id " +
+	        "JOIN `group` g ON t.group_id = g.id " +
+	        "WHERE t.group_id = ? " +
+	        "  AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
+	        "GROUP BY t.group_id, g.name, ym";
 
-	    return jdbcTemplate.query(sql, new Object[]{groupId, yearMonth}, new RowMapper<GroupMonthlyScore>() {
-	        @Override
-	        public GroupMonthlyScore mapRow(ResultSet rs, int rowNum) throws SQLException {
-	        	return new GroupMonthlyScore(
-	        		    rs.getInt(1),        // group_id
-	        		    rs.getString(2),     // group_name ← 주석 수정
-	        		    rs.getString(3),     // year_month
-	        		    rs.getInt(4)         // total_score
-	        		);
-
-	        }
-	    });
+	    return jdbcTemplate.query(sql, new Object[]{groupId, yearMonth}, (rs, rowNum) ->
+	        new GroupMonthlyScore(
+	            rs.getInt("group_id"),
+	            rs.getString("name"),
+	            rs.getString("ym"),
+	            rs.getInt("total_score")
+	        )
+	    );
 	}
+
 	
-	// 멤버별 월간 점수 조회
+	// 멤버별 월간 점수 조회 (최종 점수 기준)
 	@Override
 	public List<MemberMonthlyScore> findMemberMonthlyScore(int groupId, String yearMonth) {
-	    System.out.println("[Repository] 멤버 월간 점수 SQL 실행");
+	    System.out.println("[Repository] 멤버 월간 점수 SQL 실행(최종 score 합산)");
 	    System.out.println("groupId: " + groupId);
 	    System.out.println("yearMonth: " + yearMonth);
 
-	    String sql = 
-	    	    "SELECT h.member_id, " +
-	    	    "       m.nickname, " +
-	    	    "       SUM(t.difficulty_point) AS score, " +
-	    	    "       DATE_FORMAT(h.completed_at, '%Y-%m') " + 
-	    	    "FROM history h " +
-	    	    "JOIN todo t ON h.todo_id = t.id " +
-	    	    "JOIN member m ON h.member_id = m.id " +
-	    	    "WHERE t.group_id = ? " +
-	    	    "  AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
-	    	    "GROUP BY h.member_id, m.nickname, DATE_FORMAT(h.completed_at, '%Y-%m') " +
-	    	    "ORDER BY score DESC";
+	    String sql =
+	        "SELECT " +
+	        "  h.member_id, " +
+	        "  m.nickname, " +
+	        "  SUM(COALESCE(h.score, 0)) AS score, " +            // 🔁 핵심: h.score 사용
+	        "  DATE_FORMAT(h.completed_at, '%Y-%m') AS ym " +
+	        "FROM history h " +
+	        "JOIN todo t ON h.todo_id = t.id " +
+	        "JOIN member m ON h.member_id = m.id " +
+	        "WHERE t.group_id = ? " +
+	        "  AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
+	        "GROUP BY h.member_id, m.nickname, ym " +
+	        "ORDER BY score DESC";
 
-	    return jdbcTemplate.query(sql, new Object[]{groupId, yearMonth}, new RowMapper<MemberMonthlyScore>() {
-	        @Override
-	        public MemberMonthlyScore mapRow(ResultSet rs, int rowNum) throws SQLException {
-	            return new MemberMonthlyScore(
-	                rs.getInt(1),
-	                rs.getString(2),
-	                rs.getInt(3),
-	                rs.getString(4) 
-	            );
-	        }
-	    });
+	    return jdbcTemplate.query(sql, new Object[]{groupId, yearMonth}, (rs, rowNum) ->
+	        new MemberMonthlyScore(
+	            rs.getInt("member_id"),
+	            rs.getString("nickname"),
+	            rs.getInt("score"),
+	            rs.getString("ym")
+	        )
+	    );
 	}
+
 }
