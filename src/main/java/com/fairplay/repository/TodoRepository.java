@@ -23,4 +23,5 @@ public interface TodoRepository {
 	List<Todo> findCompletedTodos();
 	List<Todo> findNotDone(int memberId);
 	List<TodoSimple> findTodosByDateAndMember(LocalDate date, int memberId);
+	List<Todo> findByGroupId(int groupId);
 }

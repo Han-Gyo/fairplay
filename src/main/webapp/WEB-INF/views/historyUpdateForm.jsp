@@ -48,7 +48,7 @@
     <input type="date" name="completed_at" value="<fmt:formatDate value='${history.completed_at}' pattern='yyyy-MM-dd' />" required /><br><br>
 
     <!-- 점수 -->
-    <label>노력 점수 (1~5) : </label>
+    <label>점수 (1~5) : </label>
     <select name="score">
         <c:forEach begin="1" end="5" var="i">
             <option value="${i}" <c:if test="${history.score == i}">selected</c:if>>${i}</option>

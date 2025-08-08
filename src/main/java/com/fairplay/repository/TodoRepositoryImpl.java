@@ -154,5 +154,11 @@ public class TodoRepositoryImpl implements TodoRepository{
 	        memberId
 	    );
 	}
+
+	@Override
+	public List<Todo> findByGroupId(int groupId) {
+		String sql = "SELECT * FROM todo WHERE group_id = ?";
+	    return template.query(sql, todoRowMapper, groupId);
+	}
 	
 }

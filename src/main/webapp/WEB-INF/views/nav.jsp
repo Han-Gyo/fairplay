@@ -216,10 +216,11 @@
         <div class="dropdown">
             <a href="javascript:void(0);">🧹 Todo</a>
             <div class="dropdown-content">
-            		<a href="${pageContext.request.contextPath}/group/enter?groupId=${g.id}">📋 ${g.name} 그룹 들어가기</a>
                 <a href="${pageContext.request.contextPath}/todos?groupId=${sessionScope.currentGroupId}">📋 Todo 목록</a>
                 <a href="${pageContext.request.contextPath}/todos/myTodos">✅ MyTodo 목록</a>
-                <a href="${pageContext.request.contextPath}/todos/create">✅ Todo 등록</a>
+                <c:if test="${role eq 'LEADER'}">
+								  <a href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">✅ Todo 등록</a>
+								</c:if>
             </div>
         </div>
 
@@ -227,7 +228,7 @@
         <div class="dropdown">
             <a href="javascript:void(0);">📋 History</a>
             <div class="dropdown-content">
-                <a href="${pageContext.request.contextPath}/history/all">📋 전체 조회</a>
+                <a href="${pageContext.request.contextPath}/history/all?groupId=${currentGroupId}">📋 전체 히스토리</a>
                 <a href="${pageContext.request.contextPath}/history/create">📝 기록 등록</a>
             </div>
         </div>

@@ -9,11 +9,11 @@
 </head>
 <body>
 
-<h2>✅ 집안일 수행 기록 등록</h2>
+<h2>집안일 수행 기록 등록</h2>
 <!-- enctype 추가! 파일 업로드 시 필수 -->
 <form action="${pageContext.request.contextPath}/history/create" method="post" enctype="multipart/form-data">
 
-		<!-- ✅ 할 일 선택 -->
+		<!-- 할 일 선택 -->
 		<label>할 일 : </label>
 		<select name="todo_id" required>
 		    <c:forEach var="todo" items="${todoList}">
@@ -25,7 +25,7 @@
 		</select>
 		<br><br>
 		
-		<!-- ✅ 수행자 선택 -->
+		<!-- 수행자 선택 -->
 		<label>수행자 : </label>
 		<select name="member_id" required>
 		    <c:forEach var="member" items="${memberList}">
@@ -38,17 +38,18 @@
     <label>완료 날짜 : </label>
     <input type="date" name="completed_at" required /><br><br>
 
-    <!-- 점수 -->
-    <label>점수 (1~5) : </label>
-    <select name="score">
-        <c:forEach begin="1" end="5" var="i">
-            <option value="${i}">${i}</option>
-        </c:forEach>
-    </select><br><br>
-
     <!-- 메모 -->
     <label>메모 : </label><br>
     <textarea name="memo" rows="4" cols="40"></textarea><br><br>
+		
+		<!-- 점수 입력 (1~5점) -->
+		<label for="score">점수 (1~5)</label>
+		<select name="score" id="score" required>
+		    	<option value="">점수를 선택해주세요</option>
+		    <c:forEach begin="1" end="5" var="i">
+          <option value="${i}">${i}</option>
+        </c:forEach>
+		</select><br><br>
 
 		<!-- 인증샷 업로드 -->
 		<label>인증샷</label><br>

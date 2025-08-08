@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fairplay.domain.Group;
+import com.fairplay.domain.GroupMemberInfoDTO;
 import com.fairplay.domain.Member;
 import com.fairplay.domain.Todo;
 import com.fairplay.domain.TodoSimple;
@@ -57,52 +58,111 @@ public class TodoController {
 	
 	// 전체 할 일 목록 조회
 	@GetMapping
-	public String listTodos(HttpSession session,Model model) {
-		// 전체 할 일 목록조회
-	    List<Todo> todoList = todoService.getTodoList();
-	    
-	    System.out.println("전체 할일 리스트 상태 확인");
+	public String listTodos(HttpSession session, Model model, RedirectAttributes ra) {
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
+	        ra.addFlashAttribute("error", "로그인이 필요합니다.");
+	        return "redirect:/member/login";
+	    }
+
+	    Long memberId = Long.valueOf(loginMember.getId());
+
+	    // 내가 가입한 그룹 리스트
+	    List<Group> groupList = groupMemberService.findGroupsByMemberId(memberId);
+
+	    if (groupList.isEmpty()) {
+	        System.out.println("그룹 미가입자 접근 차단");
+	        ra.addFlashAttribute("error", "소속된 그룹이 없습니다.");
+	        return "redirect:/";
+	    }
+
+	    // 세션에 currentGroupId 없으면 첫 번째 그룹으로 설정
+	    if (session.getAttribute("currentGroupId") == null) {
+	        Group firstGroup = groupList.get(0);
+	        int groupId = firstGroup.getId();
+	        session.setAttribute("currentGroupId", groupId);
+
+	        String role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), groupId);
+	        session.setAttribute("role", role);
+
+	        System.out.println("그룹 세션 설정 완료 → groupId: " + groupId + " / role: " + role);
+	    }
+
+	    // 세션에서 groupId 꺼냄
+	    Integer groupId = (Integer) session.getAttribute("currentGroupId");
+
+	    // 이 그룹에 소속되어 있는지 최종 확인
+	    boolean isMember = groupMemberService.isGroupMember((long) groupId, memberId);
+	    if (!isMember) {
+	        System.out.println("접근 차단 - 그룹 소속 아님");
+	        ra.addFlashAttribute("error", "이 그룹에 소속되어 있지 않습니다.");
+	        return "redirect:/";
+	    }
+
+	    // 역할 재설정 (안전하게)
+	    String role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), groupId);
+	    session.setAttribute("role", role);
+
+	    // 📌 groupId 기준으로 할 일만 불러와야 함
+	    List<Todo> todoList = todoService.findByGroupId(groupId);
+
+	    System.out.println("할 일 목록 출력 시작 (groupId: " + groupId + ")");
 	    for (Todo t : todoList) {
 	        System.out.println(" - " + t.getTitle() + " / 상태: " + t.getStatus() + " / 담당자: " + t.getAssigned_to());
 	    }
 
-
-	    // 전체 멤버 목록조회
+	    // 멤버 매핑
 	    List<Member> memberList = memberService.readAll();
-	    
-	    // ID → 닉네임 맵핑
 	    Map<Integer, String> memberMap = new HashMap<>();
 	    for (Member m : memberList) {
 	        memberMap.put(m.getId(), m.getNickname());
 	    }
 
-	    // 로그인 사용자 ID 넘기기
-	    Member loginMember = (Member) session.getAttribute("loginMember");
-	    if (loginMember != null) {
-	        System.out.println("로그인 사용자 ID: " + loginMember.getId());
-	    }
-
-	    System.out.println("할 일 목록 확인:");
-	    for (Todo t : todoList) {
-	        System.out.println(" - " + t.getTitle() + " / assigned_to: " + t.getAssigned_to());
-	    }
-
-	    // 모델 전달
-	    if (loginMember != null) {
-	        model.addAttribute("loginMemberId", loginMember.getId());
-	    }
+	    model.addAttribute("loginMemberId", loginMember.getId());
 	    model.addAttribute("todoList", todoList);
 	    model.addAttribute("memberMap", memberMap);
 
 	    return "todos";
 	}
+
 	
 	// 그룹장만 할 일 등록 폼 접근 가능
 	@GetMapping("/create")
-	public String addTodo(Model model) {
-		List<Member> memberList = memberService.readAll(); // 담당자 선택을 위한 멤버 목록
-		model.addAttribute("memberList", memberList); // 모델에 넣기
-		return "todoCreateForm";  
+	public String addTodo(@RequestParam("groupId") int groupId,
+	                      Model model,
+	                      HttpSession session,
+	                      RedirectAttributes ra) {
+
+	    // 로그인 사용자 정보 꺼내기
+	    Member loginUser = (Member) session.getAttribute("loginMember");
+	    if (loginUser == null) {
+	        ra.addFlashAttribute("error", "로그인 후 이용해주세요.");
+	        return "redirect:/";
+	    }
+
+	    int memberId = loginUser.getId();
+
+	    // 그룹 정보 가져오기
+	    Group group = groupService.findById(groupId);
+	    if (group == null) {
+	        ra.addFlashAttribute("error", "존재하지 않는 그룹입니다.");
+	        return "redirect:/";
+	    }
+	    
+	    // 그룹장 권한 체크
+	    if (group.getLeaderId() != memberId) {
+	        ra.addFlashAttribute("error", "그룹장만 할 일을 등록할 수 있습니다.");
+	        return "redirect:/todos?groupId=" + groupId;
+	    }
+	    // 등록폼 세팅
+	    List<Member> memberList = memberService.readAll(); // 담당자 선택용
+	    model.addAttribute("memberList", memberList);
+	    model.addAttribute("groupId", groupId);
+	    
+	    System.out.println("[등록폼 진입] 로그인 멤버 ID: " + memberId);
+	    System.out.println("[등록폼 진입] 그룹장 ID: " + group.getLeaderId());
+
+	    return "todoCreateForm";
 	}
 	
 	// 할 일 실제 등록 처리
@@ -219,15 +279,17 @@ public class TodoController {
 	
 	// 완료된 할 일 목록 조회
 	@GetMapping("/completed")
-	public String completedTodos (Model model) {
+	public String completedTodos (HttpSession session,Model model) {
+		Integer groupId = (Integer) session.getAttribute("currentGroupId");
 		// 완료된 할 일만 필터링 (전체 그룹기준)
 		List<Todo> completedList = todoService.getCompletedTodos();
 		
 		//담당자 닉네임 매핑
-		List<Member> memberList = memberService.readAll();
+		List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId);
 		Map<Integer, String> memberMap = new HashMap<>();
-		for (Member m : memberList) {
-			memberMap.put(m.getId(), m.getNickname());
+
+		for (GroupMemberInfoDTO m : memberList) {
+		    memberMap.put(m.getMemberId(), m.getNickname());
 		}
 		
 		model.addAttribute("completedList", completedList);
