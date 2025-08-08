@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fairplay.domain.Group;
 import com.fairplay.domain.GroupMemberInfoDTO;
@@ -63,36 +64,44 @@ public class HistoryController {
 	public String listAllHistories(
 	        @RequestParam(value = "todo_id", required = false) Integer todoId,
 	        HttpSession session,
-	        Model model) {
+	        Model model,
+	        RedirectAttributes ra) {
 
-	    // 로그인 사용자 확인
-	    Member loginUser = (Member) session.getAttribute("loginUser");
-	    if (loginUser == null) {
-	        return "redirect:/access-denied";
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
+	        ra.addFlashAttribute("msg", "로그인 후 이용해주세요.");
+	        return "redirect:/member/login";
+	    }
+	    // 세션에 currentGroupId 없으면 설정
+	    if (session.getAttribute("currentGroupId") == null) {
+	        List<Group> myGroups = groupMemberService.findGroupsByMemberId(Long.valueOf(loginMember.getId()));
+
+	        if (!myGroups.isEmpty()) {
+	            int firstGroupId = myGroups.get(0).getId();
+	            session.setAttribute("currentGroupId", firstGroupId);
+
+	            String role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), firstGroupId);
+	            session.setAttribute("role", role);
+	        } else {
+	            ra.addFlashAttribute("msg", "가입된 그룹이 없습니다.");
+	            return "redirect:/";
+	        }
 	    }
 
-	    Long loginUserId = Long.valueOf(loginUser.getId());
+	    Integer groupId = (Integer) session.getAttribute("currentGroupId");
+	    if (!groupMemberService.isGroupMember(Long.valueOf(groupId), Long.valueOf(loginMember.getId()))) {
+	        ra.addFlashAttribute("msg", "접근 권한이 없습니다.");
+	        return "redirect:/";
+	    }
 
+	    // 이후 기존 로직
 	    List<History> historyList;
-
 	    if (todoId != null) {
 	        Todo todo = todoService.findById(todoId);
-	        Long groupId = Long.valueOf(todo.getGroup_id());
-
-	        // ✅ 그룹원 여부 확인
-	        if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
-	            return "redirect:/access-denied";
-	        }
-
 	        historyList = historyService.getHistoriesByTodoIdWithDetails(todoId);
 	        model.addAttribute("selectedTodo", todo);
 	    } else {
-	        // 전체 보기 막고 싶으면 여기서 차단해도 됨
-	        return "redirect:/access-denied";
-	        
-	        // or 그룹별 전체 보기 허용할 거면 아래와 같이 해도 됨:
-	        // historyList = historyService.getAllHistoriesWithDetails(); 
-	        // 단, 이 경우 로그인 사용자가 소속된 그룹만 필터링하는 방법도 가능
+	        historyList = historyService.getAllHistoriesWithDetails();
 	    }
 
 	    List<Todo> todoList = todoService.getTodoList();
@@ -110,7 +119,7 @@ public class HistoryController {
 	    // 세션에서 로그인 사용자 꺼냄
 	    Member loginUser = (Member) session.getAttribute("loginUser");
 	    if (loginUser == null) {
-	    	return "redirect:/access-denied";
+	    	return "redirect:/";
 	    }
 	    
 	    // todo 및 그룹 ID 추출
@@ -123,7 +132,7 @@ public class HistoryController {
 	    
 	    // 그룹원이 아니면 접근 차단 (여기가 먼저!)
 	    if (!groupMemberService.isGroupMember(groupIdLong, memberId)) {
-	        return "redirect:/access-denied";
+	        return "redirect:/";
 	    }
 
 	    // 검증 통과 후 데이터 조회
@@ -138,21 +147,25 @@ public class HistoryController {
     
     // 2. 기록 등록 폼
 	@GetMapping("/create")
-	public String addHistory(@RequestParam(required = false) Integer todo_id, HttpSession session, Model model) {
-	    Member loginUser = (Member) session.getAttribute("loginUser");
-	    if (loginUser == null) {
-	    	return "redirect:/access-denied";
+	public String addHistory(@RequestParam(required = false) Integer todo_id,
+	                         HttpSession session,
+	                         Model model,
+	                         RedirectAttributes ra) {
+
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
+	        ra.addFlashAttribute("msg", "로그인 후 이용해주세요.");
+	        return "redirect:/member/login";
+	    }
+
+	    Integer groupId = (Integer) session.getAttribute("currentGroupId");
+	    if (groupId == null || !groupMemberService.isGroupMember(Long.valueOf(groupId), Long.valueOf(loginMember.getId()))) {
+	        ra.addFlashAttribute("msg", "그룹에 속해있지 않습니다.");
+	        return "redirect:/";
 	    }
 
 	    if (todo_id != null) {
 	        Todo todo = todoService.findById(todo_id);
-	        Long groupId = Long.valueOf(todo.getGroup_id());
-	        Long memberId = Long.valueOf(loginUser.getId());
-
-	        if (!groupMemberService.isGroupMember(groupId, memberId)) {
-	            return "redirect:/access-denied";
-	        }
-
 	        model.addAttribute("selectedTodoId", todo_id);
 	        List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(todo.getGroup_id());
 	        model.addAttribute("memberList", memberList);
@@ -166,6 +179,7 @@ public class HistoryController {
 	    return "historyCreateForm";
 	}
 
+
     // 3. 기록 등록 처리
 	public String addHistory(
 		    HttpServletRequest request,
@@ -178,7 +192,7 @@ public class HistoryController {
 		) {
 		    Member loginUser = (Member) session.getAttribute("loginUser");
 		    if (loginUser == null) {
-		    	return "redirect:/access-denied";
+		    	return "redirect:/";
 		    }
 
 		    Todo todo = todoService.findById(todoId);
@@ -186,7 +200,7 @@ public class HistoryController {
 		    Long loginUserId = Long.valueOf(loginUser.getId());
 
 		    if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
-		        return "redirect:/access-denied";
+		        return "redirect:/";
 		    }
 
 		    History history = new History();
@@ -218,7 +232,7 @@ public class HistoryController {
 	public String updateHistory(@RequestParam("id") int id, HttpSession session, Model model) {
 	    Member loginUser = (Member) session.getAttribute("loginUser");
 	    if (loginUser == null) {
-	    	return "redirect:/access-denied";
+	    	return "redirect:/";
 	    }
 
 	    History history = historyService.getHistoryByIdWithDetails(id);
@@ -227,7 +241,7 @@ public class HistoryController {
 	    Long memberId = Long.valueOf(loginUser.getId());
 
 	    if (!groupMemberService.isGroupMember(groupId, memberId)) {
-	        return "redirect:/access-denied";
+	        return "redirect:/";
 	    }
 
 	    model.addAttribute("history", history);
@@ -250,7 +264,7 @@ public class HistoryController {
 		) {
 		    Member loginUser = (Member) session.getAttribute("loginUser");
 		    if (loginUser == null) {
-		    	return "redirect:/access-denied";
+		    	return "redirect:/";
 		    }
 
 		    Todo todo = todoService.findById(todoId);
@@ -258,7 +272,7 @@ public class HistoryController {
 		    Long loginUserId = Long.valueOf(loginUser.getId());
 
 		    if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
-		        return "redirect:/access-denied";
+		        return "redirect:/";
 		    }
 
 		    History history = new History();
@@ -289,7 +303,7 @@ public class HistoryController {
 	public String deleteHistory(@RequestParam("id") int id, @RequestParam("todo_id") int todo_id, HttpSession session) {
 	    Member loginUser = (Member) session.getAttribute("loginUser");
 	    if (loginUser == null) {
-	    	return "redirect:/access-denied";
+	    	return "redirect:/";
 	    }
 
 	    Todo todo = todoService.findById(todo_id);
@@ -297,7 +311,7 @@ public class HistoryController {
 	    Long memberId = Long.valueOf(loginUser.getId());
 
 	    if (!groupMemberService.isGroupMember(groupId, memberId)) {
-	        return "redirect:/access-denied";
+	        return "redirect:/";
 	    }
 
 	    historyService.deleteHistory(id);
@@ -308,7 +322,7 @@ public class HistoryController {
 	public String detailHistory(@RequestParam("history_id") int historyId, HttpSession session, Model model) {
 	    Member loginUser = (Member) session.getAttribute("loginUser");
 	    if (loginUser == null) {
-	    	return "redirect:/access-denied";
+	    	return "redirect:/";
 	    }
 
 	    History history = historyService.getHistoryByIdWithDetails(historyId);
@@ -317,7 +331,7 @@ public class HistoryController {
 	    Long memberId = Long.valueOf(loginUser.getId());
 
 	    if (!groupMemberService.isGroupMember(groupId, memberId)) {
-	        return "redirect:/access-denied";
+	        return "redirect:/";
 	    }
 
 	    List<HistoryComment> commentList = commentService.getCommentsByHistoryId(historyId);
@@ -327,20 +341,22 @@ public class HistoryController {
 	}
 
     // 8. 점수 계산
+	@GetMapping("/monthly-score")
 	public String showMonthlyScore(
 		    @RequestParam("group_id") Integer groupId,
 		    @RequestParam(value = "yearMonth", required = false) String yearMonth,
 		    HttpSession session,
 		    Model model
 		) {
-		    Member loginUser = (Member) session.getAttribute("loginUser");
-		    if (loginUser == null) return "redirect:/";
+			Member loginMember = (Member) session.getAttribute("loginMember");
+			if (loginMember == null) return "redirect:/member/login";
+
 
 		    Long groupIdLong = Long.valueOf(groupId);
-		    Long memberId = Long.valueOf(loginUser.getId());
+		    Long memberId = Long.valueOf(loginMember.getId());
 
 		    if (!groupMemberService.isGroupMember(groupIdLong, memberId)) {
-		        return "redirect:/access-denied";
+		        return "redirect:/";
 		    }
 
 		    if (yearMonth == null || yearMonth.isEmpty()) {

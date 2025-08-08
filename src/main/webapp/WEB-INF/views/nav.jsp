@@ -224,7 +224,7 @@
         <div class="dropdown">
             <a href="javascript:void(0);">📋 History</a>
             <div class="dropdown-content">
-                <a href="${pageContext.request.contextPath}/history/all">📋 전체 조회</a>
+                <a href="${pageContext.request.contextPath}/history/all?groupId=${currentGroupId}">📋 전체 히스토리</a>
                 <a href="${pageContext.request.contextPath}/history/create">📝 기록 등록</a>
             </div>
         </div>

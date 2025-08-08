@@ -21,7 +21,7 @@
 <select name="assigned_to">
 	<option value="">-- 담당자 선택 안 함 --</option>
 	<c:forEach var="member" items="${memberList}">
-		<option value="${member.memberId}">${member.nickname}</option>
+	    <option value="${member.id}">${member.nickname}</option>
 	</c:forEach>
 </select>
 <br>

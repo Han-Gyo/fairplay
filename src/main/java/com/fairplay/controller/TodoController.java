@@ -62,7 +62,7 @@ public class TodoController {
 	    Member loginMember = (Member) session.getAttribute("loginMember");
 	    if (loginMember == null) {
 	        ra.addFlashAttribute("error", "로그인이 필요합니다.");
-	        return "redirect:/";
+	        return "redirect:/member/login";
 	    }
 
 	    Long memberId = Long.valueOf(loginMember.getId());
