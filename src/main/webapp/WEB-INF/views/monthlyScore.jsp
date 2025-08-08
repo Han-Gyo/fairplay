@@ -2,7 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ include file="/WEB-INF/views/nav.jsp" %>
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -12,29 +11,22 @@
     <!-- CSS -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/statistics.css" />
 
-    <!-- Chart.js CDN -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <style>
-        a {
-            border: none;
-            text-decoration: none;
-            outline: none;
-        }
-    </style>
 </head>
-<body data-context-path="${pageContext.request.contextPath}">
+<body class="score-body" data-context-path="${pageContext.request.contextPath}">
+<div class="score-container">
 
-    <!-- ✅ 상단 타이틀 -->
-    <h2>📅 ${yearMonth} ${group.name} 그룹의 점수 현황</h2>
+    <!-- ✅ 페이지 타이틀 -->
+    <h2 class="score-title">📅 ${yearMonth} ${group.name} 그룹의 점수 현황</h2>
 
-    <!-- ✅ 월 이동 버튼 -->
+    <!-- ✅ 월 이동/선택 툴바 -->
     <c:set var="year" value="${fn:substring(yearMonth, 0, 4)}" />
     <c:set var="month" value="${fn:substring(yearMonth, 5, 7)}" />
     <c:set var="intYear" value="${year}" />
     <c:set var="intMonth" value="${month}" />
 
-    <!-- 이전/다음 월 계산 -->
+    <!-- 이전 월 계산 -->
     <c:choose>
         <c:when test="${intMonth == 1}">
             <c:set var="prevYear" value="${intYear - 1}" />
@@ -45,6 +37,7 @@
             <c:set var="prevMonth" value="${intMonth - 1}" />
         </c:otherwise>
     </c:choose>
+    <!-- 다음 월 계산 -->
     <c:choose>
         <c:when test="${intMonth == 12}">
             <c:set var="nextYear" value="${intYear + 1}" />
@@ -56,62 +49,87 @@
         </c:otherwise>
     </c:choose>
 
-    <!-- 월 이동 UI -->
-    <div style="text-align:center; margin-bottom: 20px;">
+    <div class="score-toolbar">
+        <!-- ◀ 이전 -->
         <c:choose>
             <c:when test="${prevMonth < 10}">
-                <a href="?group_id=${group.id}&yearMonth=${prevYear}-0${prevMonth}">❮</a>
+                <a class="nav-btn" href="?group_id=${group.id}&yearMonth=${prevYear}-0${prevMonth}" aria-label="이전 달">❮</a>
             </c:when>
             <c:otherwise>
-                <a href="?group_id=${group.id}&yearMonth=${prevYear}-${prevMonth}">❮</a>
+                <a class="nav-btn" href="?group_id=${group.id}&yearMonth=${prevYear}-${prevMonth}" aria-label="이전 달">❮</a>
             </c:otherwise>
         </c:choose>
 
-        <strong style="margin: 0 10px;">${month}월</strong>
+        <!-- 현재 월 표시 + 직접 선택 -->
+        <div class="month-inline">
+            <strong class="current-month">${month}월</strong>
+            <input type="month" id="ymInput" value="${yearMonth}" class="month-input" />
+            <button id="goMonthBtn" class="btn-sky">이동</button>
+        </div>
 
+        <!-- ▶ 다음 -->
         <c:choose>
             <c:when test="${nextMonth < 10}">
-                <a href="?group_id=${group.id}&yearMonth=${nextYear}-0${nextMonth}">❯</a>
+                <a class="nav-btn" href="?group_id=${group.id}&yearMonth=${nextYear}-0${nextMonth}" aria-label="다음 달">❯</a>
             </c:when>
             <c:otherwise>
-                <a href="?group_id=${group.id}&yearMonth=${nextYear}-${nextMonth}">❯</a>
+                <a class="nav-btn" href="?group_id=${group.id}&yearMonth=${nextYear}-${nextMonth}" aria-label="다음 달">❯</a>
             </c:otherwise>
         </c:choose>
     </div>
 
-	<!-- ✅ 그룹 총점 그래프 -->
-	<div class="mt-4">
-	    <h3>🏆 그룹 총 점수 그래프</h3>
-	    <input type="hidden" id="groupId" value="${group.id}" />
-	    <input type="hidden" id="yearMonth" value="${yearMonth}" />
-	    <div style="width: 50%; margin: 0 auto;">
-	        <canvas id="groupChart"></canvas>
-	    </div>
-	</div>
+    <!-- 전달 파라미터 (JS에서 사용) -->
+    <input type="hidden" id="groupId" value="${group.id}" />
+    <input type="hidden" id="yearMonth" value="${yearMonth}" />
 
-    <!-- ✅ 그룹 총 점수 출력 -->
+    <!-- ✅ 그룹 총 점수 카드 -->
+    <section class="chart-card">
+        <div class="card-header">
+            <h3>🏆 그룹 총 점수 그래프</h3>
+        </div>
+        <canvas id="groupChart" height="140"></canvas>
+        <p class="hint">※ 점수는 집안일 완료 기록을 기준으로 집계됩니다.</p>
+    </section>
+
+    <!-- ✅ 그룹 총 점수 텍스트 (있으면 유지) -->
     <c:forEach var="g" items="${groupScores}">
-        <h3>${group.name} 그룹의 총 점수는 <strong>${g.totalScore}</strong>점 입니다.</h3>
+        <div class="stat-card">
+            <p><strong>${group.name}</strong> 그룹의 총 점수는 <strong class="highlight">${g.totalScore}</strong>점 입니다.</p>
+        </div>
     </c:forEach>
 
-    <!-- ✅ 멤버 점수 출력 -->
-    <h3>👥 멤버별 점수</h3>
-    <c:forEach var="m" items="${memberScores}">
-        <p>${m.nickname} <strong>${m.score}</strong>점</p>
-    </c:forEach>
+    <!-- ✅ 멤버별 점수 카드 -->
+    <section class="chart-card">
+        <div class="card-header">
+            <h3>👥 멤버별 점수 그래프</h3>
+        </div>
+        <canvas id="memberChart" height="180"></canvas>
 
-    <!-- ✅ Chart.js 차트 추가 -->
-    <div class="mt-4" style="margin-top: 40px;">
-        <h3>📊 멤버 점수 그래프</h3>
-        <!-- 전달값 hidden 처리 -->
-        <input type="hidden" id="groupId" value="${group.id}" />
-        <input type="hidden" id="yearMonth" value="${yearMonth}" />
-        <canvas id="scoreChart" width="800" height="400"></canvas>
-    </div>
+        <!-- 텍스트 목록 (서버 렌더 값 유지) -->
+        <div class="member-list">
+            <c:forEach var="m" items="${memberScores}">
+                <p><span class="nick">${m.nickname}</span> <strong class="highlight">${m.score}</strong>점</p>
+            </c:forEach>
+        </div>
+    </section>
 
-    <!-- JS 연결 -->
-    <script src="${pageContext.request.contextPath}/resources/js/statisticsGroupChart.js"></script> <!-- 그룹 -->
-    <script src="${pageContext.request.contextPath}/resources/js/statisticsChart.js"></script>	<!-- 멤버 -->
+</div>
 
+<!-- 데이터 엔드포인트 훅 (필요 시 URL만 바꿔줘) -->
+<div id="chartHooks"
+     data-group-url="${pageContext.request.contextPath}/history/monthly-score/group-data"
+     data-member-url="${pageContext.request.contextPath}/history/monthly-score/member-data"></div>
+
+<!-- JS -->
+<script src="${pageContext.request.contextPath}/resources/js/statisticsGroupChart.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/statisticsChart.js"></script>
+<script>
+  // 월 수동 이동 버튼
+  document.getElementById('goMonthBtn')?.addEventListener('click', function() {
+    const ym = document.getElementById('ymInput').value;
+    const gid = document.getElementById('groupId').value;
+    if (ym) location.href = `?group_id=${gid}&yearMonth=${ym}`;
+  });
+</script>
 </body>
 </html>
