@@ -1,111 +1,62 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const contextPath = document.body.getAttribute("data-context-path");
-    const groupId = document.getElementById("groupId").value;
-    const yearMonth = document.getElementById("yearMonth").value;
+// statisticsChart.js
+// 역할: 멤버별 점수 바 차트 렌더링
+// 예상 JSON 형식 예시:
+// { "labels": ["닉네임1","닉네임2",...], "data": [34, 12, ...] }
 
-    // 🔥 콘텍스트/파라미터 확인 로그
-    console.log("📌 contextPath:", contextPath);
-    console.log("📌 groupId:", groupId);
-    console.log("📌 yearMonth:", yearMonth);
+document.addEventListener('DOMContentLoaded', () => {
+  const ctxPath = document.body.dataset.contextPath || '';
+  const groupId = document.getElementById('groupId')?.value;
+  const yearMonth = document.getElementById('yearMonth')?.value;
+  const hook = document.getElementById('chartHooks');
+  const memberUrl = hook?.dataset.memberUrl || `${ctxPath}/history/monthly-score/member-data`;
 
-    // ✅ 멤버별 점수 fetch
-    fetch(`${contextPath}/statistics/monthly-score?groupId=${groupId}&yearMonth=${yearMonth}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("🔥 가져온 데이터:", data);
+  const canvas = document.getElementById('memberChart');
+  if (!canvas || !groupId || !yearMonth) return;
 
-            const labels = data.map(item => item.nickname);
-            const scores = data.map(item => item.score);
+  let memberChart;
 
-            console.log("📊 labels:", labels);
-            console.log("📊 scores:", scores);
+  const render = (labels, data) => {
+    if (memberChart) memberChart.destroy();
+    const ctx = canvas.getContext('2d');
 
-            const ctx = document.getElementById("scoreChart").getContext("2d");
+    memberChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: '멤버별 점수',
+          data,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: '점수' } }
+        }
+      }
+    });
+  };
 
-            console.log("✅ Chart 생성 시작");
+  const load = async () => {
+    try {
+      const url = `${memberUrl}?group_id=${encodeURIComponent(groupId)}&yearMonth=${encodeURIComponent(yearMonth)}`;
+      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      if (!res.ok) throw new Error('member data http error');
+      const json = await res.json();
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '총 점수',
-                        data: scores,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1,
-                        barThickness: 50,
-                        categoryPercentage: 0.8,
-                        barPercentage: 0.9
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            suggestedMax: 10,
-                            ticks: {
-                                stepSize: 1,
-                                precision: 0
-                            }
-                        }
-                    }
-                }
-            });
+      const labels = json.labels || json.nicknames || (json.members?.map(m => m.nickname) ?? []);
+      const data = json.data || (json.members?.map(m => m.score) ?? []);
+      render(labels, data);
+    } catch (e) {
+      console.error('[MemberChart] load failed:', e);
+      render([], []);
+    }
+  };
 
-            console.log("✅ Chart 생성 완료");
-        })
-        .catch(error => {
-            console.error("❌ 차트 데이터를 불러오지 못했습니다:", error);
-        });
-
-    // ✅ 그룹 총점 fetch (멤버 차트 완성 후 이어붙이기)
-    fetch(`${contextPath}/statistics/group-monthly-total?groupId=${groupId}&yearMonth=${yearMonth}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("🔥 그룹 총점 데이터:", data);
-
-            const ctx = document.getElementById("groupTotalChart").getContext("2d");
-
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: [data.groupName || `그룹 ${data.groupId}`],
-                    datasets: [{
-                        label: '우리 그룹 총점',
-                        data: [data.totalScore],
-                        backgroundColor: 'rgba(255, 159, 64, 0.6)',
-                        borderColor: 'rgba(255, 159, 64, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            suggestedMax: 100,
-                            ticks: {
-                                stepSize: 10
-                            }
-                        }
-                    }
-                }
-            });
-        })
-        .catch(error => {
-            console.error("❌ 그룹 총점 차트 로딩 실패:", error);
-        });
+  load();
 });

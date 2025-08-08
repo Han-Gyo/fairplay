@@ -1,27 +1,108 @@
-body {
-    font-family: 'Pretendard', sans-serif;
-    background-color: #f9f9f9;
-    margin: 30px;
+@charset "UTF-8";
+/* 📌 필요물품 스타일을 월간 점수에 맞게 이식/확장 */
+
+/* 🩵 파스텔 하늘 배경 + 폰트 */
+.score-body {
+  font-family: 'Pretendard', sans-serif;
+  background: linear-gradient(180deg, #e0f7ff, #f6fcff);
+  padding: 40px;
+  margin: 0;
+  color: #333;
 }
 
-.container {
-    width: 90%;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 30px;
-    background: white;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    border-radius: 12px;
+/* 공통 컨테이너 */
+.score-container {
+  max-width: 1080px;
+  margin: 0 auto;
 }
 
-h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #333;
+/* 타이틀 */
+.score-title {
+  text-align: center;
+  font-size: 28px;
+  margin: 10px 0 24px;
 }
-#scoreChart {
-    max-width: 600px;
-    height: 300px;
-    display: block;
-    margin: 0 auto;
+
+/* 툴바 (월 이동/선택) */
+.score-toolbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px; height: 42px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #5ac8fa;
+  color: #5ac8fa;
+  text-decoration: none;
+  font-size: 18px;
+  transition: 0.2s;
+}
+.nav-btn:hover { background: #5ac8fa; color: #fff; }
+
+.month-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.current-month { font-size: 18px; }
+.month-input {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 14px;
+}
+.btn-sky {
+  background-color: #5ac8fa;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-sky:hover { filter: brightness(0.95); }
+
+/* 카드 레이아웃 */
+.chart-card, .stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin: 18px auto;
+  width: min(100%, 920px);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.hint { margin-top: 10px; color: #666; font-size: 13px; }
+
+.stat-card .highlight,
+.member-list .highlight { color: #0aa2d4; }
+
+/* 멤버 텍스트 리스트 */
+.member-list {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px 16px;
+}
+.member-list .nick { display: inline-block; min-width: 100px; }
+
+/* 반응형 */
+@media (max-width: 640px) {
+  .score-body { padding: 20px; }
+  .score-title { font-size: 22px; }
+  .nav-btn { width: 38px; height: 38px; }
+  .chart-card, .stat-card { padding: 16px; }
 }
