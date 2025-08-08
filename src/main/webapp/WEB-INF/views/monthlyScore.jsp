@@ -26,7 +26,7 @@
     <c:set var="intYear" value="${year}" />
     <c:set var="intMonth" value="${month}" />
 
-    <!-- 이전 월 계산 -->
+    <!-- 이전/다음 월 계산 -->
     <c:choose>
         <c:when test="${intMonth == 1}">
             <c:set var="prevYear" value="${intYear - 1}" />
@@ -37,7 +37,6 @@
             <c:set var="prevMonth" value="${intMonth - 1}" />
         </c:otherwise>
     </c:choose>
-    <!-- 다음 월 계산 -->
     <c:choose>
         <c:when test="${intMonth == 12}">
             <c:set var="nextYear" value="${intYear + 1}" />
@@ -84,14 +83,12 @@
 
     <!-- ✅ 그룹 총 점수 카드 -->
     <section class="chart-card">
-        <div class="card-header">
-            <h3>🏆 그룹 총 점수 그래프</h3>
-        </div>
-        <canvas id="groupChart" height="140"></canvas>
+        <div class="card-header"><h3>🏆 그룹 총 점수 그래프</h3></div>
+        <div class="chart-wrap"><canvas id="groupChart"></canvas></div>
         <p class="hint">※ 점수는 집안일 완료 기록을 기준으로 집계됩니다.</p>
     </section>
 
-    <!-- ✅ 그룹 총 점수 텍스트 (있으면 유지) -->
+    <!-- ✅ 그룹 총 점수 텍스트 -->
     <c:forEach var="g" items="${groupScores}">
         <div class="stat-card">
             <p><strong>${group.name}</strong> 그룹의 총 점수는 <strong class="highlight">${g.totalScore}</strong>점 입니다.</p>
@@ -100,10 +97,8 @@
 
     <!-- ✅ 멤버별 점수 카드 -->
     <section class="chart-card">
-        <div class="card-header">
-            <h3>👥 멤버별 점수 그래프</h3>
-        </div>
-        <canvas id="memberChart" height="180"></canvas>
+        <div class="card-header"><h3>👥 멤버별 점수 그래프</h3></div>
+        <div class="chart-wrap"><canvas id="memberChart"></canvas></div>
 
         <!-- 텍스트 목록 (서버 렌더 값 유지) -->
         <div class="member-list">
@@ -115,7 +110,7 @@
 
 </div>
 
-<!-- 데이터 엔드포인트 훅 (필요 시 URL만 바꿔줘) -->
+<!-- 데이터 엔드포인트 훅 -->
 <div id="chartHooks"
      data-group-url="${pageContext.request.contextPath}/statistics/group-monthly-total"
      data-member-url="${pageContext.request.contextPath}/statistics/monthly-score"></div>
@@ -124,12 +119,17 @@
 <script src="${pageContext.request.contextPath}/resources/js/statisticsGroupChart.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/statisticsChart.js"></script>
 <script>
-  // 월 수동 이동 버튼
-  document.getElementById('goMonthBtn')?.addEventListener('click', function() {
-    const ym = document.getElementById('ymInput').value;
-    const gid = document.getElementById('groupId').value;
-    if (ym) location.href = `?group_id=${gid}&yearMonth=${ym}`;
-  });
+  (function(){
+    var btn = document.getElementById('goMonthBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var ymEl = document.getElementById('ymInput');
+      var gidEl = document.getElementById('groupId');
+      var ym = ymEl ? ymEl.value : '';
+      var gid = gidEl ? gidEl.value : '';
+      if (ym) location.href = '?group_id=' + encodeURIComponent(gid) + '&yearMonth=' + encodeURIComponent(ym);
+    });
+  })();
 </script>
 </body>
 </html>

@@ -1,108 +1,93 @@
 @charset "UTF-8";
-/* 📌 필요물품 스타일을 월간 점수에 맞게 이식/확장 */
 
-/* 🩵 파스텔 하늘 배경 + 폰트 */
+/* ===== Theme ===== */
+:root{
+  --sky: #5ac8fa;
+  --sky-600: #39b7e5;
+  --ink: #1f2937;
+  --muted: #6b7280;
+  --card: #ffffff;
+  --shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
 .score-body {
-  font-family: 'Pretendard', sans-serif;
-  background: linear-gradient(180deg, #e0f7ff, #f6fcff);
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(180deg, #e0f7ff 0%, #f6fcff 100%);
   padding: 40px;
   margin: 0;
-  color: #333;
+  color: var(--ink);
 }
 
-/* 공통 컨테이너 */
-.score-container {
-  max-width: 1080px;
-  margin: 0 auto;
-}
+.score-container { max-width: 1080px; margin: 0 auto; }
 
-/* 타이틀 */
+/* Title */
 .score-title {
   text-align: center;
   font-size: 28px;
-  margin: 10px 0 24px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  margin: 8px 0 22px;
 }
 
-/* 툴바 (월 이동/선택) */
+/* Toolbar */
 .score-toolbar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 22px;
+  display: flex; justify-content: center; align-items: center;
+  gap: 14px; margin-bottom: 22px;
 }
 .nav-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px; height: 42px;
-  border-radius: 8px;
-  background: #ffffff;
-  border: 1px solid #5ac8fa;
-  color: #5ac8fa;
-  text-decoration: none;
-  font-size: 18px;
-  transition: 0.2s;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 10px;
+  background: #fff; border: 1px solid var(--sky);
+  color: var(--sky); text-decoration: none; font-size: 18px;
+  transition: transform .15s ease, background .2s ease, color .2s ease;
+  box-shadow: var(--shadow);
 }
-.nav-btn:hover { background: #5ac8fa; color: #fff; }
+.nav-btn:hover { background: var(--sky); color: #fff; transform: translateY(-1px); }
 
-.month-inline {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-.current-month { font-size: 18px; }
+.month-inline { display: inline-flex; align-items: center; gap: 10px; }
+.current-month { font-size: 18px; font-weight: 700; }
 .month-input {
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background: #fff;
-  font-size: 14px;
+  padding: 8px 10px; border-radius: 10px; border: 1px solid #d1d5db;
+  background: #fff; font-size: 14px;
 }
 .btn-sky {
-  background-color: #5ac8fa;
-  color: white;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
+  background: var(--sky); color: #fff; padding: 9px 14px; border: 0;
+  border-radius: 10px; font-weight: 700; cursor: pointer;
+  box-shadow: var(--shadow);
 }
-.btn-sky:hover { filter: brightness(0.95); }
+.btn-sky:hover { filter: brightness(0.96); }
 
-/* 카드 레이아웃 */
+/* Cards */
 .chart-card, .stat-card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  background: var(--card);
+  border-radius: 16px;
+  padding: 18px 18px 12px;
+  box-shadow: var(--shadow);
   margin: 18px auto;
-  width: min(100%, 920px);
+  width: min(100%, 960px);
 }
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-.hint { margin-top: 10px; color: #666; font-size: 13px; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.card-header h3 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.2px; }
 
-.stat-card .highlight,
-.member-list .highlight { color: #0aa2d4; }
+.hint { margin-top: 8px; color: var(--muted); font-size: 12.5px; }
+.stat-card .highlight, .member-list .highlight { color: #0aa2d4; }
 
-/* 멤버 텍스트 리스트 */
+/* Chart wrapper: control height */
+.chart-wrap { position: relative; width: 100%; height: 360px; }
+
+/* Member list under chart */
 .member-list {
-  margin-top: 16px;
-  display: grid;
+  margin-top: 14px;
+  display: grid; gap: 8px 16px;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 8px 16px;
 }
 .member-list .nick { display: inline-block; min-width: 100px; }
 
-/* 반응형 */
+/* Responsive */
 @media (max-width: 640px) {
   .score-body { padding: 20px; }
   .score-title { font-size: 22px; }
   .nav-btn { width: 38px; height: 38px; }
   .chart-card, .stat-card { padding: 16px; }
+  .chart-wrap { height: 320px; }
 }
