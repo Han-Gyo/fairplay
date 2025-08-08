@@ -117,8 +117,8 @@
 
 <!-- 데이터 엔드포인트 훅 (필요 시 URL만 바꿔줘) -->
 <div id="chartHooks"
-     data-group-url="${pageContext.request.contextPath}/history/monthly-score/group-data"
-     data-member-url="${pageContext.request.contextPath}/history/monthly-score/member-data"></div>
+     data-group-url="${pageContext.request.contextPath}/statistics/group-monthly-total"
+     data-member-url="${pageContext.request.contextPath}/statistics/monthly-score"></div>
 
 <!-- JS -->
 <script src="${pageContext.request.contextPath}/resources/js/statisticsGroupChart.js"></script>
