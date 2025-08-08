@@ -7,6 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <title>To Do List</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/todos.css">
 <style>
 	a {
 		color : black;
@@ -35,7 +36,7 @@
 
 <div style="display: flex; justify-content: space-between; gap: 30px; margin-top: 20px;">
   
-  <!-- ✅ 왼쪽: 미신청 할 일 -->
+  <!-- 왼쪽: 미신청 할 일 -->
   <div style="flex: 1;">
     <h2>🧹 아직 아무도 신청 안 한 할 일</h2>
     <table>
@@ -69,7 +70,7 @@
     </table>
   </div>
 
-  <!-- ✅ 오른쪽: 내가 맡은 진행중 할 일 -->
+  <!-- 오른쪽: 내가 맡은 진행중 할 일 -->
   <div style="flex: 1;">
     <h2>🚧 진행중인 할 일</h2>
     <table>
@@ -91,7 +92,7 @@
 				      <td>${todo.difficulty_point}</td>
 				      <td>🚧 진행중</td>
 				      <td>
-				        <!-- ✅ 본인이 담당자일 때만 포기/완료 버튼 노출 -->
+				        <!-- 본인이 담당자일 때만 포기/완료 버튼 노출 -->
 				        <c:if test="${todo.assigned_to == loginMemberId}">
 				          <!-- 포기하기 -->
 				          <form action="${pageContext.request.contextPath}/todos/unassign" method="post" style="margin-top:5px; display:inline;">
@@ -119,7 +120,7 @@
 
 
 <script>
-console.log("🔥 contextPath:", contextPath);
+console.log("contextPath:", contextPath);
 function completeTodo(todo_id) {
 		console.log("전달된 todo_id:", todo_id);
     const confirmResult = confirm("기록도 같이 남기시겠어요?");

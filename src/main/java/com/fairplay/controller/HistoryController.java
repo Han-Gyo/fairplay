@@ -211,7 +211,7 @@ public class HistoryController {
 	        return "redirect:/todos";
 	    }
 
-	    // 3) History 생성 (✅ member_id는 세션 사용자로 고정)
+	    // 3) History 생성 (member_id는 세션 사용자로 고정)
 	    History history = new History();
 	    history.setTodo_id(todoId);
 	    history.setMember_id(loginMember.getId()); // ★ 핵심: 파라미터 대신 세션 사용자

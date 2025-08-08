@@ -17,7 +17,7 @@
     .navbar {
         background-color: #4a90e2;
         color: white;
-        padding: 10px 0;
+        padding: 3px 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -40,7 +40,7 @@
     }
 
     .navbar a:hover {
-        text-decoration: underline;
+        text-decoration: none;
     }
 
     .navbar .left,
@@ -206,7 +206,7 @@
 
 <div class="navbar">
     <div class="left">
-        <!-- ✅ 로고 -->
+        <!-- 로고 -->
 		<a class="navbar-brand d-flex align-items-center" href="${pageContext.request.contextPath}/">
 		  <i class="fas fa-broom fa-lg me-2"></i> <!-- 빗자루 아이콘 -->
 		  <span style="font-weight: 600; font-size: 1.3rem;">FairPlay</span>
@@ -251,7 +251,7 @@
             </div>
         </div>
         
-        <!-- 📊 점수 드롭다운 -->
+        <!-- 점수 드롭다운 -->
 		<div class="dropdown">
 		    <a href="javascript:void(0);">📊 점수</a>
 		    <div class="dropdown-content">
@@ -260,9 +260,9 @@
 		    </div>
 		</div>
 				
-		<!-- 📦 필요 물품 드롭다운 추가 -->
+		<!-- 필요 물품 드롭다운 추가 -->
 		<c:if test="${not empty sessionScope.loginMember}">
-		    <!-- 📦 필요 물품 드롭다운 -->
+		    <!-- 필요 물품 드롭다운 -->
 		    <div class="dropdown">
 		        <a href="javascript:void(0);">📦 필요 물품</a>
 		        <div class="dropdown-content">
