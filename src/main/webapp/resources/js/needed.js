@@ -1,13 +1,12 @@
-// needed.js
-
 document.addEventListener("DOMContentLoaded", function () {
-  // 구매 완료 체크시 서버로 반영 요청
+  const contextPath = document.body.dataset.contextPath;
+
   document.querySelectorAll(".purchase-check").forEach((checkbox) => {
     checkbox.addEventListener("change", function () {
       const itemId = this.dataset.id;
       const isChecked = this.checked;
 
-      fetch(`/fairplay/needed/togglePurchased`, {
+      fetch(`${contextPath}/needed/togglePurchased`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -21,13 +20,9 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((data) => {
           const card = this.closest(".needed-card");
           if (data.success) {
-            if (isChecked) {
-              card.classList.add("purchased");
-            } else {
-              card.classList.remove("purchased");
-            }
+            card.classList.toggle("purchased", isChecked);
           } else {
-            alert("처리 실패!");
+            alert("처리 실패! " + (data.error || ""));
             this.checked = !isChecked;
           }
         })
@@ -37,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
   });
+
 
   // 삭제 확인 감성 모달 대체
   document.querySelectorAll("form[action$='delete']").forEach((form) => {

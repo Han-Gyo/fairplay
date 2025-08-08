@@ -13,7 +13,7 @@
   <!-- Js -->
   <script defer src="${pageContext.request.contextPath}/resources/js/needed.js"></script>
 </head>
-<body class="needed-body">
+<body class="needed-body" data-context-path="${pageContext.request.contextPath}">
 
   <div class="needed-container">
     <h2 class="needed-title">📦 필요 물품 목록</h2>
