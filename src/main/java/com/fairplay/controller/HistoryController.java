@@ -180,53 +180,78 @@ public class HistoryController {
 	}
 
 
-    // 3. 기록 등록 처리
+	// 3. 기록 등록 처리 (수정본: 그대로 교체)
 	@PostMapping("/create")
 	public String addHistory(
-		    HttpServletRequest request,
-		    @RequestParam("todo_id") int todoId,
-		    @RequestParam("member_id") int memberId,
-		    @RequestParam("score") int score,
-		    @RequestParam("memo") String memo,
-		    @RequestParam(value = "photo", required = false) MultipartFile photo,
-		    HttpSession session
-		) {
-		    Member loginMember = (Member) session.getAttribute("loginMember");
-		    if (loginMember == null) {
-		    	return "redirect:/";
-		    }
+	        HttpServletRequest request,
+	        @RequestParam("todo_id") int todoId,
+	        @RequestParam("score") int score,
+	        @RequestParam("memo") String memo,
+	        @RequestParam(value = "photo", required = false) MultipartFile photo,
+	        HttpSession session,
+	        RedirectAttributes ra
+	) {
+	    // 1) 로그인 확인
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
+	        ra.addFlashAttribute("error", "로그인이 필요합니다.");
+	        return "redirect:/member/login";
+	    }
 
-		    Todo todo = todoService.findById(todoId);
-		    Long groupId = Long.valueOf(todo.getGroup_id());
-		    Long loginUserId = Long.valueOf(loginMember.getId());
+	    // 2) Todo 존재/권한 확인
+	    Todo todo = todoService.findById(todoId);
+	    if (todo == null) {
+	        ra.addFlashAttribute("error", "존재하지 않는 할 일입니다.");
+	        return "redirect:/todos";
+	    }
+	    Long groupId = (long) todo.getGroup_id();
+	    Long loginUserId = (long) loginMember.getId();
+	    if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
+	        ra.addFlashAttribute("error", "이 그룹에 소속되어 있지 않습니다.");
+	        return "redirect:/todos";
+	    }
 
-		    if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
-		        return "redirect:/";
-		    }
+	    // 3) History 생성 (✅ member_id는 세션 사용자로 고정)
+	    History history = new History();
+	    history.setTodo_id(todoId);
+	    history.setMember_id(loginMember.getId()); // ★ 핵심: 파라미터 대신 세션 사용자
+	    history.setCompleted_at(new Date());
+	    history.setScore(score);                   // 폼에서 받은 점수 그대로
+	    history.setMemo(memo);
 
-		    History history = new History();
-		    history.setTodo_id(todoId);
-		    history.setMember_id(memberId);
-		    history.setCompleted_at(new Date());
-		    history.setScore(score);
-		    history.setMemo(memo);
+	    // 4) 사진 저장 (있을 때만)
+	    if (photo != null && !photo.isEmpty()) {
+	        try {
+	            String fileName = System.currentTimeMillis() + "_" + photo.getOriginalFilename();
+	            File dir = new File("C:/upload/");
+	            if (!dir.exists()) dir.mkdirs();
+	            File savedFile = new File(dir, fileName);
+	            photo.transferTo(savedFile);
+	            history.setPhoto(fileName);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            ra.addFlashAttribute("error", "사진 업로드에 실패했습니다.");
+	        }
+	    }
 
-		    if (photo != null && !photo.isEmpty()) {
-		        try {
-		            String fileName = photo.getOriginalFilename();
-		            File savedFile = new File("C:/upload/", fileName);
-		            photo.transferTo(savedFile);
-		            history.setPhoto(fileName);
-		        } catch (Exception e) {
-		            e.printStackTrace();
-		        }
-		    }
+	    // 5) 저장 (세션-DB 불일치 시 500 방지용 안내)
+	    try {
+	        historyService.addHistory(history);
+	    } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+	        ra.addFlashAttribute("error", "세션 사용자 정보가 유효하지 않습니다. 다시 로그인해주세요.");
+	        return "redirect:/member/login";
+	    }
 
-		    historyService.addHistory(history);
-		    todoService.completeTodo(todoId);
+	    // 6) 완료 플래그만 업데이트 (히스토리 INSERT는 여기서만!)
+	    //  - 네 서비스가 구시그니처면 아래 줄 유지
+	    //  - 서비스가 (id, completedBy)로 바뀌었으면 두 번째 인자로 loginMember.getId() 넘겨
+	    todoService.completeTodo(todoId);
+	    // todoService.completeTodo(todoId, loginMember.getId()); // ← 신시그니처라면 이걸 사용
 
-		    return "redirect:/history?todo_id=" + todoId;
-		}
+	    // 7) 이동
+	    return "redirect:/history?todo_id=" + todoId;
+	}
+
 
     // 4. 기록 수정 폼
 	@GetMapping("/update")
