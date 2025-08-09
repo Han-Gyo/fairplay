@@ -1,0 +1,38 @@
+@charset "UTF-8";
+/* 🍭 기본 변수 & 폰트 & 리셋 */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"); 
+
+:root {
+  /* 파스텔 하늘 팔레트 */
+  --sky-50: #f0faff;
+  --sky-100: #e0f7fa;
+  --sky-200: #e6f4ff;
+
+  /* 메인/포커스 컬러 */
+  --primary-500: #00bcd4; /* 아이콘 */
+  --primary-600: #008ecc; /* 타이틀 */
+  --primary-700: #005b96; /* 호버 */
+
+  /* 텍스트 & 보조 */
+  --text-strong: #333;
+  --text-subtle: #555;
+  --pink-600: #e75480; /* 인사말 포인트 */
+
+  /* 카드 & 그림자 */
+  --card-bg: #fff;
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-md: 0 8px 20px rgba(0,0,0,0.10);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+
+  /* 레이아웃 */
+  --navbar-h: 56px; /* 고정 네비 높이 */
+  --radius-lg: 20px;
+}
+
+/* 리셋(꼭 가볍게) */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { font-family: 'Pretendard', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: var(--text-strong); }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+button { font-family: inherit; }

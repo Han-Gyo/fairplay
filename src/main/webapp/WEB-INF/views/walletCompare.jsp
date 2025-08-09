@@ -3,17 +3,23 @@
 <%@ include file="/WEB-INF/views/nav.jsp" %>
 <html>
 <head>
-    <title>단가 비교 - ${item_name}</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>단가 비교 - ${item_name}</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/wallet.css">
 </head>
-<body>
-
+<body class="score-body">
+<div class="score-container">
 <h1>📊 "${item_name}" 단가 비교</h1>
 
 <a href="${pageContext.request.contextPath}/wallet?member_id=${param.member_id}">← 목록으로 돌아가기</a>
 
 <!-- 차트를 그릴 캔버스 -->
-<canvas id="compareChart" width="600" height="400"></canvas>
+<div class="chart-card">
+  <div class="chart-wrap">
+    <canvas id="compareChart"></canvas>
+  </div>
+  <div class="hint">단가(₩)는 가격 ÷ 수량 기준</div>
+</div>
 
 <script>
     const labels = [
@@ -36,7 +42,10 @@
             data: unitPrices,
             borderWidth: 1,
             backgroundColor: "rgba(54, 162, 235, 0.5)",
-            borderColor: "rgba(54, 162, 235, 1)"
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderRadius: 6,
+            hoverBackgroundColor: "rgba(54, 162, 235, 0.65)",
+            maxBarThickness: 48
         }]
     };
 
@@ -45,6 +54,8 @@
         data: data,
         options: {
             responsive: true,
+            maintainAspectRatio: false,
+            
             plugins: {
                 legend: { display: false },
                 title: {
@@ -53,19 +64,20 @@
                 }
             },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: "단가 (₩)"
-                    }
-                }
+            	  y: {
+            	    beginAtZero: true,
+            	    grid: { color: "rgba(0,0,0,0.06)" },   // 연한 그리드
+            	    title: { display: true, text: "단가 (₩)" }
+            	  },
+            	  x: {
+            	    grid: { display: false }               // x축 그리드는 제거
+            	  }
             }
         }
     };
 
     new Chart(document.getElementById("compareChart"), config);
 </script>
-
+</div>
 </body>
 </html>

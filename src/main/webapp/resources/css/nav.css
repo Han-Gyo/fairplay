@@ -1,104 +1,185 @@
-/* 📦 nav.css */
+    .navbar {
+        background-color: #4a90e2;
+        color: white;
+        padding: 3px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        
+        position: fixed;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    z-index: 1000;
+    }
 
-.glass-navbar {
-  background: rgba(173, 216, 230, 0.5); /* 파스텔 하늘 + 투명도 */
-  backdrop-filter: blur(15px);
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 24px;
-  font-family: 'Pretendard', sans-serif;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
+    .navbar a {
+        color: white;
+        text-decoration: none;
+        margin: 0 12px;
+        font-weight: bold;
+        position: relative;
+    }
 
-.nav-left, .nav-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
+    .navbar a:hover {
+        text-decoration: none;
+    }
 
-.glass-navbar a {
-  color: #003366;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 15px;
-  transition: 0.3s;
-}
+    .navbar .left,
+    .navbar .right {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
 
-.glass-navbar a:hover {
-  color: #005b96;
-  text-shadow: 0 0 5px rgba(0, 91, 150, 0.2);
-}
+    .dropdown {
+        position: relative;
+    }
 
-.user-greeting {
-  color: #e75480;
-  font-weight: bold;
-}
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 180px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        z-index: 1;
+        top: 100%;
+        left: 0;
+        border-radius: 8px;
+        padding: 10px 0;
+    }
 
-.dropdown {
-  position: relative;
-}
+    .dropdown-content a {
+        color: #333;
+        padding: 8px 16px;
+        display: block;
+        text-decoration: none;
+        font-weight: normal;
+    }
 
-.drop-btn::after {
-  content: \" ▼\";
-  font-size: 11px;
-}
+    .dropdown-content a:hover {
+       background-color: #f1f1f1;
+       color: #4a90e2;
+       font-weight: bold;
+    }
 
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  min-width: 180px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  overflow: hidden;
-  z-index: 1100;
-}
+    .dropdown:hover .dropdown-content {
+       display: block;
+    }
+    body {
+      padding-top: 50px; /* 네비 높이만큼 여백 주기 */
+    }
+    .fc-header-toolbar {
+		  margin-top: 60px !important;  /* ← 여백 충분히 줘서 X랑 안 겹치게 */
+		}
+		#calendarModal {
+		  background-color: rgba(255, 192, 203, 0.2); /* 연핑크 반투명 */
+		  overflow: hidden;
+		}
+		#calendarModal .modal-content {
+		  background: #fff0f5; /* 연한 핑크톤 배경 */
+		  border-radius: 20px;
+		  padding: 30px;
+		  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+		  
+		  text-align: center;
+		  max-height: 80vh;
+		  overflow-y: auto;
+		  
+		  position: absolute;
+		  top: 50%;
+		  left: 50%;
+		  transform: translate(-50%, -50%);
+		}
+		/* 이전/다음/오늘 버튼 */
+		.fc .fc-button {
+		  background-color: #ffb6c1;     /* 연핑크 */
+		  border: none;
+		  color: white;
+		  font-weight: bold;
+		  border-radius: 8px;
+		}
+		
+		.fc .fc-button:hover {
+		  background-color: #ff8da7;     /* 좀 더 진한 핑크 */
+		}
+		
+		/* 활성화된 view 버튼 (month/week 등) */
+		.fc .fc-button.fc-button-active {
+		  background-color: #ff69b4;     /* 진핑크 하이라이트 */
+		  border: none;
+		}
+		.fc-toolbar-title {
+		  color: #e75480;     /* 예쁜 진한 연핑크 계열 */
+		  font-size: 24px;
+		  font-weight: bold;
+		}
+		.fc-daygrid-day:hover {
+		  background-color: #ffe4e9;  /* 셀 hover 시 연핑크 강조 */
+		}
+		
+		.fc-day-today {
+		  background-color: #ffeef2 !important;  /* 오늘 날짜 배경 */
+		  border: 1px solid #ffb6c1 !important;
+		}
+		.calendar-toggle {
+		  position: fixed;
+		  top: 60px; /* 네비바 바로 아래로 */
+		  right: 20px;
+		  z-index: 1500;
+		  font-weight: bold;
+		  cursor: pointer;
+		  align-items: center; 
+		  text-align: center; 
+		}
+		
+		.calendar-toggle a {
+		  border: none;
+		  text-decoration: none;
+		  outline: none;
+		  font-size: 20px;
+		}
+		.calendar-toggle p {
+			font-size: 12px;
+			margin-top: -3px;
+			color: black;
+		}
+		.calendar-toggle p:hover {
+			color: darkgray;
+		}
+		#calendar-full {
+		  width: 100%;
+		  height: 100%;
+		  min-height: 500px;
+		}
+		#scheduleModal {
+	  z-index: 3000 !important;
+		}
+		.modal-backdrop {
+		  z-index: 2500 !important;
+		}
+		#todoList, #schedule-container {
+	  text-align: left;
+	  padding-left: 20px;
+	  margin: 0 auto;
+	  max-width: 600px;  /* 너무 넓지 않게 */
+	}
+	.calendar-custom-modal {
+  background: #fff0f5;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
 
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown-content a {
-  display: block;
-  padding: 10px 16px;
-  color: #333;
-  font-size: 14px;
-}
-
-.dropdown-content a:hover {
-  background-color: #e6f4ff;
-  color: #005b96;
-  font-weight: bold;
-}
-
-.calendar-toggle {
-  position: fixed;
-  top: 70px;
-  right: 20px;
-  z-index: 1100;
-  background: white;
-  padding: 10px 12px;
-  border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
   text-align: center;
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
-  transition: 0.2s;
-}
+  max-height: 80vh;
+  overflow-y: auto;
 
-.calendar-toggle:hover {
-  background: #f0faff;
-}
-
-.calendar-toggle p {
-  margin: 0;
-  font-size: 11px;
-  color: #666;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 1000px;
 }
