@@ -1,0 +1,84 @@
+@charset "UTF-8";
+
+/* 기본 리셋 스타일 */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f6f9fb;
+  margin: 0;
+  padding-top: 50px; 
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+}
+
+/* 타이틀 링크 */
+h1 a {
+  color: #333;
+  text-decoration: none;
+  font-size: 28px;
+}
+h1 a:hover {
+  color: #ff6b81;
+}
+
+/* 새 할일 버튼 */
+button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+button:hover {
+  background-color: #3578c5;
+}
+
+form {
+  display: inline;
+}
+
+/* 메인 컨테이너 */
+.todo-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+/* 섹션 공통 */
+.todo-section {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* 테이블 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+table th, table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  font-size: 14px;
+}
+
+table th {
+  background-color: #f1f3f5;
+  color: #333;
+}
+
+td button {
+  margin: 2px;
+}
+
+td form {
+  display: inline;
+}
