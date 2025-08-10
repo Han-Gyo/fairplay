@@ -10,31 +10,34 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js'></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/nav.css">
+
 <script src="${pageContext.request.contextPath}/resources/js/calendarModal.js"></script>
 
 </head>
 <body>
 
-<div class="navbar">
-    <div class="left">
-        <!-- 로고 -->
-		<a class="navbar-brand d-flex align-items-center" href="${pageContext.request.contextPath}/">
-		  <i class="fas fa-broom fa-lg me-2"></i> <!-- 빗자루 아이콘 -->
-		  <span style="font-weight: 600; font-size: 1.3rem;">FairPlay</span>
-		</a>
+<div id="app-nav" class="navbar">
+  <div class="left">
+  <!-- 로고 -->
+	<a class="navbar-brand d-flex align-items-center" href="${pageContext.request.contextPath}/">
+	  <i class="fas fa-broom fa-lg me-2"></i> <!-- 빗자루 아이콘 -->
+	  <span style="font-weight: 600; font-size: 1.3rem;">FairPlay</span>
+	</a>
 
-        <!-- Todo 드롭다운 -->
-        <div class="dropdown">
-            <a href="javascript:void(0);">🧹 Todo</a>
-            <div class="dropdown-content">
-                <a href="${pageContext.request.contextPath}/todos?groupId=${sessionScope.currentGroupId}">📋 Todo 목록</a>
-                <a href="${pageContext.request.contextPath}/todos/myTodos">✅ MyTodo 목록</a>
-                <c:if test="${role eq 'LEADER'}">
-								  <a href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">✅ Todo 등록</a>
-								</c:if>
-            </div>
-        </div>
+  <!-- Todo 드롭다운 -->
+  <div class="dropdown">
+    <a href="javascript:void(0);">🧹 Todo</a>
+    <div class="dropdown-content">
+      <a href="${pageContext.request.contextPath}/todos?groupId=${sessionScope.currentGroupId}">📋 Todo 목록</a>
+      <a href="${pageContext.request.contextPath}/todos/myTodos">✅ MyTodo 목록</a>
+      <c:if test="${role eq 'LEADER'}">
+	  	<a href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">✅ Todo 등록</a>
+		</c:if>
+    </div>
+  </div>
 
         <!-- History 드롭다운 -->
         <div class="dropdown">

@@ -1,0 +1,174 @@
+@charset "UTF-8";
+/* mytodos.css — 내가 맡은 할 일 리스트 스타일 */
+
+/* 파스텔 톤 배경 + 기본 폰트 */
+body.mytodos-body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(180deg, #e9f7ff 0%, #f9fdff 100%);
+  color: #222;
+  margin: 0;
+  padding: 32px;
+}
+
+/* 페이지 컨테이너 */
+.mytodos-container {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* 제목 */
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 8px 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 테이블 카드 래퍼 */
+.table-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* 반응형 스크롤 */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* 테이블 */
+.mytodos-table {
+  width: 100%;
+  border-collapse: separate;      /* 둥근 모서리 살리려면 separate + border-spacing */
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+.mytodos-table th, .mytodos-table td {
+  padding: 14px 12px;
+  text-align: center;
+  border-bottom: 1px solid #eef2f7;
+  word-break: keep-all;
+}
+
+.mytodos-table th {
+  background: #f7fbff;
+  font-size: 13px;
+  letter-spacing: .02em;
+  color: #4b5563;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.mytodos-table tr:hover td {
+  background: #fafcff;
+}
+
+/* 첫/마지막 셀 모서리 라운드 (헤더 영역) */
+.mytodos-table thead th:first-child { border-top-left-radius: 14px; }
+.mytodos-table thead th:last-child  { border-top-right-radius: 14px; }
+
+/* 상태 뱃지 */
+.status-badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1;
+  border: 1px solid transparent;
+}
+.status-badge.done {
+  background: #ecfdf5;
+  border-color: #bbf7d0;
+  color: #0f766e;
+}
+.status-badge.pending {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #b45309;
+}
+
+/* 난이도 pill: dp-1 ~ dp-5 */
+.difficulty-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.difficulty-pill::before {
+  content: "●";
+  font-size: 10px;
+}
+
+/* 색상 단계 */
+.dp-1 { background: #eef6ff; border-color: #dbeafe; color: #1d4ed8; }
+.dp-2 { background: #effdf5; border-color: #ccfbf1; color: #0f766e; }
+.dp-3 { background: #fffce8; border-color: #fde68a; color: #92400e; }
+.dp-4 { background: #fff1f2; border-color: #fecdd3; color: #be123c; }
+.dp-5 { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+
+/* 액션 버튼들 */
+.actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform .05s ease, background .2s ease, border-color .2s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+
+/* 타입별 */
+.btn-primary {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+.btn-primary:hover { background: #2563eb; border-color: #2563eb; }
+
+.btn-outline {
+  background: #fff;
+  color: #374151;
+}
+.btn-outline:hover { background: #f3f4f6; }
+
+.btn-secondary {
+  background: #f9fafb;
+  color: #111827;
+}
+.btn-secondary:hover { background: #eef2f7; }
+
+/* 푸터 링크 */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  color: #334155;
+  text-decoration: none;
+}
+.back-link:hover { text-decoration: underline; }
+
+/* 좁은 화면 대응 */
+@media (max-width: 768px) {
+  .mytodos-table th, .mytodos-table td { padding: 12px 10px; font-size: 13px; }
+  .page-title { font-size: 20px; }
+}

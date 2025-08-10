@@ -8,26 +8,15 @@
 <head>
   <meta charset="UTF-8">
   <title>내가 맡은 할 일</title>
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      padding: 10px;
-      border: 1px solid #ccc;
-      text-align: center;
-    }
-    button {
-      padding: 5px 10px;
-    }
-  </style>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/myTodos.css">
 </head>
-<body>
-  <h2>📌 내가 맡은 할 일 목록</h2>
+<body class="mytodos-body">
+  <div class="mytodos-container">
+    <h2 class="page-title">📌 내가 맡은 할 일 목록</h2>
 
-  <table>
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="mytodos-table">
     <thead>
       <tr>
         <th>제목</th>
@@ -43,16 +32,20 @@
           <td>${todo.title}</td>
           <td><fmt:formatDate value="${todo.due_date}" pattern="yyyy-MM-dd"/></td>
           <td>
-            <c:choose>
-              <c:when test="${todo.completed}">✅ 완료</c:when>
-              <c:otherwise>❌ 미완료</c:otherwise>
-            </c:choose>
-          </td>
+					  <c:choose>
+					    <c:when test="${todo.completed}">
+					      <span class="status-badge done">✅ 완료</span>
+					    </c:when>
+					    <c:otherwise>
+					      <span class="status-badge pending">❌ 미완료</span>
+					    </c:otherwise>
+					  </c:choose>
+					</td>
           <td>${todo.difficulty_point}</td>
           <td>
 					  <c:choose>
 					    <c:when test="${not todo.completed}">
-					      <!-- ✅ 미완료일 때만 아래 버튼들 보여주기 -->
+					      <!-- 미완료일 때만 아래 버튼들 보여주기 -->
 					      
 					      <!-- 포기 버튼 -->
 					      <form action="${pageContext.request.contextPath}/todos/unassign" method="post" style="display:inline;">
@@ -75,9 +68,12 @@
       </c:forEach>
     </tbody>
   </table>
+	</div>
+</div>
 
   <br>
-  <a href="${pageContext.request.contextPath}/todos">← 돌아가기</a>
+  <a class="back-link" href="${pageContext.request.contextPath}/todos">← 돌아가기</a>
+</div>
 </body>
 
 <script>
@@ -87,17 +83,17 @@ function completeTodo(todo_id, btnElement) {
   const confirmResult = confirm("기록도 같이 남기시겠어요?");
   
   if (confirmResult) {
-    // ✅ 기록 페이지로 이동
+    // 기록 페이지로 이동
     window.location.href = contextPath + "/history/create?todo_id=" + todo_id;
   } else {
-    // ✅ 백엔드에 완료 처리 요청
+    // 백엔드에 완료 처리 요청
     fetch(contextPath + "/todos/complete?id=" + todo_id, {
       method: "POST"
     })
     .then(response => {
       if (!response.ok) throw new Error("서버 응답 오류");
 
-      // ✅ 성공 시 해당 행 삭제
+      // 성공 시 해당 행 삭제
       const tr = btnElement.closest("tr");
       if (tr) tr.remove();
 

@@ -1,33 +1,51 @@
-@charset "UTF-8";
-
-/* 페이지 배경/타이포 */
-.wallet-body {
-  background: linear-gradient(to bottom right, var(--sky-100), var(--sky-50));
-  color: var(--text-strong);
-  min-height: 100vh;
+/* 색상 토큰 (MZ 파스텔톤) */
+:root {
+  --bg: #f6f9fc;
+  --card: #ffffff;
+  --ink: #1f2937;
+  --ink-weak: #6b7280;
+  --brand: #7c5cff;   /* 포인트 퍼플 */
+  --brand-weak: #ede9fe;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --line: #e5e7eb;
+  --hover: #f8fbff;
 }
 
-/* 페이지 컨테이너 & 타이틀 */
-.wallet-container { padding-bottom: 48px; }
+/* 레이아웃 */
+.wallet-body {
+  background: linear-gradient(180deg, var(--bg), #ffffff);
+  color: var(--ink);
+  font-family: 'Pretendard', 'Noto Sans KR', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  padding: 32px 20px 60px;
+}
+
+.wallet-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* 헤더 */
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
 
 .page-title {
-  font-size: 2rem;
+  font-size: 22px;
   font-weight: 700;
-  color: var(--primary-600);
-  margin: 8px 0 16px;
+  letter-spacing: -0.2px;
+  margin: 0;
 }
 
 .page-title a {
-  color: var(--primary-600);
+  color: var(--ink);
   text-decoration: none;
-}
-
-/* 상단 액션 영역 */
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  margin: 16px 0 20px;
-  gap: 8px;
 }
 
 /* 버튼 공통 */
@@ -36,189 +54,201 @@
   align-items: center;
   gap: 6px;
   padding: 10px 14px;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid transparent;
+  background: var(--card);
+  color: var(--ink);
+  text-decoration: none;
   font-weight: 600;
   font-size: 14px;
+  transition: transform .08s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
   cursor: pointer;
-  text-decoration: none;
-  transition: 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(17, 24, 39, .08);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(17, 24, 39, .08) inset;
 }
 
 .btn-primary {
-  background: var(--primary-600);
+  background: var(--brand);
   color: #fff;
-  box-shadow: var(--shadow-sm);
 }
-.btn-primary:hover { filter: brightness(0.95); transform: translateY(-1px); }
 
-.btn-ghost {
+.btn-outline {
   background: #fff;
-  color: var(--primary-700);
-  border-color: var(--primary-700);
+  border-color: var(--line);
 }
-.btn-ghost:hover { background: var(--sky-50); }
 
 .btn-danger {
-  background: #fff;
-  color: #b00020;
-  border-color: #b00020;
-}
-.btn-danger:hover { background: #ffeef0; }
-
-/* 표 래퍼(카드 느낌) */
-.table-wrap {
-  padding: 0;
-  overflow: hidden;
+  background: #fff5f5;
+  color: var(--danger);
+  border-color: #ffe4e6;
 }
 
-/* 표 스타일 */
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+/* 테이블 카드 스타일 */
 .wallet-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  background: #fff;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden; /* radius 적용 */
+  box-shadow: 0 12px 24px rgba(17,24,39,.06);
 }
 
 .wallet-table thead th {
-  position: sticky; /* 긴 목록일 때 상단 고정 효과 */
+  position: sticky; /* 스크롤 시 헤더 고정 */
   top: 0;
-  background: var(--sky-200);
-  color: #003366;
-  text-align: left;
-  padding: 14px 12px;
-  font-size: 14px;
+  z-index: 1;
+  background: linear-gradient(180deg, var(--brand-weak), #f8f7ff);
+  color: #4b5563;
   font-weight: 700;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  white-space: nowrap;
+  font-size: 13px;
+  letter-spacing: .2px;
+  text-align: center;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--line);
 }
 
 .wallet-table tbody td {
-  padding: 12px 12px;
   font-size: 14px;
-  color: var(--text-strong);
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  vertical-align: middle;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
 }
 
-.wallet-table tbody tr:nth-child(even) { background: #fafcff; }
-.wallet-table tbody tr:hover { background: var(--sky-50); }
+.wallet-table tbody tr:nth-child(even) {
+  background: #fbfcfe;
+}
 
-/* 관리 버튼 칸 정리 */
-.actions-cell {
+.wallet-table tbody tr:hover {
+  background: var(--hover);
+}
+
+/* 정렬/타이포 */
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums; /* 숫자 자릿수 고정 */
+}
+
+.strong {
+  font-weight: 700;
+}
+
+/* 메모 칸은 살짝 흐리게 */
+.memo {
+  color: var(--ink-weak);
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
-  display: flex;
-  gap: 6px;
 }
 
-/* 단가 비교 폼 */
-.compare-form {
-  margin-top: 20px;
+/* 뱃지 */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.badge-cat {
+  background: #eef2ff;
+  border-color: #e0e7ff;
+  color: #4338ca;
+}
+
+.badge-type {
+  background: #ecfeff;
+  border-color: #cffafe;
+  color: #0891b2;
+}
+
+/* 칩 (단가 강조) */
+.chip {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.chip-price {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #bbf7d0;
+}
+
+/* 액션 버튼 영역 */
+.actions {
   display: flex;
   gap: 8px;
+  justify-content: center;
+}
+
+/* 검색 폼 */
+.compare-form {
+  display: flex;
+  gap: 10px;
   align-items: center;
-  flex-wrap: wrap;
+  margin-top: 16px;
 }
 
 .compare-form .input {
-  flex: 1 1 260px;
+  flex: 1;
   min-width: 220px;
   padding: 10px 12px;
+  border: 1px solid var(--line);
   border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.12);
   outline: none;
-  transition: 0.2s ease;
-  font-size: 14px;
-  background: #fff;
-}
-.compare-form .input:focus {
-  border-color: var(--primary-600);
-  box-shadow: 0 0 0 3px rgba(0, 142, 204, 0.12);
+  transition: border-color .2s ease, box-shadow .2s ease;
 }
 
-/* 반응형 */
+.compare-form .input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px rgba(124,92,255,.15);
+}
+
+/* 반응형: 좁은 화면에서 덜 중요한 칼럼 숨김 */
 @media (max-width: 1024px) {
-  .wallet-table thead th:nth-child(1), /* ID */
-  .wallet-table tbody td:nth-child(1),
-  .wallet-table thead th:nth-child(11), /* 메모 */
-  .wallet-table tbody td:nth-child(11) {
-    display: none; /* 화면이 좁으면 부가 컬럼 몇 개 숨김 */
+  .wallet-table th:nth-child(11),
+  .wallet-table td:nth-child(11) { /* 메모 */
+    display: none;
   }
 }
 
-@media (max-width: 768px) {
-  .actions { justify-content: stretch; }
-  .btn { flex: 1; justify-content: center; }
-}
+@media (max-width: 840px) {
+  .wallet-table th:nth-child(8),
+  .wallet-table td:nth-child(8),   /* 구매처 */
+  .wallet-table th:nth-child(9),
+  .wallet-table td:nth-child(9),   /* 유형 */
+  .wallet-table th:nth-child(6),
+  .wallet-table td:nth-child(6) {  /* 단위 */
+    display: none;
+  }
 
-/* ===== Theme ===== */
-:root{
-  --sky: #5ac8fa;
-  --sky-600: #39b7e5;
-  --ink: #1f2937;
-  --muted: #6b7280;
-  --card: #ffffff;
-  --shadow: 0 10px 24px rgba(0,0,0,0.08);
-}
-
-/* 페이지 배경/폰트 */
-.score-body {
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: linear-gradient(180deg, #e0f7ff 0%, #f6fcff 100%);
-  padding: 40px;
-  margin: 0;
-  color: var(--ink);
-}
-
-/* 제목 */
-.score-title {
-  text-align: center;
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.2px;
-  margin: 8px 0 22px;
-}
-
-/* 뒤로가기 링크 버튼 느낌 */
-.back-link {
-  display: inline-block;
-  text-decoration: none;
-  color: var(--ink);
-  background: #fff;
-  border: 1px solid #e4f3ff;
-  border-radius: 10px;
-  padding: 8px 12px;
-  transition: .2s;
-  box-shadow: var(--shadow);
-  margin: 0 auto 14px;
-}
-.back-link:hover { background:#f4fbff; color:#0b6ea8; }
-
-/* 차트 카드 느낌 - canvas 자체를 카드처럼 */
-#compareChart{
-  display: block;
-  width: 100% !important;
-  max-width: 720px;       /* 👉 가로 사이즈: 여기 숫자만 조절하면 됨 */
-  height: 320px !important; /* 👉 차트 높이: 필요시 280~360 선에서 조절 */
-  margin: 14px auto 6px;
-
-  background: var(--card);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  border: 1px solid #e8f4ff;
-}
-
-/* 페이지 내부 기본 컨테이너 여백(필요시) */
-.score-container { max-width: 1080px; margin: 0 auto; }
-
-/* 힌트/작은 텍스트(원하면 사용) */
-.hint { margin-top: 8px; color: var(--muted); font-size: 12.5px; }
-
-/* 반응형 */
-@media (max-width: 640px) {
-  .score-body { padding: 20px; }
-  .score-title { font-size: 22px; }
-  #compareChart{ max-width: 92vw; height: 300px !important; }
+  .page-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 }

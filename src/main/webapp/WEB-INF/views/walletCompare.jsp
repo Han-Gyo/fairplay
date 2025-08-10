@@ -5,7 +5,7 @@
 <head>
 <title>단가 비교 - ${item_name}</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/wallet.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/walletCompare.css">
 </head>
 <body class="score-body">
 <div class="score-container">
