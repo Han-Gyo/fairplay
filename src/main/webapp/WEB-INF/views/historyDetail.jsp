@@ -10,10 +10,11 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <title>히스토리 상세 보기</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/history-detail.css" />
 </head>
 <body>
 
-<h2>📄 히스토리 상세</h2>
+<h2>📄히스토리 상세</h2>
 
 <p><strong>할 일 : </strong> ${history.todo.title}</p>
 <p><strong>수행자 : </strong> ${history.member.nickname}</p>
@@ -29,7 +30,7 @@
 <hr>
 <h3>💬 댓글</h3>
 
-<!-- 🔄 댓글 목록 -->
+<!-- 댓글 목록 -->
 <c:forEach var="comment" items="${commentList}">
   <div class="comment-wrapper" data-comment-id="${comment.id}" style="position: relative; border:1px solid #ccc; padding:10px; margin-bottom:10px;">
     <div class="comment-header">
@@ -62,7 +63,7 @@
 </c:forEach>
 
 
-<!-- ✏️ 댓글 작성 폼 -->
+<!-- 댓글 작성 폼 -->
 <form action="${pageContext.request.contextPath}/history/comments/add" method="post">
     <input type="hidden" name="history_id" value="${history.id}" />
     <textarea name="content" rows="3" cols="50" placeholder="댓글을 입력하세요" required></textarea><br><br>

@@ -1,0 +1,254 @@
+/* 색상 토큰 (MZ 파스텔톤) */
+:root {
+  --bg: #f6f9fc;
+  --card: #ffffff;
+  --ink: #1f2937;
+  --ink-weak: #6b7280;
+  --brand: #7c5cff;   /* 포인트 퍼플 */
+  --brand-weak: #ede9fe;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --line: #e5e7eb;
+  --hover: #f8fbff;
+}
+
+/* 레이아웃 */
+.wallet-body {
+  background: linear-gradient(180deg, var(--bg), #ffffff);
+  color: var(--ink);
+  font-family: 'Pretendard', 'Noto Sans KR', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  padding: 32px 20px 60px;
+}
+
+.wallet-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* 헤더 */
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.page-title a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* 버튼 공통 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: var(--card);
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: transform .08s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  cursor: pointer;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(17, 24, 39, .08);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(17, 24, 39, .08) inset;
+}
+
+.btn-primary {
+  background: var(--brand);
+  color: #fff;
+}
+
+.btn-outline {
+  background: #fff;
+  border-color: var(--line);
+}
+
+.btn-danger {
+  background: #fff5f5;
+  color: var(--danger);
+  border-color: #ffe4e6;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+/* 테이블 카드 스타일 */
+.wallet-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden; /* radius 적용 */
+  box-shadow: 0 12px 24px rgba(17,24,39,.06);
+}
+
+.wallet-table thead th {
+  position: sticky; /* 스크롤 시 헤더 고정 */
+  top: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, var(--brand-weak), #f8f7ff);
+  color: #4b5563;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .2px;
+  text-align: center;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.wallet-table tbody td {
+  font-size: 14px;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.wallet-table tbody tr:nth-child(even) {
+  background: #fbfcfe;
+}
+
+.wallet-table tbody tr:hover {
+  background: var(--hover);
+}
+
+/* 정렬/타이포 */
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums; /* 숫자 자릿수 고정 */
+}
+
+.strong {
+  font-weight: 700;
+}
+
+/* 메모 칸은 살짝 흐리게 */
+.memo {
+  color: var(--ink-weak);
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 뱃지 */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.badge-cat {
+  background: #eef2ff;
+  border-color: #e0e7ff;
+  color: #4338ca;
+}
+
+.badge-type {
+  background: #ecfeff;
+  border-color: #cffafe;
+  color: #0891b2;
+}
+
+/* 칩 (단가 강조) */
+.chip {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.chip-price {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #bbf7d0;
+}
+
+/* 액션 버튼 영역 */
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* 검색 폼 */
+.compare-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.compare-form .input {
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.compare-form .input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px rgba(124,92,255,.15);
+}
+
+/* 반응형: 좁은 화면에서 덜 중요한 칼럼 숨김 */
+@media (max-width: 1024px) {
+  .wallet-table th:nth-child(11),
+  .wallet-table td:nth-child(11) { /* 메모 */
+    display: none;
+  }
+}
+
+@media (max-width: 840px) {
+  .wallet-table th:nth-child(8),
+  .wallet-table td:nth-child(8),   /* 구매처 */
+  .wallet-table th:nth-child(9),
+  .wallet-table td:nth-child(9),   /* 유형 */
+  .wallet-table th:nth-child(6),
+  .wallet-table td:nth-child(6) {  /* 단위 */
+    display: none;
+  }
+
+  .page-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

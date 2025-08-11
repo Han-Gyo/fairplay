@@ -11,218 +11,33 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js'></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/nav.css">
+
 <script src="${pageContext.request.contextPath}/resources/js/calendarModal.js"></script>
-
-<style>
-    .navbar {
-        background-color: #4a90e2;
-        color: white;
-        padding: 3px 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 0;
-        font-family: 'Segoe UI', sans-serif;
-        
-        position: fixed;
-		    top: 0;
-		    left: 0;
-		    width: 100%;
-		    z-index: 1000;
-    }
-
-    .navbar a {
-        color: white;
-        text-decoration: none;
-        margin: 0 12px;
-        font-weight: bold;
-        position: relative;
-    }
-
-    .navbar a:hover {
-        text-decoration: none;
-    }
-
-    .navbar .left,
-    .navbar .right {
-        display: flex;
-        align-items: center;
-        position: relative;
-    }
-
-    .dropdown {
-        position: relative;
-    }
-
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: white;
-        min-width: 180px;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-        z-index: 1;
-        top: 100%;
-        left: 0;
-        border-radius: 8px;
-        padding: 10px 0;
-    }
-
-    .dropdown-content a {
-        color: #333;
-        padding: 8px 16px;
-        display: block;
-        text-decoration: none;
-        font-weight: normal;
-    }
-
-    .dropdown-content a:hover {
-       background-color: #f1f1f1;
-       color: #4a90e2;
-       font-weight: bold;
-    }
-
-    .dropdown:hover .dropdown-content {
-       display: block;
-    }
-    body {
-      padding-top: 50px; /* 네비 높이만큼 여백 주기 */
-    }
-    .fc-header-toolbar {
-		  margin-top: 60px !important;  /* ← 여백 충분히 줘서 X랑 안 겹치게 */
-		}
-		#calendarModal {
-		  background-color: rgba(255, 192, 203, 0.2); /* 연핑크 반투명 */
-		  overflow: hidden;
-		}
-		#calendarModal .modal-content {
-		  background: #fff0f5; /* 연한 핑크톤 배경 */
-		  border-radius: 20px;
-		  padding: 30px;
-		  box-shadow: 0 0 12px rgba(0,0,0,0.15);
-		  
-		  text-align: center;
-		  max-height: 80vh;
-		  overflow-y: auto;
-		  
-		  position: absolute;
-		  top: 50%;
-		  left: 50%;
-		  transform: translate(-50%, -50%);
-		}
-		/* 이전/다음/오늘 버튼 */
-		.fc .fc-button {
-		  background-color: #ffb6c1;     /* 연핑크 */
-		  border: none;
-		  color: white;
-		  font-weight: bold;
-		  border-radius: 8px;
-		}
-		
-		.fc .fc-button:hover {
-		  background-color: #ff8da7;     /* 좀 더 진한 핑크 */
-		}
-		
-		/* 활성화된 view 버튼 (month/week 등) */
-		.fc .fc-button.fc-button-active {
-		  background-color: #ff69b4;     /* 진핑크 하이라이트 */
-		  border: none;
-		}
-		.fc-toolbar-title {
-		  color: #e75480;     /* 예쁜 진한 연핑크 계열 */
-		  font-size: 24px;
-		  font-weight: bold;
-		}
-		.fc-daygrid-day:hover {
-		  background-color: #ffe4e9;  /* 셀 hover 시 연핑크 강조 */
-		}
-		
-		.fc-day-today {
-		  background-color: #ffeef2 !important;  /* 오늘 날짜 배경 */
-		  border: 1px solid #ffb6c1 !important;
-		}
-		.calendar-toggle {
-		  position: fixed;
-		  top: 60px; /* 네비바 바로 아래로 */
-		  right: 20px;
-		  z-index: 1500;
-		  font-weight: bold;
-		  cursor: pointer;
-		  align-items: center; 
-		  text-align: center; 
-		}
-		
-		.calendar-toggle a {
-		  border: none;
-		  text-decoration: none;
-		  outline: none;
-		  font-size: 20px;
-		}
-		.calendar-toggle p {
-			font-size: 12px;
-			margin-top: -3px;
-			color: black;
-		}
-		.calendar-toggle p:hover {
-			color: darkgray;
-		}
-		#calendar-full {
-		  width: 100%;
-		  height: 100%;
-		  min-height: 500px;
-		}
-		#scheduleModal {
-	  z-index: 3000 !important;
-		}
-		.modal-backdrop {
-		  z-index: 2500 !important;
-		}
-		#todoList, #schedule-container {
-	  text-align: left;
-	  padding-left: 20px;
-	  margin: 0 auto;
-	  max-width: 600px;  /* 너무 넓지 않게 */
-	}
-	.calendar-custom-modal {
-  background: #fff0f5;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.15);
-
-  text-align: center;
-  max-height: 80vh;
-  overflow-y: auto;
-
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;
-  max-width: 1000px;
-}
-</style>
 
 </head>
 <body>
 
-<div class="navbar">
-    <div class="left">
-        <!-- 로고 -->
-		<a class="navbar-brand d-flex align-items-center" href="${pageContext.request.contextPath}/">
-		  <i class="fas fa-broom fa-lg me-2"></i> <!-- 빗자루 아이콘 -->
-		  <span style="font-weight: 600; font-size: 1.3rem;">FairPlay</span>
-		</a>
+<div id="app-nav" class="navbar">
+  <div class="left">
+  <!-- 로고 -->
+	<a class="navbar-brand d-flex align-items-center" href="${pageContext.request.contextPath}/">
+	  <i class="fas fa-broom fa-lg me-2"></i> <!-- 빗자루 아이콘 -->
+	  <span style="font-weight: 600; font-size: 1.3rem;">FairPlay</span>
+	</a>
 
-        <!-- Todo 드롭다운 -->
-        <div class="dropdown">
-            <a href="javascript:void(0);">🧹 Todo</a>
-            <div class="dropdown-content">
-                <a href="${pageContext.request.contextPath}/todos?groupId=${sessionScope.currentGroupId}">📋 Todo 목록</a>
-                <a href="${pageContext.request.contextPath}/todos/myTodos">✅ MyTodo 목록</a>
-                <c:if test="${role eq 'LEADER'}">
-								  <a href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">✅ Todo 등록</a>
-								</c:if>
-            </div>
-        </div>
+  <!-- Todo 드롭다운 -->
+  <div class="dropdown">
+    <a href="javascript:void(0);">🧹 Todo</a>
+    <div class="dropdown-content">
+      <a href="${pageContext.request.contextPath}/todos?groupId=${sessionScope.currentGroupId}">📋 Todo 목록</a>
+      <a href="${pageContext.request.contextPath}/todos/myTodos">✅ MyTodo 목록</a>
+      <c:if test="${role eq 'LEADER'}">
+	  	<a href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">✅ Todo 등록</a>
+		</c:if>
+    </div>
+  </div>
 
         <!-- History 드롭다운 -->
         <div class="dropdown">
@@ -253,12 +68,12 @@
         
         <!-- 점수 드롭다운 -->
 		<div class="dropdown">
-		    <a href="javascript:void(0);">📊 점수</a>
-		    <div class="dropdown-content">
-		        <a href="${pageContext.request.contextPath}/history/monthly-score?group_id=1">📅 월간 점수 보기</a>
-		        <!-- 추후: 전체 통계 페이지 추가도 고려 가능 -->
-		    </div>
+		  <a href="javascript:void(0);">📊 점수</a>
+		  <div class="dropdown-content">
+		    <a href="${pageContext.request.contextPath}/history/monthly-score">📅 월간 점수 보기</a>
+		  </div>
 		</div>
+
 				
 		<!-- 필요 물품 드롭다운 추가 -->
 		<c:if test="${not empty sessionScope.loginMember}">

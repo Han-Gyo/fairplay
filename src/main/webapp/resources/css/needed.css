@@ -1,5 +1,16 @@
 @charset "UTF-8";
 /* 🩵 감성 파스텔 하늘 톤 */
+:root{
+  --bg-grad-top:#e0f7ff;  /* 하늘 그라데 상단 */
+  --bg-grad-bot:#f6fcff;  /* 하늘 그라데 하단 */
+  --primary:#5ac8fa;      /* 하늘 포인트 */
+  --primary-200:#b9ebff;  /* 옅은 테두리/배경 */
+  --text:#333;
+  --muted:#777;
+  --card-bg:#fff;
+  --border:#e6f4ff;
+  --focus-ring: rgba(90,200,250,.28);
+}
 body.needed-body {
   font-family: 'Pretendard', sans-serif;
   background: linear-gradient(180deg, #e0f7ff, #f6fcff);
