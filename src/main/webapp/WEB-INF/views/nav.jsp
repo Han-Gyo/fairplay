@@ -68,12 +68,12 @@
         
         <!-- 점수 드롭다운 -->
 		<div class="dropdown">
-		    <a href="javascript:void(0);">📊 점수</a>
-		    <div class="dropdown-content">
-		        <a href="${pageContext.request.contextPath}/history/monthly-score?group_id=1">📅 월간 점수 보기</a>
-		        <!-- 추후: 전체 통계 페이지 추가도 고려 가능 -->
-		    </div>
+		  <a href="javascript:void(0);">📊 점수</a>
+		  <div class="dropdown-content">
+		    <a href="${pageContext.request.contextPath}/history/monthly-score">📅 월간 점수 보기</a>
+		  </div>
 		</div>
+
 				
 		<!-- 필요 물품 드롭다운 추가 -->
 		<c:if test="${not empty sessionScope.loginMember}">
