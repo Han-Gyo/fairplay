@@ -157,8 +157,10 @@ public class TodoRepositoryImpl implements TodoRepository{
 
 	@Override
 	public List<Todo> findByGroupId(int groupId) {
-		String sql = "SELECT * FROM todo WHERE group_id = ?";
-	    return template.query(sql, todoRowMapper, groupId);
+	    // 그룹 ID를 사용하여 해당 그룹의 Todo만 조회
+	    String sql = "SELECT * FROM todo WHERE group_id = ? ORDER BY id DESC";
+	    System.out.println("[DB] 그룹 ID(" + groupId + ")로 할 일 목록 조회됨");
+	    return template.query(sql, todoRowMapper, groupId); // groupId를 파라미터로 넘김
 	}
 	
 }

@@ -103,7 +103,7 @@ public class TodoController {
 	    String role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), groupId);
 	    session.setAttribute("role", role);
 
-	    // 📌 groupId 기준으로 할 일만 불러와야 함
+	    // groupId 기준으로 할 일만 불러와야 함
 	    List<Todo> todoList = todoService.findByGroupId(groupId);
 
 	    System.out.println("할 일 목록 출력 시작 (groupId: " + groupId + ")");
@@ -112,10 +112,11 @@ public class TodoController {
 	    }
 
 	    // 멤버 매핑
-	    List<Member> memberList = memberService.readAll();
+	    List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId); 
 	    Map<Integer, String> memberMap = new HashMap<>();
-	    for (Member m : memberList) {
-	        memberMap.put(m.getId(), m.getNickname());
+	    
+	    for (GroupMemberInfoDTO m : memberList) { 
+	        memberMap.put(m.getMemberId(), m.getNickname()); 
 	    }
 
 	    model.addAttribute("loginMemberId", loginMember.getId());
@@ -155,7 +156,7 @@ public class TodoController {
 	        return "redirect:/todos?groupId=" + groupId;
 	    }
 	    // 등록폼 세팅
-	    List<Member> memberList = memberService.readAll(); // 담당자 선택용
+	    List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId);
 	    model.addAttribute("memberList", memberList);
 	    model.addAttribute("groupId", groupId);
 	    

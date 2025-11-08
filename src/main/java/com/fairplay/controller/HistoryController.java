@@ -72,6 +72,7 @@ public class HistoryController {
 	        ra.addFlashAttribute("msg", "로그인 후 이용해주세요.");
 	        return "redirect:/member/login";
 	    }
+	    
 	    // 세션에 currentGroupId 없으면 설정
 	    if (session.getAttribute("currentGroupId") == null) {
 	        List<Group> myGroups = groupMemberService.findGroupsByMemberId(Long.valueOf(loginMember.getId()));
@@ -94,17 +95,20 @@ public class HistoryController {
 	        return "redirect:/";
 	    }
 
-	    // 이후 기존 로직
+	    // groupId를 사용해서 히스토리를 가져옴
 	    List<History> historyList;
 	    if (todoId != null) {
+	        // 특정 할 일의 기록 조회 (기존 로직 유지)
 	        Todo todo = todoService.findById(todoId);
 	        historyList = historyService.getHistoriesByTodoIdWithDetails(todoId);
 	        model.addAttribute("selectedTodo", todo);
 	    } else {
-	        historyList = historyService.getAllHistoriesWithDetails();
+	        // 현재 그룹의 전체 히스토리만 조회하도록 수정
+	        historyList = historyService.getHistoriesByGroupIdWithDetails(groupId); 
 	    }
 
-	    List<Todo> todoList = todoService.getTodoList();
+	    List<Todo> todoList = todoService.findByGroupId(groupId);
+	    
 	    model.addAttribute("historyList", historyList);
 	    model.addAttribute("todoList", todoList);
 	    model.addAttribute("selectedTodoId", todoId);
@@ -163,24 +167,34 @@ public class HistoryController {
 	        ra.addFlashAttribute("msg", "그룹에 속해있지 않습니다.");
 	        return "redirect:/";
 	    }
+        
+        // 1. 현재 그룹의 멤버 목록을 무조건 가져옴 (수행자 드롭다운용)
+	    List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId); 
+	    model.addAttribute("memberList", memberList);
 
 	    if (todo_id != null) {
 	        Todo todo = todoService.findById(todo_id);
-	        model.addAttribute("selectedTodoId", todo_id);
-	        List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(todo.getGroup_id());
-	        model.addAttribute("memberList", memberList);
-	    } else {
-	        model.addAttribute("memberList", List.of());
-	    }
+            
+            // 선택된 todo의 그룹 ID와 현재 그룹 ID가 다르면 에러 처리 (방어 코드)
+            if (todo != null && todo.getGroup_id() != groupId) {
+                ra.addFlashAttribute("msg", "잘못된 할 일에 접근했습니다.");
+                return "redirect:/todos";
+            }
+	        
+            model.addAttribute("selectedTodoId", todo_id);
+	    } 
+        // else { model.addAttribute("memberList", List.of()); } 이 불필요한 코드가 삭제됨
 
 	    model.addAttribute("history", new History());
-	    model.addAttribute("todoList", todoService.getTodoList());
+	    
+        // 2. 할 일 목록도 현재 그룹의 것만 가져오도록 수정 (이전 단계에서 TodoService.findByGroupId를 구현함)
+	    model.addAttribute("todoList", todoService.findByGroupId(groupId));
 
 	    return "historyCreateForm";
 	}
 
 
-	// 3. 기록 등록 처리 (수정본: 그대로 교체)
+	// 3. 기록 등록 처리
 	@PostMapping("/create")
 	public String addHistory(
 	        HttpServletRequest request,
@@ -214,9 +228,9 @@ public class HistoryController {
 	    // 3) History 생성 (member_id는 세션 사용자로 고정)
 	    History history = new History();
 	    history.setTodo_id(todoId);
-	    history.setMember_id(loginMember.getId()); // ★ 핵심: 파라미터 대신 세션 사용자
+	    history.setMember_id(loginMember.getId()); 
 	    history.setCompleted_at(new Date());
-	    history.setScore(score);                   // 폼에서 받은 점수 그대로
+	    history.setScore(score);  
 	    history.setMemo(memo);
 
 	    // 4) 사진 저장 (있을 때만)
@@ -243,10 +257,8 @@ public class HistoryController {
 	    }
 
 	    // 6) 완료 플래그만 업데이트 (히스토리 INSERT는 여기서만!)
-	    //  - 네 서비스가 구시그니처면 아래 줄 유지
-	    //  - 서비스가 (id, completedBy)로 바뀌었으면 두 번째 인자로 loginMember.getId() 넘겨
 	    todoService.completeTodo(todoId);
-	    // todoService.completeTodo(todoId, loginMember.getId()); // ← 신시그니처라면 이걸 사용
+
 
 	    // 7) 이동
 	    return "redirect:/history?todo_id=" + todoId;

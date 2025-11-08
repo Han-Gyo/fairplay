@@ -34,8 +34,8 @@
       <a href="${pageContext.request.contextPath}/todos?groupId=${sessionScope.currentGroupId}">📋 Todo 목록</a>
       <a href="${pageContext.request.contextPath}/todos/myTodos">✅ MyTodo 목록</a>
       <c:if test="${role eq 'LEADER'}">
-	  	<a href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">✅ Todo 등록</a>
-		</c:if>
+	  		<a href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">✅ Todo 등록</a>
+			</c:if>
     </div>
   </div>
 
