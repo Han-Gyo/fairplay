@@ -3,6 +3,7 @@ let idCheckResult = null;
 let nicknameCheckResult = null;
 let timerInterval; // 전역으로 타이머 ID 관리
 
+
 // 아이디 중복 확인
 function checkId() {
     const userId = document.getElementById('user_id').value.trim();
@@ -76,7 +77,7 @@ function checkNickname() {
         const nickDiv = document.getElementById('nicknameCheckResult');
         nickDiv.classList.remove('error', 'success');
 
-        nicknameCheckResult = data.result; // ✅ 전역 변수 저장
+        nicknameCheckResult = data.result; // 전역 변수 저장
 
         if (data.result === 'duplicate') {
             nickDiv.classList.add('error');
@@ -105,6 +106,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const pwError = document.getElementById('pwError');
 		const emailResult = document.getElementById("emailResult").innerText;
 		const nickname = document.getElementById('nickname').value.trim();
+		const zipcode = document.getElementById('zipcode').value.trim();
+		const address = document.getElementById('address').value.trim();
+
 		
         pwError.classList.remove('error', 'success');
 
@@ -132,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
             idErrorDiv.innerText = '아이디 중복 확인이 필요하거나, 중복된 아이디입니다.';
         }
 
-        // ✅ 닉네임 중복 미확인 or 중복이면 차단
+        // 닉네임 중복 미확인 or 중복이면 차단
         if (nicknameCheckResult !== 'available') {
             e.preventDefault();
             const nickDiv = document.getElementById('nicknameCheckResult');
@@ -147,17 +151,46 @@ document.addEventListener('DOMContentLoaded', function () {
             emailDiv.classList.add('error');
             emailDiv.innerText = "이메일 인증을 완료해주세요.";
         }
+		
+		// 우편번호와 기본 주소 검사
+        if (zipcode === '' || address === '') {
+            e.preventDefault();
+            alert('주소 검색을 통해 우편번호와 기본 주소를 입력해주세요.');
+        }
+
     });
 });
+
+// 시간 포맷 함수 (전역에서 사용 가능하도록 정의)
+function formatTime(seconds) {
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${min}:${sec < 10 ? '0' + sec : sec}`;
+}
 
 
 // 이메일 인증번호 전송 및 재전송
 function sendEmailCode() {
-    const email = document.getElementById("email").value;
-    const emailResult = document.getElementById("emailResult");
+    const email = document.getElementById("email").value.trim(); // 입력창에서 이메일 값 가져오기 (앞뒤 공백 제거)
+    const emailResult = document.getElementById("emailResult");	// 결과 메시지를 표기할 영역 가져오기
     const timerDisplay = document.getElementById("timerDisplay");
     const emailCodeInput = document.getElementById("emailCode");
     const verifyBtn = document.getElementById("verifyBtn");
+	
+	// 이메일 입력값이 공백일 경우 처리
+    if (email === "") {
+        emailResult.classList.add("error");
+        emailResult.innerText = "이메일을 입력해주세요.";
+        return;
+    }
+
+    // 이메일 형식 체크 추가
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        emailResult.classList.add("error");
+        emailResult.innerText = "올바른 이메일 형식을 입력해주세요.";
+        return;
+    }
 
     // 기존 타이머가 있다면 초기화
     if (timerInterval) {
@@ -177,8 +210,8 @@ function sendEmailCode() {
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
 
-            // ✅ 타이머 만료 시
-            timerDisplay.innerText = "⛔ 인증 시간이 만료되었습니다. 다시 전송 버튼을 눌러주세요.";
+            // 타이머 만료 시
+            timerDisplay.innerText = "인증 시간이 만료되었습니다. 다시 전송 버튼을 눌러주세요.";
             emailCodeInput.disabled = true;
             verifyBtn.disabled = true;
         } else {
@@ -205,6 +238,9 @@ function sendEmailCode() {
 // 인증번호 확인
 function verifyEmailCode() {
     const code = document.getElementById("emailCode").value;
+    const timerDisplay = document.getElementById("timerDisplay");
+    const emailCodeInput = document.getElementById("emailCode");
+    const verifyBtn = document.getElementById("verifyBtn");
 
     fetch("/fairplay/mail/verifyCode", {
         method: "POST",
@@ -215,7 +251,16 @@ function verifyEmailCode() {
     })
     .then(response => response.text())
     .then(msg => {
-        document.getElementById("emailResult").innerText = msg;
+        const emailResult = document.getElementById("emailResult");
+        emailResult.innerText = msg;
+
+        // 인증 성공 시 타이머 멈추고 숨기기
+        if (msg.includes("성공")) {
+            clearInterval(timerInterval); 	// 타이머 멈춤
+            timerDisplay.innerText = "";  	// 화면에서 타이머 제거
+            emailCodeInput.disabled = true; // 입력창 비활성화
+            verifyBtn.disabled = true;      // 버튼 비활성화
+        }
     })
     .catch(error => {
         document.getElementById("emailResult").innerText = "인증 실패";
@@ -223,10 +268,4 @@ function verifyEmailCode() {
     });
 }
 
-// 시간 포맷
-function formatTime(seconds) {
-    const min = Math.floor(seconds / 60);
-    const sec = seconds % 60;
-    return `${min}:${sec < 10 ? '0' + sec : sec}`;
-}
-
+//
