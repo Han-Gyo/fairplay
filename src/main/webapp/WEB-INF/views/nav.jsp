@@ -68,10 +68,6 @@
    
    <!-- 점수 드롭다운 -->
 		<div class="dropdown">
-		  <a href="javascript:void(0);">📊 점수</a>
-		  <div class="dropdown-content">
-		    <a href="${pageContext.request.contextPath}/history/monthly-score">📅 월간 점수 보기</a>
-		  </div>
 	    <a href="javascript:void(0);">📊 점수</a>
 	    <div class="dropdown-content">
 	        <a href="${pageContext.request.contextPath}/history/monthly-score?group_id=1">📅 월간 점수 보기</a>
