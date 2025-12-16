@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fairplay.domain.Group;
 import com.fairplay.domain.Member;
@@ -36,7 +37,8 @@ public class NeededItemController {
     @GetMapping("/list")
     public String list(@RequestParam(value = "groupId", required = false) Long groupId,
                        Model model,
-                       HttpSession session) {
+                       HttpSession session,
+                       RedirectAttributes redirectAttributes) {
 
         Member loginMember = (Member) session.getAttribute("loginMember");
         if (loginMember == null) {
@@ -56,8 +58,8 @@ public class NeededItemController {
         // 3. 해당 그룹 멤버인지 확인
         boolean isMember = groupMemberService.isGroupMember(groupId, (long) loginMember.getId());
         if (!isMember) {
-            model.addAttribute("error", "해당 그룹의 멤버만 접근 가능합니다.");
-            return "redirect:/group/list";
+        	redirectAttributes.addFlashAttribute("error", "해당 그룹의 멤버만 접근 가능합니다.");
+            return "redirect:/group/groups";
         }
 
         // 4. 물품 목록 조회

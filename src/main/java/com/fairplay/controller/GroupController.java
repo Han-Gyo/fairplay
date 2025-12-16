@@ -36,7 +36,15 @@ public class GroupController {
 	
 	// 그룹 등록 폼 페이지로 이동 (Create)
 	@GetMapping("/create")
-	public String createForm() {
+	public String createForm(HttpSession session) {
+		
+		// 로그인 세션 정보 확인
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		
+		// 로그인 정보가 null일 경우 로그인 페이지로 리다이렉트
+		if (loginMember == null) {
+			return "redirect:/member/login";
+		}
 		
 		return "groupCreateForm";
 	}
@@ -48,6 +56,11 @@ public class GroupController {
 		// 로그인한 사용자 정보 가져오기
 		Member loginMember = (Member) session.getAttribute("loginMember");
 		
+		// 로그인 정보가 null인 경우 NullPointerException 방지 및 리다이렉트
+		if (loginMember == null) {
+			return "redirect:/member/login";
+		}
+		
 		// 그룹장 ID 설정
 		group.setLeaderId(loginMember.getId());
 		
@@ -55,13 +68,13 @@ public class GroupController {
 	    MultipartFile file = group.getFile(); // DTO에서 전달받은 파일 추출
 
 	    if (file != null && !file.isEmpty()) {
-	        // ✅ 1. 원본 파일명 추출
+	        // 1. 원본 파일명 추출
 	        String originalName = file.getOriginalFilename();
 
-	        // ✅ 2. UUID + 안전한 파일명으로 변환 (한글/공백 문제 방지)
+	        // 2. UUID + 안전한 파일명으로 변환 (한글/공백 문제 방지)
 	        String safeFileName = UUID.randomUUID().toString() + "_" + originalName.replaceAll("[^a-zA-Z0-9.]", "_");
 
-	        // ✅ 3. 실제 저장 경로 지정
+	        // 3. 실제 저장 경로 지정
 	        Path savePath = Paths.get("C:/upload/" + safeFileName);
 
 	        try {
