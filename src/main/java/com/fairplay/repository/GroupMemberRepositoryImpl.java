@@ -160,5 +160,19 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 	    }, memberId);
 	}
 	
+	@Override
+	public Integer findLatestGroupIdByMember(int memberId) {
+	    // 최근 가입 = PK(id) 기준 내림차순
+	    String sql =
+	        "SELECT group_id " +
+	        "FROM group_member " +
+	        "WHERE member_id = ? " +
+	        "ORDER BY id DESC " +   // ← created_at 대신 id 사용
+	        "LIMIT 1";
+
+	    List<Integer> ids = jdbcTemplate.query(sql, (rs, i) -> rs.getInt("group_id"), memberId);
+	    return ids.isEmpty() ? null : ids.get(0);
+	}
+
 
 }

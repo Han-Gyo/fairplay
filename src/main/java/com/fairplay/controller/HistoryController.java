@@ -393,38 +393,54 @@ public class HistoryController {
   // 8. 점수 계산
 	@GetMapping("/monthly-score")
 	public String showMonthlyScore(
-		    @RequestParam("group_id") Integer groupId,
-		    @RequestParam(value = "yearMonth", required = false) String yearMonth,
-		    HttpSession session,
-		    Model model
-		) {
-			Member loginMember = (Member) session.getAttribute("loginMember");
-			if (loginMember == null) return "redirect:/member/login";
+	        @RequestParam(value = "group_id", required = false) Integer groupId,
+	        @RequestParam(value = "yearMonth", required = false) String yearMonth,
+	        HttpSession session,
+	        Model model
+	) {
+	    // 세션 키 통일: loginMember
+	    Member login = (Member) session.getAttribute("loginMember");
+	    if (login == null) return "redirect:/member/login";
 
+	    // group_id 없으면 기본 그룹으로 1회 리다이렉트
+	    if (groupId == null) {
+	        Integer def = groupMemberService.findDefaultGroupId(login.getId());
+	        System.out.println("[MS] login=" + login.getId() + ", defaultGroup=" + def);
+	        if (def == null) {
+	            // 가입 그룹 없음 → 그룹 목록으로 (절대 다시 monthly-score로 보내지 말 것)
+	            return "redirect:/group/list";
+	        }
+	        String ym = (yearMonth != null && !yearMonth.isEmpty()) ? "&yearMonth=" + yearMonth : "";
+	        return "redirect:/history/monthly-score?group_id=" + def + ym;
+	    }
 
-		    Long groupIdLong = Long.valueOf(groupId);
-		    Long memberId = Long.valueOf(loginMember.getId());
+	    // 권한검사
+	    Long gid = groupId.longValue();
+	    Long mid = Long.valueOf(login.getId());
+	    if (!groupMemberService.isGroupMember(gid, mid)) {
+	        return "redirect:/";
+	    }
 
-		    if (!groupMemberService.isGroupMember(groupIdLong, memberId)) {
-		        return "redirect:/";
-		    }
+	    // yearMonth 기본값
+	    if (yearMonth == null || yearMonth.isEmpty()) {
+	        java.time.LocalDate now = java.time.LocalDate.now();
+	        yearMonth = now.getYear() + "-" + String.format("%02d", now.getMonthValue());
+	    }
 
-		    if (yearMonth == null || yearMonth.isEmpty()) {
-		        java.time.LocalDate now = java.time.LocalDate.now();
-		        yearMonth = now.getYear() + "-" + String.format("%02d", now.getMonthValue());
-		    }
+	    // 데이터 조회
+	    Group group = groupService.findById(groupId);
+	    List<GroupMonthlyScore> groupScores = historyService.getGroupMonthlyScore(groupId, yearMonth);
+	    List<MemberMonthlyScore> memberScores = historyService.getMemberMonthlyScore(groupId, yearMonth);
 
-		    Group group = groupService.findById(groupId);
-		    List<GroupMonthlyScore> groupScores = historyService.getGroupMonthlyScore(groupId, yearMonth);
-		    List<MemberMonthlyScore> memberScores = historyService.getMemberMonthlyScore(groupId, yearMonth);
+	    // 모델
+	    model.addAttribute("groupScores", groupScores);
+	    model.addAttribute("memberScores", memberScores);
+	    model.addAttribute("yearMonth", yearMonth);
+	    model.addAttribute("group", group);
+	    model.addAttribute("groupId", groupId);
 
-		    model.addAttribute("groupScores", groupScores);
-		    model.addAttribute("memberScores", memberScores);
-		    model.addAttribute("yearMonth", yearMonth);
-		    model.addAttribute("group", group);
-
-		    return "monthlyScore";
-		}
+	    return "monthlyScore";
+	}
     
     @InitBinder
     public void initBinder(WebDataBinder binder) {

@@ -115,6 +115,12 @@ public class GroupMemberServiceImpl implements GroupMemberService{
 		return gmRepo.findGroupsByMemberId(memberId);
 	}
 
+	@Override
+    public Integer findDefaultGroupId(int memberId) {
+        // 최근 가입 기준. 필요하면 ASC로 바꿔 '첫 가입' 기준으로 전환.
+        return gmRepo.findLatestGroupIdByMember(memberId);
+    }
+
 	
 	
 }

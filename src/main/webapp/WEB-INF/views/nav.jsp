@@ -74,6 +74,7 @@
 	     <!-- 추후: 전체 통계 페이지 추가도 고려 가능 -->
 	    </div>
 		</div>
+
 				
 		<!-- 필요 물품 드롭다운 추가 -->
 		<c:if test="${not empty sessionScope.loginMember}">

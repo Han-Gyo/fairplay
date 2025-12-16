@@ -75,7 +75,7 @@
 		  <div class="sep"></div>
 		  <div class="actions">
 		    <c:choose>
-		      <!-- ✅ 리더: ‘리더 위임 후 탈퇴’만 허용 (개별 탈퇴 X) -->
+		      
 		      <c:when test="${loginMember.id == group.leaderId}">
 		        <a class="btn btn-danger"
 		           href="${pageContext.request.contextPath}/groupmember/transferForm?groupId=${group.id}">
@@ -83,7 +83,7 @@
 		        </a>
 		      </c:when>
 		
-		      <!-- ✅ 일반 멤버: 본인 탈퇴 버튼 -->
+		      
 		      <c:otherwise>
 		        <form action="${pageContext.request.contextPath}/groupmember/delete" method="post"
 		              onsubmit="return confirm('정말 탈퇴하시겠어요?');" style="display:inline;">
