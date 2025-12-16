@@ -31,5 +31,6 @@ public interface HistoryRepository {
 	// 📌 통계 관련
 	List<GroupMonthlyScore> findGroupMonthlyScore(int groupId, String yearMonth);	// 그룹별 월간 점수
 	List<MemberMonthlyScore> findMemberMonthlyScore(int groupId, String yearMonth);	// 멤버별 월간 점수
+	List<History> findAllWithDetailsByGroupId(int groupId);
 
 }

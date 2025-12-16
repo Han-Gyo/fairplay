@@ -20,7 +20,6 @@
 <body class="home-body">
   <div class="home-container">
     <h1 class="home-title" data-aos="fade-down">✨ FairPlay에 오신 걸 환영해요!</h1>
-
     <!-- 카드 컨테이너 -->
     <div class="home-card-container">
 	  <!-- 집안일 -->

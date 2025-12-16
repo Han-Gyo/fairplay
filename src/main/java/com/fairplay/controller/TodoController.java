@@ -58,7 +58,7 @@ public class TodoController {
 	
 	// 전체 할 일 목록 조회
 	@GetMapping
-	public String listTodos(HttpSession session, Model model, RedirectAttributes ra) {
+	public String listTodos(@RequestParam(value = "groupId", required = false) Integer groupIdParam,HttpSession session, Model model, RedirectAttributes ra) {
 	    Member loginMember = (Member) session.getAttribute("loginMember");
 	    if (loginMember == null) {
 	        ra.addFlashAttribute("error", "로그인이 필요합니다.");
@@ -74,6 +74,10 @@ public class TodoController {
 	        System.out.println("그룹 미가입자 접근 차단");
 	        ra.addFlashAttribute("error", "소속된 그룹이 없습니다.");
 	        return "redirect:/";
+	    }
+	    
+	    if (groupIdParam != null) {
+        session.setAttribute("currentGroupId", groupIdParam);
 	    }
 
 	    // 세션에 currentGroupId 없으면 첫 번째 그룹으로 설정
@@ -103,7 +107,7 @@ public class TodoController {
 	    String role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), groupId);
 	    session.setAttribute("role", role);
 
-	    // 📌 groupId 기준으로 할 일만 불러와야 함
+	    // groupId 기준으로 할 일만 불러와야 함
 	    List<Todo> todoList = todoService.findByGroupId(groupId);
 
 	    System.out.println("할 일 목록 출력 시작 (groupId: " + groupId + ")");
@@ -112,16 +116,19 @@ public class TodoController {
 	    }
 
 	    // 멤버 매핑
-	    List<Member> memberList = memberService.readAll();
+	    List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId); 
 	    Map<Integer, String> memberMap = new HashMap<>();
-	    for (Member m : memberList) {
-	        memberMap.put(m.getId(), m.getNickname());
+	    
+	    for (GroupMemberInfoDTO m : memberList) { 
+	        memberMap.put(m.getMemberId(), m.getNickname()); 
 	    }
 
 	    model.addAttribute("loginMemberId", loginMember.getId());
 	    model.addAttribute("todoList", todoList);
 	    model.addAttribute("memberMap", memberMap);
-
+	    model.addAttribute("joinedGroups", groupList);
+	    model.addAttribute("groupId", groupId);
+	    
 	    return "todos";
 	}
 
@@ -155,7 +162,7 @@ public class TodoController {
 	        return "redirect:/todos?groupId=" + groupId;
 	    }
 	    // 등록폼 세팅
-	    List<Member> memberList = memberService.readAll(); // 담당자 선택용
+	    List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId);
 	    model.addAttribute("memberList", memberList);
 	    model.addAttribute("groupId", groupId);
 	    

@@ -25,4 +25,5 @@ public interface HistoryService {
 	// ✅ 월간 점수 기능
 	List<GroupMonthlyScore> getGroupMonthlyScore(int groupId, String yearMonth);	// 그룹별 월간 점수
 	List<MemberMonthlyScore> getMemberMonthlyScore(int groupId, String yearMonth);	// 멤버별 월간 점수
+	List<History> getHistoriesByGroupIdWithDetails(int groupId);
 }

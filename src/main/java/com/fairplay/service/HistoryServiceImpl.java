@@ -48,6 +48,21 @@ public class HistoryServiceImpl implements HistoryService{
 
 	    return historyList;
 	}
+	
+	@Override
+	public List<History> getHistoriesByGroupIdWithDetails(int groupId) {
+	    // 주석: 그룹 ID로 히스토리 조회 및 코멘트 여부 확인
+	    List<History> historyList = historyRepository.findAllWithDetailsByGroupId(groupId);
+
+	    for (History history : historyList) {
+	        Date latestCommentDate = historyRepository.findLatestCommentDateByHistoryId(history.getId());
+	        if (latestCommentDate != null && latestCommentDate.after(history.getCompleted_at())) {
+	            history.setNewComment(true);
+	        }
+	    }
+	    return historyList;
+	}
+	
 	@Override
 	public void addHistory(History history) {
 		// 기록 추가

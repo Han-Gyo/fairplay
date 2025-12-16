@@ -24,5 +24,6 @@ public interface TodoService {
 	List<Todo> findNotDone(int memberId);
 	List<TodoSimple> getTodosByDate(LocalDate date, int memberId);
 	List<Todo> findByGroupId(int groupId);
+	List<Todo> findByGroupIdAndAssignedTo(int groupId, int memberId);
 }
 
