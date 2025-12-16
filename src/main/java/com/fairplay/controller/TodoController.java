@@ -58,7 +58,7 @@ public class TodoController {
 	
 	// 전체 할 일 목록 조회
 	@GetMapping
-	public String listTodos(HttpSession session, Model model, RedirectAttributes ra) {
+	public String listTodos(@RequestParam(value = "groupId", required = false) Integer groupIdParam,HttpSession session, Model model, RedirectAttributes ra) {
 	    Member loginMember = (Member) session.getAttribute("loginMember");
 	    if (loginMember == null) {
 	        ra.addFlashAttribute("error", "로그인이 필요합니다.");
@@ -74,6 +74,10 @@ public class TodoController {
 	        System.out.println("그룹 미가입자 접근 차단");
 	        ra.addFlashAttribute("error", "소속된 그룹이 없습니다.");
 	        return "redirect:/";
+	    }
+	    
+	    if (groupIdParam != null) {
+        session.setAttribute("currentGroupId", groupIdParam);
 	    }
 
 	    // 세션에 currentGroupId 없으면 첫 번째 그룹으로 설정
@@ -122,7 +126,9 @@ public class TodoController {
 	    model.addAttribute("loginMemberId", loginMember.getId());
 	    model.addAttribute("todoList", todoList);
 	    model.addAttribute("memberMap", memberMap);
-
+	    model.addAttribute("joinedGroups", groupList);
+	    model.addAttribute("groupId", groupId);
+	    
 	    return "todos";
 	}
 

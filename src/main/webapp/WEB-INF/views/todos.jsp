@@ -21,11 +21,13 @@
 <body>
 	<h1>🧹 할 일 리스트</h1>
 
-<c:if test="${not empty msg}">
-  <script>
-    alert("${msg}");
-  </script>
-</c:if>
+<form method="get" action="${pageContext.request.contextPath}/todos" class="group-select-form">
+  <select name="groupId" id="groupId" onchange="this.form.submit()">
+    <c:forEach var="group" items="${joinedGroups}">
+      <option value="${group.id}" ${group.id == groupId ? 'selected' : ''}>${group.name}</option>
+    </c:forEach>
+  </select>
+</form>
 	
 <c:if test="${role eq 'LEADER'}">
   <form action="${pageContext.request.contextPath}/todos/create" method="get" style="display:inline;">

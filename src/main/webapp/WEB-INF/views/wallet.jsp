@@ -13,9 +13,7 @@
 <div class="wallet-container">
 
   <div class="page-head">
-    <h1 class="page-title">
-      <a href="${pageContext.request.contextPath}/">💸 가계부 전체 목록</a>
-    </h1>
+    <h1 class="page-title">💸 가계부 전체 목록</h1>
 
     <!-- 등록 버튼 -->
     <!-- 기존 a 태그에 클래스만 추가 -->
