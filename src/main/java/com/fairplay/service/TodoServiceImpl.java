@@ -121,4 +121,8 @@ public class TodoServiceImpl implements TodoService{
 	public List<Todo> findByGroupIdAndAssignedTo(int groupId, int memberId) {
 		return todoRepository.findByGroupIdAndAssignedTo(groupId, memberId);
 	}
+	@Override
+	public List<Todo> findCompletedWithoutHistory(int groupId, int memberId) {
+	    return todoRepository.findCompletedWithoutHistory(groupId, memberId);
+	}
 }

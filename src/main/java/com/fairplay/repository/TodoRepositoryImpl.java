@@ -170,4 +170,18 @@ public class TodoRepositoryImpl implements TodoRepository{
     return template.query(sql, todoRowMapper, groupId, memberId);
 	}
 	
+	@Override
+	public List<Todo> findCompletedWithoutHistory(int groupId, int memberId) {
+	    String sql = 
+	        "SELECT t.* " +
+	        "FROM todo t " +
+	        "LEFT JOIN history h ON t.id = h.todo_id " +
+	        "WHERE t.group_id = ? " +
+	        "AND t.assigned_to = ? " +
+	        "AND t.completed = 1 " +
+	        "AND h.id IS NULL";
+
+	    return template.query(sql, todoRowMapper, groupId, memberId);
+	}
+	
 }

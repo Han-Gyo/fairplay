@@ -171,7 +171,7 @@ public class HistoryController {
 	    }
 	    
       // 내가 맡은 할 일
-	    List<Todo> myTodoList = todoService.findByGroupIdAndAssignedTo(groupId, loginMember.getId());
+	    List<Todo> myTodoList = todoService.findCompletedWithoutHistory(groupId, loginMember.getId());
 	    model.addAttribute("todoList", myTodoList);
 	    
       // 멤버 목록
