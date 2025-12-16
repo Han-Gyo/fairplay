@@ -19,7 +19,7 @@
 </style>
 </head>
 <body>
-	<h1><a href="${pageContext.request.contextPath}/">🧹 할 일 리스트</a></h1>
+	<h1>🧹 할 일 리스트</h1>
 
 <c:if test="${not empty msg}">
   <script>
@@ -100,7 +100,7 @@
 				            <button type="submit" onclick="return confirm('이 할 일을 포기하고 공용 리스트로 돌릴까요?')">🚫 포기하기</button>
 				          </form>
 				          <!-- 완료하기 -->
-									<button type="button" onclick="completeTodo(${todo.id})" style="display:inline;">
+									<button type="button" onclick="completeTodo(${todo.id}, ${todo.difficulty_point})" style="display:inline;">
 									  ✔ 완료하기
 									</button>
 
@@ -121,13 +121,14 @@
 
 <script>
 console.log("contextPath:", contextPath);
-function completeTodo(todo_id) {
+function completeTodo(todo_id, score) {
 		console.log("전달된 todo_id:", todo_id);
+		console.log("전달된 score:", score);
     const confirmResult = confirm("기록도 같이 남기시겠어요?");
 
     if (confirmResult) {
         // 확인 누르면 historyCreate 페이지로 이동 (todoId 쿼리로 넘김)
-    	window.location.href = contextPath + "/history/create?todo_id=" + todo_id;
+    	window.location.href = contextPath + "/history/create?todo_id=" + todo_id + "&score=" + score;
     } else {
         // 할 일 완료 처리
         fetch(contextPath+"/todos/complete?id=" + todo_id, {

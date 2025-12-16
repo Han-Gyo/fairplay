@@ -13,7 +13,7 @@
 </head>
 <body>
 
-<h1><a href="${pageContext.request.contextPath}/">📋 전체 수행 히스토리</a></h1>
+<h1>📋 전체 수행 히스토리</h1>
 
 <a href="${pageContext.request.contextPath}/todos">← 할 일 목록으로</a>
 <!-- 필터용 네비게이션 -->

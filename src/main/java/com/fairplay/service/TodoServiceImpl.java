@@ -117,6 +117,8 @@ public class TodoServiceImpl implements TodoService{
 	    System.out.println("그룹 ID(" + groupId + ")로 할 일 목록 조회");
 	    return todoRepository.findByGroupId(groupId);
 	}
-	
-	
+	@Override
+	public List<Todo> findByGroupIdAndAssignedTo(int groupId, int memberId) {
+		return todoRepository.findByGroupIdAndAssignedTo(groupId, memberId);
+	}
 }

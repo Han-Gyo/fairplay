@@ -33,81 +33,81 @@
     <div class="dropdown-content">
       <a href="${pageContext.request.contextPath}/todos?groupId=${sessionScope.currentGroupId}">📋 Todo 목록</a>
       <a href="${pageContext.request.contextPath}/todos/myTodos">✅ MyTodo 목록</a>
-      <c:if test="${role eq 'LEADER'}">
-	  		<a href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">✅ Todo 등록</a>
+      <c:if test="${sessionScope.role eq 'LEADER'}">
+			  <a href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">✅ Todo 등록</a>
 			</c:if>
     </div>
   </div>
 
-        <!-- History 드롭다운 -->
-        <div class="dropdown">
-            <a href="javascript:void(0);">📋 History</a>
-            <div class="dropdown-content">
-                <a href="${pageContext.request.contextPath}/history/all?groupId=${currentGroupId}">📋 전체 히스토리</a>
-                <a href="${pageContext.request.contextPath}/history/create">📝 기록 등록</a>
-            </div>
-        </div>
+  <!-- History 드롭다운 -->
+  <div class="dropdown">
+      <a href="javascript:void(0);">📋 History</a>
+      <div class="dropdown-content">
+          <a href="${pageContext.request.contextPath}/history/all?groupId=${currentGroupId}">📋 전체 히스토리</a>
+          <a href="${pageContext.request.contextPath}/history/create">📝 기록 등록</a>
+      </div>
+  </div>
 
-        <!-- Wallet 드롭다운 -->
-        <div class="dropdown">
-            <a href="javascript:void(0);">💸 가계부</a>
-            <div class="dropdown-content">
-                <a href="${pageContext.request.contextPath}/wallet">💰 내 가계부</a>
-                <a href="${pageContext.request.contextPath}/wallet/create">💸 작성하기</a>
-            </div>
-        </div>
+   <!-- Wallet 드롭다운 -->
+   <div class="dropdown">
+       <a href="javascript:void(0);">💸 가계부</a>
+       <div class="dropdown-content">
+           <a href="${pageContext.request.contextPath}/wallet">💰 내 가계부</a>
+           <a href="${pageContext.request.contextPath}/wallet/create">💸 작성하기</a>
+       </div>
+   </div>
 
-        <!-- 그룹 드롭다운 -->
-        <div class="dropdown">
-            <a href="javascript:void(0);">👥 그룹</a>
-            <div class="dropdown-content">
-                <a href="${pageContext.request.contextPath}/group/create">🏠 그룹 등록</a>
-                <a href="${pageContext.request.contextPath}/group/groups">👥 그룹 목록</a>
-            </div>
-        </div>
-        
-        <!-- 점수 드롭다운 -->
+   <!-- 그룹 드롭다운 -->
+   <div class="dropdown">
+      <a href="javascript:void(0);">👥 그룹</a>
+      <div class="dropdown-content">
+         <a href="${pageContext.request.contextPath}/group/create">🏠 그룹 등록</a>
+         <a href="${pageContext.request.contextPath}/group/groups">👥 그룹 목록</a>
+      </div>
+   </div>
+   
+   <!-- 점수 드롭다운 -->
 		<div class="dropdown">
-		    <a href="javascript:void(0);">📊 점수</a>
-		    <div class="dropdown-content">
-		        <a href="${pageContext.request.contextPath}/history/monthly-score?group_id=1">📅 월간 점수 보기</a>
-		        <!-- 추후: 전체 통계 페이지 추가도 고려 가능 -->
-		    </div>
+	    <a href="javascript:void(0);">📊 점수</a>
+	    <div class="dropdown-content">
+	        <a href="${pageContext.request.contextPath}/history/monthly-score?group_id=1">📅 월간 점수 보기</a>
+	     <!-- 추후: 전체 통계 페이지 추가도 고려 가능 -->
+	    </div>
 		</div>
 				
 		<!-- 필요 물품 드롭다운 추가 -->
 		<c:if test="${not empty sessionScope.loginMember}">
 		    <!-- 필요 물품 드롭다운 -->
-		    <div class="dropdown">
-		        <a href="javascript:void(0);">📦 필요 물품</a>
-		        <div class="dropdown-content">
-		            <a href="${pageContext.request.contextPath}/needed/list?groupId=1">📋 전체 물품 목록</a>
-		            <a href="${pageContext.request.contextPath}/needed/add?groupId=1">📝 물품 등록</a>
-		        </div>
-		    </div>
+	    <div class="dropdown">
+	        <a href="javascript:void(0);">📦 필요 물품</a>
+	        <div class="dropdown-content">
+            <a href="${pageContext.request.contextPath}/needed/list?groupId=1">📋 전체 물품 목록</a>
+            <a href="${pageContext.request.contextPath}/needed/add?groupId=1">📝 물품 등록</a>
+	        </div>
+	    </div>
 		</c:if>
 		
     </div>
 
 	<div class="right">
-	    <c:choose>
-	    
-	        <c:when test="${empty sessionScope.loginMember}">
-	            <a href="${pageContext.request.contextPath}/member/login">🔐 로그인</a>
-	            <a href="${pageContext.request.contextPath}/member/create">👤 회원가입</a>
-	            <a href="${pageContext.request.contextPath}/forgot/forgotId">🆔 아이디찾기</a>
-	            <a href="${pageContext.request.contextPath}/forgot">🔑 비밀번호 찾기</a>
-	        </c:when>
+	  <c:choose>
+	  
+	      <c:when test="${empty sessionScope.loginMember}">
+          <a href="${pageContext.request.contextPath}/member/login">🔐 로그인</a>
+          <a href="${pageContext.request.contextPath}/member/create">👤 회원가입</a>
+          <a href="${pageContext.request.contextPath}/forgot/forgotId">🆔 아이디찾기</a>
+          <a href="${pageContext.request.contextPath}/forgot">🔑 비밀번호 찾기</a>
+	      </c:when>
 	
-	        <c:otherwise>
-	            <span style="color:pink; font-weight:bold;">
-	               ♥ ${sessionScope.loginMember.nickname}님 안녕하세요 ♥
-	            </span>
-	            <a href="${pageContext.request.contextPath}/mypage">🙋 마이페이지</a>
-	            <a href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a>
-	            
-	        </c:otherwise>
-	    </c:choose>
+	      <c:otherwise>
+          <span style="color:pink; font-weight:bold;">
+             ♥ ${sessionScope.loginMember.nickname}님 안녕하세요 ♥
+          </span>
+          <a href="${pageContext.request.contextPath}/mypage">🙋 마이페이지</a>
+          <a href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a>
+          
+	      </c:otherwise>
+	  </c:choose>
 	</div>
 </div>
 

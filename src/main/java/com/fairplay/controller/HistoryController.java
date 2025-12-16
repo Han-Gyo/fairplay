@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -152,6 +153,7 @@ public class HistoryController {
     // 2. 기록 등록 폼
 	@GetMapping("/create")
 	public String addHistory(@RequestParam(required = false) Integer todo_id,
+													 @RequestParam(required = false) Integer score,
 	                         HttpSession session,
 	                         Model model,
 	                         RedirectAttributes ra) {
@@ -167,15 +169,18 @@ public class HistoryController {
 	        ra.addFlashAttribute("msg", "그룹에 속해있지 않습니다.");
 	        return "redirect:/";
 	    }
-        
-        // 1. 현재 그룹의 멤버 목록을 무조건 가져옴 (수행자 드롭다운용)
+	    
+      // 내가 맡은 할 일
+	    List<Todo> myTodoList = todoService.findByGroupIdAndAssignedTo(groupId, loginMember.getId());
+	    model.addAttribute("todoList", myTodoList);
+	    
+      // 멤버 목록
 	    List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId); 
 	    model.addAttribute("memberList", memberList);
 
 	    if (todo_id != null) {
 	        Todo todo = todoService.findById(todo_id);
             
-            // 선택된 todo의 그룹 ID와 현재 그룹 ID가 다르면 에러 처리 (방어 코드)
             if (todo != null && todo.getGroup_id() != groupId) {
                 ra.addFlashAttribute("msg", "잘못된 할 일에 접근했습니다.");
                 return "redirect:/todos";
@@ -183,12 +188,10 @@ public class HistoryController {
 	        
             model.addAttribute("selectedTodoId", todo_id);
 	    } 
-        // else { model.addAttribute("memberList", List.of()); } 이 불필요한 코드가 삭제됨
-
-	    model.addAttribute("history", new History());
 	    
-        // 2. 할 일 목록도 현재 그룹의 것만 가져오도록 수정 (이전 단계에서 TodoService.findByGroupId를 구현함)
-	    model.addAttribute("todoList", todoService.findByGroupId(groupId));
+	    model.addAttribute("loginMember", loginMember);
+	    model.addAttribute("score", score);
+	    model.addAttribute("history", new History());
 
 	    return "historyCreateForm";
 	}
@@ -292,52 +295,59 @@ public class HistoryController {
     // 5. 수정 처리
 	@PostMapping("/update")
 	public String updateHistory(
-		    HttpServletRequest request,
-		    @RequestParam("id") int id,
-		    @RequestParam("todo_id") int todoId,
-		    @RequestParam("member_id") int memberId,
-		    @RequestParam("score") int score,
-		    @RequestParam("memo") String memo,
-		    @RequestParam(value = "photo", required = false) MultipartFile photo,
-		    HttpSession session
-		) {
-		    Member loginMember = (Member) session.getAttribute("loginMember");
-		    if (loginMember == null) {
-		    	return "redirect:/";
-		    }
+	        HttpServletRequest request,
+	        @RequestParam("id") int id,
+	        @RequestParam("todo_id") int todoId,
+	        @RequestParam("member_id") int memberId,
+	        @RequestParam("score") int score,
+	        @RequestParam("memo") String memo,
+	        @RequestParam("completed_at") 
+	        @DateTimeFormat(pattern = "yyyy-MM-dd") Date completedAt,
+	        @RequestParam(value = "photo", required = false) MultipartFile photo,
+	        HttpSession session
+	) {
 
-		    Todo todo = todoService.findById(todoId);
-		    Long groupId = Long.valueOf(todo.getGroup_id());
-		    Long loginUserId = Long.valueOf(loginMember.getId());
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
+	        return "redirect:/";
+	    }
 
-		    if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
-		        return "redirect:/";
-		    }
+	    Todo todo = todoService.findById(todoId);
+	    Long groupId = Long.valueOf(todo.getGroup_id());
+	    Long loginUserId = Long.valueOf(loginMember.getId());
 
-		    History history = new History();
-		    history.setId(id);
-		    history.setTodo_id(todoId);
-		    history.setMember_id(memberId);
-		    history.setCompleted_at(new Date());
-		    history.setScore(score);
-		    history.setMemo(memo);
+	    if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
+	        return "redirect:/";
+	    }
 
-		    if (photo != null && !photo.isEmpty()) {
-		        try {
-		            String fileName = photo.getOriginalFilename();
-		            File savedFile = new File("C:/upload/", fileName);
-		            photo.transferTo(savedFile);
-		            history.setPhoto(fileName);
-		        } catch (Exception e) {
-		            e.printStackTrace();
-		        }
-		    }
+	    History history = new History();
+	    history.setId(id);
+	    history.setTodo_id(todoId);
+	    history.setMember_id(memberId);
 
-		    historyService.updateHistory(history);
-		    return "redirect:/history?todo_id=" + todoId;
-		}
+	    // 사용자가 선택한 날짜 그대로 저장
+	    history.setCompleted_at(completedAt);
 
-    // 6. 삭제
+	    history.setScore(score);
+	    history.setMemo(memo);
+
+	    if (photo != null && !photo.isEmpty()) {
+	        try {
+	            String fileName = photo.getOriginalFilename();
+	            File savedFile = new File("C:/upload/", fileName);
+	            photo.transferTo(savedFile);
+	            history.setPhoto(fileName);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    historyService.updateHistory(history);
+	    return "redirect:/history?todo_id=" + todoId;
+	}
+
+
+  // 6. 삭제
 	@PostMapping("/delete")
 	public String deleteHistory(@RequestParam("id") int id, @RequestParam("todo_id") int todo_id, HttpSession session) {
 	    Member loginMember = (Member) session.getAttribute("loginMember");
@@ -357,7 +367,7 @@ public class HistoryController {
 	    return "redirect:/history?todo_id=" + todo_id;
 	}
     
-    // 7. 히스토리 상세 보기
+  // 7. 히스토리 상세 보기
 	@GetMapping("/detail")
 	public String detailHistory(@RequestParam("history_id") int historyId, HttpSession session, Model model) {
 	    Member loginMember = (Member) session.getAttribute("loginMember");
@@ -380,7 +390,7 @@ public class HistoryController {
 	    return "historyDetail";
 	}
 
-    // 8. 점수 계산
+  // 8. 점수 계산
 	@GetMapping("/monthly-score")
 	public String showMonthlyScore(
 		    @RequestParam("group_id") Integer groupId,

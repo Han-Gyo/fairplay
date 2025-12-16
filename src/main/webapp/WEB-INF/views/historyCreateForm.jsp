@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ include file="/WEB-INF/views/nav.jsp" %>
+<% java.time.LocalDate today = java.time.LocalDate.now(); %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -34,16 +35,14 @@
       <div class="form-group">
         <label for="member_id">수행자</label>
         <select name="member_id" id="member_id" required>
-          <c:forEach var="member" items="${memberList}">
-            <option value="${member.id}">${member.nickname}</option>
-          </c:forEach>
+            <option>${loginMember.nickname}</option>
         </select>
       </div>
 
       <!-- 완료 날짜 -->
       <div class="form-group">
         <label for="completed_at">완료 날짜</label>
-        <input type="date" id="completed_at" name="completed_at" required>
+        <input type="date" id="completed_at" name="completed_at" value="<%= today %>" required>
       </div>
 
       <!-- 점수 입력 (1~5점) -->
@@ -52,7 +51,7 @@
         <select name="score" id="score" required>
           <option value="">점수를 선택해주세요</option>
           <c:forEach begin="1" end="5" var="i">
-            <option value="${i}">${i}</option>
+            <option value="${i}" <c:if test="${i == score}">selected</c:if>>${i}</option>
           </c:forEach>
         </select>
       </div>

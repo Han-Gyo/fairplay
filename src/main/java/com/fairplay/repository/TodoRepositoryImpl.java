@@ -162,5 +162,12 @@ public class TodoRepositoryImpl implements TodoRepository{
 	    System.out.println("[DB] 그룹 ID(" + groupId + ")로 할 일 목록 조회됨");
 	    return template.query(sql, todoRowMapper, groupId); // groupId를 파라미터로 넘김
 	}
+
+	@Override
+	public List<Todo> findByGroupIdAndAssignedTo(int groupId, int memberId) {
+		String sql = "SELECT * FROM todo WHERE group_id = ? AND assigned_to = ? AND completed = false";
+
+    return template.query(sql, todoRowMapper, groupId, memberId);
+	}
 	
 }
