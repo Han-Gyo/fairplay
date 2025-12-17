@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ include file="/WEB-INF/views/nav.jsp" %>
+<% java.time.LocalDate today = java.time.LocalDate.now(); %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -15,7 +16,17 @@
 
     <form class="todo-form" action="${pageContext.request.contextPath}/todos/create" method="post">
       <!-- 그룹ID: 세션에 있는 currentGroupId 사용 권장 -->
-      <input type="hidden" name="group_id" value="${sessionScope.currentGroupId}" />
+      <!-- <input type="hidden" name="group_id" value="${sessionScope.currentGroupId}" /> -->
+
+		<!-- 그룹 선택 --> 
+		<div class="form-group"> 
+			<label for="group_id">그룹</label> 
+			<select id="group_id" name="group_id"> 
+				<c:forEach var="group" items="${joinedGroups}"> 
+					<option value="${group.id}" <c:if test="${group.id == groupId}">selected</c:if>> ${group.name} </option> 
+				</c:forEach> 
+			</select> 
+		</div>
 
       <!-- 제목 -->
       <div class="form-group">
@@ -29,7 +40,7 @@
         <select id="assigned_to" name="assigned_to">
           <option value="">-- 담당자 선택 안 함 --</option>
           <c:forEach var="member" items="${memberList}">
-            <option value="${member.id}">${member.nickname}</option>
+            <option value="${member.memberId}">${member.nickname}</option>
           </c:forEach>
         </select>
       </div>
@@ -38,7 +49,7 @@
       <div class="form-row">
         <div class="form-group">
           <label for="due_date">마감일</label>
-          <input type="date" id="due_date" name="due_date">
+          <input type="date" id="due_date" name="due_date" value="<%= today %>" required>
         </div>
 
         <div class="form-group">
@@ -72,4 +83,29 @@
   </div>
 
 </body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $("#group_id").on("change", function() {
+    var groupId = $(this).val();
+    $.ajax({
+      url: "${pageContext.request.contextPath}/todos/members",
+      type: "GET",
+      data: { groupId: groupId },
+      success: function(members) {
+        var $assigned = $("#assigned_to");
+        $assigned.empty();
+        $assigned.append('<option value="">-- 담당자 선택 안 함 --</option>');
+        $.each(members, function(i, member) {
+          $assigned.append('<option value="' + member.memberId + '">' + member.nickname + '</option>');
+        });
+      },
+      error: function() {
+        alert("멤버 목록을 불러오지 못했습니다.");
+      }
+    });
+  });
+</script>
+
 </html>

@@ -135,7 +135,7 @@ public class TodoController {
 	
 	// 그룹장만 할 일 등록 폼 접근 가능
 	@GetMapping("/create")
-	public String addTodo(@RequestParam("groupId") int groupId,
+	public String addTodo(@RequestParam(value="groupId", required=false) int groupId,
 	                      Model model,
 	                      HttpSession session,
 	                      RedirectAttributes ra) {
@@ -149,6 +149,12 @@ public class TodoController {
 
 	    int memberId = loginUser.getId();
 
+	    List<Group> groupList = groupMemberService.findGroupsByMemberId((long) loginUser.getId()); 
+	    if (groupList.isEmpty()) { 
+	    	ra.addFlashAttribute("error", "소속된 그룹이 없습니다."); 
+	    	return "redirect:/"; 
+	    }
+	    
 	    // 그룹 정보 가져오기
 	    Group group = groupService.findById(groupId);
 	    if (group == null) {
@@ -163,6 +169,7 @@ public class TodoController {
 	    }
 	    // 등록폼 세팅
 	    List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId);
+	    model.addAttribute("joinedGroups", groupList);
 	    model.addAttribute("memberList", memberList);
 	    model.addAttribute("groupId", groupId);
 	    
@@ -180,8 +187,23 @@ public class TodoController {
 	    @RequestParam(value = "assigned_to", required = false) Integer assigned_to,
 	    @RequestParam("due_date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date due_date,
 	    @RequestParam("difficulty_point") int difficulty_point,
-	    @RequestParam("completed") boolean completed
+	    @RequestParam("completed") boolean completed,
+	    HttpSession session,
+	    RedirectAttributes ra
 	) {
+		
+		Member loginUser = (Member) session.getAttribute("loginMember"); 
+		if (loginUser == null) { 
+			ra.addFlashAttribute("error", "로그인 후 이용해주세요."); 
+			return "redirect:/"; 
+		}
+		
+		Group group = groupService.findById(group_id); 
+		if (group.getLeaderId() != loginUser.getId()) { 
+			ra.addFlashAttribute("error", "그룹장만 할 일을 등록할 수 있습니다."); 
+			return "redirect:/todos?groupId=" + group_id; 
+		}
+		
 	    Todo todo = new Todo();
 	    todo.setTitle(title);
 	    todo.setGroup_id(group_id);
@@ -341,5 +363,12 @@ public class TodoController {
 	    System.out.println("응답할 할 일 수: " + result.size());
 	    return result;
 	}
+	
+	//그룹ID로 멤버 리스트 조회 (AJAX) 
+	@GetMapping("/members") 
+	@ResponseBody 
+	public List<GroupMemberInfoDTO> getMembersByGroup(
+					@RequestParam("groupId") int groupId) { 
+					return groupMemberService.findMemberInfoByGroupId(groupId); }
 
 }
