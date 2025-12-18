@@ -223,42 +223,25 @@ public class TodoController {
 	
 	// 수정 폼 이동
 	@GetMapping("/update")
-	public String updateTodo(@RequestParam("id") int id, Model model, HttpSession session, RedirectAttributes ra) {
-	   Member loginMember = (Member) session.getAttribute("loginMember");
+	public String updateTodo(@RequestParam("id") int id, Model model, HttpSession session) {
 	   Todo todo = todoService.findById(id);
+	   Integer groupId = (Integer) session.getAttribute("currentGroupId");
 	   
-	   if (todo == null) {
-	       ra.addFlashAttribute("error", "해당 할 일이 존재하지 않습니다.");
-	       return "redirect:/todos";
-	   }
-	
-	   // 권한 체크: 그룹장만 수정 가능하도록 로직 추가 (필요시)
-	   Group group = groupService.findById(todo.getGroup_id());
-	   if (group.getLeaderId() != loginMember.getId()) {
-	       ra.addFlashAttribute("error", "그룹장만 수정할 수 있습니다.");
-	       return "redirect:/todos";
-	   }
-
-   // 이 그룹의 멤버 목록 (담당자 변경용)
-   List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(todo.getGroup_id());
-   
-   model.addAttribute("todo", todo);
-   model.addAttribute("memberList", memberList); 
-   return "todo/todoUpdateForm";
+	   // 이 그룹의 멤버 목록을 가져와서 셀렉트 박스에 뿌려주기 위해 추가
+	   List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId);
+	   
+	   model.addAttribute("todo", todo);
+	   model.addAttribute("memberList", memberList); 
+	   return "todoUpdateForm"; 
 	}
 	
-	//수정 처리
+	// 수정 처리
 	@PostMapping("/update")
-	public String updateTodo(@ModelAttribute Todo todo, HttpSession session, RedirectAttributes ra) {
-	   try {
-	       todoService.updateTodo(todo);
-	       ra.addFlashAttribute("msg", "수정이 완료되었습니다.");
-	   } catch (Exception e) {
-	       ra.addFlashAttribute("error", "수정 중 오류가 발생했습니다.");
-	   }
-	   
-	   // 세션이 만료되었을 경우를 대비해 todo 객체에서 직접 groupId를 가져오기
-	   return "redirect:/todos?groupId=" + todo.getGroup_id();
+	public String updateTodo(@ModelAttribute Todo todo, HttpSession session) {
+	   todoService.updateTodo(todo);
+	   // 수정 후 내가 보던 그룹 페이지로 리다이렉트
+	   Integer groupId = (Integer) session.getAttribute("currentGroupId");
+	   return "redirect:/todos?groupId=" + groupId;
 	}
 	
 	// 삭제 처리
