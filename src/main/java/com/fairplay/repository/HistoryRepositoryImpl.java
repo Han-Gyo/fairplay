@@ -198,18 +198,18 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	public List<History> findByTodoIdWithDetails(int todo_id) {
 	    String sql = "SELECT " +
 	            "history.id AS history_id, " +
-	            "history.member_id, " +
-	            "history.todo_id, " +
+	            "history.member_id AS h_member_id, " +
+	            "history.todo_id AS h_todo_id, " +
 	            "history.completed_at, " +
 	            "history.photo, " +
 	            "history.memo, " +
 	            "history.score, " +
 	            "history.check, " +
 	            "history.check_member, " +
-	            "todo.id AS todo_id, " +
-	            "todo.title AS todo_title, " +
-	            "member.id AS member_id, " +
-	            "member.nickname AS member_nickname " +
+	            "todo.id AS t_id, " +
+	            "todo.title AS t_title, " +
+	            "member.id AS m_id, " +
+	            "member.nickname AS m_nickname " +
 	            "FROM history " +
 	            "JOIN todo ON history.todo_id = todo.id " +
 	            "JOIN member ON history.member_id = member.id " +
@@ -219,25 +219,23 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	    return jdbcTemplate.query(sql, (rs, rowNum) -> {
 	        History history = new History();
 	        history.setId(rs.getInt("history_id"));
-	        history.setMember_id(rs.getInt("member_id"));
-	        history.setTodo_id(rs.getInt("todo_id"));
-	        history.setCompleted_at(new java.sql.Timestamp(System.currentTimeMillis())); 
+	        history.setMember_id(rs.getInt("h_member_id"));
+	        history.setTodo_id(rs.getInt("h_todo_id"));
+	        history.setCompleted_at(rs.getTimestamp("completed_at"));
 	        history.setPhoto(rs.getString("photo"));
 	        history.setMemo(rs.getString("memo"));
 	        history.setScore(rs.getInt("score"));
 	        history.setCheck(rs.getBoolean("check"));
 	        history.setCheck_member(rs.getInt("check_member"));
 
-	        // Todo
 	        Todo todo = new Todo();
-	        todo.setId(rs.getInt("todo_id"));
-	        todo.setTitle(rs.getString("todo_title"));
+	        todo.setId(rs.getInt("t_id"));
+	        todo.setTitle(rs.getString("t_title"));
 	        history.setTodo(todo);
 
-	        // Member
 	        Member member = new Member();
-	        member.setId(rs.getInt("member_id"));
-	        member.setNickname(rs.getString("member_nickname"));
+	        member.setId(rs.getInt("m_id"));
+	        member.setNickname(rs.getString("m_nickname"));
 	        history.setMember(member);
 
 	        return history;
@@ -246,32 +244,31 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	
 	@Override
 	public List<History> findAllWithDetailsByGroupId(int groupId) {
-	    // 그룹 ID를 사용하여 해당 그룹의 모든 히스토리를 조회
 	    String sql = "SELECT " +
 	            "history.id AS history_id, " +
-	            "history.member_id, " +
-	            "history.todo_id, " +
+	            "history.member_id AS h_member_id, " +
+	            "history.todo_id AS h_todo_id, " +
 	            "history.completed_at, " +
 	            "history.photo, " +
 	            "history.memo, " +
 	            "history.score, " +
 	            "history.check, " +
 	            "history.check_member, " +
-	            "todo.id AS todo_id, " +
-	            "todo.title AS todo_title, " +
-	            "member.id AS member_id, " +
-	            "member.nickname AS member_nickname " +
+	            "todo.id AS t_id, " +
+	            "todo.title AS t_title, " +
+	            "member.id AS m_id, " +
+	            "member.nickname AS m_nickname " +
 	            "FROM history " +
 	            "JOIN todo ON history.todo_id = todo.id " +
 	            "JOIN member ON history.member_id = member.id " +
-	            "WHERE todo.group_id = ? " + 
+	            "WHERE todo.group_id = ? " +
 	            "ORDER BY history.completed_at DESC";
 
-	    return jdbcTemplate.query(sql, new Object[]{groupId}, (rs, rowNum) -> { // Object 배열에 groupId 추가
+	    return jdbcTemplate.query(sql, new Object[]{groupId}, (rs, rowNum) -> {
 	        History history = new History();
 	        history.setId(rs.getInt("history_id"));
-	        history.setMember_id(rs.getInt("member_id"));
-	        history.setTodo_id(rs.getInt("todo_id"));
+	        history.setMember_id(rs.getInt("h_member_id"));
+	        history.setTodo_id(rs.getInt("h_todo_id"));
 	        history.setCompleted_at(rs.getTimestamp("completed_at"));
 	        history.setPhoto(rs.getString("photo"));
 	        history.setMemo(rs.getString("memo"));
@@ -279,20 +276,20 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	        history.setCheck(rs.getBoolean("check"));
 	        history.setCheck_member(rs.getInt("check_member"));
 
-	        // Todo 객체 매핑
 	        Todo todo = new Todo();
-	        todo.setId(rs.getInt("todo_id"));
-	        todo.setTitle(rs.getString("todo_title"));
+	        todo.setId(rs.getInt("t_id"));
+	        todo.setTitle(rs.getString("t_title"));
 	        history.setTodo(todo);
 
-	        // Member 객체 매핑
 	        Member member = new Member();
-	        member.setId(rs.getInt("member_id"));
-	        member.setNickname(rs.getString("member_nickname"));
+	        member.setId(rs.getInt("m_id"));
+	        member.setNickname(rs.getString("m_nickname"));
 	        history.setMember(member);
+
 	        return history;
 	    });
 	}
+
 	
 	// 그룹별 월간 총점 조회 (최종 점수 기준)
 	@Override

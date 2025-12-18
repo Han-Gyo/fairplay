@@ -25,7 +25,8 @@ public class TodoServiceImpl implements TodoService{
 	// 할 일 추가
 	@Override
 	public void addTodo(Todo todo) {
-		// 👉 담당자 지정 여부에 따라 상태 자동 설정
+			
+			// 담당자 지정 여부에 따라 상태 자동 설정
 	    if (todo.getAssigned_to() != null) {
 	        todo.setStatus("신청완료");
 	    } else {

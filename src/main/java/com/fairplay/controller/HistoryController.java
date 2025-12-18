@@ -11,6 +11,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -268,7 +270,7 @@ public class HistoryController {
 	}
 
 
-    // 4. 기록 수정 폼
+  // 4. 기록 수정 폼
 	@GetMapping("/update")
 	public String updateHistory(@RequestParam("id") int id, HttpSession session, Model model) {
 	    Member loginMember = (Member) session.getAttribute("loginMember");
@@ -292,7 +294,7 @@ public class HistoryController {
 	    return "historyUpdateForm";
 	}
     
-    // 5. 수정 처리
+  // 5. 수정 처리
 	@PostMapping("/update")
 	public String updateHistory(
 	        HttpServletRequest request,
@@ -442,9 +444,41 @@ public class HistoryController {
 	    return "monthlyScore";
 	}
     
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        binder.registerCustomEditor(java.util.Date.class, new CustomDateEditor(dateFormat, false));
-    }
+	@PostMapping("/create-basic")
+	public ResponseEntity<String> addBasicHistory(
+	        @RequestParam("todo_id") int todoId,
+	        @RequestParam("score") int score,
+	        HttpSession session) {
+	    
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	    }
+
+	    try {
+	        // 1. History 객체 기본값 설정 및 저장
+	        History history = new History();
+	        history.setTodo_id(todoId);
+	        history.setMember_id(loginMember.getId());
+	        history.setCompleted_at(new java.util.Date());
+	        history.setScore(score); // 넘겨받은 난이도 점수를 그대로 기록 점수로 사용
+	        history.setMemo("상세 내용 없이 완료된 할 일입니다.");
+	        
+	        historyService.addHistory(history);
+
+	        // 2. Todo 상태 완료로 업데이트
+	        todoService.completeTodo(todoId);
+
+	        return ResponseEntity.ok("Success");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
+	    	}
+	}
+	
+	@InitBinder
+  public void initBinder(WebDataBinder binder) {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    binder.registerCustomEditor(java.util.Date.class, new CustomDateEditor(dateFormat, false));
+  }
 }

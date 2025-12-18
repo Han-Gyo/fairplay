@@ -29,14 +29,14 @@ public class TodoRepositoryImpl implements TodoRepository{
 	private RowMapper<Todo> todoRowMapper = new RowMapper<Todo>() {
 		public Todo mapRow(ResultSet rs, int rowNum) throws SQLException {
 			Todo todo = new Todo();
-			todo.setId(rs.getInt("id"));							 	// 기본 키
-			todo.setGroup_id(rs.getInt("group_id"));				 	// 그룹 ID
-			todo.setTitle(rs.getString("title"));					 	// 제목
+			todo.setId(rs.getInt("id"));							 									// 기본 키
+			todo.setGroup_id(rs.getInt("group_id"));				 						// 그룹 ID
+			todo.setTitle(rs.getString("title"));					 							// 제목
 			todo.setAssigned_to((Integer) rs.getObject("assigned_to"));	// 담당자 ID
-			todo.setStatus(rs.getString("status"));
-			todo.setDue_date(rs.getTimestamp("due_date"));			 	// 마감일 (timestamp)
-			todo.setCompleted(rs.getBoolean("completed"));			 	// 완료 여부
-			todo.setDifficulty_point(rs.getInt("difficulty_point")); 	// 난이도 점수
+			todo.setStatus(rs.getString("status"));											// 상태
+			todo.setDue_date(rs.getTimestamp("due_date"));			 				// 마감일
+			todo.setCompleted(rs.getBoolean("completed"));			 				// 완료 여부
+			todo.setDifficulty_point(rs.getInt("difficulty_point")); 		// 난이도 점수
 			return todo;
 		}
 	};
@@ -76,12 +76,12 @@ public class TodoRepositoryImpl implements TodoRepository{
 		String sql = "UPDATE todo SET title = ?, assigned_to = ?, due_date = ?, completed = ?, difficulty_point = ? WHERE id = ?";
 		// 특정 할 일 수정
 		template.update(sql,
-			todo.getTitle(),				// 제목
-			todo.getAssigned_to(),			// 담당자 ID
-			todo.getDue_date(),				// 마감일
-			todo.isCompleted(),				// 완료 여부
+			todo.getTitle(),							// 제목
+			todo.getAssigned_to(),				// 담당자 ID
+			todo.getDue_date(),						// 마감일
+			todo.isCompleted(),						// 완료 여부
 			todo.getDifficulty_point(),		// 난이도
-			todo.getId()					// 수정 대상 ID
+			todo.getId()									// 수정 대상 ID
 		);
 	}
 	
@@ -112,7 +112,7 @@ public class TodoRepositoryImpl implements TodoRepository{
 		String sql = "SELECT * FROM todo WHERE id = ?";
 		return template.queryForObject(sql, todoRowMapper, id);
 	}
-	// ✅ [신청 취소] 담당자 해제 + 상태 초기화
+	// [신청 취소] 담당자 해제 + 상태 초기화
 	@Override
 	public void resetAssignedStatus(int todoId) {
 		String sql = "UPDATE todo SET assigned_to = NULL, status ='미신청' WHERE id =?";
@@ -178,7 +178,6 @@ public class TodoRepositoryImpl implements TodoRepository{
 	        "LEFT JOIN history h ON t.id = h.todo_id " +
 	        "WHERE t.group_id = ? " +
 	        "AND t.assigned_to = ? " +
-	        "AND t.completed = 1 " +
 	        "AND h.id IS NULL";
 
 	    return template.query(sql, todoRowMapper, groupId, memberId);
