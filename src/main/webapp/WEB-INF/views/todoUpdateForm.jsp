@@ -14,7 +14,7 @@
 <form action="${pageContext.request.contextPath}/todos/update" method="post">
   
   <!-- 기존 할 일 ID 전달 -->
-  <input type="hidden" name="id" value="${todo.id}"/>
+	<input type="hidden" name="id" value="${todo.id}"/>
   <input type="hidden" name="group_id" value="${todo.group_id}"/>
   
   <div>
@@ -22,18 +22,20 @@
     <input type="text" id="title" name="title" value="${todo.title}" required />
   </div>
   
-    <div>
-    <label for="assigned_to">담당자 : </label>
-    <select id="assigned_to" name="assigned_to" required>
-      <c:forEach var="member" items="${memberList}">
-        <option value="${member.id}" <c:if test="${member.id == todo.assigned_to}">selected</c:if>>${member.nickname}</option>
-      </c:forEach>
-    </select>
-  </div>
+	<div>
+	  <label for="assigned_to">담당자 : </label>
+	  <select id="assigned_to" name="assigned_to">
+	    <option value="">-- 담당자 미정 (공용) --</option> <c:forEach var="member" items="${memberList}">
+	      <option value="${member.id}" <c:if test="${member.id == todo.assigned_to}">selected</c:if>>
+	        ${member.nickname}
+	      </option>
+	    </c:forEach>
+	  </select>
+	</div>
   
-   <div>
-    <label for="due_date">마감일 : </label>
-    <input type="date" id="due_date" name="due_date"
+  <div>
+   <label for="due_date">마감일 : </label>
+   <input type="date" id="due_date" name="due_date"
            value="${todo.due_date != null ? fn:substring(todo.due_date, 0, 10) : ''}" />
   </div>
   

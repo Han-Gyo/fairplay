@@ -434,12 +434,16 @@ public class HistoryController {
 	    List<GroupMonthlyScore> groupScores = historyService.getGroupMonthlyScore(groupId, yearMonth);
 	    List<MemberMonthlyScore> memberScores = historyService.getMemberMonthlyScore(groupId, yearMonth);
 
+	    // 가입 그룹 목록 조회 추가
+	    List<Group> myGroups = groupMemberService.findGroupsByMemberId((long) login.getId());
+
 	    // 모델
 	    model.addAttribute("groupScores", groupScores);
 	    model.addAttribute("memberScores", memberScores);
 	    model.addAttribute("yearMonth", yearMonth);
 	    model.addAttribute("group", group);
 	    model.addAttribute("groupId", groupId);
+	    model.addAttribute("myGroups", myGroups);
 
 	    return "monthlyScore";
 	}

@@ -221,29 +221,35 @@ public class TodoController {
 	    return "redirect:/todos";
 	}
 	
-	// 할 일 수정 폼 페이지 이동
+	// 수정 폼 이동
 	@GetMapping("/update")
-	public String updateTodo(@RequestParam("id") int id, Model model) {
-		Todo todo = todoService.findById(id);	// 수정할 할 일 조회
-		List<Member> memberList = memberService.readAll();
-		model.addAttribute("todo", todo);		// 모델에 담아서 뷰로 보냄
-		model.addAttribute("memberList", memberList); 
-		return "todoUpdateForm";
+	public String updateTodo(@RequestParam("id") int id, Model model, HttpSession session) {
+	   Todo todo = todoService.findById(id);
+	   Integer groupId = (Integer) session.getAttribute("currentGroupId");
+	   
+	   // 이 그룹의 멤버 목록을 가져와서 셀렉트 박스에 뿌려주기 위해 추가
+	   List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId);
+	   
+	   model.addAttribute("todo", todo);
+	   model.addAttribute("memberList", memberList); 
+	   return "todoUpdateForm"; 
 	}
 	
-	// 수정 폼에서 수정 제출
+	// 수정 처리
 	@PostMapping("/update")
-	public String updateTodo(@ModelAttribute Todo todo) {
-		todoService.updateTodo(todo);	// 수정된 내용 저장
-		return "redirect:/todos/myTodos";
+	public String updateTodo(@ModelAttribute Todo todo, HttpSession session) {
+	   todoService.updateTodo(todo);
+	   // 수정 후 내가 보던 그룹 페이지로 리다이렉트
+	   Integer groupId = (Integer) session.getAttribute("currentGroupId");
+	   return "redirect:/todos?groupId=" + groupId;
 	}
 	
-	// 할 일 삭제
+	// 삭제 처리
 	@PostMapping("/delete")
-	public String deleteTodo(@RequestParam("id") int id) {
-		System.out.println("삭제 요청 ID: " + id);
-		todoService.deleteTodo(id);
-		return "redirect:/todos/myTodos";
+	public String deleteTodo(@RequestParam("id") int id, HttpSession session) {
+	   todoService.deleteTodo(id);
+	   Integer groupId = (Integer) session.getAttribute("currentGroupId");
+	   return "redirect:/todos?groupId=" + groupId;
 	}
 
 	// 할 일 완료 처리
@@ -341,7 +347,7 @@ public class TodoController {
 		}
 	}
 	
-	// 달력 날짜 클릭 시 해당 날짜의 할 일 목록 조회 (Ajax)
+	// 달력 날짜 클릭 시 해당 날짜의 할 일 목록 조회 (AJAX)
 	@GetMapping("/calendar/todo-list")
 	@ResponseBody
 	public List<TodoSimple> getTodosByDate(

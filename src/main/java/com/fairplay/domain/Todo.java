@@ -3,15 +3,15 @@ package com.fairplay.domain;
 import java.util.Date;
 
 public class Todo {
-	private int id; 						// 할 일 고유 ID
-	private int group_id; 					// 소속 그룹 ID
-	private String title; 					// 할 일 내용
-	private Integer assigned_to; 			// 담당자 ID 
-	private String status;        			// 🔥 상태: "신청완료", "미신청"
-	private Date due_date; 					// 마감 기한
-	private boolean completed; 				// 완료 여부 (기본값: false)
-	private int difficulty_point; 			// 할 일 난이도 점수 (1~5)
-	private Integer assignedMemberId; 		// 담당자 ID (추가 정보용, 뷰용일 수 있음)
+	private int id; 												// 할 일 고유 ID
+	private int group_id; 									// 소속 그룹 ID
+	private String title; 									// 할 일 내용
+	private Integer assigned_to; 						// 담당자 ID 
+	private String status;        					// 상태: "신청완료", "미신청"
+	private Date due_date; 									// 마감 기한
+	private boolean completed; 							// 완료 여부 (기본값: false)
+	private int difficulty_point; 					// 할 일 난이도 점수 (1~5)
+	private Integer assignedMemberId; 			// 담당자 ID (추가 정보용, 뷰용일 수 있음)
 	private String assignedMemberNickname; 	// 담당자 닉네임 (뷰에 출력용)
 	
 	// 기본 생성자
@@ -96,7 +96,4 @@ public class Todo {
 	public void setAssignedMemberNickname(String assignedMemberNickname) {
 		this.assignedMemberNickname = assignedMemberNickname;
 	}
-
-
-	
 }

@@ -49,25 +49,34 @@
       </thead>
       <tbody>
       	<c:set var="index" value="1" />
-        <c:forEach var="todo" items="${todoList}" >
-          <c:if test="${todo.status == '미신청'}">
-            <tr>
-              <td>${index}</td>
-              <td>${todo.title}</td>
-              <td>${memberMap[todo.assigned_to]}</td>
-              <td><fmt:formatDate value="${todo.due_date}" pattern="yyyy-MM-dd" /></td>
-              <td>${todo.difficulty_point}</td>
-              <td>⏳ 미완료</td>
-              <td>
-                <form action="${pageContext.request.contextPath}/todos/assign" method="post">
-                  <input type="hidden" name="todo_id" value="${todo.id}" />
-                  <button type="submit">🙋 내가 할게요!</button>
-                </form>
-              </td>
-            </tr>
-            <c:set var="index" value="${index + 1}" />
-          </c:if>
-        </c:forEach>
+				<c:forEach var="todo" items="${todoList}" >
+				  <c:if test="${todo.status == '미신청'}">
+				    <tr>
+				      <td>${index}</td>
+				      <td>${todo.title}</td>
+				      <td>미지정</td> <td><fmt:formatDate value="${todo.due_date}" pattern="yyyy-MM-dd" /></td>
+				      <td>${todo.difficulty_point}</td>
+				      <td>⏳ 미완료</td>
+				      <td>
+				        <form action="${pageContext.request.contextPath}/todos/assign" method="post" style="display:inline;">
+				          <input type="hidden" name="todo_id" value="${todo.id}" />
+				          <button type="submit">🙋 내가 할게요!</button>
+				        </form>
+				
+				        <c:if test="${role eq 'LEADER'}">
+				          <div style="margin-top: 5px;">
+				            <button type="button" onclick="location.href='${pageContext.request.contextPath}/todos/edit?id=${todo.id}'" style="background-color: #ffca28;">✏ 수정</button>
+				            <form action="${pageContext.request.contextPath}/todos/delete" method="post" style="display:inline;">
+				              <input type="hidden" name="id" value="${todo.id}" />
+				              <button type="submit" onclick="return confirm('진짜 삭제하시겠습니까?')" style="background-color: #ff5252; color: white;">🗑 삭제</button>
+				            </form>
+				          </div>
+				        </c:if>
+				      </td>
+				    </tr>
+				    <c:set var="index" value="${index + 1}" />
+				  </c:if>
+				</c:forEach>
       </tbody>
     </table>
   </div>

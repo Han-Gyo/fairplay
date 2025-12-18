@@ -304,7 +304,7 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	        "  t.group_id, " +
 	        "  g.name, " +
 	        "  DATE_FORMAT(h.completed_at, '%Y-%m') AS ym, " +
-	        "  SUM(COALESCE(h.score, 0)) AS total_score " +       // 🔁 핵심: h.score 사용
+	        "  SUM(COALESCE(h.score, 0)) AS total_score " +
 	        "FROM history h " +
 	        "JOIN todo t ON h.todo_id = t.id " +
 	        "JOIN `group` g ON t.group_id = g.id " +
@@ -334,7 +334,7 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	        "SELECT " +
 	        "  h.member_id, " +
 	        "  m.nickname, " +
-	        "  SUM(COALESCE(h.score, 0)) AS score, " +            // 🔁 핵심: h.score 사용
+	        "  SUM(COALESCE(h.score, 0)) AS score, " + 
 	        "  DATE_FORMAT(h.completed_at, '%Y-%m') AS ym " +
 	        "FROM history h " +
 	        "JOIN todo t ON h.todo_id = t.id " +

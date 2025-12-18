@@ -19,7 +19,7 @@ public class TodoServiceImpl implements TodoService{
 	// 전체 할 일 목록 조회
 	@Override
 	public List<Todo> getTodoList() {
-		System.out.println("📋 할 일 전체 목록 조회");
+		System.out.println("할 일 전체 목록 조회");
 		return todoRepository.findAll();
 	}
 	// 할 일 추가
@@ -74,7 +74,7 @@ public class TodoServiceImpl implements TodoService{
 	        if (todo.getAssigned_to() == memberId) {
 	            // 내가 이미 신청했는데 status만 '미신청'이면 → 갱신 필요
 	            if ("미신청".equals(todo.getStatus())) {
-	                System.out.println("♻이미 신청했지만 상태는 미신청 → 상태만 갱신");
+	                System.out.println("이미 신청했지만 상태는 미신청 → 상태만 갱신");
 	                todoRepository.updateAssignedStatus(todoId, memberId);
 	            }
 	            return true;  // 내가 이미 맡은 할 일이라면 OK
