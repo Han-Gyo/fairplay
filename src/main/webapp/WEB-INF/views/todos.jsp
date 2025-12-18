@@ -65,7 +65,7 @@
 				
 				        <c:if test="${role eq 'LEADER'}">
 				          <div style="margin-top: 5px;">
-				            <button type="button" onclick="location.href='${pageContext.request.contextPath}/todos/edit?id=${todo.id}'" style="background-color: #ffca28;">✏ 수정</button>
+				            <button type="button" onclick="location.href='${pageContext.request.contextPath}/todos/update?id=${todo.id}'" style="background-color: #ffca28;">✏ 수정</button>
 				            <form action="${pageContext.request.contextPath}/todos/delete" method="post" style="display:inline;">
 				              <input type="hidden" name="id" value="${todo.id}" />
 				              <button type="submit" onclick="return confirm('진짜 삭제하시겠습니까?')" style="background-color: #ff5252; color: white;">🗑 삭제</button>
