@@ -54,7 +54,7 @@
 					      </form>
 					
 					      <!-- 완료 버튼 -->
-								<button type="button" onclick="completeTodo(${todo.id}, this)">완료</button>
+								<button type="button" onclick="completeTodo(${todo.id}, ${todo.difficulty_point})">완료</button>
 					
 					      <!-- 수정 버튼 -->
 					      <form action="${pageContext.request.contextPath}/todos/update" method="get" style="display:inline;">
@@ -77,32 +77,30 @@
 </body>
 
 <script>
-const contextPath = "${pageContext.request.contextPath}";
+function completeTodo(todo_id, score) {
+    const confirmResult = confirm("상세 기록을 남기시겠어요?\n(취소를 누르면 기본 기록만 생성되고 완료됩니다.)");
 
-function completeTodo(todo_id, btnElement) {
-  const confirmResult = confirm("기록도 같이 남기시겠어요?");
-  
-  if (confirmResult) {
-    // 기록 페이지로 이동
-    window.location.href = contextPath + "/history/create?todo_id=" + todo_id;
-  } else {
-    // 백엔드에 완료 처리 요청
-    fetch(contextPath + "/todos/complete?id=" + todo_id, {
-      method: "POST"
-    })
-    .then(response => {
-      if (!response.ok) throw new Error("서버 응답 오류");
-
-      // 성공 시 해당 행 삭제
-      const tr = btnElement.closest("tr");
-      if (tr) tr.remove();
-
-      alert("ToDo가 완료 처리되었습니다.");
-    })
-    .catch(error => {
-      alert("오류 발생: " + error.message);
-    });
-  }
+    if (confirmResult) {
+        // [확인] 상세 등록 폼으로 이동
+        window.location.href = contextPath + "/history/create?todo_id=" + todo_id + "&score=" + score;
+    } else {
+        // [취소] 기본 정보로 즉시 기록 생성 + 완료 처리
+        if(confirm("기본 기록으로 즉시 완료하시겠습니까?")) {
+            // 새로 만들 서버 경로로 요청 보냄
+            fetch(contextPath + "/history/create-basic?todo_id=" + todo_id + "&score=" + score, {
+                method: "POST"
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("기본 기록 등록 및 완료 처리가 되었습니다.");
+                    location.reload();
+                } else {
+                    alert("처리에 실패했습니다.");
+                }
+            })
+            .catch(error => alert("오류 발생: " + error.message));
+        }
+    }
 }
 </script>
 </html>
