@@ -20,6 +20,22 @@
     <!-- ✅ 페이지 타이틀 -->
     <h2 class="score-title">📅 ${yearMonth} ${group.name} 그룹의 점수 현황</h2>
 
+    <!-- ✅ 그룹 선택 드롭다운 -->
+    <form method="get" action="${pageContext.request.contextPath}/history/monthly-score" class="group-select-form">
+        <label for="groupSelect">그룹 선택:</label>
+        <select name="group_id" id="groupSelect" onchange="this.form.submit()">
+            <c:forEach var="g" items="${myGroups}">
+                <option value="${g.id}" <c:if test="${g.id == groupId}">selected</c:if>>
+                    ${g.name}
+                </option>
+            </c:forEach>
+        </select>
+
+        <!-- 월 직접 선택 -->
+        <input type="month" id="ymInput" name="yearMonth" value="${yearMonth}" class="month-input" />
+        <button type="submit" class="btn-sky">조회</button>
+    </form>
+
     <!-- ✅ 월 이동/선택 툴바 -->
     <c:set var="year" value="${fn:substring(yearMonth, 0, 4)}" />
     <c:set var="month" value="${fn:substring(yearMonth, 5, 7)}" />
@@ -59,11 +75,9 @@
             </c:otherwise>
         </c:choose>
 
-        <!-- 현재 월 표시 + 직접 선택 -->
+        <!-- 현재 월 표시 -->
         <div class="month-inline">
             <strong class="current-month">${month}월</strong>
-            <input type="month" id="ymInput" value="${yearMonth}" class="month-input" />
-            <button id="goMonthBtn" class="btn-sky">이동</button>
         </div>
 
         <!-- ▶ 다음 -->
@@ -100,7 +114,7 @@
         <div class="card-header"><h3>👥 멤버별 점수 그래프</h3></div>
         <div class="chart-wrap"><canvas id="memberChart"></canvas></div>
 
-        <!-- 텍스트 목록 (서버 렌더 값 유지) -->
+        <!-- 텍스트 목록 -->
         <div class="member-list">
             <c:forEach var="m" items="${memberScores}">
                 <p><span class="nick">${m.nickname}</span> <strong class="highlight">${m.score}</strong>점</p>
@@ -118,18 +132,5 @@
 <!-- JS -->
 <script src="${pageContext.request.contextPath}/resources/js/statisticsGroupChart.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/statisticsChart.js"></script>
-<script>
-  (function(){
-    var btn = document.getElementById('goMonthBtn');
-    if (!btn) return;
-    btn.addEventListener('click', function () {
-      var ymEl = document.getElementById('ymInput');
-      var gidEl = document.getElementById('groupId');
-      var ym = ymEl ? ymEl.value : '';
-      var gid = gidEl ? gidEl.value : '';
-      if (ym) location.href = '?group_id=' + encodeURIComponent(gid) + '&yearMonth=' + encodeURIComponent(ym);
-    });
-  })();
-</script>
 </body>
 </html>
