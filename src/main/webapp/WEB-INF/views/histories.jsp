@@ -43,38 +43,42 @@
   <tbody>
     <c:forEach var="history" items="${historyList}" varStatus="status">
       <tr>
-        <td>${status.count}</td>
+      	<td>${status.count}</td>
         <td>
         	<a href="${pageContext.request.contextPath}/history/detail?history_id=${history.id}">${history.todo.title}</a>
         	<c:if test="${history.newComment}">
-			    <span style="color:red; font-weight:bold;">🆕</span>
-			  </c:if>
+			    	<span style="color:red; font-weight:bold;">🆕</span>
+			  	</c:if>
         </td>
-         <td>${history.member.nickname}</td>
-         <td>
-           <fmt:formatDate value="${history.completed_at}" pattern="yyyy-MM-dd" />
-         </td>
-         <td>
-           <c:choose>
-             <c:when test="${empty history.score}">
+        <td>${history.member.nickname}</td>
+        <td>
+        	<fmt:formatDate value="${history.completed_at}" pattern="yyyy-MM-dd" />
+        </td>
+        <td>
+          <c:choose>
+            <c:when test="${empty history.score}">
                -
-             </c:when>
-             <c:otherwise>
+            </c:when>
+            <c:otherwise>
                ${history.score}
-             </c:otherwise>
-           </c:choose>
-         </td>
-          <td class="memo">${history.memo}</td>
+          	</c:otherwise>
+        	</c:choose>
+        </td>
+      	<td class="memo">${history.memo}</td>
 				<td class="actions">
-				  <!-- 수정 버튼 -->
-				  <a href="${pageContext.request.contextPath}/history/update?id=${history.id}">수정</a>
-				
-				  <!-- 삭제 버튼 -->
-				  <form action="${pageContext.request.contextPath}/history/delete" method="post">
-				    <input type="hidden" name="id" value="${history.id}">
-				    <input type="hidden" name="todo_id" value="${history.todo.id}">
-				    <button type="submit" onclick="return confirm('정말 삭제할까요?');">삭제</button>
-				  </form>
+					<c:if test="${history.member_id == loginMember.id}">
+			      <a href="${pageContext.request.contextPath}/history/update?id=${history.id}">수정</a>
+			    
+			      <form action="${pageContext.request.contextPath}/history/delete" method="post" style="display:inline;">
+			        <input type="hidden" name="id" value="${history.id}">
+			        <input type="hidden" name="todo_id" value="${history.todo.id}">
+			        <button type="submit" onclick="return confirm('정말 삭제할까요?');">삭제</button>
+			      </form>
+					</c:if>
+					  
+					<c:if test="${history.member_id != loginMember.id}">
+					  <span style="color: #ccc;">권한 없음</span>
+					</c:if>
 				</td>
       </tr>
     </c:forEach>

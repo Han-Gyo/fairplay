@@ -51,7 +51,7 @@ public class HistoryServiceImpl implements HistoryService{
 	
 	@Override
 	public List<History> getHistoriesByGroupIdWithDetails(int groupId) {
-	    // 주석: 그룹 ID로 히스토리 조회 및 코멘트 여부 확인
+	    // 그룹 ID로 히스토리 조회 및 코멘트 여부 확인
 	    List<History> historyList = historyRepository.findAllWithDetailsByGroupId(groupId);
 
 	    for (History history : historyList) {
@@ -63,40 +63,40 @@ public class HistoryServiceImpl implements HistoryService{
 	    return historyList;
 	}
 	
+	// 기록 추가
 	@Override
 	public void addHistory(History history) {
-		// 기록 추가
 		historyRepository.save(history);
 		
 	}
 
+	// id로 기록 조회
 	@Override
 	public History getHistoryById(int id) {
-		// id로 기록 조회
 		return historyRepository.findById(id);
 	}
 
+	// 특정 할일의 기록 목록 조회
 	@Override
 	public List<History> getHistoriesByTodoId(int todo_id) {
-		// 특정 할일의 기록 목록 조회
 		return historyRepository.findByTodoId(todo_id);
 	}
 
+	// 특정 멤버의 기록 목록 조회
 	@Override
 	public List<History> getHistoriesByMemberId(int member_id) {
-		// 특정 멤버의 기록 목록 조회
 		return historyRepository.findByMemberId(member_id);
 	}
 
+	// 기록 수정
 	@Override
 	public void updateHistory(History history) {
-		// 기록 수정
 		historyRepository.update(history);
 	}
 
+	// 기록삭제
 	@Override
 	public void deleteHistory(int id) {
-		// 기록삭제
 		historyRepository.delete(id);
 	}
 

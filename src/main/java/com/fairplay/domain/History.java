@@ -12,9 +12,9 @@ public class History {
 	private Integer score;         	// 점수
 	private boolean check;         	// 확인 여부
 	private Integer check_member;  	// 확인한 사람 ID
-	private Todo todo;				// Todo 객체 전체
-	private Member member;			// Member 객체 전체
-	private boolean newComment; // 새 댓글 여부 
+	private Todo todo;							// Todo 객체 전체
+	private Member member;					// Member 객체 전체
+	private boolean newComment; 		// 새 댓글 여부 
 	
 	public History() {}
 	

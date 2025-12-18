@@ -138,7 +138,7 @@ function completeTodo(todo_id, score) {
             })
             .then(response => {
                 if (response.ok) {
-                    alert("기본 기록 등록 및 완료 처리가 되었습니다! ✨");
+                    alert("기본 기록 등록 및 완료 처리가 되었습니다.");
                     location.reload();
                 } else {
                     alert("처리에 실패했습니다.");
