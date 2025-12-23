@@ -15,7 +15,7 @@
 
 /* 레이아웃 */
 .wallet-body {
-  background: linear-gradient(180deg, var(--bg), #ffffff);
+  background: linear-gradient(180deg, var(--bg), #f9fdff);
   color: var(--ink);
   font-family: 'Pretendard', 'Noto Sans KR', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
