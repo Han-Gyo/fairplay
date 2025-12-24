@@ -51,6 +51,8 @@ public class TodoServiceImpl implements TodoService{
       history.setScore(todo.getDifficulty_point());
       history.setMemo(todo.getTitle());
 
+      System.out.println("히스토리로 넘어가는 점수 : " + todo.getDifficulty_point());
+      
       historyRepository.save(history);
       System.out.println("할 일 등록과 동시에 히스토리 자동 생성!");
   }
@@ -86,6 +88,7 @@ public class TodoServiceImpl implements TodoService{
 	        history.setScore(todo.getDifficulty_point());
 	        history.setMemo(todo.getTitle());
 	        
+	        System.out.println("히스토리로 넘어가는 점수 : " + todo.getDifficulty_point());
 	        historyRepository.save(history); 
 	        System.out.println("히스토리 자동 등록!");
 	    }
