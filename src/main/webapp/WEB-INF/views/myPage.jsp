@@ -111,16 +111,23 @@
         <div class="info-group"><span class="info-label">회원 상태</span> ${member.status}</div>
 
         <!-- 하단 버튼 영역 -->
-        <div class="action-links">
-            <a href="${pageContext.request.contextPath}/member/edit?id=${member.id}" 
-               class="btn btn-primary px-4">정보 수정</a>
+		<div class="action-links">
+		    <!-- 정보 수정 버튼 -->
+		    <form action="${pageContext.request.contextPath}/member/edit" method="get">
+		        <input type="hidden" name="id" value="${member.id}" />
+		        <button type="submit" class="btn btn-primary action-btn">정보 수정</button>
+		    </form>
+		
+		    <!-- 회원 탈퇴 버튼 -->
+		    <form action="${pageContext.request.contextPath}/member/deactivate" method="post"
+		          onsubmit="return confirm('정말 탈퇴하시겠습니까?')">
+		        <input type="hidden" name="id" value="${member.id}" />
+		        <button type="submit" class="btn btn-outline-danger action-btn">회원 탈퇴</button>
+		    </form>
+		</div>
 
-            <form action="${pageContext.request.contextPath}/member/deactivate" method="post"
-                  onsubmit="return confirm('정말 탈퇴하시겠습니까?')">
-                <input type="hidden" name="id" value="${member.id}" />
-                <button type="submit" class="btn btn-outline-danger">회원 탈퇴</button>
-            </form>
-        </div>
+
+
     </div>
 </div>
 
