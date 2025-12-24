@@ -73,7 +73,7 @@ public class TodoRepositoryImpl implements TodoRepository{
 	// 할 일 수정
 	@Override
 	public void update(Todo todo) {
-		String sql = "UPDATE todo SET title = ?, assigned_to = ?, due_date = ?, completed = ?, difficulty_point = ? WHERE id = ?";
+		String sql = "UPDATE todo SET title = ?, assigned_to = ?, due_date = ?, completed = ?, difficulty_point = ?, status = ? WHERE id = ?";
 		// 특정 할 일 수정
 		template.update(sql,
 			todo.getTitle(),							// 제목
@@ -81,6 +81,7 @@ public class TodoRepositoryImpl implements TodoRepository{
 			todo.getDue_date(),						// 마감일
 			todo.isCompleted(),						// 완료 여부
 			todo.getDifficulty_point(),		// 난이도
+			todo.getStatus(),				// 상
 			todo.getId()									// 수정 대상 ID
 		);
 	}
