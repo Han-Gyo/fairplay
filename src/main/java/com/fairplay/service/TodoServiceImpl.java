@@ -6,8 +6,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fairplay.domain.History;
 import com.fairplay.domain.Todo;
 import com.fairplay.domain.TodoSimple;
+import com.fairplay.repository.HistoryRepository;
 import com.fairplay.repository.TodoRepository;
 
 @Service
@@ -15,6 +17,9 @@ public class TodoServiceImpl implements TodoService{
 
 	@Autowired
 	private TodoRepository todoRepository;
+	
+	@Autowired
+	private HistoryRepository historyRepository;
 
 	// 전체 할 일 목록 조회
 	@Override
@@ -44,6 +49,7 @@ public class TodoServiceImpl implements TodoService{
 	// 할 일 수정
 	@Override
 	public void updateTodo(Todo todo) {
+		Todo oldTodo = todoRepository.findById(todo.getId());
 		
 		if (todo.isCompleted() && (todo.getAssigned_to() == null || todo.getAssigned_to() == 0)) {
 	        System.out.println("담당자 미지정으로 인한 강제 완료 취소 로직 실행");
@@ -56,7 +62,17 @@ public class TodoServiceImpl implements TodoService{
 	    } else {
 	        todo.setStatus("미신청");
 	    }
-		
+		if (!oldTodo.isCompleted() && todo.isCompleted()) {
+	        History history = new History();
+	        history.setTodo_id(todo.getId());
+	        history.setMember_id(todo.getAssigned_to());
+	        history.setCompleted_at(new java.util.Date());
+	        history.setScore(todo.getDifficulty_point());
+	        history.setMemo(todo.getTitle());
+	        
+	        historyRepository.save(history); 
+	        System.out.println("히스토리 자동 등록!");
+	    }
 		todoRepository.update(todo);
 		System.out.println("할 일 수정됨: " + todo);
 	}
