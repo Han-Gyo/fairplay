@@ -44,6 +44,19 @@ public class TodoServiceImpl implements TodoService{
 	// 할 일 수정
 	@Override
 	public void updateTodo(Todo todo) {
+		
+		if (todo.isCompleted() && (todo.getAssigned_to() == null || todo.getAssigned_to() == 0)) {
+	        System.out.println("담당자 미지정으로 인한 강제 완료 취소 로직 실행");
+	        todo.setCompleted(false); // 미완료로 돌려버림
+	        todo.setStatus("미신청");
+	    } else if (todo.isCompleted()) {
+	        todo.setStatus("완료");
+	    } else if (todo.getAssigned_to() != null && todo.getAssigned_to() > 0) {
+	        todo.setStatus("신청완료");
+	    } else {
+	        todo.setStatus("미신청");
+	    }
+		
 		todoRepository.update(todo);
 		System.out.println("할 일 수정됨: " + todo);
 	}
