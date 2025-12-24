@@ -3,6 +3,10 @@
   font-weight: 100;         /* 기본보다 굵게 */
 }
 
+body {
+  padding-top: 70px; /* 네비게이션 높이만큼 여백 확보 */
+}
+
 
 /* 캘린더 모달 스타일 */
 .fc-header-toolbar {
