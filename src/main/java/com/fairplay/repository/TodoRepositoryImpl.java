@@ -11,7 +11,11 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 
 import com.fairplay.domain.Todo;
 import com.fairplay.domain.TodoSimple;
@@ -59,16 +63,39 @@ public class TodoRepositoryImpl implements TodoRepository{
 	public void insert(Todo todo) {
 	    String sql = "INSERT INTO todo (title, group_id, assigned_to, due_date, difficulty_point, completed, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
 	    System.out.println("[DB 저장 전] status 확인: " + todo.getStatus());
-	    template.update(sql,
-	        todo.getTitle(),            // 제목
-	        todo.getGroup_id(),         // 그룹 ID
-	        todo.getAssigned_to(),      // 담당자 ID
-	        todo.getDue_date(),         // 마감일
-	        todo.getDifficulty_point(), // 난이도
-	        todo.isCompleted(),         // 완료 여부
-	        todo.getStatus()            // 상태 (진행중 or 미신청)
-	    );
-	}
+	    
+	    KeyHolder keyHolder = new GeneratedKeyHolder();
+	    
+	    template.update(connection -> {
+
+        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, todo.getTitle());
+        ps.setInt(2, todo.getGroup_id());
+        
+        if (todo.getAssigned_to() != null && todo.getAssigned_to() > 0) {
+            ps.setInt(3, todo.getAssigned_to());
+        } else {
+            ps.setNull(3, java.sql.Types.INTEGER);
+        }
+        
+        if (todo.getDue_date() != null) {
+	          ps.setTimestamp(4, new java.sql.Timestamp(todo.getDue_date().getTime()));
+	      } else {
+	          ps.setNull(4, java.sql.Types.TIMESTAMP);
+	      }
+        ps.setInt(5, todo.getDifficulty_point());
+        ps.setBoolean(6, todo.isCompleted());
+        ps.setString(7, todo.getStatus());
+        return ps;
+	    }, keyHolder);
+
+
+    if (keyHolder.getKey() != null) {
+        int newId = keyHolder.getKey().intValue();
+        todo.setId(newId);
+        System.out.println("[DB] 방금 생성된 Todo ID: " + newId);
+    }
+}
 	
 	// 할 일 수정
 	@Override
@@ -81,14 +108,14 @@ public class TodoRepositoryImpl implements TodoRepository{
 			todo.getDue_date(),						// 마감일
 			todo.isCompleted(),						// 완료 여부
 			todo.getDifficulty_point(),		// 난이도
-			todo.getStatus(),				// 상
+			todo.getStatus(),							// 상태
 			todo.getId()									// 수정 대상 ID
 		);
 	}
 	
 	@Override
 	public void updateAssignedStatus(int todoId, int memberId) {
-		System.out.println("🔧 [DB] updateAssignedStatus 실행됨! todo_id = " + todoId + ", memberId = " + memberId);
+		System.out.println("[DB] updateAssignedStatus 실행됨! todo_id = " + todoId + ", memberId = " + memberId);
 		String sql = "UPDATE todo SET assigned_to = ?, status = ? WHERE id = ?";
 	    template.update(sql, memberId, "신청완료", todoId);
 	}

@@ -31,21 +31,36 @@ public class TodoServiceImpl implements TodoService{
 	@Override
 	public void addTodo(Todo todo) {
 			
-			// 담당자 지정 여부에 따라 상태 자동 설정
-	    if (todo.getAssigned_to() != null) {
-	        todo.setStatus("신청완료");
-	    } else {
-	        todo.setStatus("미신청");
-	    }
+		// 상태값 자동 설정
+    if (todo.isCompleted()) {
+        todo.setStatus("완료");
+    } else if (todo.getAssigned_to() != null && todo.getAssigned_to() > 0) {
+        todo.setStatus("신청완료");
+    } else {
+        todo.setStatus("미신청");
+    }
+    
+    todoRepository.insert(todo);
+    
+    if (todo.isCompleted()) {
 
-	    todoRepository.insert(todo);
+      History history = new History();
+      history.setTodo_id(todo.getId());
+      history.setMember_id(todo.getAssigned_to());
+      history.setCompleted_at(new java.util.Date());
+      history.setScore(todo.getDifficulty_point());
+      history.setMemo(todo.getTitle());
 
-	    // 로그 찍기
-	    System.out.println("등록된 할 일 제목: " + todo.getTitle());
-	    System.out.println("담당자 ID: " + todo.getAssigned_to());
-	    System.out.println("할 일 상태: " + todo.getStatus());
+      historyRepository.save(history);
+      System.out.println("할 일 등록과 동시에 히스토리 자동 생성!");
+  }
+
+    // 로그 찍기
+    System.out.println("등록된 할 일 제목: " + todo.getTitle());
+    System.out.println("담당자 ID: " + todo.getAssigned_to());
+    System.out.println("할 일 상태: " + todo.getStatus());
 	}
-	
+
 	// 할 일 수정
 	@Override
 	public void updateTodo(Todo todo) {
@@ -62,6 +77,7 @@ public class TodoServiceImpl implements TodoService{
 	    } else {
 	        todo.setStatus("미신청");
 	    }
+		
 		if (!oldTodo.isCompleted() && todo.isCompleted()) {
 	        History history = new History();
 	        history.setTodo_id(todo.getId());
