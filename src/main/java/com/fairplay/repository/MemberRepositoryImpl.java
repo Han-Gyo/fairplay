@@ -33,7 +33,7 @@ public class MemberRepositoryImpl implements MemberRepository{
 	        member.getEmail(),
 	        member.getAddress(),
 	        member.getPhone(),
-	        member.getStatus().name(),		// 👉 enum을 DB에 저장할 때 문자열로 변환
+	        member.getStatus().name(),		// enum을 DB에 저장할 때 문자열로 변환
 	        member.getProfileImage()
 	    );
 	}
@@ -71,7 +71,7 @@ public class MemberRepositoryImpl implements MemberRepository{
 			member.getEmail(),
 			member.getAddress(),
 			member.getPhone(),
-			member.getStatus().name(),   // 👉 enum을 문자열로 저장
+			member.getStatus().name(),   // enum을 문자열로 저장
 			member.getProfileImage(),
 			member.getId()
 		);
@@ -82,7 +82,7 @@ public class MemberRepositoryImpl implements MemberRepository{
 
 	@Override
 	public void deactivate(int id) {
-		// 👉 enum을 사용해 상태를 'INACTIVE'로 설정 (소프트 삭제)
+		// enum을 사용해 상태를 'INACTIVE'로 설정 (소프트 삭제)
 		String sql = "UPDATE member SET status = ? WHERE id = ?";
 		jdbcTemplate.update(sql, MemberStatus.INACTIVE.name(), id);
 	}
