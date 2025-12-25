@@ -1,163 +1,27 @@
 @charset "UTF-8";
-/* 🩵 감성 파스텔 하늘 톤 */
-:root{
-  --bg-grad-top:#e0f7ff;  /* 하늘 그라데 상단 */
-  --bg-grad-bot:#f6fcff;  /* 하늘 그라데 하단 */
-  --primary:#5ac8fa;      /* 하늘 포인트 */
-  --primary-200:#b9ebff;  /* 옅은 테두리/배경 */
-  --text:#333;
-  --muted:#777;
-  --card-bg:#fff;
-  --border:#e6f4ff;
-  --focus-ring: rgba(90,200,250,.28);
-}
-body.needed-body {
-  font-family: 'Pretendard', sans-serif;
-  background: linear-gradient(180deg, #e0f7ff, #f6fcff);
-  padding: 40px;
-  margin: 0;
-}
+@charset "UTF-8";
 
-.needed-title {
-  text-align: center;
-  font-size: 28px;
-  margin-bottom: 30px;
-  color: #333;
+/* 카드가 구매 완료되면 흐릿하게 표시 */
+.card.needed-card.purchased {
+  opacity: 0.5 !important;
 }
-
-.group-select-form select {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  margin-bottom: 20px;
-  font-size: 16px;
-}
-
-/* ✅ 물품 카드 리스트 */
-.needed-card-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
-.needed-card {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  width: 300px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: 0.3s;
-}
-.needed-card:hover {
-  transform: translateY(-4px);
-}
-.needed-card.purchased {
-  opacity: 0.5;
+.card.needed-card.purchased .card-body {
   text-decoration: line-through;
 }
 
-.item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.item-actions {
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
-}
-
-/* 수정 버튼 클릭 효과 */
-.btn-small.clicked {
+/* 수정/삭제 버튼 클릭 시 작은 애니메이션 */
+.btn.clicked {
   transform: scale(0.95);
-  box-shadow: 0 0 0 2px #5ac8fa;
+  box-shadow: 0 0 0 2px rgba(90,200,250,.3);
 }
 
-/* ✅ 통일된 버튼 스타일 */
-.btn-small,
-.btn-small.red {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 36px;
-  min-width: 70px;
-  box-sizing: border-box;
-  padding: 0 12px;
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 6px;
-  text-decoration: none;
-  text-align: center;
-  cursor: pointer;
-}
-
-/* ✅ 수정 버튼 */
-.btn-small {
-  background-color: #ffffff;
-  border: 1px solid #5ac8fa;
-  color: #5ac8fa;
-  transition: background-color 0.2s, color 0.2s;
-}
-.btn-small:hover {
-  background-color: #5ac8fa;
-  color: white;
-}
-
-/* ✅ 삭제 버튼 */
-.btn-small.red {
-  background-color: #ffd6d6;
-  color: #b40000;
-  border: none;
-}
-.btn-small.red:hover {
-  background-color: #ffbfbf;
-}
-
-/* ✅ 등록/수정 폼 */
+/* 등록/수정 폼 컨테이너 */
 .form-container {
   max-width: 500px;
   margin: 0 auto;
-  background: white;
+  background: #fff;
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
-.form-group {
-  margin-bottom: 20px;
-}
-.form-group label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-.form-btns {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
-.btn-submit {
-  background-color: #5ac8fa;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-}
-.btn-cancel {
-  background-color: #ccc;
-  padding: 10px 20px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: white;
-}
+
