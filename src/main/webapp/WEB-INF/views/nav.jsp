@@ -125,10 +125,7 @@
 </div>
 
 <!-- 커스텀 캘린더 모달 -->
-<div id="calendarModal" 
-	style="display:none; position:fixed; z-index:2000; 
-		top:0; left:0; width:100%; height:100%; 
-		background-color:rgba(0,0,0,0.4); backdrop-filter: blur(5px);">
+<div id="calendarModal">
   <div class="modal-content calendar-custom-modal">
     <span class="close-calendar" onclick="closeModal()">
         <i class="fas fa-times"></i>
@@ -154,41 +151,68 @@
 <div id="calendar"></div>
 
 <!-- 일정 등록 모달 -->
-<div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<div class="position-fixed bottom-0 end-0 m-3">
+  <button type="button" class="btn btn-primary rounded-pill shadow-lg p-3" onclick="openCalendarModal()">
+    <i class="fas fa-calendar-alt me-2"></i> Calendar
+  </button>
+</div>
+
+<div id="calendarModal">
+  <div class="calendar-custom-modal">
+    <span class="close-calendar" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+    </span>
+    
+    <div id="calendar-full"></div>
+    
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h5 class="fw-bold"><i class="fas fa-check-circle text-primary me-2"></i> 오늘 할 일</h5>
+        <ul id="todoList" class="list-group list-group-flush">
+            <li class="list-group-item text-muted">날짜를 클릭해 일정을 확인하세요!</li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <h5 class="fw-bold"><i class="fas fa-calendar-day text-info me-2"></i> 상세 일정</h5>
+        <div id="schedule-container" class="p-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="scheduleModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form method="post" id="scheduleForm">
+      <form id="scheduleForm">
         <div class="modal-header">
-          <h5 class="modal-title" id="scheduleModalLabel">📌 일정 등록</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+          <h5 class="modal-title">📌 일정 등록</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <input type="hidden" name="date" id="selectedDate" />
           <div class="mb-3">
-            <label class="form-label">제목</label>
-            <input type="text" class="form-control" name="title" required>
+            <label class="form-label">일정 제목</label>
+            <input type="text" class="form-control" name="title" placeholder="무슨 일정인가요?" required>
           </div>
           <div class="mb-3">
             <label class="form-label">메모</label>
-            <textarea class="form-control" name="memo" rows="3"></textarea>
+            <textarea class="form-control" name="memo" rows="3" placeholder="상세 내용을 적어주세요."></textarea>
           </div>
           <div class="mb-3">
-            <label class="form-label">공개 여부</label>
+            <label class="form-label">공개 범위</label>
             <select class="form-select" name="visibility">
-              <option value="PRIVATE">🔒 개인일정</option>
-              <option value="GROUP">👥 그룹공유</option>
+              <option value="private">🔒 개인일정</option>
+              <option value="group">👥 그룹공유</option>
             </select>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">등록</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+          <button type="submit" class="btn btn-primary w-100">일정 등록하기</button>
         </div>
       </form>
     </div>
   </div>
 </div>
-
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
