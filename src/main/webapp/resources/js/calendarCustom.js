@@ -15,7 +15,7 @@ function openCalendarModal() {
         calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'ko',
-            height: '100%',
+            height: '650',
             headerToolbar: {
                 left: 'prev,next',
                 center: 'title',
@@ -26,21 +26,31 @@ function openCalendarModal() {
             
             // 날짜 클릭 시 (일정 등록)
             dateClick: function(info) {
-                // 부트스트랩 모달의 날짜 input에 클릭한 날짜 세팅
-                $("#selectedDate").val(info.dateStr); 
-                $("#scheduleModal").modal("show");
+              // 부트스트랩 모달의 날짜 input에 클릭한 날짜 세팅
+              $("#selectedDate").val(info.dateStr); 
+              $("#scheduleModal").modal("show");
             },
             
             // 일정 클릭 시 (상세보기)
             eventClick: function(info) {
-                const event = info.event;
-                const memo = event.extendedProps.memo || "메모가 없습니다.";
-                alert(`📌 일정: ${event.title}\n📝 메모: ${memo}`);
+              const event = info.event;
+							// 1. 모달 각 요소에 데이터 집어넣기
+					    $("#detailTitle").text(event.title);
+					    
+					    // extendedProps에 들어있는 메모 가져오기 (없으면 기본값)
+					    const memo = event.extendedProps.memo || "등록된 메모가 없습니다.";
+					    $("#detailMemo").text(memo);
+					    
+					    // 날짜 예쁘게 포맷팅 (YYYY-MM-DD)
+					    const dateStr = event.startStr;
+					    $("#detailDate").text(dateStr);
+
+					    // 2. 상세보기 모달 띄우기
+					    $("#eventDetailModal").modal("show");
             }
         });
         calendar.render();
     } else {
-        // 이미 생성된 상태라면 다시 그리면서 데이터를 새로고침함
         calendar.updateSize();
         calendar.refetchEvents();
     }
@@ -70,7 +80,7 @@ $(document).ready(function() {
             contentType: "application/json",
             data: JSON.stringify(scheduleData),
             success: function(res) {
-                alert("일정이 등록되었습니다! 🚀");
+                alert("일정이 등록되었습니다!");
                 $("#scheduleModal").modal("hide");
                 $("#scheduleForm")[0].reset(); // 폼 초기화
                 

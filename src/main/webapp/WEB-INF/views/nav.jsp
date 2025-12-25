@@ -155,19 +155,34 @@
     <span class="close-calendar" onclick="closeModal()">
         <i class="fas fa-times"></i>
     </span>
-    
     <div id="calendar-full"></div>
-    
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <h5 class="fw-bold"><i class="fas fa-check-circle text-primary me-2"></i> 오늘 할 일</h5>
-        <ul id="todoList" class="list-group list-group-flush">
-            <li class="list-group-item text-muted">날짜를 클릭해 일정을 확인하세요!</li>
-        </ul>
+    </div>
+</div>
+
+<div class="modal fade" id="eventDetailModal" tabindex="-1" style="z-index: 2050;"> 
+	<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" style="color: #78C2AD;">📅 일정 상세 정보</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="col-md-6">
-        <h5 class="fw-bold"><i class="fas fa-calendar-day text-info me-2"></i> 상세 일정</h5>
-        <div id="schedule-container" class="p-2"></div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label text-muted small">제목</label>
+          <h4 id="detailTitle" class="fw-bold"></h4>
+        </div>
+        <hr>
+        <div class="mb-3">
+          <label class="form-label text-muted small">메모</label>
+          <p id="detailMemo" class="p-3 bg-light rounded" style="min-height: 100px; white-space: pre-wrap;"></p>
+        </div>
+        <div class="mb-1">
+          <label class="form-label text-muted small">날짜</label>
+          <p id="detailDate" class="fw-bold text-primary"></p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">닫기</button>
       </div>
     </div>
   </div>

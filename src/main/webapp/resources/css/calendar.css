@@ -36,7 +36,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
-    max-width: 900px; /* 좀 더 시원하게 키움 */
+    max-width: 900px;
     height: 85vh;
     background: #ffffff;
     border-radius: 20px;
@@ -46,12 +46,12 @@
     border: none;
 }
 
-/* 2. FullCalendar 커스텀 스타일 (Minty 컬러 적용) */
+/* 2. FullCalendar 커스텀 스타일 */
 /* 헤더 제목 */
 .fc .fc-toolbar-title {
     font-size: 1.5rem !important;
     font-weight: 800 !important;
-    color: #78C2AD; /* Minty 메인 컬러 */
+    color: #78C2AD; 
 }
 
 /* 버튼 스타일 변경 */
@@ -73,7 +73,6 @@
     background: rgba(120, 194, 173, 0.1) !important;
 }
 
-/* 날짜 칸 둥글게 */
 .fc-daygrid-day-frame {
     cursor: pointer;
 }
@@ -109,13 +108,13 @@
     color: #aaa;
 }
 .close-calendar:hover {
-    color: #ff7851; /* Minty의 Danger 컬러 느낌 */
+    color: #ff7851; 
 }
 
 
 /* 2. 일정 등록 모달 커스텀 */
 #scheduleModal .modal-content {
-    border-radius: 20px; /* 둥글게 둥글게 */
+    border-radius: 20px; 
     border: none;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
@@ -130,7 +129,7 @@
 
 #scheduleModal .modal-title {
     font-weight: 800;
-    color: #78C2AD; /* Minty 메인 컬러 */
+    color: #78C2AD; 
 }
 
 #scheduleModal .modal-body {
@@ -181,4 +180,38 @@
 
 .close-calendar:hover {
     color: #ff6b6b;
+}
+.calendar-custom-modal {
+    overflow-y: auto; 
+    -ms-overflow-style: none; 
+    scrollbar-width: none; 
+}
+.calendar-custom-modal::-webkit-scrollbar {
+    display: none; 
+}
+
+.fc-scroller {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+}
+.fc-scroller::-webkit-scrollbar {
+    display: none !important;
+}
+.row.mt-4 {
+    display: none;
+    transition: all 0.3s ease-in-out;
+}
+/* 상세보기 모달을 캘린더 모달보다 위로 올리기 */
+#eventDetailModal {
+    z-index: 2100 !important; /* 캘린더 모달(2000)보다 높게 설정 */
+}
+
+/* 모달 배경(검은막)도 같이 올라오게 설정 */
+.modal-backdrop {
+    z-index: 2040 !important; 
+}
+
+/* 상세보기 모달 전용 배경은 더 높게 */
+#eventDetailModal + .modal-backdrop {
+    z-index: 2090 !important;
 }
