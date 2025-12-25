@@ -117,9 +117,8 @@
 </nav>
 
 <!-- 캘린더 토글 버튼 -->
-<div class="position-fixed bottom-0 end-0 m-3">
-  <button type="button" class="btn btn-primary rounded-pill shadow"
-          onclick="openCalendarModal()">
+<div class="position-fixed">
+  <button onclick="openCalendarModal()">
     📅 Calendar
   </button>
 </div>
