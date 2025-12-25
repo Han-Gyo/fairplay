@@ -116,12 +116,6 @@
   </div>
 </nav>
 
-<!-- 캘린더 토글 버튼 -->
-<div class="position-fixed">
-  <button onclick="openCalendarModal()">
-    📅 Calendar
-  </button>
-</div>
 
 <!-- 커스텀 캘린더 모달 -->
 <div id="calendarModal">
