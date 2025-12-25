@@ -1,41 +1,41 @@
 package com.fairplay.domain;
 
-import java.time.LocalDateTime;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 public class Schedule {
-	private int memberId;
-	private int groupId;
-	private String title;
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) // for form data
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")      // for JSON
-	private LocalDateTime startDate;
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) // for form data
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")      // for JSON
-    private LocalDateTime endDate;
-	private String visibility;
-	private String memo;
+	private int id;
+  private int memberId;
+  private int groupId;
+  private String title;
+  private String memo;
+  private String scheduleDate;
+  private String visibility;
+  private String color; 
 	
 	public Schedule() {}
 
-
-
-	public Schedule(int memberId, int groupId, String title, LocalDateTime startDate, LocalDateTime endDate,
-			String visibility, String memo) {
+	public Schedule(int id, int memberId, int groupId, String title, String memo, String scheduleDate,
+			String visibility, String color) {
 		super();
+		this.id = id;
 		this.memberId = memberId;
 		this.groupId = groupId;
 		this.title = title;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.visibility = visibility;
 		this.memo = memo;
+		this.scheduleDate = scheduleDate;
+		this.visibility = visibility;
+		this.color = color;
+	}
+	
+	public String getStart() {
+    return this.scheduleDate;
 	}
 
+	public int getId() {
+		return id;
+	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public int getMemberId() {
 		return memberId;
@@ -61,30 +61,6 @@ public class Schedule {
 		this.title = title;
 	}
 
-	public LocalDateTime getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(LocalDateTime startDate) {
-		this.startDate = startDate;
-	}
-
-	public LocalDateTime getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(LocalDateTime endDate) {
-		this.endDate = endDate;
-	}
-
-	public String getVisibility() {
-		return visibility;
-	}
-
-	public void setVisibility(String visibility) {
-		this.visibility = visibility.toLowerCase();
-	}
-
 	public String getMemo() {
 		return memo;
 	}
@@ -92,4 +68,36 @@ public class Schedule {
 	public void setMemo(String memo) {
 		this.memo = memo;
 	}
+
+	public String getScheduleDate() {
+		return scheduleDate;
+	}
+
+	public void setScheduleDate(String scheduleDate) {
+		this.scheduleDate = scheduleDate;
+	}
+
+	public String getVisibility() {
+		return visibility;
+	}
+
+	public void setVisibility(String visibility) {
+		this.visibility = visibility;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	@Override
+	public String toString() {
+		return "Schedule [id=" + id + ", memberId=" + memberId + ", groupId=" + groupId + ", title=" + title + ", memo="
+				+ memo + ", scheduleDate=" + scheduleDate + ", visibility=" + visibility + ", color=" + color
+				+ "]";
+	}
+
 }

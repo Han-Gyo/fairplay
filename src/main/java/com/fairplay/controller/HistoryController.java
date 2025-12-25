@@ -460,13 +460,16 @@ public class HistoryController {
 	    }
 
 	    try {
+	    	
+	    		Todo todo = todoService.findById(todoId);
+	    		
 	        // 1. History 객체 기본값 설정 및 저장
 	        History history = new History();
 	        history.setTodo_id(todoId);
 	        history.setMember_id(loginMember.getId());
 	        history.setCompleted_at(new java.util.Date());
 	        history.setScore(score); // 넘겨받은 난이도 점수를 그대로 기록 점수로 사용
-	        history.setMemo("상세 내용 없이 완료된 할 일입니다.");
+	        history.setMemo(todo.getTitle());
 	        
 	        historyService.addHistory(history);
 

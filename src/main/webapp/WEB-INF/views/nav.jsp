@@ -5,18 +5,12 @@
   <!-- Bootswatch Minty 테마 -->
   <link href="https://bootswatch.com/5/minty/bootstrap.min.css" rel="stylesheet">
 
-  <!-- FullCalendar & jQuery -->
-  <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
-  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js'></script>
-
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
-  <!-- Custom CSS & JS -->
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/nav.css">
-  <script src="${pageContext.request.contextPath}/resources/js/calendarModal.js"></script>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/calendar.css">
 </head>
 <body>
 
@@ -131,68 +125,109 @@
 </div>
 
 <!-- 커스텀 캘린더 모달 -->
-<div id="calendarModal" style="display:none; position:fixed; z-index:2000;
-            top:0; left:0; width:100%; height:100%;
-            background-color:rgba(0,0,0,0.5);">
+<div id="calendarModal">
   <div class="modal-content calendar-custom-modal">
-    <span onclick="closeModal()" style="position:absolute; top:10px; right:20px;
-                 font-size:20px; cursor:pointer;">❌</span>
-    <div id="calendar-full" style="height:400px;"></div>
-    <div class="mt-4">
-      <h5>📋 <span class="modal-date">선택 날짜</span>의 할 일</h5>
-      <ul id="todoList"></ul>
+    <span class="close-calendar" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+    </span>
+    
+    <div id="calendar-full"></div>
+    
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h5 class="fw-bold"><i class="fas fa-check-circle text-primary me-2"></i> 할 일</h5>
+        <ul id="todoList">
+            <li class="text-muted">날짜를 클릭해 일정을 확인하세요!</li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <h5 class="fw-bold"><i class="fas fa-calendar-alt text-info me-2"></i> 상세 일정</h5>
+        <div id="schedule-container"></div>
+      </div>
     </div>
-    <div class="mt-4">
-      <h5>🗓 <span class="modal-date">선택 날짜</span>의 일정</h5>
-      <div id="schedule-container"></div>
-    </div>
-    <hr />
   </div>
 </div>
 
 <div id="calendar"></div>
 
 <!-- 일정 등록 모달 -->
-<div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<div class="position-fixed bottom-0 end-0 m-3">
+  <button type="button" class="btn btn-primary rounded-pill shadow-lg p-3" onclick="openCalendarModal()">
+    <i class="fas fa-calendar-alt me-2"></i> Calendar
+  </button>
+</div>
+
+<div id="calendarModal">
+  <div class="calendar-custom-modal">
+    <span class="close-calendar" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+    </span>
+    
+    <div id="calendar-full"></div>
+    
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h5 class="fw-bold"><i class="fas fa-check-circle text-primary me-2"></i> 오늘 할 일</h5>
+        <ul id="todoList" class="list-group list-group-flush">
+            <li class="list-group-item text-muted">날짜를 클릭해 일정을 확인하세요!</li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <h5 class="fw-bold"><i class="fas fa-calendar-day text-info me-2"></i> 상세 일정</h5>
+        <div id="schedule-container" class="p-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="scheduleModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form method="post" id="scheduleForm">
+      <form id="scheduleForm">
         <div class="modal-header">
-          <h5 class="modal-title" id="scheduleModalLabel">📌 일정 등록</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+          <h5 class="modal-title">📌 일정 등록</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <input type="hidden" name="date" id="selectedDate" />
           <div class="mb-3">
-            <label class="form-label">제목</label>
-            <input type="text" class="form-control" name="title" required>
+            <label class="form-label">일정 제목</label>
+            <input type="text" class="form-control" name="title" placeholder="무슨 일정인가요?" required>
           </div>
           <div class="mb-3">
             <label class="form-label">메모</label>
-            <textarea class="form-control" name="memo" rows="3"></textarea>
+            <textarea class="form-control" name="memo" rows="3" placeholder="상세 내용을 적어주세요."></textarea>
           </div>
           <div class="mb-3">
-            <label class="form-label">공개 여부</label>
+            <label class="form-label">공개 범위</label>
             <select class="form-select" name="visibility">
-              <option value="PRIVATE">🔒 개인일정</option>
-              <option value="GROUP">👥 그룹공유</option>
+              <option value="private">🔒 개인일정</option>
+              <option value="group">👥 그룹공유</option>
             </select>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">등록</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+          <button type="submit" class="btn btn-primary w-100">일정 등록하기</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 <script>
+  // 전역 변수 설정
   const contextPath = "${pageContext.request.contextPath}";
-  console.log(contextPath);
+  
+  // 로그아웃 컨펌 함수 (필요하면 추가)
+  function confirmLogout() {
+      if(confirm("정말 로그아웃 하시겠습니까?")) {
+          location.href = contextPath + "/member/logout";
+      }
+  }
 </script>
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/calendarCustom.js"></script>
 </body>
 </html>
