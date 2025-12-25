@@ -1,7 +1,5 @@
 package com.fairplay.controller;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,53 +23,59 @@ import com.fairplay.service.ScheduleService;
 @Controller
 @RequestMapping("/schedule")
 public class ScheduleController {
-	
-	@Autowired
-	private ScheduleService scheduleService;
-	
-	// 일정 등록 처리용
-	@PostMapping("/create")
-	public ResponseEntity<String> createSchedule(@RequestBody Schedule schedule, HttpSession session) {
-	    System.out.println("[ScheduleController] 일정 등록 요청 진입");
+    
+    @Autowired
+    private ScheduleService scheduleService;
 
-	    // 요청 데이터 출력
-	    System.out.println("시작일시: " + schedule.getStartDate());
-	    System.out.println("종료일시: " + schedule.getEndDate());
-	    System.out.println("제목: " + schedule.getTitle());
-	    System.out.println("그룹 ID: " + schedule.getGroupId());
-	    System.out.println("공개범위: " + schedule.getVisibility());
+    // 1. 달력에 뿌릴 일정 데이터 가져오기
+    @GetMapping("/events")
+    @ResponseBody
+    public List<Schedule> getEvents(
+            @RequestParam("start") String start,
+            @RequestParam("end") String end,
+            HttpSession session) {
+        
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        Integer groupId = (Integer) session.getAttribute("currentGroupId");
 
-	    Member loginMember = (Member) session.getAttribute("loginMember");
-	    if (loginMember == null) {
-	        System.out.println("❌ 세션에 로그인 멤버 없음");
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthorized");
-	    }
+        if (loginMember == null || groupId == null) {
+            return Collections.emptyList();
+        }
 
-	    schedule.setMemberId(loginMember.getId());
+        return scheduleService.getEvents(loginMember.getId(), groupId, start, end);
+    }
 
-	    try {
-	        scheduleService.create(schedule);
-	        System.out.println("[ScheduleController] 일정 등록 성공");
-	        return ResponseEntity.ok("success");
-	    } catch (Exception e) {
-	        System.out.println("[ScheduleController] 일정 등록 중 오류 발생");
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
-	    }
-	}
-	
-	@GetMapping("/by-date")
-	@ResponseBody
-	public List<Schedule> getSchedulesByDate(@RequestParam String date, HttpSession session) {
-	    Member loginMember = (Member) session.getAttribute("loginMember");
-	    if (loginMember == null) return Collections.emptyList();
+    // 2. 일정 등록
+    @PostMapping("/create")
+    public ResponseEntity<String> createSchedule(@RequestBody Schedule schedule, HttpSession session) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        Integer groupId = (Integer) session.getAttribute("currentGroupId");
 
-	    LocalDateTime start = LocalDate.parse(date).atStartOfDay();
-	    LocalDateTime end = start.withHour(23).withMinute(59).withSecond(59);
+        if (loginMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
 
-	    return scheduleService.findByDate(loginMember.getId(), start, end);
-	}
+        schedule.setMemberId(loginMember.getId());
+        schedule.setGroupId(groupId != null ? groupId : 0);
 
+        try {
+            scheduleService.create(schedule);
+            return ResponseEntity.ok("success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
+        }
+    }
 
+    // 3. 일정 삭제
+    @PostMapping("/delete")
+    @ResponseBody
+    public String deleteSchedule(@RequestParam("id") int id) {
+        try {
+            scheduleService.deleteSchedule(id);
+            return "success";
+        } catch (Exception e) {
+            return "fail";
+        }
+    }
 }
-
