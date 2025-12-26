@@ -25,3 +25,15 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+/* 수정/삭제 버튼 사이즈 통일 */
+.btn-align {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem 0.75rem; /* Bootstrap 기본 btn-sm 패딩 */
+  font-size: 0.875rem;       /* btn-sm 폰트 크기 */
+  line-height: 1.5;
+  height: 38px;              /* 고정 높이로 통일 */
+  min-width: 90px;           /* 버튼 너비 통일 (원하는 값으로 조정 가능) */
+}
+

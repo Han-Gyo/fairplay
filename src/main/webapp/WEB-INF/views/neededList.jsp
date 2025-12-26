@@ -74,19 +74,22 @@
 		      
 		      <!-- 카드 푸터 -->
 		      <div class="card-footer d-flex justify-content-between">
-		        <a href="${pageContext.request.contextPath}/needed/edit?id=${item.id}" 
-		           class="btn btn-warning btn-sm">
-		          <i class="fas fa-edit"></i> 수정
-		        </a>
-		        <form action="${pageContext.request.contextPath}/needed/delete" 
-		              method="post" class="d-inline">
-		          <input type="hidden" name="id" value="${item.id}">
-		          <input type="hidden" name="groupId" value="${groupId}">
-		          <button type="submit" class="btn btn-danger btn-sm">
-		            <i class="fas fa-trash"></i> 삭제
-		          </button>
-		        </form>
-		      </div>
+		          <!-- 수정 버튼: a태그 -->
+				  <a href="${pageContext.request.contextPath}/needed/edit?id=${item.id}" 
+				     class="btn btn-warning btn-sm btn-align">
+				    <i class="fas fa-edit me-1"></i> 수정
+				  </a>
+			
+				  <!-- 삭제 버튼: button -->
+				  <form action="${pageContext.request.contextPath}/needed/delete" method="post" class="d-inline">
+				    <input type="hidden" name="id" value="${item.id}">
+				    <input type="hidden" name="groupId" value="${groupId}">
+				    <button type="submit" class="btn btn-danger btn-sm btn-align">
+				      <i class="fas fa-trash me-1"></i> 삭제
+				    </button>
+				  </form>
+			 </div>
+
 		    </div>
 		  </div>
 		</c:forEach>
