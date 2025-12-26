@@ -26,7 +26,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         
         for (Schedule s : schedules) {
             if ("private".equals(s.getVisibility())) {
-                s.setColor("#20c997"); // 민트 (개인 일정)
+                s.setColor("#78C2AD"); // 민트 (개인 일정)
             } else if ("group".equals(s.getVisibility())) {
                 s.setColor("#f3969a"); // 핑크 (그룹 일정)
             }

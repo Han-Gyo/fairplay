@@ -171,19 +171,34 @@ function showDailySummary(date, events, todos) {
     const $sList = $("#summaryScheduleList").empty();
     const $tList = $("#summaryTodoList").empty();
 
-    // 일정/할 일 리스트 채우는 코드는 그대로 (생략)
     if (events.length > 0) {
         events.forEach(ev => {
-            const badgeClass = ev.extendedProps.visibility === 'group' ? 'bg-info' : 'bg-primary';
-            const item = `<button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2 shadow-sm border-0" 
+            // 1. 가시성(visibility) 가져오기
+            const visibility = ev.extendedProps.visibility;
+            // 2. 그룹명 가져오기 (데이터 필드명은 s.setGroupName으로 넘겨준 값이어야 해!)
+            const gName = ev.extendedProps.groupName || '알 수 없는 그룹'; 
+            
+            // 3. 배지에 표시할 텍스트 결정
+            // private이면 'private', group이면 실제 그룹이름 표시!
+            const badgeText = (visibility === 'group') ? gName : 'private';
+
+            const badgeStyle = (visibility === 'group') 
+                               ? 'background-color: #f3969a; color: white;' // 그룹은 핑크
+                               : 'background-color: #78C2AD; color: white;'; // 개인은 민트
+
+            const item = `
+                <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2 shadow-sm border-0" 
                         onclick="showDetailFromSummary('${ev.id}')" style="border-radius: 10px;">
                     <span>${ev.title}</span>
-                    <span class="badge ${badgeClass} rounded-pill">${ev.extendedProps.visibility}</span>
+                    <span class="badge rounded-pill" style="${badgeStyle}">${badgeText}</span>
                 </button>`;
             $sList.append(item);
         });
-    } else { $sList.append('<p class="text-muted small ps-2">등록된 일정이 없습니다.</p>'); }
+    } else { 
+        $sList.append('<p class="text-muted small ps-2">등록된 일정이 없습니다.</p>'); 
+    }
 
+    // Todo 리스트 부분은 그대로 유지 (필요하면 여기도 똑같이 수정 가능!)
     if (todos && todos.length > 0) {
         todos.forEach(t => {
             const item = `<div class="list-group-item d-flex justify-content-between align-items-center mb-2 border-0 shadow-sm" style="border-radius: 10px;">
@@ -192,7 +207,9 @@ function showDailySummary(date, events, todos) {
                 </div>`;
             $tList.append(item);
         });
-    } else { $tList.append('<p class="text-muted small ps-2">예정된 할 일이 없습니다.</p>'); }
+    } else { 
+        $tList.append('<p class="text-muted small ps-2">예정된 할 일이 없습니다.</p>'); 
+    }
 
     // 1. 모달을 띄우기 전에 캘린더 모달의 z-index를 일시적으로 낮춤
     $("#calendarModal").css("z-index", "100"); 
