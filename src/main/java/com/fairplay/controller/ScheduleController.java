@@ -64,18 +64,19 @@ public class ScheduleController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
-        }
+        } 
     }
 
     // 3. 일정 삭제
     @PostMapping("/delete")
     @ResponseBody
-    public String deleteSchedule(@RequestParam("id") int id) {
+    public ResponseEntity<String> deleteSchedule(@RequestParam("id") int id) {
         try {
             scheduleService.deleteSchedule(id);
-            return "success";
+            return ResponseEntity.ok("success"); 
         } catch (Exception e) {
-            return "fail";
+            e.printStackTrace(); 
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
         }
     }
 }
