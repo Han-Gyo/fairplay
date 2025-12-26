@@ -8,12 +8,13 @@ public class Schedule {
   private String memo;
   private String scheduleDate;
   private String visibility;
+  private String nickname;
   private String color; 
 	
 	public Schedule() {}
 
 	public Schedule(int id, int memberId, int groupId, String title, String memo, String scheduleDate,
-			String visibility, String color) {
+			String visibility, String nickname, String color) {
 		super();
 		this.id = id;
 		this.memberId = memberId;
@@ -22,6 +23,7 @@ public class Schedule {
 		this.memo = memo;
 		this.scheduleDate = scheduleDate;
 		this.visibility = visibility;
+		this.nickname = nickname;
 		this.color = color;
 	}
 	
@@ -85,6 +87,14 @@ public class Schedule {
 		this.visibility = visibility;
 	}
 
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
 	public String getColor() {
 		return color;
 	}
@@ -96,7 +106,7 @@ public class Schedule {
 	@Override
 	public String toString() {
 		return "Schedule [id=" + id + ", memberId=" + memberId + ", groupId=" + groupId + ", title=" + title + ", memo="
-				+ memo + ", scheduleDate=" + scheduleDate + ", visibility=" + visibility + ", color=" + color
+				+ memo + ", scheduleDate=" + scheduleDate + ", visibility=" + visibility + ", nickname=" + nickname + ", color=" + color
 				+ "]";
 	}
 
