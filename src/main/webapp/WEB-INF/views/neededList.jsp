@@ -73,22 +73,26 @@
 		      </div>
 		      
 		      <!-- 카드 푸터 -->
-		      <div class="card-footer d-flex justify-content-between">
-		          <!-- 수정 버튼: a태그 -->
-				  <a href="${pageContext.request.contextPath}/needed/edit?id=${item.id}" 
-				     class="btn btn-warning btn-sm btn-align">
-				    <i class="fas fa-edit me-1"></i> 수정
-				  </a>
+			<div class="card-footer d-flex justify-content-between align-items-center">
+			  <!-- 수정 버튼: a태그 -->
+			  <a href="${pageContext.request.contextPath}/needed/edit?id=${item.id}" 
+			     class="btn btn-warning btn-sm btn-eq d-inline-flex align-items-center">
+			    <i class="fas fa-edit me-1"></i> 수정
+			  </a>
 			
-				  <!-- 삭제 버튼: button -->
-				  <form action="${pageContext.request.contextPath}/needed/delete" method="post" class="d-inline">
-				    <input type="hidden" name="id" value="${item.id}">
-				    <input type="hidden" name="groupId" value="${groupId}">
-				    <button type="submit" class="btn btn-danger btn-sm btn-align">
-				      <i class="fas fa-trash me-1"></i> 삭제
-				    </button>
-				  </form>
-			 </div>
+			  <!-- 삭제 버튼: form을 flex로 전환 + 여백 제거 -->
+			  <form action="${pageContext.request.contextPath}/needed/delete" 
+			        method="post" 
+			        class="d-flex align-items-center m-0 p-0">
+			    <input type="hidden" name="id" value="${item.id}">
+			    <input type="hidden" name="groupId" value="${groupId}">
+			    <button type="submit" class="btn btn-danger btn-sm btn-eq d-inline-flex align-items-center m-0">
+			      <i class="fas fa-trash me-1"></i> 삭제
+			    </button>
+			  </form>
+			</div>
+
+
 
 		    </div>
 		  </div>
