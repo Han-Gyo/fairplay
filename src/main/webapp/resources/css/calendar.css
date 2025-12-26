@@ -201,17 +201,17 @@
     display: none;
     transition: all 0.3s ease-in-out;
 }
-/* 상세보기 모달을 캘린더 모달보다 위로 올리기 */
-#eventDetailModal {
-    z-index: 2100 !important; /* 캘린더 모달(2000)보다 높게 설정 */
+/* 캘린더 배경: 기준점 */
+#calendarModal {
+    z-index: 1000 !important;
 }
 
-/* 모달 배경(검은막)도 같이 올라오게 설정 */
+/* 배경막: 캘린더보다 위 */
 .modal-backdrop {
-    z-index: 2040 !important; 
+    z-index: 1040 !important; 
 }
 
-/* 상세보기 모달 전용 배경은 더 높게 */
-#eventDetailModal + .modal-backdrop {
-    z-index: 2090 !important;
+/* 모달 본체: 배경막보다 위 */
+#dailySummaryModal, #scheduleModal, #eventDetailModal {
+    z-index: 1050 !important;
 }
