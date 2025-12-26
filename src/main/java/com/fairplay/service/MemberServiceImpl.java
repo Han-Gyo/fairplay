@@ -98,6 +98,16 @@ public class MemberServiceImpl implements MemberService{
 	}
 
 	
+	// 이메일 중복 검사
+	@Override
+	public boolean isDuplicatedEmail(String email) {
+	    System.out.println("🛠 Service: 중복 확인 email = " + email);
+	    // Repository에서 DB 조회하여 true/false 리턴
+	    return memberRepository.existsByEmail(email);
+	}
+
+
+
 	// 아이디 + 이메일로 회원 정보 조회
 	@Override
 	public Member findByUserIdAndEmail(String userId, String email) {

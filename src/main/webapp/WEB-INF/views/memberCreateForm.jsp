@@ -72,8 +72,10 @@
                             <label for="email" class="form-label">이메일</label>
                             <div class="input-group">
                                 <input type="email" id="email" name="email" class="form-control" required>
+                                <button type="button" class="btn btn-outline-primary" onclick="checkEmail()">중복확인</button>
                                 <button type="button" class="btn btn-outline-primary" onclick="sendEmailCode()" id="sendCodeBtn">인증번호 전송</button>
                             </div>
+                            <div id="emailCheckResult" class="form-text mt-1"></div>
                             <div id="timerDisplay" class="form-text text-danger fw-bold mt-1"></div>
                         </div>
 
@@ -121,9 +123,10 @@
                         </div>
 
                         <!-- 가입 버튼 -->
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">가입하기</button>
-                        </div>
+                        <div class="d-flex gap-2 mt-4">
+						  <button type="submit" class="btn btn-success flex-fill">가입하기</button>
+						  <a href="${pageContext.request.contextPath}/" class="btn btn-outline-secondary flex-fill" role="button">홈으로</a>
+						</div>
                     </form>
                 </div>
             </div>

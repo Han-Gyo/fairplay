@@ -9,12 +9,13 @@ function checkId() {
     const contextPath = document.getElementById('contextPath').value;
     const idErrorDiv = document.getElementById('idError');
 
-    if (userId === '') {
-        idErrorDiv.className = 'form-text text-danger';
-        idErrorDiv.innerText = '아이디를 입력해주세요.';
-        idCheckResult = null;
-        return;
-    }
+	if (userId === '') {
+	    idErrorDiv.className = 'form-text text-danger fw-bold';
+	    idErrorDiv.innerText = '아이디를 입력해주세요.';
+	    document.getElementById('user_id').focus();
+	    return;
+	}
+
 
     fetch(contextPath + '/member/checkId?user_id=' + encodeURIComponent(userId), {
         method: 'GET',
@@ -79,74 +80,118 @@ function checkNickname() {
     });
 }
 
-// 전체 submit 유효성 검사
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('signUpForm').addEventListener('submit', function (e) {
-        const userId = document.getElementById('user_id').value.trim();
-        const idErrorDiv = document.getElementById('idError');
+// 이메일 중복 확인
+function checkEmail() {
+    const email = document.getElementById('email').value.trim();
+    const contextPath = document.getElementById('contextPath').value;
+    const resultDiv = document.getElementById('emailCheckResult');
 
-        const pw = document.getElementById('password').value;
-        const pwCheck = document.getElementById('passwordCheck').value;
-        const pwError = document.getElementById('pwError');
+    if (email === '') {
+        resultDiv.className = 'form-text text-danger';
+        resultDiv.innerText = '이메일을 입력해주세요.';
+        return;
+    }
 
-        const emailResultText = document.getElementById("emailResult").innerText;
-        const nickname = document.getElementById('nickname').value.trim();
-        const zipcode = document.getElementById('zipcode').value.trim();
-        const address = document.getElementById('address').value.trim();
+    // 이메일 형식 유효성 검사 추가
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        resultDiv.className = 'form-text text-danger';
+        resultDiv.innerText = '올바른 이메일 형식을 입력해주세요.';
+        return;
+    }
 
-        // 아이디 공백 체크 (복원)
-        if (userId === '') {
-            e.preventDefault();
-            idErrorDiv.className = 'form-text text-danger';
-            idErrorDiv.innerText = '아이디를 입력해주세요.';
-            return;
+    fetch(contextPath + '/member/checkEmail?email=' + encodeURIComponent(email), {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.result === 'duplicate') {
+            resultDiv.className = 'form-text text-danger';
+            resultDiv.innerText = '이미 사용 중인 이메일입니다.';
+        } else if (data.result === 'available') {
+            resultDiv.className = 'form-text text-success';
+            resultDiv.innerText = '사용 가능한 이메일입니다.';
+        } else {
+            resultDiv.className = 'form-text text-danger';
+            resultDiv.innerText = '응답 처리 오류';
         }
-
-        // 닉네임 공백 체크
-        if (nickname === '') {
-            e.preventDefault();
-            const nickDiv = document.getElementById('nicknameCheckResult');
-            nickDiv.className = 'form-text text-danger';
-            nickDiv.innerText = '닉네임은 필수 입력입니다.';
-            return;
-        }
-
-        // 비밀번호 불일치
-        if (pw !== pwCheck) {
-            e.preventDefault();
-            pwError.className = 'form-text text-danger';
-            pwError.innerText = '비밀번호가 일치하지 않습니다.';
-        }
-
-        // 아이디 중복 미확인 또는 중복
-        if (idCheckResult !== 'available') {
-            e.preventDefault();
-            idErrorDiv.className = 'form-text text-danger';
-            idErrorDiv.innerText = '아이디 중복 확인이 필요하거나, 중복된 아이디입니다.';
-        }
-
-        // 닉네임 중복 미확인 또는 중복
-        if (nicknameCheckResult !== 'available') {
-            e.preventDefault();
-            const nickDiv = document.getElementById('nicknameCheckResult');
-            nickDiv.className = 'form-text text-danger';
-            nickDiv.innerText = '닉네임 중복 확인이 필요하거나, 중복된 닉네임입니다.';
-        }
-
-        // 이메일 인증 여부
-        if (!emailResultText.includes("성공")) {
-            e.preventDefault();
-            const emailDiv = document.getElementById("emailResult");
-            emailDiv.className = 'form-text text-danger';
-            emailDiv.innerText = "이메일 인증을 완료해주세요.";
-        }
-
-        // 주소 검사
-        if (zipcode === '' || address === '') {
-            e.preventDefault();
-            alert('주소 검색을 통해 우편번호와 기본 주소를 입력해주세요.');
-        }
+    })
+    .catch(error => {
+        console.error("이메일 fetch 오류:", error);
+        resultDiv.className = 'form-text text-danger';
+        resultDiv.innerText = '서버 통신 실패';
     });
+}
+
+// 비밀번호 실시간 확인 + submit 유효성 검사
+document.addEventListener('DOMContentLoaded', function () {
+    const pw = document.getElementById('password');
+    const pwCheck = document.getElementById('passwordCheck');
+    const pwError = document.getElementById('pwError');
+
+    function validatePassword() {
+        if (pw.value && pwCheck.value) {
+            if (pw.value === pwCheck.value) {
+                pwError.className = 'form-text text-success';
+                pwError.innerText = '비밀번호가 일치합니다.';
+            } else {
+                pwError.className = 'form-text text-danger';
+                pwError.innerText = '비밀번호가 일치하지 않습니다.';
+            }
+        } else {
+            pwError.innerText = '';
+        }
+    }
+
+    pw.addEventListener('input', validatePassword);
+    pwCheck.addEventListener('input', validatePassword);
+
+    // 전체 submit 유효성 검사
+	document.getElementById('signUpForm').addEventListener('submit', function (e) {
+	    const idErrorDiv = document.getElementById('idError');
+	    const pwValue = pw.value;
+	    const pwCheckValue = pwCheck.value;
+	    const emailResultText = document.getElementById("emailResult").innerText;
+	    const nicknameCheckDiv = document.getElementById('nicknameCheckResult');
+	    const zipcode = document.getElementById('zipcode').value.trim();
+	    const address = document.getElementById('address').value.trim();
+
+	    // 비밀번호 일치 여부
+	    if (pwValue !== pwCheckValue) {
+	        e.preventDefault();
+	        pwError.className = 'form-text text-danger';
+	        pwError.innerText = '비밀번호가 일치하지 않습니다.';
+	    }
+
+	    // 아이디 중복 확인 여부
+	    if (idCheckResult !== 'available') {
+	        e.preventDefault();
+	        idErrorDiv.className = 'form-text text-danger';
+	        idErrorDiv.innerText = '아이디 중복 확인이 필요하거나, 중복된 아이디입니다.';
+	    }
+
+	    // 닉네임 중복 확인 여부
+	    if (nicknameCheckResult !== 'available') {
+	        e.preventDefault();
+	        nicknameCheckDiv.className = 'form-text text-danger';
+	        nicknameCheckDiv.innerText = '닉네임 중복 확인이 필요하거나, 중복된 닉네임입니다.';
+	    }
+
+	    // 이메일 인증 여부
+	    if (!emailResultText.includes("성공")) {
+	        e.preventDefault();
+	        const emailDiv = document.getElementById("emailResult");
+	        emailDiv.className = 'form-text text-danger';
+	        emailDiv.innerText = "이메일 인증을 완료해주세요.";
+	    }
+
+	    // 주소 검색 여부
+	    if (zipcode === '' || address === '') {
+	        e.preventDefault();
+	        alert('주소 검색을 통해 우편번호와 기본 주소를 입력해주세요.');
+	    }
+	});
 });
 
 // 시간 포맷 함수

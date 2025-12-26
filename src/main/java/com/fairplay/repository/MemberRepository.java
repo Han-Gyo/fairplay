@@ -24,6 +24,9 @@ public interface MemberRepository {
 	// 닉네임 존재 여부 확인
 	boolean existsByNickname(String nickname);
 	
+	// 이메일 존재 여부 확인
+	boolean existsByEmail(String email);
+	
 	// 아이디 + 이메일로 회원 정보 조회
 	Member findByUserIdAndEmail(String userId, String email);
 	
