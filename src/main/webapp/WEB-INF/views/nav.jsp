@@ -126,14 +126,6 @@
     
     <div id="calendar-full"></div>
     
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <h5 class="fw-bold"><i class="fas fa-check-circle text-primary me-2"></i> 할 일</h5>
-        <ul id="todoList">
-            <li class="text-muted">날짜를 클릭해 일정을 확인하세요!</li>
-        </ul>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -146,16 +138,7 @@
   </button>
 </div>
 
-<div id="calendarModal">
-  <div class="calendar-custom-modal">
-    <span class="close-calendar" onclick="closeModal()">
-        <i class="fas fa-times"></i>
-    </span>
-    <div id="calendar-full"></div>
-    </div>
-</div>
-
-<div class="modal fade" id="eventDetailModal" tabindex="-1" style="z-index: 2050;"> 
+<div class="modal fade" id="eventDetailModal" tabindex="-1"> 
 	<div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
       <div class="modal-header">
@@ -222,7 +205,30 @@
     </div>
   </div>
 </div>
-
+<div class="modal fade" id="dailySummaryModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 20px;">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold text-primary" id="summaryDateTitle">2025-08-09 일상</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <h6 class="fw-bold mb-2">📌 일정</h6>
+        <div id="summaryScheduleList" class="list-group mb-4">
+          </div>
+        
+        <h6 class="fw-bold mb-2">✅ Todo</h6>
+        <div id="summaryTodoList" class="list-group mb-3">
+          </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-primary w-100 rounded-pill" onclick="openRegisterModalFromSummary()">
+          <i class="fas fa-plus me-1"></i> 새 일정 등록하기
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
