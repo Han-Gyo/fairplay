@@ -188,7 +188,7 @@ function showDailySummary(date, events, todos) {
         todos.forEach(t => {
             const item = `<div class="list-group-item d-flex justify-content-between align-items-center mb-2 border-0 shadow-sm" style="border-radius: 10px;">
                     <span>${t.title}</span>
-                    <span class="badge bg-light text-dark rounded-pill">${t.assignedMemberNickname || '미지정'}</span>
+                    <span class="badge bg-light text-dark rounded-pill">${t.nickname || '미지정'}</span>
                 </div>`;
             $tList.append(item);
         });
