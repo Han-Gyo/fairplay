@@ -133,10 +133,6 @@
             <li class="text-muted">날짜를 클릭해 일정을 확인하세요!</li>
         </ul>
       </div>
-      <div class="col-md-6">
-        <h5 class="fw-bold"><i class="fas fa-calendar-alt text-info me-2"></i> 상세 일정</h5>
-        <div id="schedule-container"></div>
-      </div>
     </div>
   </div>
 </div>
@@ -167,6 +163,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
+      	<input type="hidden" id="detailId">
+      	
         <div class="mb-3">
           <label class="form-label text-muted small">제목</label>
           <h4 id="detailTitle" class="fw-bold"></h4>
@@ -181,7 +179,10 @@
           <p id="detailDate" class="fw-bold text-primary"></p>
         </div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer d-flex justify-content-between">
+        <button type="button" class="btn btn-outline-danger rounded-pill" onclick="deleteEvent()">
+          <i class="fas fa-trash-alt me-1"></i> 삭제
+        </button>
         <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">닫기</button>
       </div>
     </div>

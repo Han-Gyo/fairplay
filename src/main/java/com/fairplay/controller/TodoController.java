@@ -32,7 +32,6 @@ import com.fairplay.domain.Todo;
 import com.fairplay.domain.TodoSimple;
 import com.fairplay.service.GroupMemberService;
 import com.fairplay.service.GroupService;
-import com.fairplay.service.MemberService;
 import com.fairplay.service.TodoService;
 
 @Controller
@@ -41,8 +40,6 @@ public class TodoController {
 	
 	@Autowired
 	private TodoService todoService;
-	@Autowired
-	private MemberService memberService;
 	@Autowired
 	private GroupService groupService;
 	@Autowired
@@ -342,7 +339,7 @@ public class TodoController {
 			todoService.unassignTodo(id);
 			return "redirect:/todos";
 		} else {
-			// 완료된 건 유지 (삭제x)
+			// 완료된 건 유지
 			return "redirect:/todos";
 		}
 	}
@@ -368,6 +365,25 @@ public class TodoController {
 
 	    System.out.println("응답할 할 일 수: " + result.size());
 	    return result;
+	}
+	
+	@GetMapping("/by-date")
+	@ResponseBody
+	public List<TodoSimple> getTodosByDate(
+	        @RequestParam("date") String date, 
+	        HttpSession session) {
+	    
+	    // 1. 세션에서 현재 로그인한 유저 정보 가져오기
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    if (loginMember == null) {
+	        return Collections.emptyList();
+	    }
+
+	    // 2. 문자열 날짜(YYYY-MM-DD)를 LocalDate로 변환
+	    LocalDate localDate = LocalDate.parse(date);
+
+	    // 3. Service 호출
+	    return todoService.getTodosByDate(localDate, loginMember.getId());
 	}
 	
 	//그룹ID로 멤버 리스트 조회 (AJAX) 

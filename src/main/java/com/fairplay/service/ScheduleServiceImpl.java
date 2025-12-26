@@ -25,10 +25,10 @@ public class ScheduleServiceImpl implements ScheduleService {
         List<Schedule> schedules = scheduleRepository.findByRange(memberId, groupId, start, end);
         
         for (Schedule s : schedules) {
-            if ("PRIVATE".equals(s.getVisibility())) {
+            if ("private".equals(s.getVisibility())) {
                 s.setColor("#20c997"); // 민트 (개인 일정)
-            } else if ("GROUP".equals(s.getVisibility())) {
-                s.setColor("#6f42c1"); // 보라 (그룹 일정)
+            } else if ("group".equals(s.getVisibility())) {
+                s.setColor("#f3969a"); // 핑크 (그룹 일정)
             }
         }
         
