@@ -33,18 +33,21 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     @Override
     public List<Schedule> findByRange(int memberId, int groupId, String start, String end) {
         String sql = """
-            SELECT * FROM schedule 
-            WHERE ( (member_id = ? AND visibility = 'private') 
-                 OR (group_id = ? AND visibility = 'group') )
-              AND schedule_date BETWEEN ? AND ?
-            ORDER BY schedule_date ASC
-        """;
+					SELECT s.*, g.name AS group_name 
+					        FROM schedule s
+					        LEFT JOIN `group` g ON s.group_id = g.id
+					        WHERE ( (s.member_id = ? AND s.visibility = 'private') 
+					             OR (s.group_id = ? AND s.visibility = 'group') )
+					          AND s.schedule_date BETWEEN ? AND ?
+					        ORDER BY s.schedule_date ASC
+				""";
 
         return template.query(sql, (rs, rowNum) -> {
             Schedule s = new Schedule();
             s.setId(rs.getInt("id"));
             s.setMemberId(rs.getInt("member_id"));
             s.setGroupId(rs.getInt("group_id"));
+            s.setGroupName(rs.getString("group_name"));
             s.setTitle(rs.getString("title"));
             s.setMemo(rs.getString("memo"));
             s.setScheduleDate(rs.getString("schedule_date"));

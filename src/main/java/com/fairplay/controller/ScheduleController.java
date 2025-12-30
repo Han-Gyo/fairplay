@@ -50,7 +50,8 @@ public class ScheduleController {
     public ResponseEntity<String> createSchedule(@RequestBody Schedule schedule, HttpSession session) {
         Member loginMember = (Member) session.getAttribute("loginMember");
         Integer groupId = (Integer) session.getAttribute("currentGroupId");
-
+        System.out.println("지금 로그인된 그룹 ID: " + groupId);
+        
         if (loginMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
@@ -66,7 +67,7 @@ public class ScheduleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
         } 
     }
-    // 3. 일정 수정 (POST) - 추가된 부분! 🔥
+    // 3. 일정 수정
     @PostMapping("/update")
     @ResponseBody
     public ResponseEntity<String> updateSchedule(@RequestBody Schedule schedule, HttpSession session) {
@@ -77,7 +78,6 @@ public class ScheduleController {
         }
 
         try {
-            // Service에 update(Schedule schedule) 메서드 추가 필요!
             scheduleService.updateSchedule(schedule); 
             return ResponseEntity.ok("success");
         } catch (Exception e) {
