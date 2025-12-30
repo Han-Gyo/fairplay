@@ -54,6 +54,26 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
+    public void update(Schedule schedule) {
+        String sql = """
+            UPDATE schedule 
+            SET title = ?, 
+                memo = ?, 
+                schedule_date = ?, 
+                visibility = ?
+            WHERE id = ?
+        """;
+        
+        template.update(sql,
+            schedule.getTitle(),
+            schedule.getMemo(),
+            schedule.getScheduleDate(),
+            schedule.getVisibility().toLowerCase(),
+            schedule.getId()
+        );
+    }
+
+		@Override
     public void delete(int id) {
         String sql = "DELETE FROM schedule WHERE id = ?";
         template.update(sql, id);

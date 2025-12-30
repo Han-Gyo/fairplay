@@ -66,8 +66,26 @@ public class ScheduleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
         } 
     }
+    // 3. 일정 수정 (POST) - 추가된 부분! 🔥
+    @PostMapping("/update")
+    @ResponseBody
+    public ResponseEntity<String> updateSchedule(@RequestBody Schedule schedule, HttpSession session) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        
+        if (loginMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthorized");
+        }
 
-    // 3. 일정 삭제
+        try {
+            // Service에 update(Schedule schedule) 메서드 추가 필요!
+            scheduleService.updateSchedule(schedule); 
+            return ResponseEntity.ok("success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
+        }
+    }
+    // 4. 일정 삭제
     @PostMapping("/delete")
     @ResponseBody
     public ResponseEntity<String> deleteSchedule(@RequestParam("id") int id) {
@@ -79,4 +97,5 @@ public class ScheduleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
         }
     }
+    
 }

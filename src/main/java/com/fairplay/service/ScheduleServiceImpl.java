@@ -36,6 +36,12 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+		public void updateSchedule(Schedule schedule) {
+    	System.out.println("[Service] 일정 수정 시작 ID: " + schedule.getId());
+      scheduleRepository.update(schedule);
+		}
+
+		@Override
     public void deleteSchedule(int id) {
         scheduleRepository.delete(id);
     }

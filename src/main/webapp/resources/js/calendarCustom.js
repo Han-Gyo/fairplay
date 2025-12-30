@@ -27,7 +27,7 @@ function openCalendarModal() {
             // 날짜 클릭 시 (일정 등록)
 						dateClick: function(info) {
 						    const clickedDate = info.dateStr;
-						    $("#selectedDate").val(clickedDate); // 등록용 날짜 미리 세팅
+						    $("#selectedDate").val(clickedDate); 
 
 						    // 1. FullCalendar에 이미 로드된 일정들 필터링
 						    const allEvents = calendar.getEvents();
@@ -38,16 +38,12 @@ function openCalendarModal() {
 
 						    // 2. 서버에서 Todo 데이터 가져오기
 						    fetchTodoByDate(clickedDate).done(function(todos) {
-						        // [조건 체크] 일정(dayEvents)이 있거나, 할 일(todos)이 하나라도 있다면?
 						        if (dayEvents.length > 0 || (todos && todos.length > 0)) {
-						            // 상세 요약 모달 띄우기 (하단 div가 아니라 모달로!)
 						            showDailySummary(clickedDate, dayEvents, todos);
 						        } else {
-						            // 아무것도 없으면 바로 일정 등록 모달 오픈
 						            $("#scheduleModal").modal("show");
 						        }
 						    }).fail(function() {
-						        // 통신 실패 시에도 등록은 가능하게 처리
 						        $("#scheduleModal").modal("show");
 						    });
 						},
@@ -88,9 +84,13 @@ function closeModal() {
 // 3. 일정 등록 AJAX (JQuery 사용)
 $(document).ready(function() {
     $("#scheduleForm").on("submit", function(e) {
-        e.preventDefault(); // 폼 기본 제출 막기
+        e.preventDefault(); 
         
-        // 서버로 보낼 데이터 구성
+        // 1. 수정인지 등록인지 체크
+        const editId = $("#editScheduleId").val();
+        const isUpdate = editId !== "";
+        
+        // 2. 데이터 구성
         const scheduleData = {
             title: $("input[name='title']").val(),
             memo: $("textarea[name='memo']").val(),
@@ -98,25 +98,39 @@ $(document).ready(function() {
             visibility: $("select[name='visibility']").val()
         };
 
+        // 3. 수정일 경우에만 id 추가
+        if (isUpdate) {
+            scheduleData.id = parseInt(editId);
+        }
+
         $.ajax({
-            url: contextPath + "/schedule/create",
+            url: contextPath + (isUpdate ? "/schedule/update" : "/schedule/create"),
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify(scheduleData),
             success: function(res) {
-                alert("일정이 등록되었습니다!");
+                alert(isUpdate ? "일정이 수정되었습니다! ✨" : "일정이 등록되었습니다! 🎉");
+                
                 $("#scheduleModal").modal("hide");
-                $("#scheduleForm")[0].reset(); // 폼 초기화
+                $("#scheduleForm")[0].reset(); 
+                $("#editScheduleId").val(""); 
                 
                 if(calendar) {
-                    calendar.refetchEvents(); // 달력 데이터 갱신
+                    calendar.refetchEvents();
                 }
             },
             error: function(err) {
-                console.error(err);
-                alert("일정 등록에 실패했습니다. 다시 시도해주세요.");
+                console.error("에러 발생:", err);
+                alert("처리에 실패했습니다. 콘솔을 확인해주세요.");
             }
         });
+    });
+    
+    $('#scheduleModal').on('hidden.bs.modal', function () {
+        $("#scheduleForm")[0].reset();
+        $("#editScheduleId").val("");
+        $("#scheduleModalLabel").text("새 일정 등록");
+				$("#submitBtn").text("일정 등록하기");
     });
 });
 
@@ -136,6 +150,27 @@ function fetchTodoByDate(date) {
 				
     });
 		
+}
+
+function updateEvent() {
+    // 1. 상세 모달에 있던 데이터 가져오기
+    const scheduleId = $("#detailId").val();
+    const currentTitle = $("#detailTitle").text();
+    const currentMemo = $("#detailMemo").text();
+    const currentDate = $("#detailDate").text();
+    
+    // 2. 등록/수정 공용 폼에 데이터 채워넣기
+    $("#editScheduleId").val(scheduleId); 
+    $("#selectedDate").val(currentDate); 
+    $("input[name='title']").val(currentTitle);
+    $("textarea[name='memo']").val(currentMemo);
+    
+    // 3. 모달 전환
+    $("#eventDetailModal").modal("hide");
+    $("#scheduleModal").modal("show");
+    
+    $("#scheduleModalLabel").text("일정 수정하기");
+		$("#submitBtn").text("수정 완료");
 }
 
 function deleteEvent() {
