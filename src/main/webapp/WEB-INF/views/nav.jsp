@@ -142,7 +142,9 @@
 	<div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
       <div class="modal-header">
-        <h5 class="modal-title fw-bold" style="color: #78C2AD;">📅 일정 상세 정보</h5>
+        <h5 class="modal-title fw-bold" style="color: #78C2AD;">📅 일정 상세 정보
+        	<span id="detailGroupName" class="badge rounded-pill ms-2" style="font-size: 0.6em; display: none;"></span>
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">

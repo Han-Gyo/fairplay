@@ -52,6 +52,8 @@ function openCalendarModal() {
             eventClick: function(info) {
               const event = info.event;
 							const scheduleId = event.id || (event.extendedProps && event.extendedProps.id);
+							const visibility = event.extendedProps.visibility;
+							const groupName = event.extendedProps.groupName;
 							console.log("클릭한 일정 ID 확인:", scheduleId);
 							// 모달 각 요소에 데이터 집어넣기
 							$("#detailId").val(scheduleId);
@@ -64,8 +66,15 @@ function openCalendarModal() {
 					    // 날짜 예쁘게 포맷팅 (YYYY-MM-DD)
 					    const dateStr = event.startStr;
 					    $("#detailDate").text(dateStr);
+							
+							const $badge = $("#detailGroupName"); 
+							    if (visibility === 'group') {
+							        $badge.text(groupName || '그룹 일정').css("background-color", "#f3969a").show();
+							    } else {
+							        $badge.text("private").css("background-color", "#78C2AD").show();
+							  	}
 
-					    // 2. 상세보기 모달 띄우기
+					    // 상세보기 모달 띄우기
 					    $("#eventDetailModal").modal("show");
             }
         });
@@ -277,6 +286,17 @@ function showDetailFromSummary(id) {
         $("#detailTitle").text(event.title);
         $("#detailMemo").text(event.extendedProps.memo || "메모 없음");
         $("#detailDate").text(event.startStr);
+				
+				const visibility = event.extendedProps.visibility;
+	        const groupName = event.extendedProps.groupName;
+	        const $badge = $("#detailGroupName");
+
+	        if (visibility === 'group') {
+	            $badge.text(groupName || '그룹 일정').css("background-color", "#f3969a").show();
+	        } else {
+	            $badge.text("private").css("background-color", "#78C2AD").show();
+	        }
+								
         $("#eventDetailModal").modal("show");
     }
 }
