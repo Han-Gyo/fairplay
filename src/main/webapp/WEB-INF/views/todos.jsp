@@ -29,7 +29,7 @@
     <div class="card border-0 shadow-sm mb-5 rounded-4">
       <div class="card-body p-4">
         <form method="get" action="${pageContext.request.contextPath}/todos">
-          <label for="groupId" class="form-label fw-bold text-secondary small">그룹 전환</label>
+          <label for="groupId" class="form-label fw-bold text-secondary small">그룹 선택</label>
           <div class="input-group">
             <span class="input-group-text bg-primary text-white border-primary"><i class="fas fa-users"></i></span>
             <select name="groupId" id="groupId" class="form-select border-primary" onchange="this.form.submit()">
@@ -67,10 +67,10 @@
                       </form>
                       <c:if test="${role eq 'LEADER'}">
                         <div class="d-flex gap-1 justify-content-center">
-                          <button type="button" class="btn btn-outline-warning btn-xs rounded-circle" onclick="location.href='${pageContext.request.contextPath}/todos/update?id=${todo.id}'"><i class="fas fa-pen"></i></button>
+                          <button type="button" class="btn btn-outline-warning btn-xss rounded-circle" onclick="location.href='${pageContext.request.contextPath}/todos/update?id=${todo.id}'"><i class="fas fa-pen"></i></button>
                           <form action="${pageContext.request.contextPath}/todos/delete" method="post" class="d-inline">
                             <input type="hidden" name="id" value="${todo.id}" />
-                            <button type="submit" class="btn btn-outline-danger btn-xs rounded-circle" onclick="return confirm('삭제할까요?')"><i class="fas fa-trash"></i></button>
+                            <button type="submit" class="btn btn-outline-danger btn-xss rounded-circle" onclick="return confirm('삭제할까요?')"><i class="fas fa-trash"></i></button>
                           </form>
                         </div>
                       </c:if>
@@ -127,26 +127,30 @@
     </div>
   </div>
 
-  <script>
-    const contextPath = "${pageContext.request.contextPath}";
-    function completeTodo(todo_id, score) {
-      const confirmResult = confirm("상세 기록을 남기시겠어요?\n(취소를 누르면 기본 기록만 생성되고 완료됩니다.)");
-      if (confirmResult) {
-        window.location.href = contextPath + "/history/create?todo_id=" + todo_id + "&score=" + score;
-      } else {
-        if(confirm("기본 기록으로 즉시 완료하시겠습니까?")) {
-          fetch(contextPath + "/history/create-basic?todo_id=" + todo_id + "&score=" + score, {
-            method: "POST"
-          })
-          .then(response => {
-            if (response.ok) {
-              alert("완료되었습니다! ✨");
-              location.reload();
-            }
-          });
+<script>
+console.log("contextPath:", contextPath);
+function completeTodo(todo_id, score) {
+  const confirmResult = confirm("상세 기록을 남기시겠어요?\n(취소를 누르면 기본 기록만 생성되고 완료됩니다.)");
+
+  if (confirmResult) {
+      // [확인] 상세 등록 폼으로 이동
+      window.location.href = contextPath + "/history/create?todo_id=" + todo_id + "&score=" + score;
+  } else {
+    // [취소] 기본 정보로 즉시 기록 생성 + 완료 처리
+    fetch(contextPath + "/history/create-basic?todo_id=" + todo_id + "&score=" + score, {
+        method: "POST"
+    })
+    .then(response => {
+        if (response.ok) {
+            alert("기본 기록 등록 및 완료 처리가 되었습니다.");
+            location.reload();
+        } else {
+            alert("처리에 실패했습니다.");
         }
-      }
-    }
-  </script>
+    })
+    .catch(error => alert("오류 발생: " + error.message));
+	}
+}
+</script>
 </body>
 </html>

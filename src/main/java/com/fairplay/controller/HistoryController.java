@@ -66,6 +66,7 @@ public class HistoryController {
 @GetMapping("/all")
 
 public String listAllHistories(
+	@RequestParam(value = "groupId", required = false) Integer groupIdParam,
 	 @RequestParam(value = "todo_id", required = false) Integer todoId,
 	 HttpSession session,
 	 Model model,
@@ -77,41 +78,47 @@ public String listAllHistories(
        return "redirect:/member/login";
    }
 
-   // 세션에 currentGroupId 없으면 설정
-   if (session.getAttribute("currentGroupId") == null) {
-       List<Group> myGroups = groupMemberService.findGroupsByMemberId(Long.valueOf(loginMember.getId()));
-       if (!myGroups.isEmpty()) {
-           int firstGroupId = myGroups.get(0).getId();
-           session.setAttribute("currentGroupId", firstGroupId);
-           String role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), firstGroupId);
-           session.setAttribute("role", role);
-       } else {
-           ra.addFlashAttribute("msg", "가입된 그룹이 없습니다.");
-           return "redirect:/";
-       }
-   }
-
-   Integer groupId = (Integer) session.getAttribute("currentGroupId");
-   if (!groupMemberService.isGroupMember(Long.valueOf(groupId), Long.valueOf(loginMember.getId()))) {
-       ra.addFlashAttribute("msg", "접근 권한이 없습니다.");
+   Long memberId = Long.valueOf(loginMember.getId());
+   
+   List<Group> joinedGroups = groupMemberService.findGroupsByMemberId(memberId);
+   if (joinedGroups.isEmpty()) {
+       ra.addFlashAttribute("msg", "가입된 그룹이 없습니다.");
        return "redirect:/";
    }
-
-   // groupId를 사용해서 히스토리를 가져옴
+   
+   if (groupIdParam != null) {
+     session.setAttribute("currentGroupId", groupIdParam);
+ }
+   
+   if (session.getAttribute("currentGroupId") == null) {
+     int firstGroupId = joinedGroups.get(0).getId();
+     session.setAttribute("currentGroupId", firstGroupId);
+     String role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), firstGroupId);
+     session.setAttribute("role", role);
+ }
+   
+   Integer groupId = (Integer) session.getAttribute("currentGroupId");
+   
+   if (!groupMemberService.isGroupMember(Long.valueOf(groupId), memberId)) {
+     ra.addFlashAttribute("msg", "접근 권한이 없습니다.");
+     return "redirect:/";
+ }
+   
    List<History> historyList;
    if (todoId != null) {
-       // 특정 할 일의 기록 조회 (기존 로직 유지)
-       Todo todo = todoService.findById(todoId);
        historyList = historyService.getHistoriesByTodoIdWithDetails(todoId);
+       Todo todo = todoService.findById(todoId);
        model.addAttribute("selectedTodo", todo);
    } else {
-       // 현재 그룹의 전체 히스토리만 조회하도록 수정
        historyList = historyService.getHistoriesByGroupIdWithDetails(groupId); 
    }
+
    List<Todo> todoList = todoService.findByGroupId(groupId);
 
    model.addAttribute("historyList", historyList);
    model.addAttribute("todoList", todoList);
+   model.addAttribute("joinedGroups", joinedGroups); 
+   model.addAttribute("groupId", groupId);  
    model.addAttribute("selectedTodoId", todoId);
 
    return "histories";

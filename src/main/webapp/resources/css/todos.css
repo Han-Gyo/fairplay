@@ -42,6 +42,14 @@ body {
   justify-content: center;
 }
 
+.btn-xss {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+	display: flex;
+  align-items: center;
+  justify-content: center;
+}
 /* 4. Minty 테마 컬러 보조색 */
 .bg-info-light { background-color: #e3f2fd; }
 .bg-success-light { background-color: #e8f5e9; }
