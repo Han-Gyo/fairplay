@@ -25,6 +25,9 @@ public interface MemberService {
 	// 닉네임 중복 여부 확인 메서드
 	boolean isDuplicatedNickname(String nickname);
 	
+	// 이메일 중복 여부 확인 메서드
+	boolean isDuplicatedEmail(String email);
+	
 	// 아이디 + 이메일로 사용자 조회
 	Member findByUserIdAndEmail(String userId, String email);
 	

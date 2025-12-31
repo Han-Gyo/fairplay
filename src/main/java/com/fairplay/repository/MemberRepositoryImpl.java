@@ -121,6 +121,17 @@ public class MemberRepositoryImpl implements MemberRepository{
 		return count != null && count > 0;
 	}
 
+	
+	// 이메일 존재 여부 확인 (중복검사)
+	@Override
+	public boolean existsByEmail(String email) {
+		String sql = "SELECT COUNT(*) FROM member WHERE email = ?";
+		Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
+		
+		System.out.println("DB 조회 결과 email: " + count);
+		return count != null && count > 0;
+	}
+
 
 	@Override
 	public Member findByUserIdAndEmail(String userId, String email) {

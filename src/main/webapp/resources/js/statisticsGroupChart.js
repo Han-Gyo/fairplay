@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var val = ds.data[i];
         if (val == null) continue;
         var p = el.tooltipPosition();
-        g.fillText(String(val), p.x, p.y - 8);
+        g.fillText(String(val), p.x, p.y - 6); // ← 멤버 차트와 동일하게 -6으로 조정
       }
       g.restore();
     }
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function buildGradient(chart) {
     var area = chart.chartArea;
     var grad = ctx.createLinearGradient(0, area ? area.top : 0, 0, area ? area.bottom : 300);
-    grad.addColorStop(0, 'rgba(90, 200, 250, 0.35)'); // #5ac8fa
+    grad.addColorStop(0, 'rgba(90, 200, 250, 0.35)');
     grad.addColorStop(1, 'rgba(90, 200, 250, 0.00)');
     return grad;
   }
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var isSingle = !labels || labels.length <= 1;
 
     if (isSingle) {
-      // ✅ 데이터 1개 → 막대 차트
+      // 데이터 1개 → 막대 차트
       chart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -81,16 +81,22 @@ document.addEventListener('DOMContentLoaded', function () {
           animation: { duration: 700, easing: 'easeOutQuart' },
           plugins: { legend: { display: false } },
           scales: {
-            x: { grid: { display: false } },
-            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.06)', drawBorder: false } }
+            x: { grid: { display: false }, ticks: { color: '#2b3e50' } },
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(0,0,0,0.06)', drawBorder: false },
+              ticks: { color: '#2b3e50' }
+            }
           },
-          layout: { padding: { left: 6, right: 12, top: 4, bottom: 6 } }
+          layout: {
+            padding: { left: 6, right: 12, top: 20, bottom: 6 } // ← 멤버 차트와 유사하게 조정
+          }
         },
         plugins: [valueLabelPlugin]
       });
 
     } else {
-      // ✅ 데이터 여러 개 → 선 그래프 + 그라디언트
+      // 데이터 여러 개 → 선 그래프 + 그라디언트
       chart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -113,10 +119,16 @@ document.addEventListener('DOMContentLoaded', function () {
           animation: { duration: 700, easing: 'easeOutQuart' },
           plugins: { legend: { display: false } },
           scales: {
-            x: { grid: { display: false }, ticks: { maxRotation: 0, color: '#4b5563' } },
-            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.06)', drawBorder: false }, ticks: { stepSize: 5, color: '#4b5563' } }
+            x: { grid: { display: false }, ticks: { maxRotation: 0, color: '#2b3e50' } },
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(0,0,0,0.06)', drawBorder: false },
+              ticks: { stepSize: 5, color: '#2b3e50' }
+            }
           },
-          layout: { padding: { left: 6, right: 12, top: 4, bottom: 6 } },
+          layout: {
+            padding: { left: 6, right: 12, top: 20, bottom: 6 } // ← 동일하게 조정
+          },
           elements: { point: { hoverRadius: 4 } }
         },
         plugins: [valueLabelPlugin]
@@ -137,7 +149,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var url = groupUrl + '?groupId=' + encodeURIComponent(groupId) + '&yearMonth=' + encodeURIComponent(yearMonth);
     fetchJson(url).then(function(json){
       var labels = [], data = [];
-      // 서버가 {labels, data}로 줄 수도 있고, 단일 총점 객체로 줄 수도 있음
       if (json && json.labels) {
         labels = json.labels;
         data = json.data || [];
@@ -145,7 +156,6 @@ document.addEventListener('DOMContentLoaded', function () {
         labels = [yearMonth];
         data = [json.totalScore];
       } else if (Object.prototype.toString.call(json) === '[object Array]') {
-        // 혹시 배열 [{day:'01', total:10}, ...] 형식이면
         for (var i = 0; i < json.length; i++) {
           labels.push(json[i].day || '');
           data.push(json[i].total || 0);

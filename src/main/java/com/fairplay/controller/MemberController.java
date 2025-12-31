@@ -238,7 +238,21 @@ public class MemberController {
 		return result;
 	}
 
-	
+	// 이메일 중복 확인 요청 처리 (AJAX 비동기 요청)
+	@GetMapping(value = "/checkEmail", produces = "application/json")
+	@ResponseBody
+	public Map<String, String> checkEmail(@RequestParam("email") String email) {
+	    System.out.println("checkEmail() 진입: " + email);
+
+	    // 서비스 계층을 통해 이메일 중복 여부 확인
+	    boolean isDuplicate = memberService.isDuplicatedEmail(email);
+
+	    // 클라이언트에 JSON 형태로 결과 반환
+	    Map<String, String> result = new HashMap<>();
+	    result.put("result", isDuplicate ? "duplicate" : "available");
+
+	    return result;
+	}
 
 
 
