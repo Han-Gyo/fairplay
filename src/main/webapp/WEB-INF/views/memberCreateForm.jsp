@@ -73,7 +73,8 @@
                             <div class="input-group">
                                 <input type="email" id="email" name="email" class="form-control" required>
                                 <button type="button" class="btn btn-outline-primary" onclick="checkEmail()">중복확인</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="sendEmailCode()" id="sendCodeBtn">인증번호 전송</button>
+                                <button type="button" class="btn btn-outline-primary" 
+        						onclick="sendEmailCode()" id="sendCodeBtn" disabled>인증번호 전송</button>
                             </div>
                             <div id="emailCheckResult" class="form-text mt-1"></div>
                             <div id="timerDisplay" class="form-text text-danger fw-bold mt-1"></div>

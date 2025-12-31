@@ -85,18 +85,20 @@ function checkEmail() {
     const email = document.getElementById('email').value.trim();
     const contextPath = document.getElementById('contextPath').value;
     const resultDiv = document.getElementById('emailCheckResult');
+    const sendCodeBtn = document.getElementById('sendCodeBtn');
 
     if (email === '') {
         resultDiv.className = 'form-text text-danger';
         resultDiv.innerText = '이메일을 입력해주세요.';
+        sendCodeBtn.disabled = true; // 비활성화
         return;
     }
 
-    // 이메일 형식 유효성 검사 추가
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
         resultDiv.className = 'form-text text-danger';
         resultDiv.innerText = '올바른 이메일 형식을 입력해주세요.';
+        sendCodeBtn.disabled = true; // 비활성화
         return;
     }
 
@@ -109,18 +111,22 @@ function checkEmail() {
         if (data.result === 'duplicate') {
             resultDiv.className = 'form-text text-danger';
             resultDiv.innerText = '이미 사용 중인 이메일입니다.';
+            sendCodeBtn.disabled = true; // 비활성화
         } else if (data.result === 'available') {
             resultDiv.className = 'form-text text-success';
             resultDiv.innerText = '사용 가능한 이메일입니다.';
+            sendCodeBtn.disabled = false; // 중복확인 성공 시 활성화
         } else {
             resultDiv.className = 'form-text text-danger';
             resultDiv.innerText = '응답 처리 오류';
+            sendCodeBtn.disabled = true; // 비활성화
         }
     })
     .catch(error => {
         console.error("이메일 fetch 오류:", error);
         resultDiv.className = 'form-text text-danger';
         resultDiv.innerText = '서버 통신 실패';
+        sendCodeBtn.disabled = true; // 비활성화
     });
 }
 
