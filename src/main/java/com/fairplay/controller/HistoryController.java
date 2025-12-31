@@ -115,6 +115,9 @@ public String listAllHistories(
 
    List<Todo> todoList = todoService.findByGroupId(groupId);
 
+   Group group = groupService.findById(groupId); 
+   
+   model.addAttribute("group", group);
    model.addAttribute("historyList", historyList);
    model.addAttribute("todoList", todoList);
    model.addAttribute("joinedGroups", joinedGroups); 

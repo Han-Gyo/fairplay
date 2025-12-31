@@ -15,7 +15,7 @@
 <div class="container history-page">
     
    <header class="history-header">
-       <h1 class="page-title">📋 전체 수행 히스토리</h1>
+       <h1 class="page-title">📋 ${group.name} 그룹의 전체 히스토리</h1>
        <div class="top-nav">
            <a href="${pageContext.request.contextPath}/todos" class="back-link">← 할 일 목록으로</a>
        </div>

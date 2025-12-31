@@ -13,8 +13,7 @@
   <div class="container todo-page">
     <div class="d-flex justify-content-between align-items-end mb-4">
       <div>
-        <h1 class="text-primary fw-bolder mb-0">🧹 할 일 리스트</h1>
-        <p class="text-muted small mb-0">우리 그룹의 할 일을 관리해보세요!</p>
+        <h1 class="text-primary fw-bolder mb-0">🧹${group.name} 그룹의 할 일 리스트</h1>
       </div>
       <c:if test="${role eq 'LEADER'}">
         <form action="${pageContext.request.contextPath}/todos/create" method="get">

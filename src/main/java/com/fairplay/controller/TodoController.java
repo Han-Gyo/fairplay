@@ -119,7 +119,9 @@ public class TodoController {
 	    for (GroupMemberInfoDTO m : memberList) { 
 	        memberMap.put(m.getMemberId(), m.getNickname()); 
 	    }
-
+	    Group group = groupService.findById(groupId); 
+	    
+	    model.addAttribute("group", group);
 	    model.addAttribute("loginMemberId", loginMember.getId());
 	    model.addAttribute("todoList", todoList);
 	    model.addAttribute("memberMap", memberMap);
