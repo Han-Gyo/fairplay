@@ -306,8 +306,14 @@ public class TodoController {
 
 	    int memberId = loginMember.getId();
 	    List<Todo> myTodoList = todoService.findNotDone(memberId);
-
+	    List<Group> myGroups = groupMemberService.findGroupsByMemberId((long)memberId);
+	    Map<Integer, String> groupMap = new HashMap<>();
+	    for (Group g : myGroups) {
+	        groupMap.put(g.getId(), g.getName());
+	    }
+	    
 	    model.addAttribute("myTodoList", myTodoList);
+	    model.addAttribute("groupMap", groupMap);
 	    return "myTodos";  
 	}
 	

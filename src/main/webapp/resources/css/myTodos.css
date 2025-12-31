@@ -1,174 +1,145 @@
 @charset "UTF-8";
-/* mytodos.css — 내가 맡은 할 일 리스트 스타일 */
-
-/* 파스텔 톤 배경 + 기본 폰트 */
-body.mytodos-body {
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(180deg, #e9f7ff 0%, #f9fdff 100%);
-  color: #222;
-  margin: 0;
-  padding: 32px;
+/* 1. 전체 컨테이너 및 배경 설정 */
+.mytodos-body {
+    background-color: #fcfcfc; /* 부드러운 화이트 배경 */
 }
 
-/* 페이지 컨테이너 */
 .mytodos-container {
-  max-width: 1080px;
-  margin: 0 auto;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Pretendard', -apple-system, sans-serif;
 }
 
-/* 제목 */
+/* 2. 타이틀 스타일 */
 .page-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin: 8px 0 18px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    color: #78C2AD; /* Minty 메인 컬러 */
+    font-weight: 800;
+    margin-bottom: 25px;
+    letter-spacing: -1px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-/* 테이블 카드 래퍼 */
+/* 3. 테이블 카드 디자인 (이미지 속 라운드 스타일) */
 .table-card {
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.06);
-  overflow: hidden;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 }
 
-/* 반응형 스크롤 */
-.table-responsive {
-  width: 100%;
-  overflow-x: auto;
-}
-
-/* 테이블 */
 .mytodos-table {
-  width: 100%;
-  border-collapse: separate;      /* 둥근 모서리 살리려면 separate + border-spacing */
-  border-spacing: 0;
-  table-layout: fixed;
+    width: 100%;
+    margin-bottom: 0;
+    border-collapse: collapse;
 }
 
-.mytodos-table th, .mytodos-table td {
-  padding: 14px 12px;
-  text-align: center;
-  border-bottom: 1px solid #eef2f7;
-  word-break: keep-all;
+/* 테이블 헤더 - 이미지와 동일한 민트 배경 */
+.mytodos-table thead th {
+    background-color: #78C2AD;
+    color: white !important;
+    font-weight: 600;
+    padding: 18px 15px;
+    border: none;
+    text-align: center;
+    font-size: 0.95rem;
 }
 
-.mytodos-table th {
-  background: #f7fbff;
-  font-size: 13px;
-  letter-spacing: .02em;
-  color: #4b5563;
-  position: sticky;
-  top: 0;
-  z-index: 1;
+/* 테이블 바디 */
+.mytodos-table tbody td {
+    padding: 12px 15px;
+    vertical-align: middle;
+    text-align: center;
+    border-bottom: 1px solid #f8f8f8;
+    color: #5a5a5a;
+    font-size: 0.9rem;
 }
 
-.mytodos-table tr:hover td {
-  background: #fafcff;
+/* 4. 할 일 제목 & 그룹 뱃지 (이미지 스타일 적용) */
+.todo-item-flex {
+    display: flex;
+    justify-content: space-between; /* 양 끝 정렬 */
+    align-items: center;
+    width: 100%;
+    padding: 5px 10px;
 }
 
-/* 첫/마지막 셀 모서리 라운드 (헤더 영역) */
-.mytodos-table thead th:first-child { border-top-left-radius: 14px; }
-.mytodos-table thead th:last-child  { border-top-right-radius: 14px; }
+.todo-title-text {
+    font-weight: 500;
+    color: #444;
+}
 
-/* 상태 뱃지 */
+/* 이미지 속 핑크색 배지 스타일 */
+.group-badge {
+    background-color: #FFB7C5; /* 이미지의 핑크색 */
+    color: white;
+    padding: 4px 12px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(255, 183, 197, 0.4);
+}
+
+/* 5. 상태 뱃지 및 기타 요소 */
 .status-badge {
-  display: inline-block;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  line-height: 1;
-  border: 1px solid transparent;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
-.status-badge.done {
-  background: #ecfdf5;
-  border-color: #bbf7d0;
-  color: #0f766e;
-}
-.status-badge.pending {
-  background: #fff7ed;
-  border-color: #fed7aa;
-  color: #b45309;
+.status-badge.done { background: #e8f5e9; color: #4caf50; }
+.status-badge.pending { background: #fff5f5; color: #ff6b6b; }
+
+/* 6. 수정/완료/포기 버튼 (이미지 속 버튼 스타일 적용) */
+/* 완료 버튼 (민트) */
+button[onclick*="completeTodo"] {
+    background: #78C2AD;
+    color: white !important;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    transition: 0.2s;
+    cursor: pointer;
 }
 
-/* 난이도 pill: dp-1 ~ dp-5 */
-.difficulty-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  border: 1px solid transparent;
-}
-.difficulty-pill::before {
-  content: "●";
-  font-size: 10px;
+/* 수정 버튼 (이미지의 연한 민트 느낌) */
+form[action*="update"] button {
+    background: #a2d9ce; /* 버튼용 연한 민트 */
+    color: white !important;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    margin-left: 4px;
 }
 
-/* 색상 단계 */
-.dp-1 { background: #eef6ff; border-color: #dbeafe; color: #1d4ed8; }
-.dp-2 { background: #effdf5; border-color: #ccfbf1; color: #0f766e; }
-.dp-3 { background: #fffce8; border-color: #fde68a; color: #92400e; }
-.dp-4 { background: #fff1f2; border-color: #fecdd3; color: #be123c; }
-.dp-5 { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
-
-/* 액션 버튼들 */
-.actions {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
+/* 포기 버튼 (핑크) */
+form[action*="unassign"] button {
+    background: #FFB7C5; /* 이미지의 핑크색 */
+    color: white !important;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
 }
 
-.btn {
-  appearance: none;
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: transform .05s ease, background .2s ease, border-color .2s ease;
+/* 버튼 호버 효과 */
+button:hover {
+    transform: scale(1.05);
+    filter: brightness(0.95);
 }
-.btn:hover { transform: translateY(-1px); }
 
-/* 타입별 */
-.btn-primary {
-  background: #3b82f6;
-  color: #fff;
-  border-color: #3b82f6;
-}
-.btn-primary:hover { background: #2563eb; border-color: #2563eb; }
-
-.btn-outline {
-  background: #fff;
-  color: #374151;
-}
-.btn-outline:hover { background: #f3f4f6; }
-
-.btn-secondary {
-  background: #f9fafb;
-  color: #111827;
-}
-.btn-secondary:hover { background: #eef2f7; }
-
-/* 푸터 링크 */
+/* 7. 하단 링크 */
 .back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 16px;
-  color: #334155;
-  text-decoration: none;
+    display: inline-block;
+    text-decoration: none;
+    color: #999;
+    font-size: 0.9rem;
+    margin-top: 20px;
+    transition: 0.2s;
 }
-.back-link:hover { text-decoration: underline; }
-
-/* 좁은 화면 대응 */
-@media (max-width: 768px) {
-  .mytodos-table th, .mytodos-table td { padding: 12px 10px; font-size: 13px; }
-  .page-title { font-size: 20px; }
-}
+.back-link:hover { color: #78C2AD; }
