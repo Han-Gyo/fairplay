@@ -108,14 +108,14 @@ public class HistoryServiceImpl implements HistoryService{
 
 	@Override
 	public List<GroupMonthlyScore> getGroupMonthlyScore(int groupId, String yearMonth) {
-		System.out.println("📌 [Service] 그룹 월간 점수 요청 - groupId: " + groupId + ", yearMonth: " + yearMonth);
+		System.out.println("[Service] 그룹 월간 점수 요청 - groupId: " + groupId + ", yearMonth: " + yearMonth);
 		return historyRepository.findGroupMonthlyScore(groupId, yearMonth);
 	}
 
 
 	@Override
 	public List<MemberMonthlyScore> getMemberMonthlyScore(int groupId, String yearMonth) {
-		System.out.println("📌 [Service] 멤버 월간 점수 요청 - groupId: " + groupId + ", yearMonth: " + yearMonth);
+		System.out.println("[Service] 멤버 월간 점수 요청 - groupId: " + groupId + ", yearMonth: " + yearMonth);
 		return historyRepository.findMemberMonthlyScore(groupId, yearMonth);
 	}
 

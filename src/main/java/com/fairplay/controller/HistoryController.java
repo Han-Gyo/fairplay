@@ -115,9 +115,6 @@ public String listAllHistories(
 
    List<Todo> todoList = todoService.findByGroupId(groupId);
 
-   Group group = groupService.findById(groupId); 
-   
-   model.addAttribute("group", group);
    model.addAttribute("historyList", historyList);
    model.addAttribute("todoList", todoList);
    model.addAttribute("joinedGroups", joinedGroups); 
@@ -189,15 +186,19 @@ public String listAllHistories(
 	    model.addAttribute("memberList", memberList);
 
 	    if (todo_id != null) {
-	        Todo todo = todoService.findById(todo_id);
-            
-            if (todo != null && todo.getGroup_id() != groupId) {
-                ra.addFlashAttribute("msg", "잘못된 할 일에 접근했습니다.");
-                return "redirect:/todos";
-            }
-	        
-            model.addAttribute("selectedTodoId", todo_id);
-	    } 
+        Todo todo = todoService.findById(todo_id);
+        
+        // 권한 체크 및 존재 여부 확인
+        if (todo == null || todo.getGroup_id() != groupId) {
+            ra.addFlashAttribute("msg", "잘못된 할 일에 접근했거나 없는 할 일입니다.");
+            return "redirect:/todos";
+        }
+
+        if (score == null) {
+            score = todo.getDifficulty_point();
+        }
+        model.addAttribute("selectedTodoId", todo_id);
+	    }
 	    
 	    model.addAttribute("loginMember", loginMember);
 	    model.addAttribute("score", score);
