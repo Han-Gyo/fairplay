@@ -35,16 +35,7 @@ form label {
   color: #198754 !important; /* Bootstrap 기본 초록 */
 }
 
-/* ===== 버튼 커스터마이즈 ===== */
-.btn-outline-primary:hover {
-  background-color: #5ac8fa;
-  color: #fff;
-}
 
-.btn-outline-success:hover {
-  background-color: #198754;
-  color: #fff;
-}
 
 /* ===== 반응형 보완 ===== */
 @media (max-width: 640px) {
