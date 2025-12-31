@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
     <title>회원가입 | Fairplay</title>
@@ -17,7 +18,7 @@
                 <div class="card-body p-4">
                     <form id="signUpForm" method="post"
                           action="${pageContext.request.contextPath}/member/create"
-                          enctype="multipart/form-data" novalidate> <!-- 브라우저 기본 말풍선 대신 커스텀 제어를 위해 novalidate 추가 가능 -->
+                          enctype="multipart/form-data" novalidate>
 
                         <!-- 아이디 -->
                         <div class="mb-3">
@@ -100,22 +101,17 @@
                         <div class="mb-4">
                             <label class="form-label fw-semibold">휴대폰 번호</label>
                             <div class="input-group">
-                                <select name="phone1" class="form-select" style="max-width: 90px;">
+                                <select name="phone1" class="form-select" style="max-width: 90px;" required>
                                     <option value="010">010</option>
                                     <option value="011">011</option>
-                                    <option value="016">016</option> <!-- 옵션 추가됨 -->
+                                    <option value="016">016</option>
                                 </select>
-                                <input type="text" id="phone2" name="phone2" class="form-control" maxlength="4" required>
-                                <input type="text" id="phone3" name="phone3" class="form-control" maxlength="4" required>
+                                <input type="text" id="phone2" name="phone2" class="form-control" maxlength="4" pattern="\\d{3,4}" required placeholder="숫자 3~4자리">
+                                <input type="text" id="phone3" name="phone3" class="form-control" maxlength="4" pattern="\\d{4}" required placeholder="숫자 4자리">
                             </div>
                         </div>
 
-                        <!-- 가입 버튼 영역 수정 -->
-                        <!-- 
-                             d-grid 대신 d-flex를 사용하여 버튼을 가로로 배치 
-                             gap-2: 버튼 사이 간격 
-                             flex-fill: 버튼이 가로 영역을 동일하게 나누어 채우도록 설정 
-                        -->
+                        <!-- 가입 버튼 -->
                         <div class="d-flex gap-2 mt-4">
                             <button type="submit" class="btn btn-success btn-lg fw-bold flex-fill">가입하기</button>
                             <a href="${pageContext.request.contextPath}/" class="btn btn-outline-secondary btn-lg fw-bold flex-fill d-flex align-items-center justify-content-center" role="button">홈으로</a>
@@ -126,7 +122,6 @@
         </div>
     </div>
 </div>
-
 
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
