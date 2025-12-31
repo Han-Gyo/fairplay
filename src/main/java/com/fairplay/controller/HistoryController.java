@@ -60,64 +60,62 @@ public class HistoryController {
 	
 	@Autowired
 	private GroupMemberService groupMemberService;
-
 	
-	// 전체 히스토리 보기
-	@GetMapping("/all")
-	public String listAllHistories(
-	        @RequestParam(value = "todo_id", required = false) Integer todoId,
-	        HttpSession session,
-	        Model model,
-	        RedirectAttributes ra) {
+//전체 히스토리 보기
 
-	    Member loginMember = (Member) session.getAttribute("loginMember");
-	    if (loginMember == null) {
-	        ra.addFlashAttribute("msg", "로그인 후 이용해주세요.");
-	        return "redirect:/member/login";
-	    }
-	    
-	    // 세션에 currentGroupId 없으면 설정
-	    if (session.getAttribute("currentGroupId") == null) {
-	        List<Group> myGroups = groupMemberService.findGroupsByMemberId(Long.valueOf(loginMember.getId()));
+@GetMapping("/all")
 
-	        if (!myGroups.isEmpty()) {
-	            int firstGroupId = myGroups.get(0).getId();
-	            session.setAttribute("currentGroupId", firstGroupId);
+public String listAllHistories(
+	 @RequestParam(value = "todo_id", required = false) Integer todoId,
+	 HttpSession session,
+	 Model model,
+	 RedirectAttributes ra) {
 
-	            String role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), firstGroupId);
-	            session.setAttribute("role", role);
-	        } else {
-	            ra.addFlashAttribute("msg", "가입된 그룹이 없습니다.");
-	            return "redirect:/";
-	        }
-	    }
+   Member loginMember = (Member) session.getAttribute("loginMember");
+   if (loginMember == null) {
+       ra.addFlashAttribute("msg", "로그인 후 이용해주세요.");
+       return "redirect:/member/login";
+   }
 
-	    Integer groupId = (Integer) session.getAttribute("currentGroupId");
-	    if (!groupMemberService.isGroupMember(Long.valueOf(groupId), Long.valueOf(loginMember.getId()))) {
-	        ra.addFlashAttribute("msg", "접근 권한이 없습니다.");
-	        return "redirect:/";
-	    }
+   // 세션에 currentGroupId 없으면 설정
+   if (session.getAttribute("currentGroupId") == null) {
+       List<Group> myGroups = groupMemberService.findGroupsByMemberId(Long.valueOf(loginMember.getId()));
+       if (!myGroups.isEmpty()) {
+           int firstGroupId = myGroups.get(0).getId();
+           session.setAttribute("currentGroupId", firstGroupId);
+           String role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), firstGroupId);
+           session.setAttribute("role", role);
+       } else {
+           ra.addFlashAttribute("msg", "가입된 그룹이 없습니다.");
+           return "redirect:/";
+       }
+   }
 
-	    // groupId를 사용해서 히스토리를 가져옴
-	    List<History> historyList;
-	    if (todoId != null) {
-	        // 특정 할 일의 기록 조회 (기존 로직 유지)
-	        Todo todo = todoService.findById(todoId);
-	        historyList = historyService.getHistoriesByTodoIdWithDetails(todoId);
-	        model.addAttribute("selectedTodo", todo);
-	    } else {
-	        // 현재 그룹의 전체 히스토리만 조회하도록 수정
-	        historyList = historyService.getHistoriesByGroupIdWithDetails(groupId); 
-	    }
+   Integer groupId = (Integer) session.getAttribute("currentGroupId");
+   if (!groupMemberService.isGroupMember(Long.valueOf(groupId), Long.valueOf(loginMember.getId()))) {
+       ra.addFlashAttribute("msg", "접근 권한이 없습니다.");
+       return "redirect:/";
+   }
 
-	    List<Todo> todoList = todoService.findByGroupId(groupId);
-	    
-	    model.addAttribute("historyList", historyList);
-	    model.addAttribute("todoList", todoList);
-	    model.addAttribute("selectedTodoId", todoId);
+   // groupId를 사용해서 히스토리를 가져옴
+   List<History> historyList;
+   if (todoId != null) {
+       // 특정 할 일의 기록 조회 (기존 로직 유지)
+       Todo todo = todoService.findById(todoId);
+       historyList = historyService.getHistoriesByTodoIdWithDetails(todoId);
+       model.addAttribute("selectedTodo", todo);
+   } else {
+       // 현재 그룹의 전체 히스토리만 조회하도록 수정
+       historyList = historyService.getHistoriesByGroupIdWithDetails(groupId); 
+   }
+   List<Todo> todoList = todoService.findByGroupId(groupId);
 
-	    return "histories";
-	}
+   model.addAttribute("historyList", historyList);
+   model.addAttribute("todoList", todoList);
+   model.addAttribute("selectedTodoId", todoId);
+
+   return "histories";
+}
 	
 	// 1. 기록 목록 (히스토리 리스트)
 	@GetMapping
