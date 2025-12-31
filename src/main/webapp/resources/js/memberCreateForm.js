@@ -1,300 +1,217 @@
-// 중복 확인 결과 전역 변수
+// 상태 관리 변수 (중복 확인 및 인증 여부)
 let idCheckResult = null;
 let nicknameCheckResult = null;
-let timerInterval; // 전역으로 타이머 ID 관리
+let emailAuthStatus = false; // 이메일 인증 성공 여부
+let timerInterval;
+
+// 유틸리티: 에러 메시지 출력 전용
+function setError(elementId, message, isSuccess = false) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    element.innerText = message;
+    element.className = isSuccess ? 'form-text text-success fw-bold' : 'form-text text-danger fw-bold';
+}
 
 // 아이디 중복 확인
 function checkId() {
     const userId = document.getElementById('user_id').value.trim();
     const contextPath = document.getElementById('contextPath').value;
-    const idErrorDiv = document.getElementById('idError');
 
-	if (userId === '') {
-	    idErrorDiv.className = 'form-text text-danger fw-bold';
-	    idErrorDiv.innerText = '아이디를 입력해주세요.';
-	    document.getElementById('user_id').focus();
-	    return;
-	}
+    if (userId === '') {
+        setError('idError', '아이디를 입력해주세요.');
+        document.getElementById('user_id').focus();
+        return;
+    }
 
-
-    fetch(contextPath + '/member/checkId?user_id=' + encodeURIComponent(userId), {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' }
-    })
+    fetch(`${contextPath}/member/checkId?user_id=${encodeURIComponent(userId)}`)
     .then(res => res.json())
     .then(data => {
         idCheckResult = data.result;
-        if (data.result === 'duplicate') {
-            idErrorDiv.className = 'form-text text-danger';
-            idErrorDiv.innerText = '이미 사용 중인 아이디입니다.';
-        } else if (data.result === 'available') {
-            idErrorDiv.className = 'form-text text-success';
-            idErrorDiv.innerText = '사용 가능한 아이디입니다.';
+        if (data.result === 'available') {
+            setError('idError', '사용 가능한 아이디입니다.', true);
         } else {
-            idErrorDiv.className = 'form-text text-danger';
-            idErrorDiv.innerText = '응답 처리 오류';
+            setError('idError', '이미 사용 중인 아이디입니다.');
+            idCheckResult = 'duplicate';
         }
     })
-    .catch(error => {
-        console.error("fetch 오류:", error);
-        idErrorDiv.className = 'form-text text-danger';
-        idErrorDiv.innerText = '서버 통신 실패';
-    });
+    .catch(() => setError('idError', '서버 통신 실패'));
 }
 
 // 닉네임 중복 확인
 function checkNickname() {
     const nickname = document.getElementById('nickname').value.trim();
     const contextPath = document.getElementById('contextPath').value;
-    const nickDiv = document.getElementById('nicknameCheckResult');
 
     if (nickname === '') {
-        nickDiv.className = 'form-text text-danger';
-        nickDiv.innerText = '닉네임을 입력해주세요.';
-        nicknameCheckResult = null;
+        setError('nicknameCheckResult', '닉네임을 입력해주세요.');
+        document.getElementById('nickname').focus();
         return;
     }
 
-    fetch(contextPath + '/member/checkNickname?nickname=' + encodeURIComponent(nickname), {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' }
-    })
+    fetch(`${contextPath}/member/checkNickname?nickname=${encodeURIComponent(nickname)}`)
     .then(res => res.json())
     .then(data => {
         nicknameCheckResult = data.result;
-        if (data.result === 'duplicate') {
-            nickDiv.className = 'form-text text-danger';
-            nickDiv.innerText = '이미 사용 중인 닉네임입니다.';
-        } else if (data.result === 'available') {
-            nickDiv.className = 'form-text text-success';
-            nickDiv.innerText = '사용 가능한 닉네임입니다.';
+        if (data.result === 'available') {
+            setError('nicknameCheckResult', '사용 가능한 닉네임입니다.', true);
         } else {
-            nickDiv.className = 'form-text text-danger';
-            nickDiv.innerText = '응답 처리 오류';
+            setError('nicknameCheckResult', '이미 사용 중인 닉네임입니다.');
         }
-    })
-    .catch(error => {
-        console.error("닉네임 fetch 오류:", error);
-        nickDiv.className = 'form-text text-danger';
-        nickDiv.innerText = '서버 통신 실패';
     });
 }
 
-// 이메일 중복 확인
+// 이메일 중복 확인 및 전송 버튼 활성화
 function checkEmail() {
     const email = document.getElementById('email').value.trim();
     const contextPath = document.getElementById('contextPath').value;
-    const resultDiv = document.getElementById('emailCheckResult');
-    const sendCodeBtn = document.getElementById('sendCodeBtn');
+    const sendBtn = document.getElementById('sendCodeBtn');
 
-    if (email === '') {
-        resultDiv.className = 'form-text text-danger';
-        resultDiv.innerText = '이메일을 입력해주세요.';
-        sendCodeBtn.disabled = true; // 비활성화
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setError('emailCheckResult', '유효한 이메일 형식이 아닙니다.');
+        sendBtn.disabled = true;
         return;
     }
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-        resultDiv.className = 'form-text text-danger';
-        resultDiv.innerText = '올바른 이메일 형식을 입력해주세요.';
-        sendCodeBtn.disabled = true; // 비활성화
-        return;
-    }
-
-    fetch(contextPath + '/member/checkEmail?email=' + encodeURIComponent(email), {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' }
-    })
+    fetch(`${contextPath}/member/checkEmail?email=${encodeURIComponent(email)}`)
     .then(res => res.json())
     .then(data => {
-        if (data.result === 'duplicate') {
-            resultDiv.className = 'form-text text-danger';
-            resultDiv.innerText = '이미 사용 중인 이메일입니다.';
-            sendCodeBtn.disabled = true; // 비활성화
-        } else if (data.result === 'available') {
-            resultDiv.className = 'form-text text-success';
-            resultDiv.innerText = '사용 가능한 이메일입니다.';
-            sendCodeBtn.disabled = false; // 중복확인 성공 시 활성화
+        if (data.result === 'available') {
+            setError('emailCheckResult', '사용 가능한 이메일입니다.', true);
+            sendBtn.disabled = false;
         } else {
-            resultDiv.className = 'form-text text-danger';
-            resultDiv.innerText = '응답 처리 오류';
-            sendCodeBtn.disabled = true; // 비활성화
+            setError('emailCheckResult', '이미 등록된 이메일입니다.');
+            sendBtn.disabled = true;
         }
-    })
-    .catch(error => {
-        console.error("이메일 fetch 오류:", error);
-        resultDiv.className = 'form-text text-danger';
-        resultDiv.innerText = '서버 통신 실패';
-        sendCodeBtn.disabled = true; // 비활성화
     });
 }
 
-// 비밀번호 실시간 확인 + submit 유효성 검사
+// 비밀번호 실시간 체크
 document.addEventListener('DOMContentLoaded', function () {
     const pw = document.getElementById('password');
     const pwCheck = document.getElementById('passwordCheck');
-    const pwError = document.getElementById('pwError');
 
-    function validatePassword() {
+    const validatePw = () => {
         if (pw.value && pwCheck.value) {
             if (pw.value === pwCheck.value) {
-                pwError.className = 'form-text text-success';
-                pwError.innerText = '비밀번호가 일치합니다.';
+                setError('pwError', '비밀번호가 일치합니다.', true);
             } else {
-                pwError.className = 'form-text text-danger';
-                pwError.innerText = '비밀번호가 일치하지 않습니다.';
+                setError('pwError', '비밀번호가 일치하지 않습니다.');
             }
-        } else {
-            pwError.innerText = '';
         }
-    }
+    };
+    pw.addEventListener('input', validatePw);
+    pwCheck.addEventListener('input', validatePw);
 
-    pw.addEventListener('input', validatePassword);
-    pwCheck.addEventListener('input', validatePassword);
+    // [중요] 폼 제출(Submit) 최종 검증
+    document.getElementById('signUpForm').addEventListener('submit', function (e) {
+        const userId = document.getElementById('user_id').value.trim();
+        const userPw = document.getElementById('password').value.trim();
+        const userPwConfirm = document.getElementById('passwordCheck').value.trim();
+        const realName = document.getElementById('real_name').value.trim();
+        const nickname = document.getElementById('nickname').value.trim();
+        const zipcode = document.getElementById('zipcode').value.trim();
 
-    // 전체 submit 유효성 검사
-	document.getElementById('signUpForm').addEventListener('submit', function (e) {
-	    const idErrorDiv = document.getElementById('idError');
-	    const pwValue = pw.value;
-	    const pwCheckValue = pwCheck.value;
-	    const emailResultText = document.getElementById("emailResult").innerText;
-	    const nicknameCheckDiv = document.getElementById('nicknameCheckResult');
-	    const zipcode = document.getElementById('zipcode').value.trim();
-	    const address = document.getElementById('address').value.trim();
+        // 1. 공백 검사 및 포커스
+        if (!userId) {
+            setError('idError', '아이디를 입력하세요.');
+            document.getElementById('user_id').focus();
+            return e.preventDefault();
+        }
+        if (!userPw) {
+            setError('pwError', '비밀번호를 입력하세요.');
+            document.getElementById('password').focus();
+            return e.preventDefault();
+        }
+        if (userPw !== userPwConfirm) {
+            setError('pwError', '비밀번호가 일치하지 않습니다.');
+            document.getElementById('passwordCheck').focus();
+            return e.preventDefault();
+        }
+        if (!realName) {
+            alert('실명을 입력해주세요.');
+            document.getElementById('real_name').focus();
+            return e.preventDefault();
+        }
+        if (!nickname) {
+            setError('nicknameCheckResult', '닉네임을 입력하세요.');
+            document.getElementById('nickname').focus();
+            return e.preventDefault();
+        }
 
-	    // 비밀번호 일치 여부
-	    if (pwValue !== pwCheckValue) {
-	        e.preventDefault();
-	        pwError.className = 'form-text text-danger';
-	        pwError.innerText = '비밀번호가 일치하지 않습니다.';
-	    }
+        // 2. 중복 확인 여부 검사
+        if (idCheckResult !== 'available') {
+            setError('idError', '아이디 중복 확인이 필요합니다.');
+            document.getElementById('user_id').focus();
+            return e.preventDefault();
+        }
+        if (nicknameCheckResult !== 'available') {
+            setError('nicknameCheckResult', '닉네임 중복 확인이 필요합니다.');
+            document.getElementById('nickname').focus();
+            return e.preventDefault();
+        }
 
-	    // 아이디 중복 확인 여부
-	    if (idCheckResult !== 'available') {
-	        e.preventDefault();
-	        idErrorDiv.className = 'form-text text-danger';
-	        idErrorDiv.innerText = '아이디 중복 확인이 필요하거나, 중복된 아이디입니다.';
-	    }
+        // 3. 인증 여부 검사
+        if (!emailAuthStatus) {
+            setError('emailResult', '이메일 인증을 완료해주세요.');
+            document.getElementById('email').focus();
+            return e.preventDefault();
+        }
 
-	    // 닉네임 중복 확인 여부
-	    if (nicknameCheckResult !== 'available') {
-	        e.preventDefault();
-	        nicknameCheckDiv.className = 'form-text text-danger';
-	        nicknameCheckDiv.innerText = '닉네임 중복 확인이 필요하거나, 중복된 닉네임입니다.';
-	    }
-
-	    // 이메일 인증 여부
-	    if (!emailResultText.includes("성공")) {
-	        e.preventDefault();
-	        const emailDiv = document.getElementById("emailResult");
-	        emailDiv.className = 'form-text text-danger';
-	        emailDiv.innerText = "이메일 인증을 완료해주세요.";
-	    }
-
-	    // 주소 검색 여부
-	    if (zipcode === '' || address === '') {
-	        e.preventDefault();
-	        alert('주소 검색을 통해 우편번호와 기본 주소를 입력해주세요.');
-	    }
-	});
+        // 4. 주소 검사
+        if (!zipcode) {
+            alert('주소 검색을 완료해주세요.');
+            return e.preventDefault();
+        }
+        
+        // 모든 검증 통과 시 제출 진행
+    });
 });
 
-// 시간 포맷 함수
-function formatTime(seconds) {
-    const min = Math.floor(seconds / 60);
-    const sec = seconds % 60;
-    return `${min}:${sec < 10 ? '0' + sec : sec}`;
-}
-
-// 이메일 인증번호 전송
+// 이메일 인증번호 발송 및 타이머 로직
 function sendEmailCode() {
-    const email = document.getElementById("email").value.trim();
-    const emailResult = document.getElementById("emailResult");
-    const timerDisplay = document.getElementById("timerDisplay");
-    const emailCodeInput = document.getElementById("emailCode");
-    const verifyBtn = document.getElementById("verifyBtn");
-
-    if (email === "") {
-        emailResult.className = 'form-text text-danger';
-        emailResult.innerText = "이메일을 입력해주세요.";
-        return;
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-        emailResult.className = 'form-text text-danger';
-        emailResult.innerText = "올바른 이메일 형식을 입력해주세요.";
-        return;
-    }
-
+    const email = document.getElementById("email").value;
     if (timerInterval) clearInterval(timerInterval);
 
-    emailCodeInput.disabled = false;
-    verifyBtn.disabled = false;
-
     let timeLeft = 180;
-    timerDisplay.innerText = `남은 시간: ${formatTime(timeLeft)}`;
+    const timerDisp = document.getElementById("timerDisplay");
+    
     timerInterval = setInterval(() => {
-        timeLeft--;
-        if (timeLeft <= 0) {
+        const min = Math.floor(timeLeft / 60);
+        const sec = timeLeft % 60;
+        timerDisp.innerText = `남은 시간: ${min}:${sec < 10 ? '0' + sec : sec}`;
+        if (--timeLeft < 0) {
             clearInterval(timerInterval);
-            timerDisplay.innerText = "인증 시간이 만료되었습니다. 다시 전송 버튼을 눌러주세요.";
-            emailCodeInput.disabled = true;
-            verifyBtn.disabled = true;
-        } else {
-            timerDisplay.innerText = `남은 시간: ${formatTime(timeLeft)}`;
+            timerDisp.innerText = "시간 만료. 다시 시도하세요.";
+            document.getElementById("verifyBtn").disabled = true;
         }
     }, 1000);
 
     fetch("/fairplay/mail/sendCode", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "email=" + encodeURIComponent(email)
-    })
-    .then(response => response.text())
-    .then(msg => {
-        emailResult.className = msg.includes("성공") ? 'form-text text-success' : 'form-text text-danger';
-        emailResult.innerText = msg;
-    })
-    .catch(error => {
-        emailResult.className = 'form-text text-danger';
-        emailResult.innerText = "인증 요청 실패";
-        console.error("인증 요청 실패:", error);
-    });
+        body: `email=${encodeURIComponent(email)}`
+    }).then(() => setError('emailResult', '인증번호가 발송되었습니다.', true));
 }
 
-// 인증번호 확인
+// 인증번호 확인 로직
 function verifyEmailCode() {
     const code = document.getElementById("emailCode").value;
-    const timerDisplay = document.getElementById("timerDisplay");
-    const emailCodeInput = document.getElementById("emailCode");
-    const verifyBtn = document.getElementById("verifyBtn");
-
     fetch("/fairplay/mail/verifyCode", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-        body: "code=" + encodeURIComponent(code)
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `code=${encodeURIComponent(code)}`
     })
-    .then(response => response.text())
+    .then(res => res.text())
     .then(msg => {
-        const emailResult = document.getElementById("emailResult");
         if (msg.includes("성공")) {
-            emailResult.className = 'form-text text-success';
-            emailResult.innerText = msg;
+            setError('emailResult', '인증 성공!', true);
+            emailAuthStatus = true;
             clearInterval(timerInterval);
-            timerDisplay.innerText = "";
-            emailCodeInput.disabled = true;
-            verifyBtn.disabled = true;
+            document.getElementById("timerDisplay").innerText = "";
+            document.getElementById("emailCode").disabled = true;
+            document.getElementById("verifyBtn").disabled = true;
         } else {
-            emailResult.className = 'form-text text-danger';
-            emailResult.innerText = msg || '인증 실패';
+            setError('emailResult', '인증번호가 일치하지 않습니다.');
         }
-    })
-    .catch(error => {
-        const emailResult = document.getElementById("emailResult");
-        emailResult.className = 'form-text text-danger';
-        emailResult.innerText = "인증 실패";
-        console.error("인증 실패:", error);
     });
 }
