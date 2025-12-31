@@ -150,7 +150,7 @@ public class TodoRepositoryImpl implements TodoRepository{
 	@Override
 	public List<Todo> findCompletedTodos() {
 		String sql = "SELECT * FROM todo WHERE completed = true ORDER BY id DESC";
-		System.out.println("✅ [DB] 완료된 할 일 목록 조회됨");
+		System.out.println("[DB] 완료된 할 일 목록 조회됨");
 		return template.query(sql, todoRowMapper);
 	}
 
@@ -165,7 +165,7 @@ public class TodoRepositoryImpl implements TodoRepository{
 	    String sql = """
 	        SELECT t.id, t.title, m.nickname
 	        FROM todo t
-	        JOIN member m ON t.assigned_to = m.id
+	        LEFT JOIN member m ON t.assigned_to = m.id
 	        WHERE DATE(t.due_date) = ?
 	          AND t.group_id IN (
 	              SELECT gm.group_id FROM group_member gm WHERE gm.member_id = ?

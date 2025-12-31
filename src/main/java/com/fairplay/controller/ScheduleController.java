@@ -50,7 +50,8 @@ public class ScheduleController {
     public ResponseEntity<String> createSchedule(@RequestBody Schedule schedule, HttpSession session) {
         Member loginMember = (Member) session.getAttribute("loginMember");
         Integer groupId = (Integer) session.getAttribute("currentGroupId");
-
+        System.out.println("지금 로그인된 그룹 ID: " + groupId);
+        
         if (loginMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
@@ -66,8 +67,25 @@ public class ScheduleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
         } 
     }
+    // 3. 일정 수정
+    @PostMapping("/update")
+    @ResponseBody
+    public ResponseEntity<String> updateSchedule(@RequestBody Schedule schedule, HttpSession session) {
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        
+        if (loginMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("unauthorized");
+        }
 
-    // 3. 일정 삭제
+        try {
+            scheduleService.updateSchedule(schedule); 
+            return ResponseEntity.ok("success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
+        }
+    }
+    // 4. 일정 삭제
     @PostMapping("/delete")
     @ResponseBody
     public ResponseEntity<String> deleteSchedule(@RequestParam("id") int id) {
@@ -79,4 +97,5 @@ public class ScheduleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
         }
     }
+    
 }

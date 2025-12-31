@@ -4,24 +4,28 @@ public class Schedule {
 	private int id;
   private int memberId;
   private int groupId;
+  private String groupName;
   private String title;
   private String memo;
   private String scheduleDate;
   private String visibility;
+  private String nickname;
   private String color; 
 	
 	public Schedule() {}
 
-	public Schedule(int id, int memberId, int groupId, String title, String memo, String scheduleDate,
-			String visibility, String color) {
+	public Schedule(int id, int memberId, int groupId, String groupName, String title, String memo, String scheduleDate,
+			String visibility, String nickname, String color) {
 		super();
 		this.id = id;
 		this.memberId = memberId;
 		this.groupId = groupId;
+		this.groupName = groupName;
 		this.title = title;
 		this.memo = memo;
 		this.scheduleDate = scheduleDate;
 		this.visibility = visibility;
+		this.nickname = nickname;
 		this.color = color;
 	}
 	
@@ -51,6 +55,14 @@ public class Schedule {
 
 	public void setGroupId(int groupId) {
 		this.groupId = groupId;
+	}
+	
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 
 	public String getTitle() {
@@ -85,6 +97,14 @@ public class Schedule {
 		this.visibility = visibility;
 	}
 
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
 	public String getColor() {
 		return color;
 	}
@@ -95,8 +115,8 @@ public class Schedule {
 
 	@Override
 	public String toString() {
-		return "Schedule [id=" + id + ", memberId=" + memberId + ", groupId=" + groupId + ", title=" + title + ", memo="
-				+ memo + ", scheduleDate=" + scheduleDate + ", visibility=" + visibility + ", color=" + color
+		return "Schedule [id=" + id + ", memberId=" + memberId + ", groupId=" + groupId + ", groupName=" + groupName + ", title=" + title + ", memo="
+				+ memo + ", scheduleDate=" + scheduleDate + ", visibility=" + visibility + ", nickname=" + nickname + ", color=" + color
 				+ "]";
 	}
 

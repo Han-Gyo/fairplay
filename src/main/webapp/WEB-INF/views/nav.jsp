@@ -142,7 +142,9 @@
 	<div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
       <div class="modal-header">
-        <h5 class="modal-title fw-bold" style="color: #78C2AD;">📅 일정 상세 정보</h5>
+        <h5 class="modal-title fw-bold" style="color: #78C2AD;">📅 일정 상세 정보
+        	<span id="detailGroupName" class="badge rounded-pill ms-2" style="font-size: 0.6em; display: none;"></span>
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
@@ -163,6 +165,7 @@
         </div>
       </div>
       <div class="modal-footer d-flex justify-content-between">
+      	<button type="button" class="btn btn-warning" onclick="updateEvent()">수정</button>
         <button type="button" class="btn btn-outline-danger rounded-pill" onclick="deleteEvent()">
           <i class="fas fa-trash-alt me-1"></i> 삭제
         </button>
@@ -175,33 +178,37 @@
 <div class="modal fade" id="scheduleModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form id="scheduleForm">
-        <div class="modal-header">
-          <h5 class="modal-title">📌 일정 등록</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" name="date" id="selectedDate" />
-          <div class="mb-3">
-            <label class="form-label">일정 제목</label>
-            <input type="text" class="form-control" name="title" placeholder="무슨 일정인가요?" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">메모</label>
-            <textarea class="form-control" name="memo" rows="3" placeholder="상세 내용을 적어주세요."></textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">공개 범위</label>
-            <select class="form-select" name="visibility">
-              <option value="private">🔒 개인일정</option>
-              <option value="group">👥 그룹공유</option>
-            </select>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary w-100">일정 등록하기</button>
-        </div>
-      </form>
+			<form id="scheduleForm">
+			    <input type="hidden" id="editScheduleId" name="id">
+			    
+			    <div class="modal-header">
+			        <h5 class="modal-title" id="scheduleModalLabel">📌 일정 등록</h5>
+			        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			    </div>
+			    
+			    <div class="modal-body">
+			        <input type="hidden" name="date" id="selectedDate" />
+			        <div class="mb-3">
+			            <label class="form-label">일정 제목</label>
+			            <input type="text" class="form-control" name="title" placeholder="무슨 일정인가요?" required>
+			        </div>
+			        <div class="mb-3">
+			            <label class="form-label">메모</label>
+			            <textarea class="form-control" name="memo" rows="3" placeholder="상세 내용을 적어주세요."></textarea>
+			        </div>
+			        <div class="mb-3">
+			            <label class="form-label">공개 범위</label>
+			            <select class="form-select" name="visibility">
+			                <option value="private">🔒 개인일정</option>
+			                <option value="group">👥 그룹공유</option>
+			            </select>
+			        </div>
+			    </div>
+			    
+			    <div class="modal-footer">
+			        <button type="submit" id="submitBtn" class="btn btn-primary w-100">일정 등록하기</button>
+			    </div>
+			</form>
     </div>
   </div>
 </div>

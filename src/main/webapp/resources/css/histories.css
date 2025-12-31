@@ -1,66 +1,127 @@
-body {
-    font-family: '맑은 고딕', sans-serif;
-    margin: 40px;
+.history-page {
+    padding-top: 20px !important; 
+    padding-bottom: 80px;
 }
-h2 {
-    margin-bottom: 20px;
+
+/* 2. 타이틀 & 상단 버튼 */
+.page-title {
+    color: #78C2AD;
+    font-weight: 800;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
 }
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 16px;
+.back-link {
+    text-decoration: none;
+    color: #999;
+    font-size: 0.9rem;
+    transition: 0.2s;
 }
-th, td {
-    padding: 12px;
-    border-bottom: 1px solid #ccc;
+.back-link:hover { color: #78C2AD; }
+
+/* 3. 필터 뱃지 (민트&핑크 조합) */
+.filter-section {
+    margin: 25px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.filter-badge {
+    text-decoration: none;
+    padding: 8px 18px;
+    border-radius: 30px;
+    background: #fff;
+    border: 1.5px solid #eee;
+    color: #888;
+    font-size: 0.85rem;
+    transition: 0.3s;
+}
+.filter-badge.active {
+    background: #78C2AD;
+    border-color: #78C2AD;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(120, 194, 173, 0.3);
+}
+.filter-badge:hover:not(.active) {
+    border-color: #FFB7C5;
+    color: #FFB7C5;
+}
+
+/* 4. 테이블 카드 디자인 */
+.table-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+}
+.history-table {
+    margin-bottom: 0;
+}
+.history-table thead th {
+    background-color: #78C2AD;
+    color: white;
+    font-weight: 600;
+    padding: 15px;
+    border: none;
     text-align: center;
 }
-th {
-    background-color: #f4f4f4;
-}
-tr:hover {
-    background-color: #f9f9f9;
-}
-.memo {
-    text-align: left;
-}
-.actions {
-display: flex;
-justify-content: center;
-gap: 8px; /* 버튼 사이 간격 */
+.history-table tbody td {
+    padding: 18px;
+    vertical-align: middle;
+    text-align: center;
+    border-bottom: 1px solid #f8f8f8;
 }
 
-.actions form {
-    margin: 0;
-}
-
-.actions a,
-.actions button {
-    padding: 6px 10px;
-    font-size: 14px;
-    border: none;
-    background-color: #4CAF50;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
+/* 5. 세부 요소 스타일 */
+.todo-link {
     text-decoration: none;
+    color: #444;
+    font-weight: 600;
 }
+.new-tag {
+    font-size: 0.7rem;
+    background: #FFB7C5;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+.nickname {
+    background: #f1fcf9;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #555;
+}
+.score-pill {
+    background: #fff3f5;
+    color: #FFB7C5;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 10px;
+}
+.score-pill.is-empty { background: #f5f5f5; color: #ccc; }
 
-.actions button {
-    background-color: #f44336;
+/* 6. 수정/삭제 버튼 */
+.btn-mint, .btn-pink {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    border: none;
+    text-decoration: none;
+    color: white !important;
+    transition: 0.2s;
 }
+.btn-mint { background: #78C2AD; }
+.btn-pink { background: #FFB7C5; margin-left: 4px; }
+.btn-mint:hover { background: #66b19c; transform: scale(1.05); }
+.btn-pink:hover { background: #ffa4b5; transform: scale(1.05); }
 
-.actions a:hover {
-    background-color: #45a049;
-}
-
-.actions button:hover {
-    background-color: #d32f2f;
-}
-a {
-	color : black;
-	text-decoration : none;
-}
-a:hover {
-	color : pink;
+/* 메모 열 너비 제한 */
+.memo-col {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
