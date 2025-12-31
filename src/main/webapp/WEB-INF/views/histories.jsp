@@ -54,13 +54,13 @@
 	            <c:forEach var="history" items="${historyList}" varStatus="status">
 	                <tr>
 	                    <td>${status.count}</td>
-	                    <td class="text-start px-4">
+	                    <td class="text-start">
 	                        <a href="${pageContext.request.contextPath}/history/detail?history_id=${history.id}" class="todo-link">
 	                            ${history.todo.title}
-	                        </a>
 	                        <c:if test="${history.newComment}">
 	                            <span class="new-tag">NEW</span>
 	                        </c:if>
+	                        </a>
 	                    </td>
 	                    <td><span class="nickname">${history.member.nickname}</span></td>
 	                    <td><fmt:formatDate value="${history.completed_at}" pattern="yyyy-MM-dd" /></td>
