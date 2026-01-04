@@ -10,74 +10,73 @@
 </head>
 <body class="wallet-body">
 
-<div class="wallet-container">
+<div class="container wallet-container">
 
   <div class="page-head">
     <h1 class="page-title">💸 가계부 전체 목록</h1>
-
-    <!-- 등록 버튼 -->
-    <!-- 기존 a 태그에 클래스만 추가 -->
     <a class="btn btn-primary" href="${pageContext.request.contextPath}/wallet/create">+ 새 항목 등록</a>
   </div>
 
   <!-- 항목 리스트 테이블 -->
-  <table class="wallet-table">
-      <thead>
-          <tr>
-              <th>ID</th>
-              <th>품목명</th>
-              <th>카테고리</th>
-              <th>가격</th>
-              <th>수량</th>
-              <th>단위</th>
-              <th>단가(1개당)</th>
-              <th>구매처</th>
-              <th>유형</th>
-              <th>구매일</th>
-              <th>메모</th>
-              <th>관리</th>
-          </tr>
-      </thead>
-      <tbody>
-          <c:forEach var="item" items="${walletList}">
-              <tr>
-                  <td class="num">${item.id}</td>
-                  <td class="strong">${item.item_name}</td>
-                  <td>
-                    <span class="badge badge-cat">${item.category}</span>
-                  </td>
-                  <td class="num">
-                    <fmt:formatNumber value="${item.price}" pattern="#,###" />원
-                  </td>
-                  <td class="num">${item.quantity}</td>
-                  <td>${item.unit}</td>
-                  <td class="num">
-                      <c:if test="${item.unit_count != 0}">
-                          <span class="chip chip-price">
-                            <fmt:formatNumber value="${item.price / item.unit_count}" pattern="#,###"/>원
-                          </span>
-                      </c:if>
-                  </td>
-                  <td>${item.store}</td>
-                  <td>
-                    <span class="badge badge-type">${item.type}</span>
-                  </td>
-                  <td><fmt:formatDate value="${item.purchase_date}" pattern="yyyy-MM-dd"/></td>
-                  <td class="memo">${item.memo}</td>
-                  <td class="actions">
-                      <a class="btn btn-ghost" href="${pageContext.request.contextPath}/wallet/edit?id=${item.id}">✏️ 수정</a>
-                      <a class="btn btn-danger" href="${pageContext.request.contextPath}/wallet/delete?id=${item.id}&member_id=${member_id}" onclick="return confirm('정말 삭제할까요?');">🗑️ 삭제</a>
-                  </td>
-              </tr>
-          </c:forEach>
-      </tbody>
-  </table>
+  <div class="table-card">
+	  <table class="wallet-table">
+	    <thead>
+	      <tr>
+	        <th>ID</th>
+	        <th>품목명</th>
+	        <th>카테고리</th>
+	        <th>가격</th>
+	        <th>수량</th>
+	        <th>단위</th>
+	        <th>단가(1개당)</th>
+	        <th>구매처</th>
+	        <th>유형</th>
+	        <th>구매일</th>
+	        <th>메모</th>
+	        <th>관리</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <c:forEach var="item" items="${walletList}">
+	        <tr>
+	          <td class="num">${item.id}</td>
+	          <td class="strong">${item.item_name}</td>
+	          <td>
+	            <span class="badge badge-cat">${item.category}</span>
+	          </td>
+	          <td class="num">
+	            <fmt:formatNumber value="${item.price}" pattern="#,###" />원
+	          </td>
+	          <td class="num">${item.quantity}</td>
+	          <td>${item.unit}</td>
+	          <td class="num">
+	            <c:if test="${item.unit_count != 0}">
+	              <span class="chip chip-price">
+	              	<fmt:formatNumber value="${item.price / item.unit_count}" pattern="#,###"/>원
+	              </span>
+	            </c:if>
+	          </td>
+	          <td>${item.store}</td>
+	          <td>
+	            <span class="badge badge-type">${item.type}</span>
+	          </td>
+	          <td><fmt:formatDate value="${item.purchase_date}" pattern="yyyy-MM-dd"/></td>
+	          <td class="memo">${item.memo}</td>
+	          <td class="actions">
+	            <a class="btn btn-ghost" href="${pageContext.request.contextPath}/wallet/edit?id=${item.id}">✏️ 수정</a>
+	            <a class="btn btn-danger" href="${pageContext.request.contextPath}/wallet/delete?id=${item.id}&member_id=${member_id}" onclick="return confirm('정말 삭제할까요?');">🗑️ 삭제</a>
+	          </td>
+	        </tr>
+	      </c:forEach>
+	    </tbody>
+	  </table>
+	</div>
 
   <!-- 단가 비교 검색 -->
   <form class="compare-form" action="${pageContext.request.contextPath}/wallet/compare" method="get">
-      <input type="hidden" name="member_id" value="${member_id}" />
-      <input class="input" type="text" name="item_name" placeholder="비교할 품목명 입력" required/>
-      <button class="btn btn-outline" type="submit">📊 단가 비교</button>
+    <input type="hidden" name="member_id" value="${member_id}" />
+    <input class="input" type="text" name="item_name" placeholder="비교할 품목명 입력" required/>
+    <button class="btn btn-outline" type="submit">📊 단가 비교</button>
   </form>
 
 </div>

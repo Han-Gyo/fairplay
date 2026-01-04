@@ -11,7 +11,7 @@
 </head>
 <body class="bg-light">
   <div class="container todo-page">
-    <div class="d-flex justify-content-between align-items-end mb-4">
+    <div class="d-flex justify-content-between">
       <div>
         <h1 class="text-primary fw-bolder mb-0">🧹${group.name} 그룹의 할 일 리스트</h1>
       </div>
