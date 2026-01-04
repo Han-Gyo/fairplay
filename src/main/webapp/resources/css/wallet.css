@@ -73,6 +73,7 @@
     background: #78C2AD;
     color: white !important;
     padding: 6px 14px;
+    border: none;
     border-radius: 8px;
     text-decoration: none;
     font-size: 0.85rem;
@@ -82,6 +83,7 @@
     background: #FFB7C5; /* 연핑크 삭제 버튼 */
     color: white !important;
     padding: 6px 14px;
+    border: none;
     border-radius: 8px;
     text-decoration: none;
     font-size: 0.85rem;
@@ -158,7 +160,7 @@
 /* 3. 상단 '새 항목 등록' 버튼 */
 .btn-primary:hover {
     background-color: #66b19c !important;
-    transform: translateY(-2px); /* 위로 살짝 들리는 효과 */
+    transform: scale(1.05);
     box-shadow: 0 6px 15px rgba(120, 194, 173, 0.3);
     transition: all 0.2s ease-in-out;
 }

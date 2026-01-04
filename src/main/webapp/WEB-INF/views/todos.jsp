@@ -9,7 +9,7 @@
   <title>To Do List</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/todos.css">
 </head>
-<body class="bg-light">
+<body>
   <div class="container todo-page">
     <div class="d-flex justify-content-between">
       <div>
