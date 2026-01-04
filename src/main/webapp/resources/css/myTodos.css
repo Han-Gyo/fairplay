@@ -1,10 +1,6 @@
 @charset "UTF-8";
-/* 1. 전체 컨테이너 및 배경 설정 */
-.mytodos-body {
-    background-color: #fcfcfc; /* 부드러운 화이트 배경 */
-}
 
-/* 2. 타이틀 스타일 */
+/* 1. 타이틀 스타일 */
 .page-title {
     color: #78C2AD; /* Minty 메인 컬러 */
     font-weight: 800;
@@ -17,7 +13,7 @@
     gap: 10px;
 }
 
-/* 3. 테이블 카드 디자인 (이미지 속 라운드 스타일) */
+/* 2. 테이블 카드 디자인 (이미지 속 라운드 스타일) */
 .table-card {
     background: white;
     border-radius: 20px;
@@ -53,7 +49,7 @@
     font-size: 0.9rem;
 }
 
-/* 4. 할 일 제목 & 그룹 뱃지 (이미지 스타일 적용) */
+/* 3. 할 일 제목 & 그룹 뱃지 (이미지 스타일 적용) */
 .todo-item-flex {
     display: flex;
     justify-content: space-between; /* 양 끝 정렬 */
@@ -78,7 +74,7 @@
     box-shadow: 0 2px 6px rgba(255, 183, 197, 0.4);
 }
 
-/* 5. 상태 뱃지 및 기타 요소 */
+/* 4. 상태 뱃지 및 기타 요소 */
 .status-badge {
     padding: 5px 12px;
     border-radius: 8px;
@@ -88,7 +84,7 @@
 .status-badge.done { background: #e8f5e9; color: #4caf50; }
 .status-badge.pending { background: #fff5f5; color: #ff6b6b; }
 
-/* 6. 수정/완료/포기 버튼 (이미지 속 버튼 스타일 적용) */
+/* 5. 수정/완료/포기 버튼 */
 /* 완료 버튼 (민트) */
 button[onclick*="completeTodo"] {
     background: #78C2AD;
@@ -128,7 +124,7 @@ button:hover {
     filter: brightness(0.95);
 }
 
-/* 7. 하단 링크 */
+/* 6. 하단 링크 */
 .back-link {
     display: inline-block;
     text-decoration: none;
