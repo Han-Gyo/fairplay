@@ -11,8 +11,8 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/myTodos.css">
 </head>
 <body class="mytodos-body">
-  <div class="mytodos-container">
-    <h2 class="page-title">📌 내가 맡은 할 일 목록</h2>
+  <div class="container mytodos-container">
+    <h1 class="page-title">📌 내가 맡은 할 일 목록</h1>
     <div class="table-card">
       <div class="table-responsive">
         <table class="mytodos-table">
