@@ -73,11 +73,28 @@
 	</div>
 
   <!-- 단가 비교 검색 -->
-  <form class="compare-form" action="${pageContext.request.contextPath}/wallet/compare" method="get">
-    <input type="hidden" name="member_id" value="${member_id}" />
-    <input class="input" type="text" name="item_name" placeholder="비교할 품목명 입력" required/>
-    <button class="btn btn-outline" type="submit">📊 단가 비교</button>
-  </form>
+<div class="compare-section card border-0 shadow-sm rounded-4 mt-5">
+  <div class="card-body p-4">
+    <div class="d-flex align-items-center mb-3">
+      <h5 class="fw-bold text-dark mb-0">
+        <i class="fas fa-chart-bar text-primary me-2"></i>최저가 똑똑하게 비교하기
+      </h5>
+    </div>
+    
+    <form class="compare-form-new" action="${pageContext.request.contextPath}/wallet/compare" method="get">
+      <input type="hidden" name="member_id" value="${member_id}" />
+      <div class="input-group-custom">
+        <div class="search-input-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input class="input-field" type="text" name="item_name" placeholder="어떤 품목의 단가가 궁금하신가요?" required/>
+        </div>
+        <button class="btn-compare-gradient" type="submit">
+          <span>📊 단가 분석하기</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
 </div>
 </body>

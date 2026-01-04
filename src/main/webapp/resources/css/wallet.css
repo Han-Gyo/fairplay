@@ -100,48 +100,65 @@
 .badge-type { background-color: #fff0f3; color: #FFB7C5; }
 
 /* 6. 하단 검색 폼 (중앙 정렬 및 여백) */
-.compare-form {
-    margin-top: 40px;
+/* 단가 비교 섹션 전체 컨테이너 */
+.compare-section {
+    background: linear-gradient(145deg, #ffffff, #f0f9f7); /* 미세한 그라데이션 */
+    border: 1px solid rgba(120, 194, 173, 0.2) !important;
+}
+
+/* 커스텀 입력 그룹 */
+.input-group-custom {
     display: flex;
-    justify-content: center;
+    gap: 12px;
     align-items: center;
-    gap: 15px;
-    padding: 30px;
+}
+
+/* 입력창 감싸는 영역 */
+.search-input-wrapper {
+    position: relative;
+    flex-grow: 1;
+}
+
+.search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #78C2AD;
+}
+
+/* 메인 입력 필드 */
+.input-field {
+    width: 100%;
+    border: 2px solid #eee;
+    border-radius: 50px;
+    padding: 14px 25px 14px 50px; /* 아이콘 공간 확보 */
+    font-size: 1rem;
+    transition: all 0.3s ease;
     background: white;
-    border-radius: 25px;
-    border: 1px solid #f0f0f0;
 }
 
-.compare-form .input {
-    border: 1.5px solid #eee;
-    border-radius: 30px;
-    padding: 10px 25px;
-    width: 300px;
+.input-field:focus {
+    border-color: #78C2AD;
+    box-shadow: 0 0 0 4px rgba(120, 194, 173, 0.1);
     outline: none;
-    transition: 0.3s;
 }
 
-.compare-form .input:focus { border-color: #78C2AD; }
-
-.btn-outline {
-    background: #78C2AD;
-    border: 2px solid #78C2AD;
+/* 그라데이션 버튼 (포인트!) */
+.btn-compare-gradient {
+    background: linear-gradient(135deg, #78C2AD, #6cc3d5);
     color: white;
-    padding: 10px 25px;
-    border-radius: 30px;
-    font-weight: bold;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 50px;
+    font-weight: 700;
     cursor: pointer;
-}
-
-.btn-outline:hover {
-    background: #66b19c;
-    color: white;
-    transform: scale(1.05);
-    transition: all 0.2s ease-in-out;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(108, 195, 213, 0.3);
 }
 
 /* --- 버튼 Hover 효과 추가 --- */
-
 /* 1. 수정 버튼 (민트색 유지하면서 살짝 어둡게) */
 .btn-ghost:hover {
     background-color: #66b19c !important; /* 조금 더 진한 민트 */
@@ -161,5 +178,12 @@
     background-color: #66b19c !important;
     transform: scale(1.05);
     box-shadow: 0 6px 15px rgba(120, 194, 173, 0.3);
+    transition: all 0.2s ease-in-out;
+}
+
+/* 4. 하단 '단가 분석하기' 버튼*/
+.btn-compare-gradient:hover {
+		background-color: #66b19c !important;
+	  transform: scale(1.05);
     transition: all 0.2s ease-in-out;
 }
