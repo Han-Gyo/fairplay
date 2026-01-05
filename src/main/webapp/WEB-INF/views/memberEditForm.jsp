@@ -39,13 +39,19 @@
 
                 <!-- 닉네임 -->
                 <div class="mb-3">
-                    <label for="nickname" class="form-label fw-bold">닉네임</label>
+                    <label for="nickname" class="form-label fw-bold">
+                        <i class="fas fa-user-tag me-1 text-success"></i> 닉네임
+                    </label>
                     <div class="input-group">
                         <input type="text" class="form-control" id="nickname" name="nickname" value="${member.nickname}" required>
-                        <button type="button" class="btn btn-outline-success" id="checkNicknameBtn">중복 확인</button>
+                        <button type="button" class="btn btn-success" id="checkNicknameBtn">
+                            <i class="fas fa-search"></i> 중복 확인
+                        </button>
                     </div>
-                    <div id="nicknameCheckResult" class="form-text mt-1 text-success"></div>
+                    <!-- 결과 메시지 영역 -->
+                    <div id="nicknameCheckResult" class="mt-2"></div>
                 </div>
+
 
                 <!-- 프로필 이미지 -->
                 <div class="mb-3">
@@ -77,9 +83,26 @@
 
                 <!-- 이메일 -->
                 <div class="mb-3">
-                    <label for="email" class="form-label fw-bold">이메일</label>
-                    <input type="email" class="form-control" id="email" name="email" value="${member.email}" required>
+                    <label for="email" class="form-label fw-bold">
+                        <i class="fas fa-envelope me-1 text-primary"></i> 이메일
+                    </label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="email" name="email" value="${member.email}" required>
+                        <button type="button" class="btn btn-primary" id="sendEmailCodeBtn">
+                            <i class="fas fa-paper-plane"></i> 인증번호 발송
+                        </button>
+                    </div>
+                    <div class="input-group mt-2">
+                        <input type="text" class="form-control" id="emailCode" placeholder="인증번호 입력">
+                        <button type="button" class="btn btn-success" id="verifyEmailCodeBtn">
+                            <i class="fas fa-check-circle"></i> 인증 확인
+                        </button>
+                    </div>
+                    <!-- 결과 메시지 영역 -->
+                    <div id="emailCheckResult" class="mt-2"></div>
                 </div>
+
+
 
                 <!-- 휴대폰 번호 -->
                 <div class="mb-3">
