@@ -46,6 +46,66 @@ public class MemberServiceImpl implements MemberService {
     // 전달받은 Member 객체를 Repository로 전달하여 DB 업데이트 수행 (Update)
     @Override
     public void update(Member member) {
+        // 기존 회원 정보 조회
+        Member existing = memberRepository.findById(member.getId());
+        if (existing == null) {
+            throw new RuntimeException("회원 정보를 찾을 수 없습니다.");
+        }
+
+        // user_id: 비어 있으면 기존 값 유지
+        if (member.getUser_id() == null || member.getUser_id().isEmpty()) {
+            member.setUser_id(existing.getUser_id());
+        }
+
+        // real_name: 비어 있으면 기존 값 유지
+        if (member.getReal_name() == null || member.getReal_name().isEmpty()) {
+            member.setReal_name(existing.getReal_name());
+        }
+
+        // nickname: 비어 있으면 기존 값 유지
+        if (member.getNickname() == null || member.getNickname().isEmpty()) {
+            member.setNickname(existing.getNickname());
+        }
+
+        // email: Controller에서 인증 여부 체크 후 넘어오기 때문에 여기서는 단순히 null 방지만
+        if (member.getEmail() == null || member.getEmail().isEmpty()) {
+            member.setEmail(existing.getEmail());
+        }
+
+        // address: 비어 있으면 기존 값 유지
+        if (member.getAddress() == null || member.getAddress().isEmpty()) {
+            member.setAddress(existing.getAddress());
+        }
+
+        // phone: 비어 있으면 기존 값 유지
+        if (member.getPhone() == null || member.getPhone().isEmpty()) {
+            member.setPhone(existing.getPhone());
+        }
+
+        // profileImage: 비어 있으면 기존 값 유지
+        if (member.getProfileImage() == null || member.getProfileImage().isEmpty()) {
+            member.setProfileImage(existing.getProfileImage());
+        }
+
+        // password: 여기서는 변경하지 않음 (별도 changePassword 로직 사용)
+        member.setPassword(existing.getPassword());
+
+        // status: null 방지
+        if (member.getStatus() == null) {
+            member.setStatus(existing.getStatus());
+        }
+
+        // role: null 방지
+        if (member.getRole() == null || member.getRole().isEmpty()) {
+            member.setRole(existing.getRole());
+        }
+
+        // inactive_at: null 방지
+        if (member.getInactive_at() == null) {
+            member.setInactive_at(existing.getInactive_at());
+        }
+
+        // 최종 업데이트 실행
         memberRepository.update(member);
     }
 
