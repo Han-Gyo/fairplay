@@ -16,7 +16,7 @@
 
 <div class="wallet-form-container">
   <h1 class="wallet-form-title">
-    ${wallet.id == 0 ? "➕ 새 항목 등록" : "✏️ 항목 수정"}
+    ${wallet.id == 0 ? "💸가계부 등록" : "✏️ 항목 수정"}
   </h1>
 
   <form class="wallet-form"

@@ -1,71 +1,136 @@
-/* 전체 배경 & 폰트 */
-:root{
-  --bg-grad-top:#e0f7ff;  /* 하늘 그라데 상단 */
-  --bg-grad-bot:#f6fcff;  /* 하늘 그라데 하단 */
-  --primary:#5ac8fa;      /* 하늘 포인트 */
-  --primary-200:#b9ebff;  /* 옅은 테두리/배경 */
-  --text:#333;
-  --muted:#777;
-  --card-bg:#fff;
-  --border:#e6f4ff;
-  --focus-ring: rgba(90,200,250,.28);
-}
-.wallet-form-body{
-  background: linear-gradient(180deg, var(--bg-grad-top), var(--bg-grad-bot));
-  font-family:'Pretendard','Noto Sans KR',system-ui,-apple-system,sans-serif;
-  color:var(--text); min-height:100vh; padding:40px 16px; margin:0;
+@charset "UTF-8";
+
+/* 기본 배경 및 폰트 설정 */
+.wallet-form-body {
+    background-color: #f8f9fa;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 상단 고정 */
+    min-height: 100vh;
+    margin: 0;
+    padding: 80px 20px 40px 20px;
 }
 
-.wallet-form-container{
-  max-width:700px; margin:0 auto; padding:28px 24px;
-  background:var(--card-bg); border-radius:16px;
-  box-shadow:0 8px 24px rgba(0,0,0,.08);
-  border:1px solid var(--primary-200);
+/* 폼 컨테이너 */
+.wallet-form-container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 450px; /* 모든 등록 폼 너비 통일 */
+    padding: 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
 }
 
-.wallet-form-title{ text-align:center; font-size:22px; margin:6px 0 22px; }
-
-.form-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.wallet-form-container .form-group{ margin-bottom:16px; }
-.wallet-form-container .form-group label{ display:block; font-weight:700; margin-bottom:8px; color:#444; }
-
-.wallet-form-container input[type="text"],
-.wallet-form-container input[type="number"],
-.wallet-form-container input[type="date"],
-.wallet-form-container select,
-.wallet-form-container textarea{
-  width:100%; padding:11px 12px; box-sizing:border-box;
-  border:1px solid var(--border); border-radius:10px; background:#fff;
-  outline:none; transition:border-color .2s, box-shadow .2s, transform .04s;
+/* 타이틀 스타일 */
+.wallet-form-title {
+    color: #78C2AD;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
 }
-.wallet-form-container input:focus,
-.wallet-form-container select:focus,
-.wallet-form-container textarea:focus{
-  border-color:var(--primary); box-shadow:0 0 0 4px var(--focus-ring);
-}
-.wallet-form-container textarea{ resize:vertical; min-height:100px; }
-.hint{ margin-top:6px; font-size:12px; color:var(--muted); }
 
-.form-btns{ display:flex; gap:10px; justify-content:space-between; margin-top:20px; }
-.btn-submit,.btn-cancel{
-  display:inline-block; min-width:120px; text-align:center;
-  padding:12px 18px; border-radius:12px; font-weight:600; cursor:pointer;
-  border:none; text-decoration:none; transition:transform .06s, box-shadow .2s, background-color .2s;
+/* 입력 그룹 공통 */
+.form-group {
+    margin-bottom: 0.8rem;
 }
-.btn-submit{
-  background:var(--primary); color:#fff;
-  box-shadow:0 8px 18px rgba(90,200,250,.25);
-}
-.btn-submit:hover{ filter:brightness(1.03); box-shadow:0 10px 22px rgba(90,200,250,.32); }
-.btn-submit:active{ transform:translateY(1px); }
 
-.btn-cancel{
-  background:#f5fbff; color:#1b3d52; border:1px solid var(--border);
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #5a5a5a;
+    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
 }
-.btn-cancel:hover{ background:#edf8ff; }
-.btn-cancel:active{ transform:translateY(1px); }
 
-@media (max-width:520px){
-  .wallet-form-container{ padding:22px 16px; }
-  .form-row{ grid-template-columns:1fr; }
+/* 2열 레이아웃 (가격/수량, 단위/개수) */
+.form-row {
+    display: flex;
+    gap: 10px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* 모든 입력 필드 스타일 통일 */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 2px solid #f1f3f5;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background-color: #fdfdfd;
+}
+
+/* 메모장 높이 및 폰트 조절 */
+.form-group textarea {
+    font-size: 15px;
+    height: 80px;
+    resize: none;
+    padding-top: 0.7rem;
+}
+
+/* 포커스 효과 (민티 민트) */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #78C2AD;
+    box-shadow: 0 0 0 4px rgba(120, 194, 173, 0.1);
+}
+
+/* 힌트 텍스트 (민티 핑크) */
+.hint {
+    font-size: 0.75rem;
+    color: #f3969a;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* 버튼 영역 */
+.form-btns {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
+}
+
+.btn-submit {
+    flex: 2;
+    background-color: #78C2AD;
+    color: white;
+    border: none;
+    padding: 0.9rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cancel {
+    flex: 1;
+    background-color: #f3969a;
+    color: white !important;
+    text-decoration: none;
+    text-align: center;
+    padding: 0.9rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-submit:hover, .btn-cancel:hover {
+    transform: translateY(-2px);
+    filter: brightness(0.9);
 }
