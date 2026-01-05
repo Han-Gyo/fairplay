@@ -15,10 +15,10 @@
 .todo-form-container {
     background: #ffffff;
     width: 100%;
-    max-width: 500px;
-    padding: 2rem;
-    border-radius: 20px; /* 둥글둥글하게 MZ 느낌 */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 */
+    max-width: 450px;
+    padding: 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     border: 1px solid #e9ecef;
 }
 
@@ -27,22 +27,22 @@
     color: #78C2AD; /* 민티 메인 컬러 */
     font-weight: 700;
     text-align: center;
-    margin-bottom: 1.5rem;
-    font-size: 1.6rem;
+    margin-bottom: 1.rem;
+    font-size: 1.4rem;
     letter-spacing: -0.5px;
 }
 
 /* 입력 그룹 공통 */
 .form-group {
-    margin-bottom: 1.2rem;
+    margin-bottom: 0.8rem;
 }
 
 .form-group label {
     display: block;
     font-weight: 600;
     color: #5a5a5a;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
 }
 
 /* 입력 필드 (Input, Select) */
