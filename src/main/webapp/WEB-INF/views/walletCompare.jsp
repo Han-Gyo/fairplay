@@ -9,7 +9,7 @@
 </head>
 <body class="score-body">
 <div class="score-container">
-<h1>📊 "${item_name}" 단가 비교</h1>
+<h1>📊 ${item_name} 단가 비교</h1>
 
 <a href="${pageContext.request.contextPath}/wallet?member_id=${param.member_id}">← 목록으로 돌아가기</a>
 
@@ -41,11 +41,11 @@
             label: "단가 (₩)",
             data: unitPrices,
             borderWidth: 1,
-            backgroundColor: "rgba(54, 162, 235, 0.5)",
-            borderColor: "rgba(54, 162, 235, 1)",
-            borderRadius: 6,
-            hoverBackgroundColor: "rgba(54, 162, 235, 0.65)",
-            maxBarThickness: 48
+            backgroundColor: "#78C2AD",
+            borderColor: "#78C2AD",
+            borderRadius: 10,
+            hoverBackgroundColor: "#64a190",
+            maxBarThickness: 40
         }]
     };
 

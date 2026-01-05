@@ -1,3 +1,7 @@
+/* 배경색 */
+body {
+	background-color: #f8f9fa;
+}
 /* 1. 상단 내비바 높이 조절 */
 .history-page {
     padding-top: 10px !important; 
