@@ -49,13 +49,25 @@
 	          </td>
 	          <td class="num">${item.quantity}</td>
 	          <td>${item.unit}</td>
-	          <td class="num">
-	            <c:if test="${item.unit_count != 0}">
-	              <span class="chip chip-price">
-	              	<fmt:formatNumber value="${item.price / item.unit_count}" pattern="#,###"/>원
-	              </span>
-	            </c:if>
-	          </td>
+						<td class="num">
+						  <c:set var="totalCount" value="${item.quantity * (item.unit_count > 0 ? item.unit_count : 1)}" />
+						  
+						  <c:if test="${totalCount != 0}">
+						    <span class="chip chip-price">
+						      <c:choose>
+						        <c:when test="${item.unit == 'mL' || item.unit == 'ml' || item.unit == 'g'}">
+						          <fmt:formatNumber value="${(item.price / totalCount) * 100}" pattern="#,###"/>원
+						          <small style="font-size: 0.75rem; color: #666;">/100${item.unit}</small>
+						        </c:when>
+						        
+						        <c:otherwise>
+						          <fmt:formatNumber value="${item.price / totalCount}" pattern="#,###"/>원
+						          <small style="font-size: 0.75rem; color: #666;">/개</small>
+						        </c:otherwise>
+						      </c:choose>
+						    </span>
+						  </c:if>
+						</td>
 	          <td>${item.store}</td>
 	          <td>
 	            <span class="badge badge-type">${item.type}</span>

@@ -67,6 +67,12 @@
       </div>
     </div>
 
+		<div class="form-group info-feedback-box" style="margin-bottom: 20px; padding: 10px; background: #f0f7ff; border-radius: 8px;">
+		  <p id="live-feedback" style="margin: 0; color: #007bff; font-weight: bold; font-size: 0.95rem;">
+		    ✏️ 내용을 입력하면 요약이 나타나요!
+		  </p>
+		</div>
+		
     <div class="form-group">
       <label for="store">구매처</label>
       <input type="text" id="store" name="store"
@@ -101,4 +107,56 @@
 </div>
 
 </body>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 요소들 정확히 매칭
+  var itemName = document.getElementById('item_name');
+  var price = document.getElementById('price');
+  var quantity = document.getElementById('quantity');
+  var unitCount = document.getElementById('unit_count');
+  var unit = document.getElementById('unit');
+  var feedback = document.getElementById('live-feedback');
+
+  function updateFeedback() {
+    // 1. 값 가져오기 & 숫자 변환
+    var nameVal = itemName.value ? itemName.value.trim() : "";
+    var qVal = (quantity && quantity.value) ? parseFloat(quantity.value) : 0;
+    var cVal = (unitCount && unitCount.value) ? parseFloat(unitCount.value) : 0;
+    var uVal = (unit && unit.value) ? unit.value.trim() : "";
+
+    if (nameVal || qVal || cVal || uVal) {
+      // 1. 기본 시작
+      var message = '💡 ' + (nameVal !== "" ? nameVal : '___') + ' ';
+      
+      // 2. 수량 및 묶음 정보 조합
+      var totalCount = (cVal > 0) ? (qVal * cVal) : qVal;
+
+      if (cVal > 1) {
+        // 묶음 상품인 경우 (예: 신라면 4개입 - 총 8봉지)
+        message += qVal + '개입 세트 총 ' + totalCount + uVal + '를 사셨군요!';
+      } else {
+        // 일반 상품인 경우
+        message += (qVal > 0 ? qVal : '0') + uVal + '를 사셨군요!';
+      }
+
+      feedback.innerText = message;
+    } else {
+      feedback.innerText = '✏️ 내용을 입력하면 요약이 나타나요!';
+    }
+  }
+
+  // 모든 관련 필드에 이벤트 연결
+  var inputs = [itemName, quantity, unitCount, unit];
+  for (var i = 0; i < inputs.length; i++) {
+    if (inputs[i]) {
+      inputs[i].addEventListener('input', updateFeedback);
+    }
+  }
+
+  // 초기 로드 실행
+  updateFeedback();
+});
+</script>
+
 </html>
