@@ -143,33 +143,28 @@
                 </div>
             </form>
 
-            <!-- 비밀번호 변경 -->
-            <hr class="my-4">
-            <h5 class="text-primary"><i class="fas fa-key me-2"></i>비밀번호 변경</h5>
-            <form action="${pageContext.request.contextPath}/mypage/changePw" method="post">
-                <c:if test="${not empty error}">
-                    <div class="alert alert-danger">${error}</div>
-                </c:if>
-                <c:if test="${not empty message}">
-                    <div class="alert alert-success">${message}</div>
-                </c:if>
-
-                <div class="mb-3">
-                    <label for="currentPassword" class="form-label fw-bold">현재 비밀번호</label>
-                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" required />
-                </div>
-                <div class="mb-3">
-                    <label for="newPassword" class="form-label fw-bold">새 비밀번호</label>
-                    <input type="password" class="form-control" id="newPassword" name="newPassword" required />
-                </div>
-                <div class="mb-3">
-                    <label for="confirmPassword" class="form-label fw-bold">새 비밀번호 확인</label>
-                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required />
-                </div>
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-warning">비밀번호 변경</button>
-                </div>
-            </form>
+			<!-- 비밀번호 변경 -->
+			<hr class="my-4">
+			<h5 class="text-primary"><i class="fas fa-key me-2"></i>비밀번호 변경</h5>
+			<form id="pwChangeForm" action="${pageContext.request.contextPath}/mypage/changePw" method="post">
+			    <div class="mb-3">
+			        <label for="currentPassword" class="form-label fw-bold">현재 비밀번호</label>
+			        <input type="password" class="form-control" id="currentPassword" name="currentPassword" required />
+			    </div>
+			    <div class="mb-3">
+			        <label for="newPassword" class="form-label fw-bold">새 비밀번호</label>
+			        <input type="password" class="form-control" id="newPassword" name="newPassword" required />
+			    </div>
+			    <div class="mb-3">
+			        <label for="confirmPassword" class="form-label fw-bold">새 비밀번호 확인</label>
+			        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required />
+			    </div>
+			    <!-- 결과 메시지 영역 -->
+			    <div id="pwChangeResult" class="mt-2"></div>
+			    <div class="d-flex justify-content-end">
+			        <button type="submit" class="btn btn-warning">비밀번호 변경</button>
+			    </div>
+			</form>
         </div>
     </div>
 </div>

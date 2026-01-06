@@ -242,6 +242,51 @@ document.addEventListener('DOMContentLoaded', function () {
 	            modalImage.src = '';
 	        });
 	    }
+		
+		// ===== 비밀번호 변경 ===== //
+		const pwForm = document.getElementById("pwChangeForm");
+		const currentPw = document.getElementById("currentPassword");
+		const newPw = document.getElementById("newPassword");
+		const confirmPw = document.getElementById("confirmPassword");
+		const pwChangeResult = document.getElementById("pwChangeResult");
+
+		if (pwForm) {
+		    pwForm.addEventListener("submit", function(e) {
+		        e.preventDefault(); // 기본 폼 제출 막기
+
+		        // 클라이언트 측 유효성 검사
+		        if (newPw.value.length < 8) {
+		            showResult(pwChangeResult, "비밀번호는 최소 8자리 이상이어야 합니다.", "danger");
+		            return;
+		        }
+		        if (newPw.value !== confirmPw.value) {
+		            showResult(pwChangeResult, "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.", "danger");
+		            return;
+		        }
+
+		        // 서버 요청 (JSON 응답)
+		        fetch(contextPath + "/mypage/changePw", {
+		            method: "POST",
+		            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+		            body: "currentPassword=" + encodeURIComponent(currentPw.value) +
+		                  "&newPassword=" + encodeURIComponent(newPw.value) +
+		                  "&confirmPassword=" + encodeURIComponent(confirmPw.value)
+		        })
+		        .then(res => res.json())
+		        .then(data => {
+		            if (data.result === "success") {
+		                showResult(pwChangeResult, data.message, "success");
+		                pwForm.reset(); // 성공 시 폼 초기화
+		            } else {
+		                showResult(pwChangeResult, data.message, "danger");
+		            }
+		        })
+		        .catch(err => {
+		            console.error("❌ 비밀번호 변경 오류:", err);
+		            showResult(pwChangeResult, "서버 오류가 발생했습니다.", "danger");
+		        });
+		    });
+		}
 	});
 
 	// 주소 검색 API 실행 함수
@@ -273,3 +318,5 @@ document.addEventListener('DOMContentLoaded', function () {
 	        });
 	    }
 	});
+	
+	

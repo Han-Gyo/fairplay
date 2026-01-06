@@ -135,41 +135,44 @@ public class MyPageController {
     }
     
     
-    // 비밀번호 변경
+    // 비밀번호 변경 (JSON 응답 버전)
     @PostMapping("/changePw")
-    public String changePassword(@RequestParam String currentPassword,
-                                 @RequestParam String newPassword,
-                                 @RequestParam String confirmPassword,
-                                 HttpSession session,
-                                 org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public Map<String, String> changePassword(@RequestParam String currentPassword,
+                                              @RequestParam String newPassword,
+                                              @RequestParam String confirmPassword,
+                                              HttpSession session) {
+        Map<String, String> result = new HashMap<>();
 
-        // 세션에서 로그인된 사용자 가져오기
+        // 로그인 여부 확인
         Member loginMember = (Member) session.getAttribute("loginMember");
-
         if (loginMember == null) {
-            redirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
-            return "redirect:/member/login";
+            result.put("result", "fail");
+            result.put("message", "로그인이 필요합니다.");
+            return result;
         }
 
-        // 현재 비밀번호가 일치하지 않을 경우
+        // 현재 비밀번호 검증
         if (!memberService.checkPassword(loginMember.getId(), currentPassword)) {
-            redirectAttributes.addFlashAttribute("error", "현재 비밀번호가 틀렸습니다.");
-            return "redirect:/mypage/edit?id=" + loginMember.getId();
+            result.put("result", "fail");
+            result.put("message", "현재 비밀번호가 틀렸습니다.");
+            return result;
         }
 
-        // 새 비밀번호와 확인 비밀번호가 일치하지 않을 경우
+        // 새 비밀번호와 확인 비밀번호 일치 여부 확인
         if (!newPassword.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("error", "새 비밀번호가 일치하지 않습니다.");
-            return "redirect:/mypage/edit?id=" + loginMember.getId();
+            result.put("result", "fail");
+            result.put("message", "새 비밀번호가 일치하지 않습니다.");
+            return result;
         }
 
         // 비밀번호 변경 실행
         memberService.changePassword(loginMember.getId(), newPassword);
 
-        // 성공 메시지 전달
-        redirectAttributes.addFlashAttribute("message", "비밀번호가 성공적으로 변경되었습니다.");
-
-        return "redirect:/member/edit?id=" + loginMember.getId();
+        // 성공 응답 반환
+        result.put("result", "success");
+        result.put("message", "비밀번호가 성공적으로 변경되었습니다.");
+        return result;
     }
 
     
