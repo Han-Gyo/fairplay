@@ -8,8 +8,10 @@ public class GroupMemberInfoDTO {
 	private int totalScore;
 	private int weeklyScore;
 	private int warningCount;
-	private int id;			// group_member.id
+	private int id;			
+	private int memberId;
 	private int groupId;	// 그룹 ID -> 추방 시 필요
+	private int monthlyScore;	// 이번 달 집안일 점수
 	
 	
 	
@@ -60,6 +62,18 @@ public class GroupMemberInfoDTO {
 	}
 	public void setGroupId(int groupId) {
 		this.groupId = groupId;
+	}
+	public int getMemberId() {
+		return memberId;
+	}
+	public void setMemberId(int memberId) {
+		this.memberId = memberId;
+	}
+	public int getMonthlyScore() {
+		return monthlyScore;
+	}
+	public void setMonthlyScore(int monthlyScore) {
+		this.monthlyScore = monthlyScore;
 	}
 	
 	

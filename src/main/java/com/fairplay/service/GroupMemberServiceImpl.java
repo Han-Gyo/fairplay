@@ -5,20 +5,25 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fairplay.domain.Group;
 import com.fairplay.domain.GroupMember;
 import com.fairplay.domain.GroupMemberInfoDTO;
 import com.fairplay.repository.GroupMemberRepository;
+import com.fairplay.repository.GroupRepository;
 
 @Service
 public class GroupMemberServiceImpl implements GroupMemberService{
 
 	
 	private final GroupMemberRepository gmRepo;
+	private final GroupRepository groupRepository;
 	
 	// 생성자 주입 방식 (의존성 주입)
 	@Autowired
-	public GroupMemberServiceImpl(GroupMemberRepository gmRepo) {
+	public GroupMemberServiceImpl(GroupMemberRepository gmRepo,
+								  GroupRepository groupRepository) {
 		this.gmRepo = gmRepo;
+		this.groupRepository = groupRepository;
 	}
 	
 	@Override
@@ -46,13 +51,14 @@ public class GroupMemberServiceImpl implements GroupMemberService{
 	}
 
 	@Override
-	public void delete(int id) {
-		gmRepo.delete(id);
+	public void delete(int groupId, int memberId) {
+		System.out.println("삭제 요청 들어옴: " + groupId + ", " + memberId);  // 삭제 요청으로 Id 값들 잘 들어오는지 확인
+		gmRepo.delete(groupId, memberId);
 		
 	}
 
 	@Override
-	public boolean isGroupMember(int groupId, int memberId) {
+	public boolean isGroupMember(Long groupId, Long memberId) {
 		
 		return gmRepo.isGroupMember(groupId, memberId);
 	}
@@ -62,7 +68,59 @@ public class GroupMemberServiceImpl implements GroupMemberService{
 	public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
 		return gmRepo.findMemberInfoByGroupId(groupId);
 	}
-	
+
+	// 그룹 멤버 수 조회
+	@Override
+	public int countByGroupId(int groupId) {
+	    return gmRepo.countByGroupId(groupId); 
+	}
+
+	// 그룹 탈퇴 로직 구현
+	@Override
+	public void leaveGroup(int memberId, int groupId) {
+		
+		// 그룹 멤버에서 본인 row 삭제
+		gmRepo.deleteByMemberIdAndGroupId(memberId, groupId);
+		
+		// 삭제 후 남은 인원 수 체크
+		int remaining = gmRepo.countByGroupId(groupId);
+		
+		// 남은 인원이 0이면 그룹 자체 삭제
+		if (remaining == 0) {
+			groupRepository.deleteById(groupId);
+		}
+	}
+
+	// 그룹 내 역할 조회
+	@Override
+	public String findRoleByMemberIdAndGroupId(int memberId, int groupId) {
+		return gmRepo.findRoleByMemberIdAndGroupId(memberId, groupId);
+	}
+
+	// 그룹 내에서 리더를 제외한 멤버 목록 조회 (위임 대상용)
+	@Override
+	public List<GroupMemberInfoDTO> findMembersExcludingLeader(int groupId) {
+		return gmRepo.findMembersExcludingLeader(groupId);
+	}
+
+	// 리더 위임 처리
+	@Override
+	public void updateRoleToLeader(int groupId, int memberId) {
+		gmRepo.updateRoleToLeader(groupId, memberId);
+	}
+
+	// 내가 가입한 그룹 리스트 반환 (그룹명, ID 포함)
+	@Override
+	public List<Group> findGroupsByMemberId(Long memberId) {
+		return gmRepo.findGroupsByMemberId(memberId);
+	}
+
+	@Override
+    public Integer findDefaultGroupId(int memberId) {
+        // 최근 가입 기준. 필요하면 ASC로 바꿔 '첫 가입' 기준으로 전환.
+        return gmRepo.findLatestGroupIdByMember(memberId);
+    }
+
 	
 	
 }

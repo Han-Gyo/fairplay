@@ -1,0 +1,71 @@
+/* 1. 기본 레이아웃 및 폰트 */
+body {
+  font-family: 'NanumSquare', 'Segoe UI', sans-serif;
+  background-color: #f8f9fa;
+}
+
+.todo-page {
+  padding-top: 5px !important;
+  padding-bottom: 80px;
+}
+
+/* 2. 카드 공통 스타일 (Minty 특유의 둥글함) */
+.rounded-4 {
+  border-radius: 1.25rem !important;
+}
+
+.todo-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #ffffff;
+}
+
+.todo-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(120, 194, 173, 0.15) !important;
+}
+
+/* 3. 버튼 크기 고정 (중요!) */
+.btn-fixed {
+  width: 60px; 
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-xs {
+  width: 60px;
+  height: 30px;
+  border: none;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-xss {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+	display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* 4. Minty 테마 컬러 보조색 */
+.bg-info-light { background-color: #e3f2fd; }
+.bg-success-light { background-color: #e8f5e9; }
+
+/* 5. 텍스트 및 제목 스타일 */
+.text-primary { color: #78C2AD !important; font-size: 1.8rem;} /* Minty 메인색 */
+.btn-info { background-color: #6cc3d5 !important; border-color: #6cc3d5 !important; }
+.h1 {font-size: 1.8rem !important;}
+
+/* 6. 입력창 커스텀 */
+.form-select:focus, .form-control:focus {
+  border-color: #78C2AD;
+  box-shadow: 0 0 0 0.25rem rgba(120, 194, 173, 0.25);
+}
+
+.input-group-text {
+  border: none;
+}

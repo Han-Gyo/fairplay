@@ -1,103 +1,149 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%-- 
+  수정 사항:
+  1. nav.jsp에 이미 html, head, body 태그 및 Bootstrap 라이브러리가 포함되어 있으므로 
+     본 파일에서는 본문(Content) 위주로 구성함.
+  2. nav.jsp의 fixed-top 네비게이션 바 높이를 고려하여 여백(padding-top) 추가.
+  3. 이모티콘 제거 및 주석으로 코드 정리.
+--%>
 <%@ include file="/WEB-INF/views/nav.jsp" %>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>마이페이지</title>
-    <meta charset="UTF-8">
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
-    <!-- Bootstrap (선택사항) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Nanum Gothic', sans-serif;
-            background: linear-gradient(135deg, #fce3ec, #ffe6f7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 40px;
-            width: 400px;
-        }
+<!-- 커스텀 CSS (nav.jsp 로드 이후에 위치하여 마이페이지 전용 스타일 적용) -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/myPage.css" />
 
-        h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-        }
+<style>
+    /* 네비게이션 바(fixed-top)에 가려지지 않도록 패딩 추가 */
+    .mypage-container {
+        padding-top: 100px;
+        padding-bottom: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+    
+    .glass-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 550px;
+    }
 
-        .info-line {
-            margin: 10px 0;
-            font-size: 16px;
-            color: #444;
-        }
+    .profile-img-container {
+        text-align: center;
+        margin-bottom: 25px;
+    }
 
-        .action-links {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
+    .profile-img {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        object-fit: cover;
+        cursor: pointer;
+        border: 3px solid #78c2ad; /* Minty 테마 포인트 컬러 사용 */
+        transition: 0.3s;
+    }
 
-        .btn-custom {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            background: #ff8ec7;
-            color: white;
-            transition: 0.3s;
-            text-decoration: none;
-        }
+    .info-group {
+        margin-bottom: 15px;
+        border-bottom: 1px solid #f1f1f1;
+        padding-bottom: 8px;
+    }
 
-        .btn-custom:hover {
-            background: #e471b0;
-        }
+    .info-label {
+        font-weight: bold;
+        color: #78c2ad;
+        width: 100px;
+        display: inline-block;
+    }
 
-        .btn-danger {
-            background: #ff5e7e;
-        }
+    .action-links {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
 
-        .btn-danger:hover {
-            background: #d94c68;
-        }
-    </style>
-</head>
-<body>
+    /* 모달 기본 스타일 */
+    #imageModal {
+        display: none;
+        position: fixed;
+        z-index: 3000; /* nav.jsp의 z-index보다 높게 설정 */
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8);
+        justify-content: center;
+        align-items: center;
+    }
+    #modalImg { max-width: 90%; max-height: 90%; }
+</style>
+
+<div class="mypage-container">
     <div class="glass-card">
-        <h2>👤 마이페이지</h2>
+        <h3 class="text-center mb-4">마이페이지</h3>
 
-        <div class="info-line">실명: ${member.real_name}</div>
-        <div class="info-line">아이디: ${member.user_id}</div>
-        <div class="info-line">닉네임: ${member.nickname}</div>
-        <div class="info-line">이메일: ${member.email}</div>
-        <div class="info-line">전화번호: ${member.phone}</div>
-        <div class="info-line">주소: ${member.address}</div>
-        <div class="info-line">가입일: ${member.created_at}</div>
-        
-        <!-- 👇 enum 상태 확인용 -->
-    	<div class="info-line">회원 상태: ${member.status}</div>
-
-        <div class="action-links">
-            <a class="btn-custom" href="${pageContext.request.contextPath}/member/edit?id=${member.id}">정보 수정</a>
-
-            <form action="${pageContext.request.contextPath}/member/deactivate" method="post"
-                  onsubmit="return confirm('정말 탈퇴하시겠습니까?')">
-                <input type="hidden" name="id" value="${member.id}" />
-                <button type="submit" class="btn-custom btn-danger">회원 탈퇴</button>
-            </form>
+        <!-- 프로필 이미지 섹션 -->
+        <div class="profile-img-container">
+            <c:choose>
+                <c:when test="${member.profileImage ne 'default_profile.png'}">
+                    <img src="${pageContext.request.contextPath}/upload/profile/${member.profileImage}"
+                         alt="Profile" class="profile-img"
+                         onclick="showImageModal(this.src)" />
+                </c:when>
+                <c:otherwise>
+                    <img src="${pageContext.request.contextPath}/resources/img/default-profile.png"
+                         alt="Default Profile" class="profile-img"
+                         onclick="showImageModal(this.src)" />
+                </c:otherwise>
+            </c:choose>
         </div>
+
+        <!-- 상세 정보 리스트 -->
+        <div class="info-group"><span class="info-label">실명</span> ${member.real_name}</div>
+        <div class="info-group"><span class="info-label">아이디</span> ${member.user_id}</div>
+        <div class="info-group"><span class="info-label">닉네임</span> ${member.nickname}</div>
+        <div class="info-group"><span class="info-label">이메일</span> ${member.email}</div>
+        <div class="info-group"><span class="info-label">전화번호</span> ${member.phone}</div>
+        <div class="info-group"><span class="info-label">주소</span> ${member.address}</div>
+        <div class="info-group"><span class="info-label">가입일</span> ${member.created_at}</div>
+        <div class="info-group"><span class="info-label">회원 상태</span> ${member.status}</div>
+
+        <!-- 하단 버튼 영역 -->
+		<div class="action-links">
+		    <!-- 정보 수정 버튼 -->
+		    <form action="${pageContext.request.contextPath}/member/edit" method="get">
+		        <input type="hidden" name="id" value="${member.id}" />
+		        <button type="submit" class="btn btn-primary action-btn">정보 수정</button>
+		    </form>
+		
+		    <!-- 회원 탈퇴 버튼 -->
+		    <form action="${pageContext.request.contextPath}/member/deactivate" method="post"
+		          onsubmit="return confirm('정말 탈퇴하시겠습니까?')">
+		        <input type="hidden" name="id" value="${member.id}" />
+		        <button type="submit" class="btn btn-outline-danger action-btn">회원 탈퇴</button>
+		    </form>
+		</div>
+
+
+
     </div>
-</body>
-</html>
+</div>
+
+<!-- 이미지 확대 모달 -->
+<div id="imageModal" onclick="this.style.display='none'">
+    <img id="modalImg" src="" alt="Enlarged" />
+</div>
+
+<script>
+    /**
+     * 이미지 확대 모달 제어
+     */
+    function showImageModal(src) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        modal.style.display = 'flex';
+        modalImg.src = src;
+    }
+</script>

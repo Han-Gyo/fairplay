@@ -254,10 +254,38 @@
             <scope>runtime</scope>
         </dependency>
 
+		<!-- JSON 변환기: jackson-databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.13.5</version>
+		</dependency>
         
-        
-         
-        
+		<dependency>
+		  <groupId>com.fasterxml.jackson.datatype</groupId>
+		  <artifactId>jackson-datatype-jsr310</artifactId>
+		  <version>2.13.5</version> <!-- 내가 쓰는 버전에 맞게 조정 -->
+		</dependency>
+		
+    <dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-context-support</artifactId>
+	    <version>${org.springframework-version}</version> 
+	</dependency>
+    
+    <!-- JavaMail API (Jakarta Mail 또는 javax.mail) -->
+	<dependency>
+	    <groupId>com.sun.mail</groupId>
+	    <artifactId>jakarta.mail</artifactId>
+	    <version>1.6.7</version>
+	</dependency>  
+	
+	<dependency>
+	    <groupId>org.springframework.security</groupId>
+	    <artifactId>spring-security-crypto</artifactId>
+	    <version>${security-version}</version>
+	</dependency>  
+    
   </dependencies>
   
 	<build>

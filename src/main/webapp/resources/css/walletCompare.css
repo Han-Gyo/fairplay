@@ -1,0 +1,74 @@
+@charset "UTF-8";
+/* 페이지 전체 배경 및 폰트 */
+.score-body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 80px 20px 40px 20px; /* 네비바 공간 확보 */
+  color: #2c3e50;
+  min-height: 100vh;
+}
+
+/* 전체 컨테이너 */
+.score-container {
+  max-width: 850px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 제목 스타일 */
+.score-container h1 {
+  color: #78C2AD;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  letter-spacing: -0.5px;
+}
+
+/* 뒤로가기 버튼 */
+.score-container a {
+  align-self: flex-start;
+  display: inline-block;
+  text-decoration: none;
+  color: #ffffff !important;
+  background-color: #f3969a;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(243, 150, 154, 0.2);
+}
+
+.score-container a:hover {
+  background-color: #e08589;
+  transform: translateY(-2px);
+}
+
+/* 차트 카드 영역 */
+.chart-card {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e9ecef;
+  text-align: center;
+}
+
+/* 차트 캔버스 랩퍼 */
+.chart-wrap {
+  position: relative;
+  height: 400px; /* 차트 높이 확보 */
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* 하단 힌트 텍스트 */
+.hint {
+  color: #868e96;
+  font-size: 0.85rem;
+  font-weight: 500;
+}

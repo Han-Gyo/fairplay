@@ -17,4 +17,29 @@ public interface MemberRepository {
 	void deactivate(int id);
 	
 	Member findByUserId(String user_id);
+	
+	// user_id가 DB에 존재하는지 여부를 boolean으로 반환
+	boolean existsByUserId(String userId);
+	
+	// 닉네임 존재 여부 확인
+	boolean existsByNickname(String nickname);
+	
+	// 이메일 존재 여부 확인
+	boolean existsByEmail(String email);
+	
+	// 아이디 + 이메일로 회원 정보 조회
+	Member findByUserIdAndEmail(String userId, String email);
+	
+	// 이메일로 회원 조회
+	Member findByEmail(String email);
+	
+	// 비밀번호만 수정
+	int updatePassword(Member member);
+	
+	// 회원의 비밀번호를 ID 기준으로 수정하는 메서드
+	void updatePassword(int id, String encodedPassword);
+	
+	// 실명 + 이메일로 회원 조회 (아이디 찾기용)
+	Member findByRealNameAndEmail(String realName, String email);
+	
 }

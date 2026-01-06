@@ -4,7 +4,7 @@
 
 <html>
 <head>
-    <title>그룹 멤버 수정</title>
+    <title>그룹에 가입된 멤버 수정</title>
     <link href="<c:url value='/resources/css/bootstrap.min.css' />" rel="stylesheet">
     <style>
         body {

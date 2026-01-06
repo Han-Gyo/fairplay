@@ -1,0 +1,190 @@
+/* 1. 전체 레이아웃 및 여백 조정 */
+.wallet-body {
+    padding-bottom: 80px;
+    font-family: 'Pretendard', sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* 2. 상단 타이틀 영역 */
+.page-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px; /* 테이블과의 간격 확보 */
+}
+
+.page-title {
+    color: #78C2AD;
+    font-weight: 800;
+    font-size: 1.8rem;
+    margin: 0;
+    letter-spacing: -1px;
+}
+/* 3. 테이블 카드 디자인 */
+.table-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.wallet-table {
+    width: 100%;
+    border-collapse: separate; /* 라운딩 적용을 위해 separate 사용 */
+    border-spacing: 0;
+}
+
+.wallet-table thead th {
+    background-color: #78C2AD;
+    color: white;
+    font-weight: 600;
+    padding: 15px;
+    border: none;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+/* 테이블 헤더 좌우 끝부분 라운딩 처리 */
+.wallet-table thead tr th:first-child { border-radius: 20px 0 0 20px; }
+.wallet-table thead tr th:last-child { border-radius: 0 20px 20px 0; }
+
+.wallet-table tbody td {
+    padding: 15px 10px;
+    vertical-align: middle;
+    text-align: center;
+    border-bottom: 1px solid #f8f8f8;
+    color: #5a5a5a;
+}
+
+/* 4. 버튼 및 요소 스타일 */
+.btn-primary {
+    background-color: #78C2AD;
+    color: white !important;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 10px rgba(120, 194, 173, 0.2);
+}
+
+.btn-ghost {
+    background: #78C2AD;
+    color: white !important;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+.btn-danger {
+    background: #FFB7C5; /* 연핑크 삭제 버튼 */
+    color: white !important;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin-left: 5px;
+}
+
+/* 5. 뱃지 디자인 */
+.badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.badge-cat { background-color: #e9f7f4; color: #78C2AD; }
+.badge-type { background-color: #fff0f3; color: #FFB7C5; }
+
+/* 6. 하단 검색 폼 (중앙 정렬 및 여백) */
+/* 단가 비교 섹션 전체 컨테이너 */
+.compare-section {
+    background: linear-gradient(145deg, #ffffff, #f0f9f7); /* 미세한 그라데이션 */
+    border: 1px solid rgba(120, 194, 173, 0.2) !important;
+}
+
+/* 커스텀 입력 그룹 */
+.input-group-custom {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* 입력창 감싸는 영역 */
+.search-input-wrapper {
+    position: relative;
+    flex-grow: 1;
+}
+
+.search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #78C2AD;
+}
+
+/* 메인 입력 필드 */
+.input-field {
+    width: 100%;
+    border: 2px solid #eee;
+    border-radius: 50px;
+    padding: 14px 25px 14px 50px; /* 아이콘 공간 확보 */
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.input-field:focus {
+    border-color: #78C2AD;
+    box-shadow: 0 0 0 4px rgba(120, 194, 173, 0.1);
+    outline: none;
+}
+
+/* 그라데이션 버튼 (포인트!) */
+.btn-compare-gradient {
+    background: linear-gradient(135deg, #78C2AD, #6cc3d5);
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(108, 195, 213, 0.3);
+}
+
+/* --- 버튼 Hover 효과 추가 --- */
+/* 1. 수정 버튼 (민트색 유지하면서 살짝 어둡게) */
+.btn-ghost:hover {
+    background-color: #66b19c !important; /* 조금 더 진한 민트 */
+    transform: scale(1.05); /* 살짝 커지는 효과 */
+    transition: all 0.2s ease-in-out;
+}
+
+/* 2. 삭제 버튼 (연핑크에서 조금 더 진한 핑크로) */
+.btn-danger:hover {
+    background-color: #ffa4b5 !important; /* 조금 더 진한 핑크 */
+    transform: scale(1.05);
+    transition: all 0.2s ease-in-out;
+}
+
+/* 3. 상단 '새 항목 등록' 버튼 */
+.btn-primary:hover {
+    background-color: #66b19c !important;
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(120, 194, 173, 0.3);
+    transition: all 0.2s ease-in-out;
+}
+
+/* 4. 하단 '단가 분석하기' 버튼*/
+.btn-compare-gradient:hover {
+		background-color: #66b19c !important;
+	  transform: scale(1.05);
+    transition: all 0.2s ease-in-out;
+}

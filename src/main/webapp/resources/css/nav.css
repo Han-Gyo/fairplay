@@ -1,0 +1,130 @@
+.navbar .nav-link {
+  color: #fff ;   /* 흰색 유지 */
+  font-weight: 100;         /* 기본보다 굵게 */
+}
+
+body {
+  padding-top: 70px; /* 네비게이션 높이만큼 여백 확보 */
+}
+
+
+/* 캘린더 모달 스타일 */
+.fc-header-toolbar {
+  margin-top: 60px !important;
+}
+
+#calendarModal {
+  background-color: rgba(255, 192, 203, 0.2);
+  overflow: hidden;
+}
+
+#calendarModal .modal-content {
+  background: #fff0f5;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+  text-align: center;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 캘린더 버튼 */
+.fc .fc-button {
+  background-color: #ffb6c1;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+.fc .fc-button:hover {
+  background-color: #ff8da7;
+}
+
+.fc .fc-button.fc-button-active {
+  background-color: #ff69b4;
+  border: none;
+}
+
+.fc-toolbar-title {
+  color: #e75480;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.fc-daygrid-day:hover {
+  background-color: #ffe4e9;
+}
+
+.fc-day-today {
+  background-color: #ffeef2 !important;
+  border: 1px solid #ffb6c1 !important;
+}
+
+.calendar-toggle {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  z-index: 1500;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+}
+
+.calendar-toggle a {
+  border: none;
+  text-decoration: none;
+  outline: none;
+  font-size: 20px;
+}
+
+.calendar-toggle p {
+  font-size: 12px;
+  margin-top: -3px;
+  color: black;
+}
+
+.calendar-toggle p:hover {
+  color: darkgray;
+}
+
+#calendar-full {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+}
+
+#scheduleModal {
+  z-index: 3000 !important;
+}
+
+.modal-backdrop {
+  z-index: 2500 !important;
+}
+
+#todoList, #schedule-container {
+  text-align: left;
+  padding-left: 20px;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.calendar-custom-modal {
+  background: #fff0f5;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.15);
+  text-align: center;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 1000px;
+}

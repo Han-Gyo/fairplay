@@ -20,6 +20,7 @@ public class GroupMemberInfoRowMapper implements RowMapper<GroupMemberInfoDTO>{
 		dto.setWarningCount(rs.getInt("warning_count"));
 		dto.setId(rs.getInt("id"));
 		dto.setGroupId(rs.getInt("group_id"));
+		dto.setMemberId(rs.getInt("member_id"));
 		return dto;
 	}
 

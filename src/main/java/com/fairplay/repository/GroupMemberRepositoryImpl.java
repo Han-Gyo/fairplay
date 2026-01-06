@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.fairplay.domain.Group;
 import com.fairplay.domain.GroupMember;
 import com.fairplay.domain.GroupMemberInfoDTO;
 import com.fairplay.mapper.GroupMemberInfoRowMapper;
@@ -71,16 +72,16 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 	}
 
 	@Override
-	public void delete(int id) {
+	public void delete(int groupId, int memberId) {
 		
-		String sql = "delete from group_member where id = ?";
+		String sql = "delete from group_member where group_id = ? AND member_id = ?";
 		
-		jdbcTemplate.update(sql, id);
+		jdbcTemplate.update(sql, groupId, memberId);
 		
 	}
 
 	@Override
-	public boolean isGroupMember(int groupId, int memberId) {
+	public boolean isGroupMember(Long groupId, Long memberId) {
 		
 		// 주어진 그룹 ID와 멤버 ID가 모두 일치하는 데이터가 group_member 테이블에 존재하는지 확인하는 SQL
 		String sql = "select count(*) from group_member where group_id = ? and member_id = ?";
@@ -94,7 +95,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 
 	@Override
 	public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
-		String sql = "SELECT gm.id, gm.group_id, m.nickname, m.real_name, " +
+		String sql = "SELECT gm.id, gm.group_id, gm.member_id, m.nickname, m.real_name, " +
 	             	 "gm.role, gm.total_score, gm.weekly_score, gm.warning_count " +
 	             	 "FROM group_member gm " +
 	             	 "JOIN member m ON gm.member_id = m.id " +
@@ -104,8 +105,74 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
 						
 		return jdbcTemplate.query(sql, new GroupMemberInfoRowMapper(), groupId);
 	}
+
+	@Override
+	public int countByGroupId(int groupId) {
+		String sql = "SELECT COUNT(*) FROM group_member WHERE group_id = ?";
+		return jdbcTemplate.queryForObject(sql, Integer.class, groupId);
+	}
+
+	// 그룹장 탈퇴 전용 처리
+	@Override
+	public void deleteByMemberIdAndGroupId(int memberId, int groupId) {
+		String sql = "DELETE FROM group_member WHERE member_id = ? AND group_id = ?";
+	    jdbcTemplate.update(sql, memberId, groupId);
+	}
+
+	// 그룹 내 역할 조회
+	@Override
+	public String findRoleByMemberIdAndGroupId(int memberId, int groupId) {
+		String sql = "SELECT role FROM group_member WHERE member_id = ? AND group_id = ?";
+	    return jdbcTemplate.queryForObject(sql, String.class, memberId, groupId);
+	}
+
+	// 그룹 내에서 리더를 제외한 멤버 목록 조회 (위임 대상)
+	@Override
+	public List<GroupMemberInfoDTO> findMembersExcludingLeader(int groupId) {
+		String sql = "SELECT gm.id, gm.group_id, gm.member_id, m.nickname, m.real_name, " +
+	             "gm.role, gm.total_score, gm.weekly_score, gm.warning_count " +
+	             "FROM group_member gm " +
+	             "JOIN member m ON gm.member_id = m.id " +
+	             "WHERE gm.group_id = ? AND gm.role != 'LEADER'";
+
+		return jdbcTemplate.query(sql, new GroupMemberInfoRowMapper(), groupId);
+	}
+
+	@Override
+	public void updateRoleToLeader(int groupId, int memberId) {
+		String sql = "UPDATE group_member SET role = 'LEADER' WHERE group_id = ? AND member_id = ?";
+		jdbcTemplate.update(sql, groupId, memberId);
+	}
+
+	// 내가 가입한 그룹 리스트 반환 (그룹명, ID 포함)
+	@Override
+	public List<Group> findGroupsByMemberId(Long memberId) {
+	    String sql = "SELECT g.id, g.name " +
+	                 "FROM group_member gm " +
+	                 "JOIN `group` g ON gm.group_id = g.id " +
+	                 "WHERE gm.member_id = ?";
+	    
+	    return jdbcTemplate.query(sql, (rs, rowNum) -> {
+	        Group group = new Group();
+	        group.setId(rs.getInt("id"));
+	        group.setName(rs.getString("name"));
+	        return group;
+	    }, memberId);
+	}
 	
-	
-	
+	@Override
+	public Integer findLatestGroupIdByMember(int memberId) {
+	    // 최근 가입 = PK(id) 기준 내림차순
+	    String sql =
+	        "SELECT group_id " +
+	        "FROM group_member " +
+	        "WHERE member_id = ? " +
+	        "ORDER BY id DESC " +   // ← created_at 대신 id 사용
+	        "LIMIT 1";
+
+	    List<Integer> ids = jdbcTemplate.query(sql, (rs, i) -> rs.getInt("group_id"), memberId);
+	    return ids.isEmpty() ? null : ids.get(0);
+	}
+
 
 }

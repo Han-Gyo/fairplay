@@ -1,0 +1,138 @@
+@charset "UTF-8";
+.mytodos-body {
+	background-color: #f8f9fa;
+}
+/* 1. 타이틀 스타일 */
+.page-title {
+  color: #78C2AD; /* Minty 메인 컬러 */
+  font-weight: 800;
+  font-size: 1.8rem;
+  margin-top: 2px;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 2. 테이블 카드 디자인 (이미지 속 라운드 스타일) */
+.table-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.mytodos-table {
+  width: 100%;
+  margin-bottom: 0;
+  border-collapse: collapse;
+}
+
+/* 테이블 헤더 - 이미지와 동일한 민트 배경 */
+.mytodos-table thead th {
+  background-color: #78C2AD;
+  color: white !important;
+  font-weight: 600;
+  padding: 15px;
+  border: none;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+/* 테이블 바디 */
+.mytodos-table tbody td {
+  padding: 12px 15px;
+  vertical-align: middle;
+  text-align: center;
+  border-bottom: 1px solid #f8f8f8;
+  color: #5a5a5a;
+  font-size: 0.9rem;
+}
+
+/* 3. 할 일 제목 & 그룹 뱃지 (이미지 스타일 적용) */
+.todo-item-flex {
+  display: flex;
+  justify-content: space-between; /* 양 끝 정렬 */
+  align-items: center;
+  width: 100%;
+  padding: 5px 10px;
+}
+
+.todo-title-text {
+  font-weight: 500;
+  color: #444;
+}
+
+/* 이미지 속 핑크색 배지 스타일 */
+.group-badge {
+  background-color: #FFB7C5; /* 이미지의 핑크색 */
+  color: white;
+  padding: 4px 12px;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(255, 183, 197, 0.4);
+}
+
+/* 4. 상태 뱃지 및 기타 요소 */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.status-badge.done { background: #e8f5e9; color: #4caf50; }
+.status-badge.pending { background: #fff5f5; color: #ff6b6b; }
+
+/* 5. 수정/완료/포기 버튼 */
+/* 완료 버튼 (민트) */
+button[onclick*="completeTodo"] {
+	background: #78C2AD;
+	color: white !important;
+	border: none;
+	padding: 6px 14px;
+	border-radius: 8px;
+	font-size: 0.8rem;
+	transition: 0.2s;
+	cursor: pointer;
+}
+
+/* 수정 버튼 (이미지의 연한 민트 느낌) */
+form[action*="update"] button {
+  background: #a2d9ce; /* 버튼용 연한 민트 */
+  color: white !important;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  margin-left: 4px;
+}
+
+/* 포기 버튼 (핑크) */
+form[action*="unassign"] button {
+  background: #FFB7C5; /* 이미지의 핑크색 */
+  color: white !important;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+/* 버튼 호버 효과 */
+button:hover {
+  transform: scale(1.05);
+  filter: brightness(0.95);
+}
+
+/* 6. 하단 링크 */
+.back-link {
+  display: inline-block;
+  text-decoration: none;
+  color: #999;
+  font-size: 0.9rem;
+  margin-top: 20px;
+  transition: 0.2s;
+}
+.back-link:hover { color: #78C2AD; }

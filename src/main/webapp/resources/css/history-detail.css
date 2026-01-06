@@ -1,0 +1,277 @@
+/* 디자인 토큰(색/간격) */
+:root {
+  --bg: #f6f8fb;
+  --card-bg: #ffffff;
+  --text: #1f2937;        /* 진한 회색 */
+  --muted: #6b7280;       /* 설명용 회색 */
+  --primary: #7c5cff;     /* 포인트(퍼플) */
+  --primary-weak: #efeaff;
+  --accent: #00bcd4;      /* 서브 포인트(민트/시안) */
+  --border: #e5e7eb;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow-sm: 0 2px 10px rgba(17, 24, 39, 0.06);
+  --shadow-md: 0 8px 24px rgba(17, 24, 39, 0.08);
+}
+
+/* 페이지 기본 레이아웃 */
+html, body {
+  background: radial-gradient(1200px 600px at 0% 0%, #f0f5ff 0%, transparent 50%) fixed,
+              radial-gradient(800px 400px at 100% 0%, #f0fffb 0%, transparent 50%) fixed,
+              var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+               "Noto Sans KR", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+}
+
+/* 가운데 정렬 + 최대 폭 제한 */
+body {
+  max-width: 960px;
+  margin: 36px auto 80px;
+  padding: 0 20px;
+}
+
+/* 제목 스타일 */
+h2 {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  margin: 8px 0 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+h2::after {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  border-radius: 999px;
+}
+
+/* 섹션 카드 공통 */
+.section-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+}
+
+/* 정보 블록(p 태그들) → 보기 좋게 라인 맞추기 */
+p {
+  margin: 10px 0;
+  line-height: 1.6;
+}
+p > strong {
+  display: inline-block;
+  min-width: 92px; /* 라벨 칸 폭 고정해서 정렬감 */
+  color: var(--muted);
+}
+
+/* 구분선 */
+hr {
+  border: none;
+  border-top: 1px dashed var(--border);
+  margin: 24px 0;
+}
+
+/* 인증사진 프레임 */
+img[alt="인증사진"] {
+  display: block;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  max-width: 480px;   /* 넓은 화면에서 과하게 커지지 않게 */
+  width: 100%;
+  height: auto;
+  margin-top: 8px;
+}
+
+/* 소제목(댓글) */
+h3 {
+  font-size: 20px;
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+h3::before {
+  content: "💬";
+}
+
+/* ===== 댓글 리스트 카드 ===== */
+
+/* 개별 댓글 카드 */
+.comment-wrapper {
+  position: relative; /* 드롭다운 포지셔닝 기준 */
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 14px 12px 14px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.06s ease, box-shadow 0.12s ease;
+}
+.comment-wrapper:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* 헤더: 작성자, 날짜, 더보기 아이콘 라인 */
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.comment-header strong {
+  font-weight: 700;
+}
+.comment-header small {
+  color: var(--muted);
+}
+
+/* ⋮ 더보기 아이콘 */
+.material-icons.menu-toggle {
+  font-size: 22px;
+  color: #6b7280;
+  padding: 4px;
+  border-radius: 8px;
+  transition: background 0.12s ease, color 0.12s ease, transform 0.08s ease;
+  user-select: none;
+}
+.material-icons.menu-toggle:hover {
+  background: #f3f4f6;
+  color: var(--text);
+  transform: scale(1.04);
+}
+.material-icons.menu-toggle:active {
+  transform: scale(0.98);
+}
+
+/* 드롭다운 메뉴 */
+.comment-menu {
+  position: absolute;
+  right: 10px;
+  top: 32px;
+  display: none; /* JS로 토글 */
+  min-width: 120px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: var(--shadow-md);
+  z-index: 1200; /* 네비보다 위로 */
+  animation: menuIn 120ms ease;
+}
+@keyframes menuIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.comment-menu button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 8px 10px;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.comment-menu button:hover {
+  background: #f6f7fb;
+}
+
+/* 본문 */
+.comment-content p {
+  margin: 6px 0 2px;
+  line-height: 1.7;
+  word-break: break-word;
+}
+
+/* ===== 댓글 작성 폼 ===== */
+form[action$="/history/comments/add"] {
+  margin-top: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 16px;
+}
+textarea[name="content"],
+textarea.edit-area {
+  width: 100%;
+  min-height: 92px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  transition: box-shadow 0.12s ease, border-color 0.12s ease;
+}
+textarea[name="content"]:focus,
+textarea.edit-area:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-weak);
+}
+
+/* 버튼 공통 */
+button {
+  appearance: none;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+button:hover {
+  background: #6b54ff;
+  box-shadow: 0 6px 18px rgba(124, 92, 255, 0.22);
+  transform: translateY(-1px);
+}
+button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* 링크(뒤로가기) */
+a {
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.12s ease, color 0.12s ease;
+}
+a:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* 모바일 대응 */
+@media (max-width: 560px) {
+  body { margin: 24px auto 56px; }
+  h2 { font-size: 24px; }
+  p > strong { min-width: 78px; }
+  .comment-menu { right: 6px; }
+}
+
+/* 접근성: 포커스 링 */
+.material-icons.menu-toggle:focus,
+button:focus,
+a:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--primary-weak);
+  border-radius: 10px;
+}

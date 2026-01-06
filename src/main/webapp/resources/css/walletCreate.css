@@ -1,0 +1,136 @@
+@charset "UTF-8";
+
+/* 기본 배경 및 폰트 설정 */
+.wallet-form-body {
+    background-color: #f8f9fa;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 상단 고정 */
+    min-height: 100vh;
+    margin: 0;
+    padding: 80px 20px 40px 20px;
+}
+
+/* 폼 컨테이너 */
+.wallet-form-container {
+    background: #ffffff;
+    width: 100%;
+    max-width: 450px; /* 모든 등록 폼 너비 통일 */
+    padding: 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+}
+
+/* 타이틀 스타일 */
+.wallet-form-title {
+    color: #78C2AD;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
+}
+
+/* 입력 그룹 공통 */
+.form-group {
+    margin-bottom: 0.8rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #5a5a5a;
+    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+}
+
+/* 2열 레이아웃 (가격/수량, 단위/개수) */
+.form-row {
+    display: flex;
+    gap: 10px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* 모든 입력 필드 스타일 통일 */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 2px solid #f1f3f5;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background-color: #fdfdfd;
+}
+
+/* 메모장 높이 및 폰트 조절 */
+.form-group textarea {
+    font-size: 15px;
+    height: 80px;
+    resize: none;
+    padding-top: 0.7rem;
+}
+
+/* 포커스 효과 (민티 민트) */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #78C2AD;
+    box-shadow: 0 0 0 4px rgba(120, 194, 173, 0.1);
+}
+
+/* 힌트 텍스트 (민티 핑크) */
+.hint {
+    font-size: 0.75rem;
+    color: #f3969a;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* 버튼 영역 */
+.form-btns {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
+}
+
+.btn-submit {
+    flex: 2;
+    background-color: #78C2AD;
+    color: white;
+    border: none;
+    padding: 0.9rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cancel {
+    flex: 1;
+    background-color: #f3969a;
+    color: white !important;
+    text-decoration: none;
+    text-align: center;
+    padding: 0.9rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-submit:hover, .btn-cancel:hover {
+    transform: translateY(-2px);
+    filter: brightness(0.9);
+}

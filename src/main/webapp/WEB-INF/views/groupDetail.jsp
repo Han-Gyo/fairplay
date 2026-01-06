@@ -1,187 +1,143 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ include file="/WEB-INF/views/nav.jsp" %>
-
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-    <title>그룹 상세 보기</title>
-    <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f4f6f9;
-            padding: 50px;
-        }
-
-        .detail-box {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 25px;
-        }
-
-        .row {
-            margin-bottom: 18px;
-        }
-
-        .label {
-            font-weight: bold;
-            display: inline-block;
-            width: 130px;
-            color: #555;
-        }
-
-        .value {
-            display: inline-block;
-            color: #222;
-        }
-
-        .btn-group {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            margin: 0 10px;
-        }
-
-        .btn-list {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        .btn-edit {
-            background-color: #007bff;
-            color: white;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>그룹 상세</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/group.css" />
 </head>
-<body>
+<body class="group-body" data-context-path="${pageContext.request.contextPath}">
+<div class="group-container">
 
-<div class="detail-box">
-    <h2>📄 그룹 상세 보기</h2>
+  <h1 class="page-title">📌 ${group.name}</h1>
 
-    <div class="row"><span class="label">그룹 이름:</span> <span class="value">${group.name}</span></div>
-    <div class="row"><span class="label">설명:</span> <span class="value">${group.description}</span></div>
-    <div class="row"><span class="label">공개 여부:</span> 
-        <span class="value">
-            <c:choose>
-			  <c:when test="${group.publicStatus}">공개</c:when>
-			  <c:otherwise>비공개</c:otherwise>
-			</c:choose>
+  <div class="card">
+    <div class="grid grid-2">
+      <div>
+        <div class="section-title">그룹 정보</div>
+        <div class="pills">
+          <span class="pill">멤버 ${currentMemberCount} / ${group.maxMember}</span>
+          <span class="pill">생성일 ${group.formattedCreatedAt}</span>
+          <span class="pill"><c:choose><c:when test="${group.publicStatus}">공개</c:when><c:otherwise>비공개</c:otherwise></c:choose></span>
+        </div>
 
-        </span>
+        <div class="sep"></div>
+
+        <div class="section-title">그룹 소개</div>
+        <p style="margin:6px 0 0;">${empty group.description ? '설명이 없어요.' : group.description}</p>
+
+        <div class="sep"></div>
+
+        <c:if test="${not empty group.profile_img}">
+		  <div class="section-title">대표 이미지</div>
+		  <!-- 썸네일: 클릭하면 라이트박스 오픈 -->
+		  <img
+		    class="img-thumb"
+		    src="${pageContext.request.contextPath}/upload/${group.profile_img}"
+		    data-full="${pageContext.request.contextPath}/upload/${group.profile_img}"
+		    alt="대표 이미지" />
+		</c:if>
+
+        
+        <div class="sep"></div>
+
+		<div class="section-title">그룹장 한마디</div>
+		<p style="margin:6px 0 0;">
+		  <c:choose>
+		    <c:when test="${not empty group.admin_comment}">
+		      <c:out value="${group.formattedAdminComment}" escapeXml="false"/>
+		    </c:when>
+		    <c:otherwise>
+		      아직 작성된 한마디가 없어요.
+		    </c:otherwise>
+		  </c:choose>
+		</p>
+        
+      </div>
+
+      <div>
+        <c:if test="${not empty loginMember && loginMember.id == group.leaderId}">
+          <div class="section-title">초대 코드</div>
+          <div class="inline">
+            <input id="codeInput" class="input" value="${group.code}" readonly />
+            <button type="button" class="btn btn-gray" id="copyCodeBtn">복사</button>
+          </div>
+          <div class="help">멤버가 이 코드를 입력하면 그룹에 합류할 수 있어요.</div>
+          <div class="sep"></div>
+        </c:if>
+
+        <div class="section-title">빠른 작업</div>
+        <div class="actions">
+        
+        <c:if test="${not empty loginMember and isMember}">
+		  <div class="sep"></div>
+		  <div class="actions">
+		    <c:choose>
+		      
+		      <c:when test="${loginMember.id == group.leaderId}">
+		        <a class="btn btn-danger"
+		           href="${pageContext.request.contextPath}/groupmember/transferForm?groupId=${group.id}">
+		          리더 위임 후 탈퇴
+		        </a>
+		      </c:when>
+		
+		      
+		      <c:otherwise>
+		        <form action="${pageContext.request.contextPath}/groupmember/delete" method="post"
+		              onsubmit="return confirm('정말 탈퇴하시겠어요?');" style="display:inline;">
+		          <input type="hidden" name="groupId" value="${group.id}" />
+		          <input type="hidden" name="memberId" value="${loginMember.id}" />
+		          <button type="submit" class="btn btn-danger">그룹 탈퇴</button>
+		        </form>
+		      </c:otherwise>
+		    </c:choose>
+		  </div>
+		</c:if>
+        
+          <a class="btn btn-outline" href="${pageContext.request.contextPath}/group/groups">목록</a>
+
+          <c:if test="${not empty loginMember && loginMember.id == group.leaderId}">
+            <a class="btn btn-sky" href="${pageContext.request.contextPath}/group/edit?id=${group.id}">정보 수정</a>
+            <a class="btn btn-danger" data-delete-id="${group.id}" href="${pageContext.request.contextPath}/group/delete?id=${group.id}">그룹 삭제</a>
+          </c:if>
+
+          <c:choose>
+            <c:when test="${empty loginMember}">
+              <a class="btn btn-outline" href="${pageContext.request.contextPath}/member/setRedirect?redirectURI=/group/detail?id=${group.id}">로그인 후 가입</a>
+            </c:when>
+            <c:when test="${isMember}">
+              <button class="btn btn-gray" disabled>이미 가입됨</button>
+            </c:when>
+            <c:otherwise>
+              <a class="btn btn-sky" href="${pageContext.request.contextPath}/groupmember/create?groupId=${group.id}">이 그룹 가입</a>
+            </c:otherwise>
+          </c:choose>
+
+          <c:choose>
+            <c:when test="${group.publicStatus}">
+              <a class="btn btn-outline" href="${pageContext.request.contextPath}/groupmember/list?groupId=${group.id}">멤버 보기</a>
+            </c:when>
+            <c:otherwise>
+              <c:if test="${not empty loginMember && isMember}">
+                <a class="btn btn-outline" href="${pageContext.request.contextPath}/groupmember/list?groupId=${group.id}">멤버 보기</a>
+              </c:if>
+            </c:otherwise>
+          </c:choose>
+        </div>
+      </div>
     </div>
-    
-	<!-- ✅ 초대코드 마스킹 + 복사 기능 (그룹장만 노출) -->
-	<c:if test="${loginMember.id == group.leaderId}">
-	    <div class="row">
-	        <span class="label">초대 코드:</span>
-	        <span class="value">
-	            <input type="password" id="inviteCode" value="${group.code}" readonly 
-	                   style="border: none; background: transparent; width: 100px;" />
-	            <button type="button" onclick="copyInviteCode()">복사</button>
-	        </span>
-	    </div>
-	</c:if>
-	
-    <div class="row">
-	    <span class="label">대표 이미지:</span>
-	    <span class="value">
-	        <c:choose>
-	            
-	            <c:when test="${not empty group.profile_img}">
-	                <img src="${pageContext.request.contextPath}/upload/${group.profile_img}" 
-	                     alt="대표 이미지" width="100" style="cursor: pointer;"
-	                     onclick="window.open(this.src, '_blank')" />
-	            </c:when>
-	
-	            
-	            <c:otherwise>
-	                <img src="${pageContext.request.contextPath}/resources/img/default-group.png" 
-	                     alt="기본 이미지" width="100" />
-	            </c:otherwise>
-	        </c:choose>
-	    </span>
-	</div>
-
-    <div class="row"><span class="label">관리자 한마디:</span> <span class="value">${group.admin_comment}</span></div>
-    <div class="row">
-    	<span class="label">생성일:</span> 
-    	<span class="value">
-    		<fmt:formatDate value="${group.created_at}" pattern="yyyy-MM-dd HH:mm" />
-		</span>
-	</div>
-	
-	<a href="${pageContext.request.contextPath}/groupmember/create?groupId=${group.id}">
-	    <button type="button" class="btn btn-success">✅ 이 그룹에 가입하기</button>
-	</a>
-
-    <div class="btn-group">
-	    <!-- 목록으로 이동 -->
-	    <a href="${pageContext.request.contextPath}/group/groups">
-	        <button class="btn btn-list">목록으로</button>
-	    </a>
-	
-	    <!-- 그룹 수정 -->
-	    <a href="${pageContext.request.contextPath}/group/edit?id=${group.id}">
-	        <button class="btn btn-edit">수정</button>
-	    </a>
-	
-	    <!-- 그룹 삭제 -->
-	    <a href="${pageContext.request.contextPath}/group/delete?id=${group.id}" 
-	       onclick="return confirm('정말 삭제할까요?');">
-	        <button class="btn btn-delete">삭제</button>
-	    </a>
-	
-	    <!-- ✅ 멤버 보기: 공개 그룹은 누구나 / 비공개는 로그인 + 가입자만 -->
-	    <c:choose>
-	        
-	        <c:when test="${group.publicStatus}">
-	            <a href="${pageContext.request.contextPath}/groupmember/list?groupId=${group.id}">
-	                <button class="btn btn-primary">📋 멤버 보기</button>
-	            </a>
-	        </c:when>
-	
-	        
-	        <c:otherwise>
-	            <c:if test="${not empty loginMember and isMember}">
-	                <a href="${pageContext.request.contextPath}/groupmember/list?groupId=${group.id}">
-	                    <button class="btn btn-primary">📋 멤버 보기</button>
-	                </a>
-	            </c:if>
-	        </c:otherwise>
-	    </c:choose>
-	</div>
+  </div>
 
 </div>
 
+<!-- Lightbox -->
+<div id="imgLightbox" class="lightbox" aria-hidden="true">
+  <button class="lightbox-close" aria-label="닫기">×</button>
+  <img id="lightboxImg" alt="확대 이미지" />
+</div>
 
-
-<script>
-    function copyInviteCode() {
-        const input = document.getElementById("inviteCode");
-        input.type = 'text'; // 비밀번호 필드를 일반 텍스트로 바꿔서 복사 가능하게
-        input.select();
-        input.setSelectionRange(0, 99999); // 모바일 호환
-        document.execCommand("copy");
-        alert("초대코드가 복사되었습니다!");
-        input.type = 'password'; // 다시 비밀번호 필드로 변경
-    }
-</script>
-
+<script src="${pageContext.request.contextPath}/resources/js/group.js"></script>
 </body>
 </html>
