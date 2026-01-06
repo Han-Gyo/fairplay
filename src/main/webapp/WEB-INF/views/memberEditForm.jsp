@@ -88,6 +88,8 @@
                     </label>
                     <div class="input-group">
                         <input type="email" class="form-control" id="email" name="email" value="${member.email}" required>
+                        <!-- 기존 이메일 값 hidden으로 전달 -->
+    					<input type="hidden" id="originalEmail" value="${member.email}">
                         <button type="button" class="btn btn-primary" id="sendEmailCodeBtn">
                             <i class="fas fa-paper-plane"></i> 인증번호 발송
                         </button>
