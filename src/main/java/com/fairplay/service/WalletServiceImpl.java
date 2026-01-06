@@ -49,4 +49,10 @@ public class WalletServiceImpl implements WalletService{
 		return walletRepository.comparePriceByItemName(memberId, itemName);
 	}
 	
+	//그룹 ID로 내역 조회 로직 구현
+	@Override
+  public List<Wallet> findByGroupId(int groupId) {
+    return walletRepository.findByGroupId(groupId);
+  }
+	
 }

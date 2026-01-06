@@ -16,6 +16,22 @@
     <h1 class="page-title">💸 가계부 전체 목록</h1>
     <a class="btn btn-primary" href="${pageContext.request.contextPath}/wallet/create">+ 새 항목 등록</a>
   </div>
+  
+	<div class="card border-0 shadow-sm mb-5 rounded-4">
+	  <div class="card-body p-4">
+	    <form method="get" action="${pageContext.request.contextPath}/wallet">
+	      <label for="groupId" class="form-label fw-bold text-secondary small">가계부 그룹 선택</label>
+	      <div class="input-group">
+	        <span class="input-group-text bg-primary text-white border-primary"><i class="fas fa-users"></i></span>
+	        <select name="groupId" id="groupId" class="form-select border-primary" onchange="this.form.submit()">
+	          <c:forEach var="group" items="${joinedGroups}">
+	            <option value="${group.id}" ${group.id == groupId ? 'selected' : ''}>${group.name}</option>
+	          </c:forEach>
+	        </select>
+	      </div>
+	    </form>
+	  </div>
+	</div>
 
   <!-- 항목 리스트 테이블 -->
   <div class="table-card">
