@@ -16,22 +16,33 @@ function setError(elementId, message, isSuccess = false) {
 function checkId() {
     const userId = document.getElementById('user_id').value.trim();
     const contextPath = document.getElementById('contextPath').value;
+
+    // 1. 공백 검사
     if (userId === '') {
         setError('idError', '아이디를 입력해주세요.');
         return;
     }
+
+    // 2. 형식 검사 (영문 소문자 + 숫자, 5~20자)
+    const idRegex = /^[a-z0-9]{5,20}$/;
+    if (!idRegex.test(userId)) {
+        setError('idError', '아이디는 5~20자의 영문 소문자와 숫자만 가능합니다.');
+        return;
+    }
+
+    // 3. 서버 중복 확인
     fetch(`${contextPath}/member/checkId?user_id=${encodeURIComponent(userId)}`)
-    .then(res => res.json())
-    .then(data => {
-        idCheckResult = data.result;
-        if (data.result === 'available') {
-            setError('idError', '사용 가능한 아이디입니다.', true);
-        } else {
-            setError('idError', '이미 사용 중인 아이디입니다.');
-            idCheckResult = 'duplicate';
-        }
-    })
-    .catch(() => setError('idError', '서버 통신 실패'));
+        .then(res => res.json())
+        .then(data => {
+            idCheckResult = data.result;
+            if (data.result === 'available') {
+                setError('idError', '사용 가능한 아이디입니다.', true);
+            } else {
+                setError('idError', '이미 사용 중인 아이디입니다.');
+                idCheckResult = 'duplicate';
+            }
+        })
+        .catch(() => setError('idError', '서버 통신 실패'));
 }
 
 // 닉네임 중복 확인
@@ -87,16 +98,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const pwCheck = document.getElementById('passwordCheck');
 
     const validatePw = () => {
-        if (pw.value && pwCheck.value) {
-            if (pw.value === pwCheck.value) {
-                setError('pwError', '비밀번호가 일치합니다.', true);
-            } else {
-                setError('pwError', '비밀번호가 일치하지 않습니다.');
-            }
+        const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
+
+        // 아무것도 입력 안 했을 때는 메시지 지우기
+        if (!pw.value && !pwCheck.value) {
+            setError('pwError', '');
+            return;
+        }
+
+        if (!pwRegex.test(pw.value)) {
+            setError('pwError', '비밀번호는 8~16자의 영문 소문자, 숫자, 특수문자를 포함해야 합니다.');
+        } else if (pwCheck.value === '') {
+            setError('pwError', '비밀번호 형식이 올바릅니다.', true);
+        } else if (pw.value === pwCheck.value) {
+            setError('pwError', '비밀번호가 일치합니다.', true);
+        } else {
+            setError('pwError', '비밀번호가 일치하지 않습니다.');
         }
     };
+
     pw.addEventListener('input', validatePw);
     pwCheck.addEventListener('input', validatePw);
+	
 	    // [중요] 폼 제출(Submit) 최종 검증
 		document.getElementById('signUpForm').addEventListener('submit', function (e) {
 		    const userId = document.getElementById('user_id').value.trim();
@@ -120,7 +143,13 @@ document.addEventListener('DOMContentLoaded', function () {
 		        setError('pwError', '비밀번호를 입력하세요.');
 		        document.getElementById('password').focus();
 		        return e.preventDefault();
-		    }
+		    }			
+			const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
+			if (!pwRegex.test(userPw)) {
+			    setError('pwError', '비밀번호는 8~16자의 영문 소문자, 숫자, 특수문자를 포함해야 합니다.');
+			    document.getElementById('password').focus();
+			    return e.preventDefault();
+			}
 		    if (userPw !== userPwConfirm) {
 		        setError('pwError', '비밀번호가 일치하지 않습니다.');
 		        document.getElementById('passwordCheck').focus();
