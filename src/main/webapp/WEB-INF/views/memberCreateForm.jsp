@@ -21,28 +21,42 @@
                           enctype="multipart/form-data" novalidate>
 
                         <!-- 아이디 -->
-                        <div class="mb-3">
-                            <label for="user_id" class="form-label fw-semibold">아이디</label>
-                            <div class="input-group">
-                                <input type="text" id="user_id" name="user_id" class="form-control" placeholder="아이디를 입력하세요" required>
-                                <button type="button" class="btn btn-primary" onclick="checkId()">중복확인</button>
-                            </div>
-                            <input type="hidden" id="contextPath" value="${pageContext.request.contextPath}" />
-                            <div id="idError" class="form-text mt-1"></div>
-                        </div>
+						<div class="mb-3">
+						    <label for="user_id" class="form-label fw-semibold">아이디</label>
+						    <div class="input-group">
+						        <input type="text" id="user_id" name="user_id"
+						               class="form-control" placeholder="아이디를 입력하세요"
+						               minlength="5" maxlength="20"
+						               pattern="^[a-z0-9]{5,20}$"
+						               required>
+						        <button type="button" class="btn btn-primary" onclick="checkId()">중복확인</button>
+						    </div>
+						    <input type="hidden" id="contextPath" value="${pageContext.request.contextPath}" />
+						    <div id="idError" class="form-text mt-1"></div>
+						</div>
+
 
                         <!-- 비밀번호 -->
-                        <div class="mb-3">
-                            <label for="password" class="form-label fw-semibold">비밀번호</label>
-                            <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호 입력" required>
-                        </div>
-
-                        <!-- 비밀번호 확인 -->
-                        <div class="mb-3">
-                            <label for="passwordCheck" class="form-label fw-semibold">비밀번호 확인</label>
-                            <input type="password" id="passwordCheck" class="form-control" placeholder="비밀번호 재입력" required>
-                            <div id="pwError" class="form-text mt-1"></div>
-                        </div>
+						<div class="mb-3">
+						    <label for="password" class="form-label fw-semibold">비밀번호</label>
+						    <input type="password" id="password" name="password"
+						           class="form-control" placeholder="비밀번호 입력"
+						           minlength="8" maxlength="16"
+						           pattern="^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$"
+						           required>
+						    <div class="form-text">비밀번호는 8~16자의 영문 소문자, 숫자, 특수문자를 포함해야 합니다.</div>
+						</div>
+						
+						<!-- 비밀번호 확인 -->
+						<div class="mb-3">
+						    <label for="passwordCheck" class="form-label fw-semibold">비밀번호 확인</label>
+						    <input type="password" id="passwordCheck" name="passwordCheck"
+						           class="form-control" placeholder="비밀번호 재입력"
+						           minlength="8" maxlength="16"
+						           pattern="^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$"
+						           required>
+						    <div id="pwError" class="form-text mt-1"></div>
+						</div>
 
                         <!-- 실명 -->
                         <div class="mb-3">
