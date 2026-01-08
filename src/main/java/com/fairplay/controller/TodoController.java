@@ -216,8 +216,11 @@ public class TodoController {
 	    System.out.println("받은 assigned_to: " + assigned_to);
 	    System.out.println("completed 값: " + completed);
 
+	    session.setAttribute("currentGroupId", todo.getGroup_id());
+	    
 	    todoService.addTodo(todo);
-	    return "redirect:/todos";
+	    
+	    return "redirect:/todos?group_id=" + todo.getGroup_id();
 	}
 	
 	// 수정 폼 이동

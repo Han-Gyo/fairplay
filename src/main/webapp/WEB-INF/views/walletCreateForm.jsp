@@ -18,10 +18,20 @@
   <h1 class="wallet-form-title">
     ${wallet.id == 0 ? "💸가계부 등록" : "✏️ 항목 수정"}
   </h1>
-
+  
   <form class="wallet-form"
         action="${pageContext.request.contextPath}${wallet.id == 0 ? '/wallet/save' : '/wallet/update'}"
         method="post">
+        
+    <!-- 그룹 선택 --> 
+		<div class="form-group"> 
+			<label for="group_id">그룹</label> 
+			<select id="group_id" name="group_id"> 
+				<c:forEach var="group" items="${joinedGroups}"> 
+					<option value="${group.id}" <c:if test="${group.id == groupId}">selected</c:if>> ${group.name} </option> 
+				</c:forEach> 
+			</select> 
+		</div>
     
     <!-- 숨겨진 값 -->
     <input type="hidden" name="id" value="${wallet.id}" />
