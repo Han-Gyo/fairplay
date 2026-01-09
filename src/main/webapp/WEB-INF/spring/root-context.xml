@@ -8,16 +8,15 @@
 		
 	<!-- JavaMailSender 설정 -->
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-	    <property name="host" value="smtp.gmail.com" />
-	    <property name="port" value="587" />
-	    <property name="username" value="tjgksry3940@gmail.com" />
-	    <property name="password" value="lyxr sttm murh enur" /> <!-- 앱 비밀번호 넣기 -->
-	
+	    <property name="host" value="smtp.mail.nate.com" />
+	    <property name="port" value="465" />
+	    <property name="username" value="fairplay_@nate.com" />
+	    <property name="password" value="vpdjvmffpdl1@" />
 	    <property name="javaMailProperties">
 	        <props>
 	            <prop key="mail.transport.protocol">smtp</prop>
 	            <prop key="mail.smtp.auth">true</prop>
-	            <prop key="mail.smtp.starttls.enable">true</prop>
+	            <prop key="mail.smtp.ssl.enable">true</prop>
 	            <prop key="mail.debug">true</prop>
 	        </props>
 	    </property>

@@ -184,9 +184,6 @@
 </div>
 
 <!-- JS -->
-<script>
-    const contextPath = '${pageContext.request.contextPath}';
-</script>
 <script src="<c:url value='/resources/js/memberEditForm.js' />"></script>
 
 <!-- Daum 주소 API -->
