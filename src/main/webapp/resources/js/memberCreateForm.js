@@ -4,7 +4,7 @@ let nicknameCheckResult = null;
 let emailAuthStatus = false;
 let timerInterval;
 
-// 에러 메시지 출력
+// 에러 메시지 출력 함수
 function setError(elementId, message, isSuccess = false) {
     const element = document.getElementById(elementId);
     if (!element) return;
@@ -17,20 +17,17 @@ function checkId() {
     const userId = document.getElementById('user_id').value.trim();
     const contextPath = document.getElementById('contextPath').value;
 
-    // 1. 공백 검사
     if (userId === '') {
         setError('idError', '아이디를 입력해주세요.');
         return;
     }
 
-    // 2. 형식 검사 (영문 소문자 + 숫자, 5~20자)
     const idRegex = /^[a-z0-9]{5,20}$/;
     if (!idRegex.test(userId)) {
         setError('idError', '아이디는 5~20자의 영문 소문자와 숫자만 가능합니다.');
         return;
     }
 
-    // 3. 서버 중복 확인
     fetch(`${contextPath}/member/checkId?user_id=${encodeURIComponent(userId)}`)
         .then(res => res.json())
         .then(data => {
@@ -71,6 +68,7 @@ function checkEmail() {
     const email = document.getElementById('email').value.trim();
     const contextPath = document.getElementById('contextPath').value;
     const sendBtn = document.getElementById('sendCodeBtn');
+    const resetEmailBtn = document.getElementById("resetEmailBtn");
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         setError('emailCheckResult', '유효한 이메일 형식이 아닙니다.');
@@ -82,8 +80,10 @@ function checkEmail() {
     .then(res => res.json())
     .then(data => {
         if (data.result === 'available') {
-            setError('emailCheckResult', '사용 가능한 이메일입니다.', true);
+            setError('emailCheckResult', '사용 가능한 이메일입니다. 인증이 필요합니다.', true);
             sendBtn.disabled = false;
+            document.getElementById("email").readOnly = true;
+            resetEmailBtn.style.display = "inline-block";
         } else {
             setError('emailCheckResult', '이미 등록된 이메일입니다.');
             sendBtn.disabled = true;
@@ -92,20 +92,18 @@ function checkEmail() {
     .catch(() => setError('emailCheckResult', '서버 통신 실패'));
 }
 
-// 비밀번호 실시간 체크
+// DOMContentLoaded: 이벤트 바인딩
 document.addEventListener('DOMContentLoaded', function () {
     const pw = document.getElementById('password');
     const pwCheck = document.getElementById('passwordCheck');
+    const resetEmailBtn = document.getElementById("resetEmailBtn");
 
     const validatePw = () => {
         const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
-
-        // 아무것도 입력 안 했을 때는 메시지 지우기
         if (!pw.value && !pwCheck.value) {
             setError('pwError', '');
             return;
         }
-
         if (!pwRegex.test(pw.value)) {
             setError('pwError', '비밀번호는 8~16자의 영문 소문자, 숫자, 특수문자를 포함해야 합니다.');
         } else if (pwCheck.value === '') {
@@ -120,144 +118,137 @@ document.addEventListener('DOMContentLoaded', function () {
     pw.addEventListener('input', validatePw);
     pwCheck.addEventListener('input', validatePw);
 	
-	    // [중요] 폼 제출(Submit) 최종 검증
-		document.getElementById('signUpForm').addEventListener('submit', function (e) {
-		    const userId = document.getElementById('user_id').value.trim();
-		    const userPw = document.getElementById('password').value.trim();
-		    const userPwConfirm = document.getElementById('passwordCheck').value.trim();
-		    const realName = document.getElementById('real_name').value.trim();
-		    const nickname = document.getElementById('nickname').value.trim();
-		    const zipcode = document.getElementById('zipcode').value.trim();
-		    const address = document.getElementById('address').value.trim();
-		    const addressDetail = document.getElementById('addressDetail').value.trim();
-		    const phone2 = document.getElementById('phone2').value.trim();
-		    const phone3 = document.getElementById('phone3').value.trim();
+    const emailInput = document.getElementById("email");
+    const checkEmailBtn = document.querySelector("button[onclick='checkEmail()']");
+    const sendBtn = document.getElementById("sendCodeBtn");
+    const verifyBtn = document.getElementById("verifyBtn");
 
-		    // 1. 공백 검사
-		    if (!userId) {
-		        setError('idError', '아이디를 입력하세요.');
-		        document.getElementById('user_id').focus();
-		        return e.preventDefault();
-		    }
-		    if (!userPw) {
-		        setError('pwError', '비밀번호를 입력하세요.');
-		        document.getElementById('password').focus();
-		        return e.preventDefault();
-		    }			
-			const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
-			if (!pwRegex.test(userPw)) {
-			    setError('pwError', '비밀번호는 8~16자의 영문 소문자, 숫자, 특수문자를 포함해야 합니다.');
-			    document.getElementById('password').focus();
-			    return e.preventDefault();
-			}
-		    if (userPw !== userPwConfirm) {
-		        setError('pwError', '비밀번호가 일치하지 않습니다.');
-		        document.getElementById('passwordCheck').focus();
-		        return e.preventDefault();
-		    }
-		    if (!realName) {
-		        alert('실명을 입력해주세요.');
-		        document.getElementById('real_name').focus();
-		        return e.preventDefault();
-		    }
-		    if (!nickname) {
-		        setError('nicknameCheckResult', '닉네임을 입력하세요.');
-		        document.getElementById('nickname').focus();
-		        return e.preventDefault();
-		    }
+    emailInput.addEventListener("input", function () {
+        if(checkEmailBtn) checkEmailBtn.disabled = false;
+        if(sendBtn) sendBtn.disabled = true;
+        if(verifyBtn) verifyBtn.disabled = true;
+        setError("emailCheckResult", "");
+        setError("emailResult", "");
+    });
 
-		    // 2. 중복 확인
-		    if (idCheckResult !== 'available') {
-		        setError('idError', '아이디 중복 확인이 필요합니다.');
-		        document.getElementById('user_id').focus();
-		        return e.preventDefault();
-		    }
-		    if (nicknameCheckResult !== 'available') {
-		        setError('nicknameCheckResult', '닉네임 중복 확인이 필요합니다.');
-		        document.getElementById('nickname').focus();
-		        return e.preventDefault();
-		    }
+    if (resetEmailBtn) {
+        resetEmailBtn.addEventListener("click", function () {
+            const emailInput = document.getElementById("email");
+            emailInput.readOnly = false;
+            emailInput.value = "";
+            if(checkEmailBtn) checkEmailBtn.disabled = false;
+            if(sendBtn) sendBtn.disabled = true;
+            if(verifyBtn) verifyBtn.disabled = true; // 리셋 시 확인 버튼도 다시 잠금
+            
+            setError("emailCheckResult", "");
+            setError("emailResult", "");
+            resetEmailBtn.style.display = "none";
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById("timerDisplay").innerText = "";
+            
+            // 인증번호 입력칸도 초기화
+            const codeInput = document.getElementById("emailCode");
+            if(codeInput) {
+                codeInput.value = "";
+                codeInput.disabled = false;
+            }
+        });
+    }
 
-		    // 3. 이메일 인증
-		    if (!emailAuthStatus) {
-		        setError('emailResult', '이메일 인증을 완료해주세요.');
-		        document.getElementById('email').focus();
-		        return e.preventDefault();
-		    }
+    document.getElementById('signUpForm').addEventListener('submit', function (e) {
+        const userId = document.getElementById('user_id').value.trim();
+        const userPw = document.getElementById('password').value.trim();
+        const userPwConfirm = document.getElementById('passwordCheck').value.trim();
+        const realName = document.getElementById('real_name').value.trim();
+        const nickname = document.getElementById('nickname').value.trim();
+        const zipcode = document.getElementById('zipcode').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const addressDetail = document.getElementById('addressDetail').value.trim();
+        const phone2 = document.getElementById('phone2').value.trim();
+        const phone3 = document.getElementById('phone3').value.trim();
 
-		    // 4. 주소 검사
-		    if (!zipcode || !address) {
-		        alert('주소 검색을 완료해주세요.');
-		        document.getElementById('zipcode').focus();
-		        return e.preventDefault();
-		    }
-		    if (!addressDetail) {
-		        alert('상세주소를 입력해주세요.');
-		        document.getElementById('addressDetail').focus();
-		        return e.preventDefault();
-		    }
+        if (!userId) { setError('idError', '아이디를 입력하세요.'); return e.preventDefault(); }
+        if (!userPw) { setError('pwError', '비밀번호를 입력하세요.'); return e.preventDefault(); }
+        
+        const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
+        if (!pwRegex.test(userPw)) { return e.preventDefault(); }
+        if (userPw !== userPwConfirm) { return e.preventDefault(); }
+        if (!realName) { alert('실명을 입력해주세요.'); return e.preventDefault(); }
+        if (!nickname) { return e.preventDefault(); }
 
-		    // 5. 전화번호 검사
-		    if (!/^\d{3,4}$/.test(phone2)) {
-		        alert('휴대폰 가운데 번호는 숫자 3~4자리여야 합니다.');
-		        document.getElementById('phone2').focus();
-		        return e.preventDefault();
-		    }
-		    if (!/^\d{4}$/.test(phone3)) {
-		        alert('휴대폰 끝 번호는 숫자 4자리여야 합니다.');
-		        document.getElementById('phone3').focus();
-		        return e.preventDefault();
-		    }
+        if (idCheckResult !== 'available') { alert('아이디 중복 확인이 필요합니다.'); return e.preventDefault(); }
+        if (nicknameCheckResult !== 'available') { alert('닉네임 중복 확인이 필요합니다.'); return e.preventDefault(); }
+        if (!emailAuthStatus) { alert('이메일 인증을 완료해주세요.'); return e.preventDefault(); }
+        if (!zipcode || !address) { alert('주소 검색을 완료해주세요.'); return e.preventDefault(); }
+        if (!addressDetail) { alert('상세주소를 입력해주세요.'); return e.preventDefault(); }
+        if (!/^\d{3,4}$/.test(phone2) || !/^\d{4}$/.test(phone3)) { alert('전화번호 형식을 확인하세요.'); return e.preventDefault(); }
+    });
+});
 
-		    // 모든 검증 통과 시 제출 진행
-		});
-	});
+// 이메일 인증번호 발송
+function sendEmailCode() {
+    const email = document.getElementById("email").value;
+    const resetEmailBtn = document.getElementById("resetEmailBtn");
+    const checkEmailBtn = document.querySelector("button[onclick='checkEmail()']");
+    const sendBtn = document.getElementById("sendCodeBtn");
+    const verifyBtn = document.getElementById("verifyBtn");
+    
+    if (timerInterval) clearInterval(timerInterval);
 
-	// 이메일 인증번호 발송
-	function sendEmailCode() {
-	    const email = document.getElementById("email").value;
-	    if (timerInterval) clearInterval(timerInterval);
+    let timeLeft = 180;
+    const timerDisp = document.getElementById("timerDisplay");
 
-	    let timeLeft = 180;
-	    const timerDisp = document.getElementById("timerDisplay");
+    timerInterval = setInterval(() => {
+        const min = Math.floor(timeLeft / 60);
+        const sec = timeLeft % 60;
+        timerDisp.innerText = `남은 시간: ${min}:${sec < 10 ? '0' + sec : sec}`;
+        
+        if (--timeLeft < 0) {
+            clearInterval(timerInterval);
+            timerDisp.innerText = "시간 만료. 다시 입력 버튼을 눌러주세요.";
+            
+            if(verifyBtn) verifyBtn.disabled = true;
+            if(sendBtn) sendBtn.disabled = true;
+            if(checkEmailBtn) checkEmailBtn.disabled = true;
+            
+            setError('emailResult', '인증 시간이 만료되었습니다.', false);
+        }
+    }, 1000);
 
-	    timerInterval = setInterval(() => {
-	        const min = Math.floor(timeLeft / 60);
-	        const sec = timeLeft % 60;
-	        timerDisp.innerText = `남은 시간: ${min}:${sec < 10 ? '0' + sec : sec}`;
-	        if (--timeLeft < 0) {
-	            clearInterval(timerInterval);
-	            timerDisp.innerText = "시간 만료. 다시 시도하세요.";
-	            document.getElementById("verifyBtn").disabled = true;
-	        }
-	    }, 1000);
+    fetch("/fairplay/mail/sendCode", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `email=${encodeURIComponent(email)}`
+    }).then(() => {
+        setError('emailResult', '인증번호가 발송되었습니다.', true);
+        document.getElementById("email").readOnly = true;
+        resetEmailBtn.style.display = "inline-block";
+        
+        // [수정] 인증번호 발송 성공 시 '인증 확인' 버튼 활성화
+        if(verifyBtn) verifyBtn.disabled = false;
+    });
+}
 
-	    fetch("/fairplay/mail/sendCode", {
-	        method: "POST",
-	        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-	        body: `email=${encodeURIComponent(email)}`
-	    }).then(() => setError('emailResult', '인증번호가 발송되었습니다.', true));
-	}
-
-	// 인증번호 확인
-	function verifyEmailCode() {
-	    const code = document.getElementById("emailCode").value;
-	    fetch("/fairplay/mail/verifyCode", {
-	        method: "POST",
-	        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-	        body: `code=${encodeURIComponent(code)}`
-	    })
-	    .then(res => res.text())
-	    .then(msg => {
-	        if (msg.includes("성공")) {
-	            setError('emailResult', '인증 성공!', true);
-	            emailAuthStatus = true;
-	            clearInterval(timerInterval);
-	            document.getElementById("timerDisplay").innerText = "";
-	            document.getElementById("emailCode").disabled = true;
-	            document.getElementById("verifyBtn").disabled = true;
-	        } else {
-	            setError('emailResult', '인증번호가 일치하지 않습니다.');
-	        }
-	    });
-	}
+// 인증번호 확인
+function verifyEmailCode() {
+    const code = document.getElementById("emailCode").value;
+    fetch("/fairplay/mail/verifyCode", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `code=${encodeURIComponent(code)}`
+    })
+    .then(res => res.text())
+    .then(msg => {
+        if (msg.includes("성공")) {
+            setError('emailResult', '인증 성공!', true);
+            emailAuthStatus = true;
+            clearInterval(timerInterval);
+            document.getElementById("timerDisplay").innerText = "";
+            document.getElementById("emailCode").disabled = true;
+            document.getElementById("verifyBtn").disabled = true; // 인증 완료 시 비활성화
+            document.getElementById("resetEmailBtn").style.display = "none";
+        } else {
+            setError('emailResult', '인증번호가 일치하지 않습니다.');
+        }
+    });
+}
