@@ -51,11 +51,12 @@ public class WalletRepositoryImpl implements WalletRepository{
 	// 항목 수정
 	@Override
 	public void update(Wallet wallet) {
-		String sql = "UPDATE wallet SET item_name=?, category=?, price=?, "
+		String sql = "UPDATE wallet SET group_id=?, item_name=?, category=?, price=?, "
 				+ "quantity=?, unit=?, unit_count=?, store=?, type=?, "
 				+ "purchase_date=?, memo=? WHERE id=?";
 		
 		jdbcTemplate.update(sql,
+			wallet.getGroup_id(),
 			wallet.getItem_name(),
 			wallet.getCategory(),
 			wallet.getPrice(),

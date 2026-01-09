@@ -157,22 +157,41 @@ public String save(@ModelAttribute Wallet wallet, HttpSession session) {
 
 // 항목 수정 폼
 @GetMapping("/edit")
-public String update(@RequestParam("id") int id, Model model) {
+public String update(@RequestParam("id") int id, HttpSession session, Model model) {
 	System.out.println("수정 폼 진입: id = " + id);
-	Wallet wallet = walletService.findById(id);
-	
-	model.addAttribute("wallet",wallet);
-	model.addAttribute("member_id", wallet.getMember_id());
+	//1. 로그인 체크 및 내 정보 가져오기
+  Member loginMember = (Member) session.getAttribute("loginMember");
+  if (loginMember == null) {
+    return "redirect:/member/login";
+  }
+  int memberId = loginMember.getId();
+
+  // 2. 수정할 데이터 조회
+  Wallet wallet = walletService.findById(id);
+  if (wallet == null) {
+    return "redirect:/wallet";
+  }
+
+  // 3. 내가 가입한 그룹 리스트 조회해서 모델에 담기
+  List<Group> groupList = groupMemberService.findGroupsByMemberId((long) memberId);
+  
+  model.addAttribute("wallet", wallet);
+  model.addAttribute("member_id", wallet.getMember_id());
+  model.addAttribute("joinedGroups", groupList); 
+  model.addAttribute("groupId", wallet.getGroup_id()); 
+  
 	return "walletCreateForm";
 }
 
 // 항목 수정 처리
 @PostMapping("/update")
-public String update(@ModelAttribute Wallet wallet) {
+public String update(@ModelAttribute Wallet wallet, HttpSession session) {
 	System.out.println("지출 수정: " + wallet);
 
 	walletService.update(wallet);
-	return "redirect:/wallet";
+
+	session.setAttribute("currentGroupId", wallet.getGroup_id());
+  return "redirect:/wallet?groupId=" + wallet.getGroup_id();
 }
 
 // 항목 삭제 처리
