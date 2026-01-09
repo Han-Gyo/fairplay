@@ -29,29 +29,67 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 이메일 실시간 검사 + 인증 상태 초기화
+    // ===== 이메일 관련 변수 ===== //
     const emailErrorDiv = document.createElement('div');
     emailErrorDiv.className = 'form-text text-danger';
     emailInput.parentNode.appendChild(emailErrorDiv);
 
     const emailCheckResult = document.getElementById("emailCheckResult");
+    const checkEmailBtn = document.getElementById("checkEmailBtn");
+    const sendEmailBtn = document.getElementById("sendEmailCodeBtn");
+    const verifyEmailBtn = document.getElementById("verifyEmailCodeBtn");
+    const emailCodeInput = document.getElementById("emailCode");
+    const originalEmail = document.getElementById("originalEmail").value;
 
-    emailInput.addEventListener('input', function () {
+    // 입력 이벤트: 형식 검사 + 중복 확인 버튼만 제어
+	emailInput.addEventListener('input', function () {
+	    const email = emailInput.value.trim();
+
+	    if (email === originalEmail) {
+	        showResult(emailCheckResult, "현재 사용 중인 이메일입니다.", "muted");
+	        checkEmailBtn.disabled = true;
+	        sendEmailBtn.disabled = true; // 기존 이메일이면 발송 버튼도 비활성화
+	        return;
+	    }
+
+	    if (!emailRegex.test(email)) {
+	        showResult(emailCheckResult, "올바른 이메일 형식이 아닙니다.", "danger");
+	        checkEmailBtn.disabled = true;
+	        sendEmailBtn.disabled = true; // 형식 틀리면 발송 버튼도 비활성화
+	        return;
+	    }
+
+	    // 형식만 맞으면 중복 확인 버튼 활성화
+	    checkEmailBtn.disabled = false;
+
+	    // 이메일이 바뀌었으니 발송 버튼은 항상 초기화
+	    sendEmailBtn.disabled = true;
+
+	    // 인증 상태 초기화
+	    const hiddenInput = document.querySelector("input[name='emailVerified']");
+	    if (hiddenInput) hiddenInput.remove();
+	});
+
+    // 중복 확인 버튼 클릭 이벤트: Ajax 호출
+    checkEmailBtn.addEventListener('click', function () {
         const email = emailInput.value.trim();
 
-        // 형식 검사
-        if (!emailRegex.test(email)) {
-            emailErrorDiv.textContent = '올바른 이메일 형식이 아닙니다.';
-        } else {
-            emailErrorDiv.textContent = '';
-        }
-
-        // 인증 상태 초기화
-        const hiddenInput = document.querySelector("input[name='emailVerified']");
-        if (hiddenInput) hiddenInput.remove();
-        if (emailCheckResult) {
-            showResult(emailCheckResult, "이메일 변경 시 인증이 필요합니다.", "warning");
-        }
+        fetch(contextPath + "/member/checkEmail?email=" + encodeURIComponent(email))
+            .then(res => res.json())
+            .then(data => {
+                if (data.result === "duplicate") {
+                    showResult(emailCheckResult, "이미 사용 중인 이메일입니다.", "danger");
+                    sendEmailBtn.disabled = true;
+                } else {
+                    showResult(emailCheckResult, "사용 가능한 이메일입니다. 인증이 필요합니다.", "success");
+                    sendEmailBtn.disabled = false; // 중복검사 통과 후에만 활성화
+                }
+            })
+            .catch(err => {
+                console.error("이메일 중복 확인 오류:", err);
+                showResult(emailCheckResult, "서버 오류가 발생했습니다.", "danger");
+                sendEmailBtn.disabled = true;
+            });
     });
 
     // 전화번호 실시간 검사
@@ -105,60 +143,35 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-	    // ===== 이메일 인증 발송/확인 ===== //
-	    const sendEmailBtn = document.getElementById("sendEmailCodeBtn");
-	    const verifyEmailBtn = document.getElementById("verifyEmailCodeBtn");
-	    const emailCodeInput = document.getElementById("emailCode");
-	    const originalEmail = document.getElementById("originalEmail").value; // JSP에서 hidden으로 전달된 기존 이메일
+    // ===== 이메일 인증 발송 ===== //
+    if (sendEmailBtn) {
+        sendEmailBtn.disabled = true; // 초기 비활성화
 
-	    // 페이지 로딩 시 발송 버튼 비활성화
-	    if (sendEmailBtn) {
-	        sendEmailBtn.disabled = true;
-	    }
+        sendEmailBtn.addEventListener("click", function () {
+            const email = emailInput.value.trim();
+            if (email === "") {
+                showResult(emailCheckResult, "이메일을 입력해주세요.", "danger");
+                return;
+            }
 
-	    // 이메일 입력 이벤트에서 버튼 활성화/비활성화
-	    emailInput.addEventListener('input', function () {
-	        const email = emailInput.value.trim();
+            fetch(contextPath + "/mail/sendCode", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "email=" + encodeURIComponent(email)
+            })
+            .then(res => res.text())
+            .then(msg => {
+                showResult(emailCheckResult, msg, "info");
+            })
+            .catch(err => {
+                console.error("이메일 발송 오류:", err);
+                showResult(emailCheckResult, "서버 오류가 발생했습니다.", "danger");
+            });
+        });
+    }
 
-	        if (emailRegex.test(email) && email !== originalEmail) {
-	            sendEmailBtn.disabled = false; // 올바른 형식 + 기존 이메일과 다를 때만 활성화
-	        } else {
-	            sendEmailBtn.disabled = true;  // 잘못된 형식이거나 기존 이메일 그대로면 비활성화
-	        }
-
-	        // 인증 상태 초기화
-	        const hiddenInput = document.querySelector("input[name='emailVerified']");
-	        if (hiddenInput) hiddenInput.remove();
-	        if (emailCheckResult) {
-	            showResult(emailCheckResult, "이메일 변경 시 인증이 필요합니다.", "warning");
-	        }
-	    });
-
-	    if (sendEmailBtn && verifyEmailBtn) {
-	        // 인증번호 발송
-	        sendEmailBtn.addEventListener("click", function () {
-	            const email = emailInput.value.trim();
-	            if (email === "") {
-	                showResult(emailCheckResult, "이메일을 입력해주세요.", "danger");
-	                return;
-	            }
-
-	            fetch(contextPath + "/mail/sendCode", {
-	                method: "POST",
-	                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-	                body: "email=" + encodeURIComponent(email)
-	            })
-	            .then(res => res.text())
-	            .then(msg => {
-	                showResult(emailCheckResult, msg, "info");
-	            })
-	            .catch(err => {
-	                console.error("이메일 발송 오류:", err);
-	                showResult(emailCheckResult, "서버 오류가 발생했습니다.", "danger");
-	            });
-	        });
-
-	        // 인증번호 확인
+	    // 인증번호 확인
+	    if (verifyEmailBtn) {
 	        verifyEmailBtn.addEventListener("click", function () {
 	            const code = emailCodeInput.value.trim();
 	            if (code === "") {
@@ -175,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	            .then(msg => {
 	                if (msg.includes("성공")) {
 	                    showResult(emailCheckResult, msg, "success");
-	                    // 인증 성공 시 hidden input 추가
 	                    const hiddenInput = document.createElement("input");
 	                    hiddenInput.type = "hidden";
 	                    hiddenInput.name = "emailVerified";
@@ -214,11 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	        resetBtn.addEventListener('click', function () {
 	            const defaultSrc = contextPath + '/resources/img/default-profile.png';
 	            previewImg.src = defaultSrc;
-
-	            // 서버로 기본 이미지로 초기화 요청 의사 전달
 	            resetInput.value = 'true';
-
-	            // 선택된 파일 초기화
 	            if (fileInput) {
 	                fileInput.value = '';
 	            }
@@ -242,56 +250,56 @@ document.addEventListener('DOMContentLoaded', function () {
 	            modalImage.src = '';
 	        });
 	    }
-		
-		// ===== 비밀번호 변경 ===== //
-		const pwForm = document.getElementById("pwChangeForm");
-		const currentPw = document.getElementById("currentPassword");
-		const newPw = document.getElementById("newPassword");
-		const confirmPw = document.getElementById("confirmPassword");
-		const pwChangeResult = document.getElementById("pwChangeResult");
 
-		// 회원가입 때와 동일한 정규식 (8~16자리, 소문자+숫자+특수문자 포함)
-		const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
+	    // ===== 비밀번호 변경 ===== //
+	    const pwForm = document.getElementById("pwChangeForm");
+	    const currentPw = document.getElementById("currentPassword");
+	    const newPw = document.getElementById("newPassword");
+	    const confirmPw = document.getElementById("confirmPassword");
+	    const pwChangeResult = document.getElementById("pwChangeResult");
 
-		if (pwForm) {
-		    pwForm.addEventListener("submit", function(e) {
-		        e.preventDefault(); // 기본 폼 제출 막기
+	    // 회원가입 때와 동일한 정규식 (8~16자리, 소문자+숫자+특수문자 포함)
+	    const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
 
-		        // 클라이언트 측 유효성 검사
-		        if (!pwRegex.test(newPw.value)) {
-		            showResult(pwChangeResult, "비밀번호는 8~16자의 영문 소문자, 숫자, 특수문자를 포함해야 합니다.", "danger");
-		            return;
-		        }
-		        if (newPw.value !== confirmPw.value) {
-		            showResult(pwChangeResult, "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.", "danger");
-		            return;
-		        }
+	    if (pwForm) {
+	        pwForm.addEventListener("submit", function(e) {
+	            e.preventDefault(); // 기본 폼 제출 막기
 
-		        // 서버 요청 (JSON 응답)
-		        fetch(contextPath + "/mypage/changePw", {
-		            method: "POST",
-		            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-		            body: "currentPassword=" + encodeURIComponent(currentPw.value) +
-		                  "&newPassword=" + encodeURIComponent(newPw.value) +
-		                  "&confirmPassword=" + encodeURIComponent(confirmPw.value)
-		        })
-		        .then(res => res.json())
-		        .then(data => {
-		            if (data.result === "success") {
-		                showResult(pwChangeResult, data.message, "success");
-		                pwForm.reset(); // 성공 시 폼 초기화
-		            } else {
-		                showResult(pwChangeResult, data.message, "danger");
-		            }
-		        })
-		        .catch(err => {
-		            console.error("비밀번호 변경 오류:", err);
-		            showResult(pwChangeResult, "서버 오류가 발생했습니다.", "danger");
-		        });
-		    });
-		}
+	            // 클라이언트 측 유효성 검사
+	            if (!pwRegex.test(newPw.value)) {
+	                showResult(pwChangeResult, "비밀번호는 8~16자의 영문 소문자, 숫자, 특수문자를 포함해야 합니다.", "danger");
+	                return;
+	            }
+	            if (newPw.value !== confirmPw.value) {
+	                showResult(pwChangeResult, "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.", "danger");
+	                return;
+	            }
 
-	});
+	            // 서버 요청 (JSON 응답)
+	            fetch(contextPath + "/mypage/changePw", {
+	                method: "POST",
+	                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+	                body: "currentPassword=" + encodeURIComponent(currentPw.value) +
+	                      "&newPassword=" + encodeURIComponent(newPw.value) +
+	                      "&confirmPassword=" + encodeURIComponent(confirmPw.value)
+	            })
+	            .then(res => res.json())
+	            .then(data => {
+	                if (data.result === "success") {
+	                    showResult(pwChangeResult, data.message, "success");
+	                    pwForm.reset(); // 성공 시 폼 초기화
+	                } else {
+	                    showResult(pwChangeResult, data.message, "danger");
+	                }
+	            })
+	            .catch(err => {
+	                console.error("비밀번호 변경 오류:", err);
+	                showResult(pwChangeResult, "서버 오류가 발생했습니다.", "danger");
+	            });
+	        });
+	    }
+
+	}); // DOMContentLoaded 끝
 
 	// 주소 검색 API 실행 함수
 	function execDaumPostcode() {
@@ -306,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	            document.getElementById('address').value = `(${zonecode}) ${roadAddr}`;
 	        }
-	    }).open();	
+	    }).open();
 	}
 
 	// 상세주소 입력 시 전체 주소 갱신
@@ -322,5 +330,3 @@ document.addEventListener('DOMContentLoaded', function () {
 	        });
 	    }
 	});
-	
-	
