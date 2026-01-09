@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ===== 공통 메시지 출력 헬퍼 ===== //
     function showResult(targetDiv, message, type) {
-        // type: success, danger, warning, info, muted
         targetDiv.innerHTML = `<span class="text-${type}">${message}</span>`;
     }
 
@@ -24,53 +23,50 @@ document.addEventListener('DOMContentLoaded', function () {
         const phoneValid = phoneRegex.test(phone2.value) && phoneRegex.test(phone3.value);
 
         if (!emailValid || !phoneValid) {
-            e.preventDefault(); // 서버 전송 차단
+            e.preventDefault();
             alert("입력 형식을 확인해주세요.");
         }
     });
 
     // ===== 이메일 관련 변수 ===== //
-    const emailErrorDiv = document.createElement('div');
-    emailErrorDiv.className = 'form-text text-danger';
-    emailInput.parentNode.appendChild(emailErrorDiv);
-
     const emailCheckResult = document.getElementById("emailCheckResult");
     const checkEmailBtn = document.getElementById("checkEmailBtn");
     const sendEmailBtn = document.getElementById("sendEmailCodeBtn");
     const verifyEmailBtn = document.getElementById("verifyEmailCodeBtn");
     const emailCodeInput = document.getElementById("emailCode");
     const originalEmail = document.getElementById("originalEmail").value;
+	const resetEmailBtn = document.getElementById("resetEmailBtn");
 
-    // 입력 이벤트: 형식 검사 + 중복 확인 버튼만 제어
-	emailInput.addEventListener('input', function () {
-	    const email = emailInput.value.trim();
+    // 입력 이벤트
+    emailInput.addEventListener('input', function () {
+        const email = emailInput.value.trim();
 
-	    if (email === originalEmail) {
-	        showResult(emailCheckResult, "현재 사용 중인 이메일입니다.", "muted");
-	        checkEmailBtn.disabled = true;
-	        sendEmailBtn.disabled = true; // 기존 이메일이면 발송 버튼도 비활성화
-	        return;
-	    }
+        if (email === originalEmail) {
+            showResult(emailCheckResult, "현재 사용 중인 이메일입니다.", "muted");
+            checkEmailBtn.disabled = true;
+            sendEmailBtn.disabled = true;
+            return;
+        }
 
-	    if (!emailRegex.test(email)) {
-	        showResult(emailCheckResult, "올바른 이메일 형식이 아닙니다.", "danger");
-	        checkEmailBtn.disabled = true;
-	        sendEmailBtn.disabled = true; // 형식 틀리면 발송 버튼도 비활성화
-	        return;
-	    }
+        if (!emailRegex.test(email)) {
+            showResult(emailCheckResult, "올바른 이메일 형식이 아닙니다.", "danger");
+            checkEmailBtn.disabled = true;
+            sendEmailBtn.disabled = true;
+            return;
+        }
 
-	    // 형식만 맞으면 중복 확인 버튼 활성화
-	    checkEmailBtn.disabled = false;
+		// 형식이 맞으면 안내 텍스트 제거
+		showResult(emailCheckResult, "", "muted");
 
-	    // 이메일이 바뀌었으니 발송 버튼은 항상 초기화
-	    sendEmailBtn.disabled = true;
+		
+        checkEmailBtn.disabled = false;
+        sendEmailBtn.disabled = true;
 
-	    // 인증 상태 초기화
-	    const hiddenInput = document.querySelector("input[name='emailVerified']");
-	    if (hiddenInput) hiddenInput.remove();
-	});
+        const hiddenInput = document.querySelector("input[name='emailVerified']");
+        if (hiddenInput) hiddenInput.remove();
+    });
 
-    // 중복 확인 버튼 클릭 이벤트: Ajax 호출
+    // 중복 확인 버튼
     checkEmailBtn.addEventListener('click', function () {
         const email = emailInput.value.trim();
 
@@ -82,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     sendEmailBtn.disabled = true;
                 } else {
                     showResult(emailCheckResult, "사용 가능한 이메일입니다. 인증이 필요합니다.", "success");
-                    sendEmailBtn.disabled = false; // 중복검사 통과 후에만 활성화
+                    sendEmailBtn.disabled = false;
                 }
             })
             .catch(err => {
@@ -92,241 +88,212 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-    // 전화번호 실시간 검사
-    const phoneErrorDiv = document.createElement('div');
-    phoneErrorDiv.className = 'form-text text-danger';
-    phone3.parentNode.parentNode.appendChild(phoneErrorDiv);
-
-    function validatePhoneInput() {
-        const valid = phoneRegex.test(phone2.value) && phoneRegex.test(phone3.value);
-        phoneErrorDiv.textContent = valid ? '' : '휴대폰 번호는 숫자 3~4자리씩 입력해주세요.';
-    }
-
-    phone2.addEventListener('input', validatePhoneInput);
-    phone3.addEventListener('input', validatePhoneInput);
-
-    // ===== 닉네임 중복 확인 버튼 ===== //
-    const nicknameInput = document.getElementById('nickname');
-    const checkBtn = document.getElementById('checkNicknameBtn');
-    const resultDiv = document.getElementById('nicknameCheckResult');
-
-    if (!checkBtn) {
-        console.error(" checkNicknameBtn 찾을 수 없음");
-        return;
-    }
-
-    checkBtn.addEventListener('click', function () {
-        console.log(" [중복 확인] 버튼 클릭됨");
-
-        const nickname = nicknameInput.value.trim();
-
-        if (nickname === "") {
-            showResult(resultDiv, "닉네임을 입력해주세요.", "danger");
-            return;
-        }
-
-        fetch(contextPath + '/mypage/checkNicknameAjax?nickname=' + encodeURIComponent(nickname))
-            .then(response => response.json())
-            .then(data => {
-                console.log("서버 응답:", data);
-                if (data.result === "unauthorized") {
-                    showResult(resultDiv, "로그인이 필요합니다.", "muted");
-                } else if (data.result === "duplicate") {
-                    showResult(resultDiv, "이미 사용 중인 닉네임입니다.", "danger");
-                } else {
-                    showResult(resultDiv, "사용 가능한 닉네임입니다.", "success");
-                }
-            })
-            .catch(error => {
-                console.error("Ajax 오류:", error);
-                showResult(resultDiv, "서버 오류가 발생했습니다.", "muted");
-            });
-    });
-
     // ===== 이메일 인증 발송 ===== //
     if (sendEmailBtn) {
-        sendEmailBtn.disabled = true; // 초기 비활성화
+        sendEmailBtn.disabled = true;
 
-        sendEmailBtn.addEventListener("click", function () {
-            const email = emailInput.value.trim();
-            if (email === "") {
-                showResult(emailCheckResult, "이메일을 입력해주세요.", "danger");
+		sendEmailBtn.addEventListener("click", function () {
+		    const email = emailInput.value.trim();
+		    if (email === "") {
+		        showResult(emailCheckResult, "이메일을 입력해주세요.", "danger");
+		        return;
+		    }
+
+		    fetch(contextPath + "/mail/sendCode", {
+		        method: "POST",
+		        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+		        body: "email=" + encodeURIComponent(email)
+		    })
+		    .then(res => res.text())
+		    .then(msg => {
+		        showResult(emailCheckResult, msg, "info");
+
+		        // 이메일 입력칸 잠금 처리
+		        emailInput.readOnly = true;
+
+		        // 다시 입력 버튼 표시
+		        resetEmailBtn.style.display = "inline-block";
+		    })
+		    .catch(err => {
+		        console.error("이메일 발송 오류:", err);
+		        showResult(emailCheckResult, "서버 오류가 발생했습니다.", "danger");
+		    });
+		});
+    } // [수정됨] sendEmailBtn 조건문 닫기 추가
+
+    // ===== 이메일 다시 입력 버튼 ===== //
+    if (resetEmailBtn) {
+        resetEmailBtn.addEventListener("click", function () {
+            emailInput.readOnly = false;   // 잠금 해제
+            emailInput.value = "";         // 입력값 초기화
+            checkEmailBtn.disabled = true;
+            sendEmailBtn.disabled = true;
+            showResult(emailCheckResult, "이메일을 다시 입력해주세요.", "info");
+
+            // 버튼 다시 숨기기
+            resetEmailBtn.style.display = "none";
+        });
+    }
+
+    // ===== 인증번호 확인 ===== //
+    if (verifyEmailBtn) {
+        verifyEmailBtn.addEventListener("click", function () {
+            const code = emailCodeInput.value.trim();
+            if (code === "") {
+                showResult(emailCheckResult, "인증번호를 입력해주세요.", "danger");
                 return;
             }
 
-            fetch(contextPath + "/mail/sendCode", {
+            fetch(contextPath + "/mail/verifyCode", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: "email=" + encodeURIComponent(email)
+                body: "code=" + encodeURIComponent(code)
             })
             .then(res => res.text())
             .then(msg => {
-                showResult(emailCheckResult, msg, "info");
+                if (msg.includes("성공")) {
+                    showResult(emailCheckResult, msg, "success");
+                    const hiddenInput = document.createElement("input");
+                    hiddenInput.type = "hidden";
+                    hiddenInput.name = "emailVerified";
+                    hiddenInput.value = "true";
+                    document.getElementById("editForm").appendChild(hiddenInput);
+                } else {
+                    showResult(emailCheckResult, msg, "danger");
+
+                    // 실패 시 이메일 입력칸 다시 활성화
+                    emailInput.readOnly = false;
+                }
             })
             .catch(err => {
-                console.error("이메일 발송 오류:", err);
+                console.error("인증 확인 오류:", err);
                 showResult(emailCheckResult, "서버 오류가 발생했습니다.", "danger");
+
+                // 서버 오류 시에도 다시 활성화
+                emailInput.readOnly = false;
             });
         });
     }
 
-	    // 인증번호 확인
-	    if (verifyEmailBtn) {
-	        verifyEmailBtn.addEventListener("click", function () {
-	            const code = emailCodeInput.value.trim();
-	            if (code === "") {
-	                showResult(emailCheckResult, "인증번호를 입력해주세요.", "danger");
-	                return;
-	            }
+    // ===== 프사 미리보기 기능 ===== //
+    const fileInput = document.getElementById('profileImageFile');
+    const previewImg = document.getElementById('profilePreview');
 
-	            fetch(contextPath + "/mail/verifyCode", {
-	                method: "POST",
-	                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-	                body: "code=" + encodeURIComponent(code)
-	            })
-	            .then(res => res.text())
-	            .then(msg => {
-	                if (msg.includes("성공")) {
-	                    showResult(emailCheckResult, msg, "success");
-	                    const hiddenInput = document.createElement("input");
-	                    hiddenInput.type = "hidden";
-	                    hiddenInput.name = "emailVerified";
-	                    hiddenInput.value = "true";
-	                    document.getElementById("editForm").appendChild(hiddenInput);
-	                } else {
-	                    showResult(emailCheckResult, msg, "danger");
-	                }
-	            })
-	            .catch(err => {
-	                console.error("인증 확인 오류:", err);
-	                showResult(emailCheckResult, "서버 오류가 발생했습니다.", "danger");
-	            });
-	        });
-	    }
+    if (fileInput && previewImg) {
+        fileInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                previewImg.src = URL.createObjectURL(file);
+            }
+        });
+    }
 
-	    // 프사 미리보기 기능
-	    const fileInput = document.getElementById('profileImageFile');
-	    const previewImg = document.getElementById('profilePreview');
+    // 기본 이미지 버튼 처리
+    const resetBtn = document.getElementById('resetImageBtn');
+    const resetInput = document.getElementById('resetProfileImage');
 
-	    if (fileInput && previewImg) {
-	        fileInput.addEventListener('change', function (e) {
-	            const file = e.target.files[0];
-	            console.log("선택된 파일:", file);
-	            if (file) {
-	                previewImg.src = URL.createObjectURL(file);
-	            }
-	        });
-	    }
+    if (resetBtn && previewImg && resetInput) {
+        resetBtn.addEventListener('click', function () {
+            const defaultSrc = contextPath + '/resources/img/default-profile.png';
+            previewImg.src = defaultSrc;
+            resetInput.value = 'true';
+            if (fileInput) {
+                fileInput.value = '';
+            }
+        });
+    }
 
-	    // 기본 이미지 버튼 처리
-	    const resetBtn = document.getElementById('resetImageBtn');
-	    const resetInput = document.getElementById('resetProfileImage');
+    // 프사 클릭 시 확대 모달 띄우기
+    const imageModal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
 
-	    if (resetBtn && previewImg && resetInput) {
-	        resetBtn.addEventListener('click', function () {
-	            const defaultSrc = contextPath + '/resources/img/default-profile.png';
-	            previewImg.src = defaultSrc;
-	            resetInput.value = 'true';
-	            if (fileInput) {
-	                fileInput.value = '';
-	            }
-	        });
-	    }
+    if (previewImg && imageModal && modalImage) {
+        previewImg.addEventListener('click', function () {
+            if (previewImg.src) {
+                modalImage.src = previewImg.src;
+                imageModal.style.display = 'flex';
+            }
+        });
 
-	    // 프사 클릭 시 확대 모달 띄우기
-	    const imageModal = document.getElementById('imageModal');
-	    const modalImage = document.getElementById('modalImage');
+        imageModal.addEventListener('click', function () {
+            imageModal.style.display = 'none';
+            modalImage.src = '';
+        });
+    }
 
-	    if (previewImg && imageModal && modalImage) {
-	        previewImg.addEventListener('click', function () {
-	            if (previewImg.src) {
-	                modalImage.src = previewImg.src;
-	                imageModal.style.display = 'flex';
-	            }
-	        });
+    // ===== 비밀번호 변경 ===== //
+    const pwForm = document.getElementById("pwChangeForm");
+    const currentPw = document.getElementById("currentPassword");
+    const newPw = document.getElementById("newPassword");
+    const confirmPw = document.getElementById("confirmPassword");
+    const pwChangeResult = document.getElementById("pwChangeResult");
 
-	        imageModal.addEventListener('click', function () {
-	            imageModal.style.display = 'none';
-	            modalImage.src = '';
-	        });
-	    }
+    const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
 
-	    // ===== 비밀번호 변경 ===== //
-	    const pwForm = document.getElementById("pwChangeForm");
-	    const currentPw = document.getElementById("currentPassword");
-	    const newPw = document.getElementById("newPassword");
-	    const confirmPw = document.getElementById("confirmPassword");
-	    const pwChangeResult = document.getElementById("pwChangeResult");
+    if (pwForm) {
+        pwForm.addEventListener("submit", function(e) {
+            e.preventDefault();
 
-	    // 회원가입 때와 동일한 정규식 (8~16자리, 소문자+숫자+특수문자 포함)
-	    const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
+            if (!pwRegex.test(newPw.value)) {
+                showResult(pwChangeResult, "비밀번호는 8~16자의 영문 소문자, 숫자, 특수문자를 포함해야 합니다.", "danger");
+                return;
+            }
+            if (newPw.value !== confirmPw.value) {
+                showResult(pwChangeResult, "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.", "danger");
+                return;
+            }
 
-	    if (pwForm) {
-	        pwForm.addEventListener("submit", function(e) {
-	            e.preventDefault(); // 기본 폼 제출 막기
+            fetch(contextPath + "/mypage/changePw", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "currentPassword=" + encodeURIComponent(currentPw.value) +
+                      "&newPassword=" + encodeURIComponent(newPw.value) +
+                      "&confirmPassword=" + encodeURIComponent(confirmPw.value)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.result === "success") {
+                    showResult(pwChangeResult, data.message, "success");
+                    pwForm.reset(); // 성공 시 폼 초기화
+                } else {
+                    showResult(pwChangeResult, data.message, "danger");
+                }
+            })
+            .catch(err => {
+                console.error("비밀번호 변경 오류:", err);
+                showResult(pwChangeResult, "서버 오류가 발생했습니다.", "danger");
+            });
+        });
+    }
 
-	            // 클라이언트 측 유효성 검사
-	            if (!pwRegex.test(newPw.value)) {
-	                showResult(pwChangeResult, "비밀번호는 8~16자의 영문 소문자, 숫자, 특수문자를 포함해야 합니다.", "danger");
-	                return;
-	            }
-	            if (newPw.value !== confirmPw.value) {
-	                showResult(pwChangeResult, "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.", "danger");
-	                return;
-	            }
+}); // DOMContentLoaded 끝
 
-	            // 서버 요청 (JSON 응답)
-	            fetch(contextPath + "/mypage/changePw", {
-	                method: "POST",
-	                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-	                body: "currentPassword=" + encodeURIComponent(currentPw.value) +
-	                      "&newPassword=" + encodeURIComponent(newPw.value) +
-	                      "&confirmPassword=" + encodeURIComponent(confirmPw.value)
-	            })
-	            .then(res => res.json())
-	            .then(data => {
-	                if (data.result === "success") {
-	                    showResult(pwChangeResult, data.message, "success");
-	                    pwForm.reset(); // 성공 시 폼 초기화
-	                } else {
-	                    showResult(pwChangeResult, data.message, "danger");
-	                }
-	            })
-	            .catch(err => {
-	                console.error("비밀번호 변경 오류:", err);
-	                showResult(pwChangeResult, "서버 오류가 발생했습니다.", "danger");
-	            });
-	        });
-	    }
+// ===== 주소 검색 API 실행 함수 ===== //
+function execDaumPostcode() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            const roadAddr = data.roadAddress;
+            const zonecode = data.zonecode;
 
-	}); // DOMContentLoaded 끝
+            document.getElementById('postcode').value = zonecode;
+            document.getElementById('roadAddress').value = roadAddr;
+            document.getElementById('detailAddress').focus();
 
-	// 주소 검색 API 실행 함수
-	function execDaumPostcode() {
-	    new daum.Postcode({
-	        oncomplete: function(data) {
-	            const roadAddr = data.roadAddress;
-	            const zonecode = data.zonecode;
+            document.getElementById('address').value = `(${zonecode}) ${roadAddr}`;
+        }
+    }).open();
+}
 
-	            document.getElementById('postcode').value = zonecode;
-	            document.getElementById('roadAddress').value = roadAddr;
-	            document.getElementById('detailAddress').focus();
+// 상세주소 입력 시 전체 주소 갱신
+document.addEventListener('DOMContentLoaded', function () {
+    const detailInput = document.getElementById('detailAddress');
+    const roadInput = document.getElementById('roadAddress');
+    const zoneInput = document.getElementById('postcode');
+    const fullInput = document.getElementById('address');
 
-	            document.getElementById('address').value = `(${zonecode}) ${roadAddr}`;
-	        }
-	    }).open();
-	}
-
-	// 상세주소 입력 시 전체 주소 갱신
-	document.addEventListener('DOMContentLoaded', function () {
-	    const detailInput = document.getElementById('detailAddress');
-	    const roadInput = document.getElementById('roadAddress');
-	    const zoneInput = document.getElementById('postcode');
-	    const fullInput = document.getElementById('address');
-
-	    if (detailInput && roadInput && zoneInput && fullInput) {
-	        detailInput.addEventListener('input', function () {
-	            fullInput.value = `(${zoneInput.value}) ${roadInput.value} ${detailInput.value}`;
-	        });
-	    }
-	});
+    if (detailInput && roadInput && zoneInput && fullInput) {
+        detailInput.addEventListener('input', function () {
+            fullInput.value = `(${zoneInput.value}) ${roadInput.value} ${detailInput.value}`;
+        });
+    }
+});

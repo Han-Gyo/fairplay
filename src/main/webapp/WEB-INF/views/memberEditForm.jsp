@@ -91,12 +91,16 @@
 				        <!-- 기존 이메일 값 hidden으로 전달 -->
 				        <input type="hidden" id="originalEmail" value="${member.email}">
 				        <!-- 중복 확인 버튼 -->
-						<button type="button" class="btn btn-outline-primary" id="checkEmailBtn" disabled>
-						    <i class="fas fa-search"></i> 중복 확인
-						</button>
-						<!-- 인증번호 발송 버튼 (중복검사 통과 시 활성화) -->
-						<button type="button" class="btn btn-primary" id="sendEmailCodeBtn" disabled>
-						    <i class="fas fa-paper-plane"></i> 인증번호 발송
+				        <button type="button" class="btn btn-outline-primary" id="checkEmailBtn" disabled>
+				            <i class="fas fa-search"></i> 중복 확인
+				        </button>
+				        <!-- 인증번호 발송 버튼 (중복검사 통과 시 활성화) -->
+				        <button type="button" class="btn btn-primary" id="sendEmailCodeBtn" disabled>
+				            <i class="fas fa-paper-plane"></i> 인증번호 발송
+				        </button>
+				        <!-- 이메일 다시 입력 버튼 -->
+				        <button type="button" class="btn btn-warning" id="resetEmailBtn" style="display:none;">
+						    <i class="fas fa-undo"></i> 다시 입력
 						</button>
 				    </div>
 				    <div class="input-group mt-2">
@@ -108,6 +112,7 @@
 				    <!-- 결과 메시지 영역 -->
 				    <div id="emailCheckResult" class="mt-2"></div>
 				</div>
+
 
 
 
