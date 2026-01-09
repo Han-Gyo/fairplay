@@ -250,13 +250,16 @@ document.addEventListener('DOMContentLoaded', function () {
 		const confirmPw = document.getElementById("confirmPassword");
 		const pwChangeResult = document.getElementById("pwChangeResult");
 
+		// 회원가입 때와 동일한 정규식 (8~16자리, 소문자+숫자+특수문자 포함)
+		const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
+
 		if (pwForm) {
 		    pwForm.addEventListener("submit", function(e) {
 		        e.preventDefault(); // 기본 폼 제출 막기
 
 		        // 클라이언트 측 유효성 검사
-		        if (newPw.value.length < 8) {
-		            showResult(pwChangeResult, "비밀번호는 최소 8자리 이상이어야 합니다.", "danger");
+		        if (!pwRegex.test(newPw.value)) {
+		            showResult(pwChangeResult, "비밀번호는 8~16자의 영문 소문자, 숫자, 특수문자를 포함해야 합니다.", "danger");
 		            return;
 		        }
 		        if (newPw.value !== confirmPw.value) {
@@ -282,11 +285,12 @@ document.addEventListener('DOMContentLoaded', function () {
 		            }
 		        })
 		        .catch(err => {
-		            console.error("❌ 비밀번호 변경 오류:", err);
+		            console.error("비밀번호 변경 오류:", err);
 		            showResult(pwChangeResult, "서버 오류가 발생했습니다.", "danger");
 		        });
 		    });
 		}
+
 	});
 
 	// 주소 검색 API 실행 함수

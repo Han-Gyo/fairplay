@@ -154,10 +154,18 @@
 			    <div class="mb-3">
 			        <label for="newPassword" class="form-label fw-bold">새 비밀번호</label>
 			        <input type="password" class="form-control" id="newPassword" name="newPassword" required />
+			        <!-- 안내 문구 -->
+			        <div class="form-text text-muted">
+			            비밀번호는 8~16자의 영문 소문자, 숫자, 특수문자를 포함해야 합니다.
+			        </div>
 			    </div>
 			    <div class="mb-3">
 			        <label for="confirmPassword" class="form-label fw-bold">새 비밀번호 확인</label>
 			        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required />
+			        <!-- 안내 문구 -->
+			        <div class="form-text text-muted">
+			            새 비밀번호와 동일하게 입력해주세요.
+			        </div>
 			    </div>
 			    <!-- 결과 메시지 영역 -->
 			    <div id="pwChangeResult" class="mt-2"></div>
@@ -165,6 +173,7 @@
 			        <button type="submit" class="btn btn-warning">비밀번호 변경</button>
 			    </div>
 			</form>
+
         </div>
     </div>
 </div>
