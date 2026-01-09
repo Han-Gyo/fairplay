@@ -107,7 +107,7 @@
         <div class="info-group"><span class="info-label">이메일</span> ${member.email}</div>
         <div class="info-group"><span class="info-label">전화번호</span> ${member.phone}</div>
         <div class="info-group"><span class="info-label">주소</span> ${member.address}</div>
-        <div class="info-group"><span class="info-label">가입일</span> ${member.created_at}</div>
+        <div class="info-group"><span class="info-label">가입일</span> ${member.createdAtFormatted}</div>
         <div class="info-group"><span class="info-label">회원 상태</span> ${member.status}</div>
 
         <!-- 하단 버튼 영역 -->

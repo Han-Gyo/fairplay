@@ -1,6 +1,7 @@
 package com.fairplay.domain;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import com.fairplay.enums.MemberStatus;
 
@@ -98,6 +99,12 @@ public class Member {
     public void setCreated_at(LocalDateTime created_at) {
         this.created_at = created_at;
     }
+    
+    public String getCreatedAtFormatted() {
+        if (created_at == null) return "";
+        return created_at.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
 
     public LocalDateTime getInactive_at() {
         return inactive_at;
