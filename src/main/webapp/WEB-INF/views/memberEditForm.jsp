@@ -144,8 +144,6 @@
                     <input type="hidden" id="address" name="address" value="${member.address}" />
                 </div>
 
-                <input type="hidden" name="status" value="${member.status}" />
-
                 <!-- 버튼 -->
                 <div class="d-flex justify-content-between mt-4">
                     <button type="submit" class="btn btn-success">수정 완료</button>

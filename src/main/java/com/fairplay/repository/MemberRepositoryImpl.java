@@ -55,7 +55,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 	// 특정 회원 업데이트 (Update)
     @Override
     public void update(Member member) {
-        String sql = "UPDATE member SET user_id = ?, password = ?, real_name = ?, nickname = ?, email = ?, address = ?, phone = ?, status = ?, role = ?, profile_image = ?, inactive_at = ? WHERE id = ?";
+        String sql = "UPDATE member SET user_id = ?, password = ?, real_name = ?, nickname = ?, email = ?, address = ?, phone = ?, status = ?, profile_image = ?, inactive_at = ? WHERE id = ?";
         
         jdbcTemplate.update(sql,
             member.getUser_id(),
@@ -66,12 +66,12 @@ public class MemberRepositoryImpl implements MemberRepository {
             member.getAddress(),
             member.getPhone(),
             member.getStatus().name(),
-            member.getRole(),
             member.getProfileImage(),
             member.getInactive_at(),
             member.getId()
         );
     }
+
 
 
     @Override
