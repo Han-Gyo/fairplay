@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
             emailInput.value = "";
             if(checkEmailBtn) checkEmailBtn.disabled = false;
             if(sendBtn) sendBtn.disabled = true;
-            if(verifyBtn) verifyBtn.disabled = true; // 리셋 시 확인 버튼도 다시 잠금
+            if(verifyBtn) verifyBtn.disabled = true; 
             
             setError("emailCheckResult", "");
             setError("emailResult", "");
@@ -146,7 +146,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (timerInterval) clearInterval(timerInterval);
             document.getElementById("timerDisplay").innerText = "";
             
-            // 인증번호 입력칸도 초기화
             const codeInput = document.getElementById("emailCode");
             if(codeInput) {
                 codeInput.value = "";
@@ -155,34 +154,107 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    document.getElementById('signUpForm').addEventListener('submit', function (e) {
-        const userId = document.getElementById('user_id').value.trim();
-        const userPw = document.getElementById('password').value.trim();
-        const userPwConfirm = document.getElementById('passwordCheck').value.trim();
-        const realName = document.getElementById('real_name').value.trim();
-        const nickname = document.getElementById('nickname').value.trim();
-        const zipcode = document.getElementById('zipcode').value.trim();
-        const address = document.getElementById('address').value.trim();
-        const addressDetail = document.getElementById('addressDetail').value.trim();
-        const phone2 = document.getElementById('phone2').value.trim();
-        const phone3 = document.getElementById('phone3').value.trim();
+	document.getElementById('signUpForm').addEventListener('submit', function (e) {
+	    const userId = document.getElementById('user_id').value.trim();
+	    const userPw = document.getElementById('password').value.trim();
+	    const userPwConfirm = document.getElementById('passwordCheck').value.trim();
+	    const realName = document.getElementById('real_name').value.trim();
+	    const nickname = document.getElementById('nickname').value.trim();
+	    const zipcode = document.getElementById('zipcode').value.trim();
+	    const address = document.getElementById('address').value.trim();
+	    const addressDetail = document.getElementById('addressDetail').value.trim();
+	    const phone2 = document.getElementById('phone2').value.trim();
+	    const phone3 = document.getElementById('phone3').value.trim();
 
-        if (!userId) { setError('idError', '아이디를 입력하세요.'); return e.preventDefault(); }
-        if (!userPw) { setError('pwError', '비밀번호를 입력하세요.'); return e.preventDefault(); }
-        
-        const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
-        if (!pwRegex.test(userPw)) { return e.preventDefault(); }
-        if (userPw !== userPwConfirm) { return e.preventDefault(); }
-        if (!realName) { alert('실명을 입력해주세요.'); return e.preventDefault(); }
-        if (!nickname) { return e.preventDefault(); }
+	    if (!userId) { 
+	        setError('idError', '아이디를 입력하세요.'); 
+	        document.getElementById('user_id').focus();
+	        e.preventDefault(); 
+	        return; 
+	    }
 
-        if (idCheckResult !== 'available') { alert('아이디 중복 확인이 필요합니다.'); return e.preventDefault(); }
-        if (nicknameCheckResult !== 'available') { alert('닉네임 중복 확인이 필요합니다.'); return e.preventDefault(); }
-        if (!emailAuthStatus) { alert('이메일 인증을 완료해주세요.'); return e.preventDefault(); }
-        if (!zipcode || !address) { alert('주소 검색을 완료해주세요.'); return e.preventDefault(); }
-        if (!addressDetail) { alert('상세주소를 입력해주세요.'); return e.preventDefault(); }
-        if (!/^\d{3,4}$/.test(phone2) || !/^\d{4}$/.test(phone3)) { alert('전화번호 형식을 확인하세요.'); return e.preventDefault(); }
-    });
+        // 아이디 중복확인 여부 체크를 아이디 입력 체크 바로 밑으로 옮기는 것이 흐름상 자연스럽습니다.
+	    if (idCheckResult !== 'available') { 
+	        alert('아이디 중복 확인이 필요합니다.'); 
+	        document.getElementById('user_id').focus();
+	        e.preventDefault(); 
+	        return; 
+	    }
+
+	    if (!userPw) { 
+	        setError('pwError', '비밀번호를 입력하세요.'); 
+	        document.getElementById('password').focus();
+	        e.preventDefault(); 
+	        return; 
+	    }
+
+	    const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
+	    if (!pwRegex.test(userPw)) { 
+            // 제출 시에도 에러 메시지를 보여주면 더 명확합니다.
+            setError('pwError', '비밀번호 형식을 확인하세요.');
+	        document.getElementById('password').focus();
+	        e.preventDefault(); 
+	        return; 
+	    }
+
+	    if (userPw !== userPwConfirm) { 
+            setError('pwError', '비밀번호가 일치하지 않습니다.');
+	        document.getElementById('passwordCheck').focus();
+	        e.preventDefault(); 
+	        return; 
+	    }
+
+	    if (!realName) { 
+	        alert('실명을 입력해주세요.'); 
+	        document.getElementById('real_name').focus();
+	        e.preventDefault(); 
+	        return; 
+	    }
+
+		if (!nickname) { 
+		    setError('nicknameCheckResult', '닉네임을 입력해주세요.'); 
+		    document.getElementById('nickname').focus(); 
+		    e.preventDefault(); 
+		    return; 
+		}
+
+	    if (nicknameCheckResult !== 'available') { 
+	        alert('닉네임 중복 확인이 필요합니다.'); 
+	        document.getElementById('nickname').focus();
+	        e.preventDefault(); 
+	        return; 
+	    }
+
+	    if (!emailAuthStatus) { 
+	        alert('이메일 인증을 완료해주세요.'); 
+	        document.getElementById('email').focus();
+	        e.preventDefault(); 
+	        return; 
+	    }
+
+	    if (!zipcode || !address) { 
+	        alert('주소 검색을 완료해주세요.'); 
+            // zipcode 버튼이나 필드에 포커스
+	        document.getElementById('zipcode').focus();
+	        e.preventDefault(); 
+	        return; 
+	    }
+
+	    if (!addressDetail) { 
+	        alert('상세주소를 입력해주세요.'); 
+	        document.getElementById('addressDetail').focus();
+	        e.preventDefault(); 
+	        return; 
+	    }
+
+	    if (!/^\d{3,4}$/.test(phone2) || !/^\d{4}$/.test(phone3)) { 
+	        alert('전화번호 형식을 확인하세요.'); 
+	        document.getElementById('phone2').focus();
+	        e.preventDefault(); 
+	        return; 
+	    }
+	});
+
 });
 
 // 이메일 인증번호 발송
@@ -223,8 +295,6 @@ function sendEmailCode() {
         setError('emailResult', '인증번호가 발송되었습니다.', true);
         document.getElementById("email").readOnly = true;
         resetEmailBtn.style.display = "inline-block";
-        
-        // [수정] 인증번호 발송 성공 시 '인증 확인' 버튼 활성화
         if(verifyBtn) verifyBtn.disabled = false;
     });
 }
@@ -245,7 +315,7 @@ function verifyEmailCode() {
             clearInterval(timerInterval);
             document.getElementById("timerDisplay").innerText = "";
             document.getElementById("emailCode").disabled = true;
-            document.getElementById("verifyBtn").disabled = true; // 인증 완료 시 비활성화
+            document.getElementById("verifyBtn").disabled = true;
             document.getElementById("resetEmailBtn").style.display = "none";
         } else {
             setError('emailResult', '인증번호가 일치하지 않습니다.');
