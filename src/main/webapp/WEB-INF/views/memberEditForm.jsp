@@ -82,27 +82,37 @@
                 </div>
 
                 <!-- 이메일 -->
-                <div class="mb-3">
-                    <label for="email" class="form-label fw-bold">
-                        <i class="fas fa-envelope me-1 text-primary"></i> 이메일
-                    </label>
-                    <div class="input-group">
-                        <input type="email" class="form-control" id="email" name="email" value="${member.email}" required>
-                        <!-- 기존 이메일 값 hidden으로 전달 -->
-    					<input type="hidden" id="originalEmail" value="${member.email}">
-                        <button type="button" class="btn btn-primary" id="sendEmailCodeBtn">
-                            <i class="fas fa-paper-plane"></i> 인증번호 발송
-                        </button>
-                    </div>
-                    <div class="input-group mt-2">
-                        <input type="text" class="form-control" id="emailCode" placeholder="인증번호 입력">
-                        <button type="button" class="btn btn-success" id="verifyEmailCodeBtn">
-                            <i class="fas fa-check-circle"></i> 인증 확인
-                        </button>
-                    </div>
-                    <!-- 결과 메시지 영역 -->
-                    <div id="emailCheckResult" class="mt-2"></div>
-                </div>
+				<div class="mb-3">
+				    <label for="email" class="form-label fw-bold">
+				        <i class="fas fa-envelope me-1 text-primary"></i> 이메일
+				    </label>
+				    <div class="input-group">
+				        <input type="email" class="form-control" id="email" name="email" value="${member.email}" required>
+				        <!-- 기존 이메일 값 hidden으로 전달 -->
+				        <input type="hidden" id="originalEmail" value="${member.email}">
+				        <!-- 중복 확인 버튼 -->
+				        <button type="button" class="btn btn-outline-primary" id="checkEmailBtn" disabled>
+				            <i class="fas fa-search"></i> 중복 확인
+				        </button>
+				        <!-- 인증번호 발송 버튼 (중복검사 통과 시 활성화) -->
+				        <button type="button" class="btn btn-primary" id="sendEmailCodeBtn" disabled>
+				            <i class="fas fa-paper-plane"></i> 인증번호 발송
+				        </button>
+				        <!-- 이메일 다시 입력 버튼 -->
+				        <button type="button" class="btn btn-warning" id="resetEmailBtn" style="display:none;">
+						    <i class="fas fa-undo"></i> 다시 입력
+						</button>
+				    </div>
+				    <div class="input-group mt-2">
+				        <input type="text" class="form-control" id="emailCode" placeholder="인증번호 입력">
+				        <button type="button" class="btn btn-success" id="verifyEmailCodeBtn">
+				            <i class="fas fa-check-circle"></i> 인증 확인
+				        </button>
+				    </div>
+				    <!-- 결과 메시지 영역 -->
+				    <div id="emailCheckResult" class="mt-2"></div>
+				</div>
+
 
 
 
@@ -179,9 +189,6 @@
 </div>
 
 <!-- JS -->
-<script>
-    const contextPath = '${pageContext.request.contextPath}';
-</script>
 <script src="<c:url value='/resources/js/memberEditForm.js' />"></script>
 
 <!-- Daum 주소 API -->

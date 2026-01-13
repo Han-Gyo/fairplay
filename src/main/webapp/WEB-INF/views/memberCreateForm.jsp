@@ -82,21 +82,30 @@
 
                         <!-- 이메일 -->
                         <div class="mb-4">
-                            <label for="email" class="form-label fw-semibold">이메일</label>
-                            <div class="input-group mb-2">
-                                <input type="email" id="email" name="email" class="form-control" placeholder="example@mail.com" required>
-                                <button type="button" class="btn btn-primary" onclick="checkEmail()">중복확인</button>
-                                <button type="button" class="btn btn-outline-primary" onclick="sendEmailCode()" id="sendCodeBtn" disabled>인증번호 전송</button>
-                            </div>
-                            <div id="emailCheckResult" class="form-text"></div>
-                            <div id="timerDisplay" class="form-text text-danger fw-bold"></div>
+						    <label for="email" class="form-label fw-semibold">이메일</label>
+						    <div class="input-group mb-2">
+						        <input type="email" id="email" name="email" class="form-control" placeholder="example@mail.com" required>
+						        <button type="button" class="btn btn-primary" onclick="checkEmail()">중복확인</button>
+						        <button type="button" class="btn btn-outline-primary" onclick="sendEmailCode()" id="sendCodeBtn" disabled>
+						            인증번호 전송
+						        </button>
+						        <!-- 다시 입력 버튼 추가 -->
+						        <button type="button" class="btn btn-warning" id="resetEmailBtn" style="display:none;">
+						            다시 입력
+						        </button>
+						    </div>
+						
+						    <!-- 결과 메시지 영역 -->
+						    <div id="emailCheckResult" class="form-text"></div>
+						    <div id="timerDisplay" class="form-text text-danger fw-bold"></div>
+						
+						    <div class="input-group mt-2">
+						        <input type="text" id="emailCode" class="form-control" placeholder="인증번호 6자리">
+						        <button type="button" class="btn btn-success" onclick="verifyEmailCode()" id="verifyBtn">인증 확인</button>
+						    </div>
+						    <div id="emailResult" class="form-text"></div>
+						</div>
 
-                            <div class="input-group mt-2">
-                                <input type="text" id="emailCode" class="form-control" placeholder="인증번호 6자리">
-                                <button type="button" class="btn btn-success" onclick="verifyEmailCode()" id="verifyBtn">인증 확인</button>
-                            </div>
-                            <div id="emailResult" class="form-text"></div>
-                        </div>
 
                         <hr>
 
