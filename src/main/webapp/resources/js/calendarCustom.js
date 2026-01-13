@@ -104,8 +104,11 @@ $(document).ready(function() {
             title: $("input[name='title']").val(),
             memo: $("textarea[name='memo']").val(),
             scheduleDate: $("#selectedDate").val(),
-            visibility: $("select[name='visibility']").val()
+            visibility: $("select[name='visibility']").val(),
+						groupId: $("#scheduleForm").find("select[name='groupId']").val()
         };
+				
+				console.log("보내는 그룹ID:", scheduleData.groupId);
 
         // 3. 수정일 경우에만 id 추가
         if (isUpdate) {
@@ -140,6 +143,9 @@ $(document).ready(function() {
         $("#editScheduleId").val("");
         $("#scheduleModalLabel").text("새 일정 등록");
 				$("#submitBtn").text("일정 등록하기");
+				
+				$("#groupSelectSection").hide();
+				$("#groupIdSelect").empty().append('<option value="">-- 그룹을 선택해주세요 --</option>');
     });
 });
 
