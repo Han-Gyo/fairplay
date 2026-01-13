@@ -43,6 +43,9 @@
             <option value="${member.memberId}">${member.nickname}</option>
           </c:forEach>
         </select>
+        <div id="assignee-guide" style="color: #ff4d4f; font-size: 12px; display: none; margin-top: 5px;">
+			  	완료 상태로 변경하려면 담당자 지정이 필수예요!
+				</div>
       </div>
 
       <!-- 2열 영역: 마감일/난이도 -->
@@ -87,24 +90,66 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-  $("#group_id").on("change", function() {
+  // 요소 미리 찾아두기
+  const $groupSelect = $("#group_id");
+  const $assigneeSelect = $("#assigned_to");
+  const $completedSelect = $("#completed");
+  const $guide = $("#assignee-guide");
+
+  // 1. [검증 함수] 완료인데 담당자 없는지 체크
+  function checkValidation() {
+    const isCompleted = $completedSelect.val() === "true";
+    const hasAssignee = $assigneeSelect.val() !== "";
+
+    if (isCompleted && !hasAssignee) {
+      $guide.show(); // 가이드 표시
+      $assigneeSelect.css("border", "2px solid #ff4d4f");
+      return false;
+    } else {
+      $guide.hide(); // 가이드 숨김
+      $assigneeSelect.css("border", "");
+      return true;
+    }
+  }
+
+  // 2. 실시간 체크 (값 바뀔 때마다 실행)
+  $completedSelect.on("change", checkValidation);
+  $assigneeSelect.on("change", checkValidation);
+
+  // 3. 그룹 변경 시 멤버 로드 (기존 로직 + 체크 추가)
+  $groupSelect.on("change", function() {
     var groupId = $(this).val();
     $.ajax({
       url: "${pageContext.request.contextPath}/todos/members",
       type: "GET",
       data: { groupId: groupId },
       success: function(members) {
-        var $assigned = $("#assigned_to");
-        $assigned.empty();
-        $assigned.append('<option value="">-- 담당자 선택 안 함 --</option>');
+        $assigneeSelect.empty();
+        $assigneeSelect.append('<option value="">-- 담당자 선택 안 함 --</option>');
         $.each(members, function(i, member) {
-          $assigned.append('<option value="' + member.memberId + '">' + member.nickname + '</option>');
+          $assigneeSelect.append('<option value="' + member.memberId + '">' + member.nickname + '</option>');
         });
+        checkValidation(); // 멤버 새로 불러온 후에도 검증 상태 업데이트
       },
       error: function() {
         alert("멤버 목록을 불러오지 못했습니다.");
       }
     });
+  });
+
+  // 4. 폼 제출 시 최종 방어
+  $(".todo-form").on("submit", function(e) {
+    if (!checkValidation()) {
+      e.preventDefault();
+      alert("담당자를 지정해야 '완료'로 수정할 수 있어요!");
+      $assigneeSelect.focus();
+      return false;
+    }
+  });
+
+  // 5. 페이지 로드 시 초기 상태 체크
+  $(document).ready(function() {
+    checkValidation();
   });
 </script>
 
