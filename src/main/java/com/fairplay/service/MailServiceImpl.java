@@ -30,7 +30,7 @@ public class MailServiceImpl implements MailService {
             helper.setTo(toEmail);
             helper.setSubject("[FairPlay] 이메일 인증번호 안내");
             helper.setText("인증번호는 다음과 같습니다: " + code);
-            helper.setFrom("tjgksry3940@gmail.com"); // 발신자 이메일
+            helper.setFrom("fairplay_@nate.com"); // 발신자 이메일
 
             mailSender.send(message);
         } catch (Exception e) {
@@ -43,6 +43,7 @@ public class MailServiceImpl implements MailService {
     public void sendSimpleMessage(String to, String subject, String text) throws Exception {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
+        message.setFrom("fairplay_@nate.com");
         message.setSubject(subject);
         message.setText(text);
         mailSender.send(message);
