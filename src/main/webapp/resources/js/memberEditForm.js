@@ -27,19 +27,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const phoneRegex = /^\d{3,4}$/;
 
-    // [수정] 제출 전 로직: 이메일이 바뀌었을 때만 인증 체크
+    // 제출 전 로직
     editForm.addEventListener('submit', function(e) {
         const email = emailInput.value.trim();
         const phoneValid = phoneRegex.test(phone2.value) && phoneRegex.test(phone3.value);
         
-        // 1. 전화번호 형식 검사
         if (!phoneValid) {
             e.preventDefault();
             alert("전화번호 형식을 확인해주세요.");
             return;
         }
 
-        // 2. 닉네임 중복 체크 확인
         if (!isNicknameChecked) {
             e.preventDefault();
             alert("닉네임 중복 확인을 진행해주세요.");
@@ -47,17 +45,13 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // 3. [수정됨] 이메일 검증 로직
-        // 이메일이 공백이거나 기존 이메일과 같다면 검사를 건너뛰고 제출 허용
         if (email !== "" && email !== originalEmail) {
-            // 이메일 형식이 맞는지 확인
             if (!emailRegex.test(email)) {
                 e.preventDefault();
                 alert("올바른 이메일 형식이 아닙니다.");
                 return;
             }
 
-            // 형식이 맞다면 인증 완료 여부 확인
             const isEmailVerified = document.querySelector("input[name='emailVerified']");
             if (!isEmailVerified) {
                 e.preventDefault();
@@ -67,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // ===== 닉네임 중복 확인 로직 (기존 유지) ===== //
+    // ===== 닉네임 중복 확인 로직 ===== //
     if (nicknameInput) {
         nicknameInput.addEventListener("input", function() {
             const currentNickname = nicknameInput.value.trim();
@@ -110,13 +104,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ===== 이메일 관련 변수 및 이벤트 (기존 유지) ===== //
+    // ===== 이메일 관련 변수 및 이벤트 ===== //
     const emailCheckResult = document.getElementById("emailCheckResult");
     const checkEmailBtn = document.getElementById("checkEmailBtn");
     const sendEmailBtn = document.getElementById("sendEmailCodeBtn");
     const verifyEmailBtn = document.getElementById("verifyEmailCodeBtn");
     const emailCodeInput = document.getElementById("emailCode");
-	const resetEmailBtn = document.getElementById("resetEmailBtn");
+    const resetEmailBtn = document.getElementById("resetEmailBtn");
+
+    if (verifyEmailBtn) verifyEmailBtn.disabled = true;
 
     emailInput.addEventListener('input', function () {
         const email = emailInput.value.trim();
@@ -135,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-		showResult(emailCheckResult, "", "muted");
+        showResult(emailCheckResult, "", "muted");
         checkEmailBtn.disabled = false;
         sendEmailBtn.disabled = true;
 
@@ -143,7 +139,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (hiddenInput) hiddenInput.remove();
     });
 
-    // 중복 확인 버튼
     checkEmailBtn.addEventListener('click', function () {
         const email = emailInput.value.trim();
         fetch(contextPath + "/member/checkEmail?email=" + encodeURIComponent(email))
@@ -165,34 +160,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ===== 이메일 인증 발송 ===== //
     if (sendEmailBtn) {
-		sendEmailBtn.addEventListener("click", function () {
-		    const email = emailInput.value.trim();
-		    fetch(contextPath + "/mail/sendCode", {
-		        method: "POST",
-		        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-		        body: "email=" + encodeURIComponent(email)
-		    })
-		    .then(res => res.text())
-		    .then(msg => {
-		        showResult(emailCheckResult, msg, "info");
-		        emailInput.readOnly = true;
-		        resetEmailBtn.style.display = "inline-block";
-		    })
-		    .catch(err => {
-		        showResult(emailCheckResult, "서버 오류가 발생했습니다.", "danger");
-		    });
-		});
+        sendEmailBtn.addEventListener("click", function () {
+            const email = emailInput.value.trim();
+            
+            // [수정] 무분별한 클릭 방지를 위해 발송 즉시 버튼 비활성화
+            sendEmailBtn.disabled = true;
+            showResult(emailCheckResult, "인증번호를 발송 중입니다...", "info");
+
+            fetch(contextPath + "/mail/sendCode", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "email=" + encodeURIComponent(email)
+            })
+            .then(res => res.text())
+            .then(msg => {
+                showResult(emailCheckResult, msg, "info");
+                emailInput.readOnly = true;
+                resetEmailBtn.style.display = "inline-block";
+                
+                checkEmailBtn.disabled = true;   
+                verifyEmailBtn.disabled = false; 
+            })
+            .catch(err => {
+                showResult(emailCheckResult, "발송에 실패했습니다. 다시 시도해주세요.", "danger");
+                // [수정] 실패 시에는 다시 누를 수 있도록 활성화
+                sendEmailBtn.disabled = false;
+            });
+        });
     }
 
     // ===== 이메일 다시 입력 버튼 ===== //
     if (resetEmailBtn) {
         resetEmailBtn.addEventListener("click", function () {
             emailInput.readOnly = false;
-            emailInput.value = originalEmail; // 다시 입력 시 기존 이메일로 복구
+            emailInput.value = originalEmail;
+            
+            if (emailCodeInput) emailCodeInput.value = "";
+            
             checkEmailBtn.disabled = true;
             sendEmailBtn.disabled = true;
+            verifyEmailBtn.disabled = true; 
             showResult(emailCheckResult, "", "muted");
             resetEmailBtn.style.display = "none";
+            
+            const hiddenInput = document.querySelector("input[name='emailVerified']");
+            if (hiddenInput) hiddenInput.remove();
         });
     }
 
@@ -214,6 +226,8 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(msg => {
                 if (msg.includes("성공")) {
                     showResult(emailCheckResult, msg, "success");
+                    verifyEmailBtn.disabled = true; 
+                    
                     const hiddenInput = document.createElement("input");
                     hiddenInput.type = "hidden";
                     hiddenInput.name = "emailVerified";
@@ -221,13 +235,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById("editForm").appendChild(hiddenInput);
                 } else {
                     showResult(emailCheckResult, msg, "danger");
-                    emailInput.readOnly = false;
                 }
             });
         });
     }
 
-    // ===== 프사 미리보기 (기존 유지) ===== //
+    // ===== 프사 미리보기/비밀번호 변경 등 나머지 로직 동일 =====
     const fileInput = document.getElementById('profileImageFile');
     const previewImg = document.getElementById('profilePreview');
 
@@ -252,7 +265,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // 프사 클릭 확대 모달 (기존 유지)
     const imageModal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
 
@@ -268,7 +280,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ===== 비밀번호 변경 (기존 유지) ===== //
     const pwForm = document.getElementById("pwChangeForm");
     const currentPw = document.getElementById("currentPassword");
     const newPw = document.getElementById("newPassword");
@@ -308,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// ===== 주소 검색 API 실행 함수 (기존 유지) ===== //
+// ===== 주소 검색 API 실행 함수 ===== //
 function execDaumPostcode() {
     new daum.Postcode({
         oncomplete: function(data) {
