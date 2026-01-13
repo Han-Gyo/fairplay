@@ -403,5 +403,14 @@ public class TodoController {
 	public List<GroupMemberInfoDTO> getMembersByGroup(
 					@RequestParam("groupId") int groupId) { 
 					return groupMemberService.findMemberInfoByGroupId(groupId); }
-
+	
+	// 일정 등록 시 사용할 '내 그룹 목록' 가져오기
+	@GetMapping("/api/myGroups")
+	@ResponseBody
+	public List<Group> getMyGroups(HttpSession session) {
+	 Member loginMember = (Member) session.getAttribute("loginMember");
+	 if (loginMember == null) return Collections.emptyList();
+	 
+	 return groupMemberService.findGroupsByMemberId((long) loginMember.getId());
+	}
 }

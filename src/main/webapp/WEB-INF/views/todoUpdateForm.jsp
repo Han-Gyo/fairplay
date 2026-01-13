@@ -55,7 +55,7 @@
 		  <option value="false" <c:if test="${!todo.completed}">selected</c:if>>미완료</option>
 		</select>
 	</div>
-  	<div id="assignee-guide" style="color: #ff4d4f; font-size: 12px; display: none; margin-top: 5px;">
+  <div id="assignee-guide" style="color: #ff4d4f; font-size: 12px; display: none; margin-top: 5px;">
   	완료 상태로 변경하려면 담당자 지정이 필수예요!
 	</div>
 

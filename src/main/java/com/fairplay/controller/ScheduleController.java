@@ -42,30 +42,35 @@ public class ScheduleController {
             return Collections.emptyList();
         }
 
-        return scheduleService.getEvents(loginMember.getId(), groupId, start, end);
+        return scheduleService.getEvents(loginMember.getId(), 0, start, end);
     }
 
     // 2. 일정 등록
     @PostMapping("/create")
     public ResponseEntity<String> createSchedule(@RequestBody Schedule schedule, HttpSession session) {
-        Member loginMember = (Member) session.getAttribute("loginMember");
-        Integer groupId = (Integer) session.getAttribute("currentGroupId");
-        System.out.println("지금 로그인된 그룹 ID: " + groupId);
-        
-        if (loginMember == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
+      Member loginMember = (Member) session.getAttribute("loginMember");
+      
+      if (loginMember == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+      }
 
-        schedule.setMemberId(loginMember.getId());
-        schedule.setGroupId(groupId != null ? groupId : 0);
+      // 작성자 세팅
+      schedule.setMemberId(loginMember.getId());
 
-        try {
-            scheduleService.create(schedule);
-            return ResponseEntity.ok("success");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
-        } 
+      if (schedule.getGroupId() == 0) {
+        Integer sessionGroupId = (Integer) session.getAttribute("currentGroupId");
+        schedule.setGroupId(sessionGroupId != null ? sessionGroupId : 0);
+      }
+
+      System.out.println("DB에 저장될 최종 그룹 ID: " + schedule.getGroupId());
+
+      try {
+        scheduleService.create(schedule);
+        return ResponseEntity.ok("success");
+      } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("fail");
+      } 
     }
     // 3. 일정 수정
     @PostMapping("/update")

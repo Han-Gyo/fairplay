@@ -27,74 +27,66 @@ public class TodoServiceImpl implements TodoService{
 		System.out.println("할 일 전체 목록 조회");
 		return todoRepository.findAll();
 	}
-	// 할 일 추가
-	@Override
-	public void addTodo(Todo todo) {
-			
-		// 상태값 자동 설정
-    if (todo.isCompleted()) {
-        todo.setStatus("완료");
-    } else if (todo.getAssigned_to() != null && todo.getAssigned_to() > 0) {
-        todo.setStatus("신청완료");
-    } else {
-        todo.setStatus("미신청");
-    }
-    
-    todoRepository.insert(todo);
-    
-    if (todo.isCompleted()) {
+ //할 일 추가
+ @Override
+ public void addTodo(Todo todo) {
+   if (todo == null) return;
 
-      History history = new History();
-      history.setTodo_id(todo.getId());
-      history.setMember_id(todo.getAssigned_to());
-      history.setCompleted_at(new java.util.Date());
-      history.setScore(todo.getDifficulty_point());
-      history.setMemo(todo.getTitle());
+   Integer assignedTo = todo.getAssigned_to();
+   
+   if (todo.isCompleted() && assignedTo != null && assignedTo > 0) {
+     todo.setStatus("완료");
+   } else if (assignedTo != null && assignedTo > 0) {
+     todo.setStatus("신청완료");
+   } else {
+     todo.setCompleted(false); 
+     todo.setStatus("미신청");
+   }
+   
+   todoRepository.insert(todo);
+   
+   if (todo.isCompleted() && assignedTo != null && assignedTo > 0) {
+     createHistory(todo, assignedTo);
+     System.out.println("할 일 등록과 동시에 히스토리 자동 생성!");
+   }
+ }
 
-      System.out.println("히스토리로 넘어가는 점수 : " + todo.getDifficulty_point());
-      
-      historyRepository.save(history);
-      System.out.println("할 일 등록과 동시에 히스토리 자동 생성!");
-  }
+ // 할 일 수정
+ @Override
+ public void updateTodo(Todo todo) {
+   if (todo == null) return;
+   
+   Todo oldTodo = todoRepository.findById(todo.getId());
+   Integer assignedTo = todo.getAssigned_to();
+   
+   if (todo.isCompleted() && (assignedTo == null || assignedTo == 0)) {
+     todo.setCompleted(false);
+     todo.setStatus("미신청");
+   } else if (todo.isCompleted()) {
+     todo.setStatus("완료");
+   } else if (assignedTo != null && assignedTo > 0) {
+     todo.setStatus("신청완료");
+   } else {
+     todo.setStatus("미신청");
+   }
+   
+   if (!oldTodo.isCompleted() && todo.isCompleted() && assignedTo != null && assignedTo > 0) {
+     createHistory(todo, assignedTo);
+     System.out.println("수정 시 히스토리 자동 등록 완료!");
+   }
+   
+   todoRepository.update(todo);
+ }
 
-    // 로그 찍기
-    System.out.println("등록된 할 일 제목: " + todo.getTitle());
-    System.out.println("담당자 ID: " + todo.getAssigned_to());
-    System.out.println("할 일 상태: " + todo.getStatus());
-	}
-
-	// 할 일 수정
-	@Override
-	public void updateTodo(Todo todo) {
-		Todo oldTodo = todoRepository.findById(todo.getId());
-		
-		if (todo.isCompleted() && (todo.getAssigned_to() == null || todo.getAssigned_to() == 0)) {
-	        System.out.println("담당자 미지정으로 인한 강제 완료 취소 로직 실행");
-	        todo.setCompleted(false); // 미완료로 돌려버림
-	        todo.setStatus("미신청");
-	    } else if (todo.isCompleted()) {
-	        todo.setStatus("완료");
-	    } else if (todo.getAssigned_to() != null && todo.getAssigned_to() > 0) {
-	        todo.setStatus("신청완료");
-	    } else {
-	        todo.setStatus("미신청");
-	    }
-		
-		if (!oldTodo.isCompleted() && todo.isCompleted()) {
-	        History history = new History();
-	        history.setTodo_id(todo.getId());
-	        history.setMember_id(todo.getAssigned_to());
-	        history.setCompleted_at(new java.util.Date());
-	        history.setScore(todo.getDifficulty_point());
-	        history.setMemo(todo.getTitle());
-	        
-	        System.out.println("히스토리로 넘어가는 점수 : " + todo.getDifficulty_point());
-	        historyRepository.save(history); 
-	        System.out.println("히스토리 자동 등록!");
-	    }
-		todoRepository.update(todo);
-		System.out.println("할 일 수정됨: " + todo);
-	}
+ private void createHistory(Todo todo, Integer memberId) {
+   History history = new History();
+   history.setTodo_id(todo.getId());
+   history.setMember_id(memberId);
+   history.setCompleted_at(new java.util.Date());
+   history.setScore(todo.getDifficulty_point());
+   history.setMemo(todo.getTitle());
+   historyRepository.save(history);
+ }
 	// 할 일 삭제
 	@Override
 	public void deleteTodo(int id) {

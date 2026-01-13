@@ -198,11 +198,18 @@
 			        </div>
 			        <div class="mb-3">
 			            <label class="form-label">공개 범위</label>
-			            <select class="form-select" name="visibility">
+			            <select class="form-select" name="visibility" id="visibilitySelect">
 			                <option value="private">🔒 개인일정</option>
 			                <option value="group">👥 그룹공유</option>
 			            </select>
 			        </div>
+			        
+			        <div class="mb-3" id="groupSelectSection" style="display: none;">
+							  <label class="form-label text-primary fw-bold">공유할 그룹 선택</label>
+							  <select class="form-select" name="groupId" id="groupIdSelect">
+							    <option value="">-- 그룹을 선택해주세요 --</option>
+							  </select>
+							</div>
 			    </div>
 			    
 			    <div class="modal-footer">
@@ -240,15 +247,55 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 <script>
-  // 전역 변수 설정
-  const contextPath = "${pageContext.request.contextPath}";
+// 전역 변수 설정
+const contextPath = "${pageContext.request.contextPath}";
+
+// 로그아웃 컨펌 함수 (필요하면 추가)
+function confirmLogout() {
+    if(confirm("정말 로그아웃 하시겠습니까?")) {
+        location.href = contextPath + "/member/logout";
+    }
+}
   
-  // 로그아웃 컨펌 함수 (필요하면 추가)
-  function confirmLogout() {
-      if(confirm("정말 로그아웃 하시겠습니까?")) {
-          location.href = contextPath + "/member/logout";
-      }
-  }
+$(document).ready(function() {
+	// 1. 공개 범위 변경 이벤트 감지
+  $(document).on('change', '#visibilitySelect', function() {
+    const selectedVal = $(this).val();
+    console.log("공주님, 선택하신 범위는:", selectedVal);
+
+    if (selectedVal === 'group') {
+      $('#groupSelectSection').slideDown(200);
+      fetchMyGroups(); // 그룹 목록 불러오기
+    } else {
+      $('#groupSelectSection').slideUp(200);
+      $('#groupIdSelect').val(''); // 값 초기화
+    }
+  });
+
+	// 2. 그룹 목록 가져오는 함수
+	function fetchMyGroups() {
+	  const $select = $('#groupIdSelect');
+	  
+	  $.ajax({
+	    url: contextPath + "/todos/api/myGroups",
+	    type: "GET",
+	    success: function(data) {
+	      $select.empty(); 
+	      $select.append('<option value="">-- 그룹을 선택해주세요 --</option>');
+	      
+	      if (data && data.length > 0) {
+	        let htmlOptions = "";
+	        data.forEach(function(group) {
+	          htmlOptions += '<option value="' + group.id + '">' + group.name + '</option>';
+	        });
+	        
+	        $select.append(htmlOptions);
+	        $select.val(""); 
+	      }
+	    }
+	  });
+	}
+});
 </script>
 <script src="${pageContext.request.contextPath}/resources/js/calendarCustom.js"></script>
 </body>
