@@ -1,3 +1,7 @@
+/**
+ * Fairplay 회원가입 JS
+ */
+
 // 상태 관리 변수
 let idCheckResult = null;
 let nicknameCheckResult = null;
@@ -137,6 +141,8 @@ document.addEventListener('DOMContentLoaded', function () {
             emailInput.readOnly = false;
             emailInput.value = "";
             if(checkEmailBtn) checkEmailBtn.disabled = false;
+            
+            // 다시 입력 버튼 클릭 시 전송 버튼 비활성화 상태 유지
             if(sendBtn) sendBtn.disabled = true;
             if(verifyBtn) verifyBtn.disabled = true; 
             
@@ -151,6 +157,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 codeInput.value = "";
                 codeInput.disabled = false;
             }
+            // 이메일 인증 상태 초기화
+            emailAuthStatus = false;
         });
     }
 
@@ -173,7 +181,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	        return; 
 	    }
 
-        // 아이디 중복확인 여부 체크를 아이디 입력 체크 바로 밑으로 옮기는 것이 흐름상 자연스럽습니다.
 	    if (idCheckResult !== 'available') { 
 	        alert('아이디 중복 확인이 필요합니다.'); 
 	        document.getElementById('user_id').focus();
@@ -190,7 +197,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	    const pwRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,16}$/;
 	    if (!pwRegex.test(userPw)) { 
-            // 제출 시에도 에러 메시지를 보여주면 더 명확합니다.
             setError('pwError', '비밀번호 형식을 확인하세요.');
 	        document.getElementById('password').focus();
 	        e.preventDefault(); 
@@ -234,7 +240,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	    if (!zipcode || !address) { 
 	        alert('주소 검색을 완료해주세요.'); 
-            // zipcode 버튼이나 필드에 포커스
 	        document.getElementById('zipcode').focus();
 	        e.preventDefault(); 
 	        return; 
@@ -296,6 +301,12 @@ function sendEmailCode() {
         document.getElementById("email").readOnly = true;
         resetEmailBtn.style.display = "inline-block";
         if(verifyBtn) verifyBtn.disabled = false;
+        
+        // 인증번호 발송 시 '인증번호 전송' 버튼 비활성화
+        if(sendBtn) sendBtn.disabled = true;
+        
+        // 인증번호 발송 시 '중복확인' 버튼 비활성화 (추가됨)
+        if(checkEmailBtn) checkEmailBtn.disabled = true;
     });
 }
 
@@ -316,7 +327,9 @@ function verifyEmailCode() {
             document.getElementById("timerDisplay").innerText = "";
             document.getElementById("emailCode").disabled = true;
             document.getElementById("verifyBtn").disabled = true;
-            document.getElementById("resetEmailBtn").style.display = "none";
+            
+            // 수정: 인증 성공 시에도 [다시 입력] 버튼을 숨기지 않고 유지함
+            // document.getElementById("resetEmailBtn").style.display = "none"; (주석 처리됨)
         } else {
             setError('emailResult', '인증번호가 일치하지 않습니다.');
         }
