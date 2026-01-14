@@ -7,6 +7,13 @@ body {
   padding-top: 70px; /* 네비게이션 높이만큼 여백 확보 */
 }
 
+.logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain; 
+  flex-shrink: 0; 
+  margin-right: -13px; 
+}
 
 /* 캘린더 모달 스타일 */
 .fc-header-toolbar {

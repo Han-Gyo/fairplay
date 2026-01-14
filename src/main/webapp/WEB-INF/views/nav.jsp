@@ -20,8 +20,8 @@
 
     <!-- 로고 -->
     <a class="navbar-brand d-flex align-items-center fw-bold" href="${pageContext.request.contextPath}/">
-      <i class="fas fa-broom fa-lg me-2"></i>
-      FairPlay
+      <img src="${pageContext.request.contextPath}/resources/img/nav-logo.png" class="logo-img" alt="FairPlay 로고">
+      airPlay
     </a>
 
     <!-- 모바일 토글 -->
