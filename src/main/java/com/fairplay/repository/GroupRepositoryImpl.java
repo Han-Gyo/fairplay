@@ -28,10 +28,10 @@ public class GroupRepositoryImpl implements GroupRepository{
 	    String sql = "INSERT INTO `group` (name, description, code, max_member, public_status, profile_img, admin_comment, leader_id) " +
 	                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-	    // ✅ 자동 생성된 기본 키(id)를 반환받기 위한 KeyHolder 생성
+	    // 자동 생성된 기본 키(id)를 반환받기 위한 KeyHolder 생성
 	    KeyHolder keyHolder = new GeneratedKeyHolder();
 
-	    // ✅ PreparedStatement를 생성하고, RETURN_GENERATED_KEYS 옵션으로 insert 후 생성된 ID를 가져옴
+	    // PreparedStatement를 생성하고, RETURN_GENERATED_KEYS 옵션으로 insert 후 생성된 ID를 가져옴
 	    jdbcTemplate.update(connection -> {
 	        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS); // ← 자동 생성된 ID를 얻기 위한 설정
 	        ps.setString(1, group.getName());              // 그룹 이름
@@ -45,7 +45,7 @@ public class GroupRepositoryImpl implements GroupRepository{
 	        return ps;
 	    }, keyHolder);
 
-	    // ✅ insert 후 자동 생성된 그룹 ID 값을 Group 객체에 설정 → 이후 서비스에서 group.getId()로 사용 가능
+	    // insert 후 자동 생성된 그룹 ID 값을 Group 객체에 설정 → 이후 서비스에서 group.getId()로 사용 가능
 	    group.setId(keyHolder.getKey().intValue());
 	}
 

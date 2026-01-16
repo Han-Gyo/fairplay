@@ -78,8 +78,8 @@ public class GroupController {
 	        Path savePath = Paths.get("C:/upload/" + safeFileName);
 
 	        try {
-	            file.transferTo(savePath.toFile()); // ✅ 4. 파일 저장
-	            group.setProfile_img(safeFileName); // ✅ 5. DB에 저장할 파일명 설정
+	            file.transferTo(savePath.toFile()); // 4. 파일 저장
+	            group.setProfile_img(safeFileName); // 5. DB에 저장할 파일명 설정
 	        } catch (IOException e) {
 	            e.printStackTrace(); // 에러 발생 시 로그 출력
 	        }

@@ -1,0 +1,88 @@
+@charset "UTF-8";
+
+/* Minty Theme 전용 커스텀 스타일 */
+
+:root {
+  --minty-primary: #78c2ad;
+  --minty-secondary: #f3969a;
+}
+
+/* 섹션 타이틀 디자인 */
+.section-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #f8f9fa;
+  padding-bottom: 0.5rem;
+}
+
+/* 그룹 설명 박스 */
+.description-box {
+  background-color: #fdfdfd;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+/* 리더 한마디 카드 */
+.admin-comment-card {
+  background-color: #f1fcf9; /* Minty Primary 연한 버전 */
+  border: 1px dashed var(--minty-primary);
+}
+
+.quote-icon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+/* 이미지 썸네일 개선 */
+.img-thumb { 
+  cursor: zoom-in; 
+  max-width: 100%; 
+  max-height: 350px; 
+  border-radius: 16px; 
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05); 
+  transition: all 0.3s ease;
+  object-fit: cover;
+}
+.img-thumb:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+
+/* 아이콘 사이즈 조절 */
+.size-sm { width: 18px; height: 18px; }
+.size-xs { width: 14px; height: 14px; }
+.size-lg { width: 48px; height: 48px; }
+
+/* 가입 권장 애니메이션 */
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(120, 194, 173, 0.4); }
+  70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(120, 194, 173, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(120, 194, 173, 0); }
+}
+
+/* 버튼 둥글게 */
+.rounded-pill { border-radius: 50rem !important; }
+
+/* 아바타 플레이스홀더 */
+.avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  background-color: #f8f9fa;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 기존 라이트박스 & 토스트 유지 */
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 9999; }
+.lightbox.open { display: flex; }
+.lightbox-close { position: fixed; top: 20px; right: 20px; background: none; color: #fff; border: 0; font-size: 45px; cursor: pointer; }
+.toast-custom { position: fixed; left: 50%; bottom: 40px; transform: translateX(-50%); background: #2d3436; color: #fff; padding: 12px 28px; border-radius: 50px; font-size: 14px; opacity: 0; transition: all .3s ease; z-index: 10001; }

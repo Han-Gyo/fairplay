@@ -36,7 +36,6 @@ public class GroupMemberController {
 		this.groupService = groupService;
 	}
 	
-	
 	// 그룹 가입 폼 보기
 	@GetMapping("/create")
 	public String createForm(@RequestParam("groupId") int groupId,
@@ -65,50 +64,59 @@ public class GroupMemberController {
 		return "groupMemberCreateForm";
 	}
 	
-	
 	// 그룹 가입 처리
 	@PostMapping("/create")
 	public String createGroupMember(@RequestParam("groupId") int groupId,
-	                                @RequestParam(value = "inviteCode", required = false) String inviteCode,
-	                                HttpSession session,
-	                                RedirectAttributes redirectAttributes) {
+									@RequestParam(value = "inviteCode", required = false) String inviteCode,
+									HttpSession session,
+									RedirectAttributes redirectAttributes) {
 
-	    // 세션에서 로그인한 사용자 확인
-	    Member loginMember = (Member) session.getAttribute("loginMember");
-	    if (loginMember == null) {
-	        redirectAttributes.addFlashAttribute("msg", "로그인이 필요합니다.");
-	        return "redirect:/member/login";
-	    }
+		// 세션에서 로그인한 사용자 확인
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		if (loginMember == null) {
+			redirectAttributes.addFlashAttribute("msg", "로그인이 필요합니다.");
+			return "redirect:/member/login";
+		}
 
-	    // 그룹 정보 가져오기
-	    Group group = groupService.findById(groupId);
-	    if (group == null) {
-	        redirectAttributes.addFlashAttribute("msg", "존재하지 않는 그룹입니다.");
-	        return "redirect:/group/list";
-	    }
+		// 그룹 정보 가져오기
+		Group group = groupService.findById(groupId);
+		if (group == null) {
+			redirectAttributes.addFlashAttribute("msg", "존재하지 않는 그룹입니다.");
+			return "redirect:/group/list";
+		}
 
-	    // ❗ 초대코드가 null이면 빈 문자열로 처리 (null 예외 방지)
-	    if (inviteCode == null || !inviteCode.equals(group.getCode())) {
-	        redirectAttributes.addFlashAttribute("msg", "초대코드가 올바르지 않습니다.");
-	        return "redirect:/groupmember/create?groupId=" + groupId;
-	    }
+		// [수정 사항] 가입 처리 전 정원 체크 로직 추가
+		// 1. 현재 이 그룹에 가입된 멤버 수 조회
+		int currentMemberCount = groupMemberService.countByGroupId(groupId);
+		
+		// 2. 그룹의 최대 인원수(maxMember)와 비교
+		// group.getMaxMember()가 null이 아닐 때만 체크 (Integer 타입일 경우 고려)
+		if (group.getMaxMember() != null && currentMemberCount >= group.getMaxMember()) {
+			redirectAttributes.addFlashAttribute("msg", "그룹 정원이 가득 차서 가입할 수 없습니다.");
+			return "redirect:/group/detail?id=" + groupId;
+		}
 
-	    // 가입 처리
-	    GroupMember groupMember = new GroupMember();
-	    groupMember.setGroupId(groupId);
-	    groupMember.setMemberId(loginMember.getId());
-	    groupMember.setWeeklyScore(0);
-	    groupMember.setTotalScore(0);
-	    groupMember.setWarningCount(0);
-	    groupMember.setRole("MEMBER");
+		// 초대코드가 null이면 빈 문자열로 처리 (null 예외 방지)
+		if (inviteCode == null || !inviteCode.equals(group.getCode())) {
+			redirectAttributes.addFlashAttribute("msg", "초대코드가 올바르지 않습니다.");
+			return "redirect:/groupmember/create?groupId=" + groupId;
+		}
 
-	    groupMemberService.save(groupMember);
+		// 가입 처리
+		GroupMember groupMember = new GroupMember();
+		groupMember.setGroupId(groupId);
+		groupMember.setMemberId(loginMember.getId());
+		groupMember.setWeeklyScore(0);
+		groupMember.setTotalScore(0);
+		groupMember.setWarningCount(0);
+		groupMember.setRole("MEMBER");
 
-	    redirectAttributes.addFlashAttribute("msg", "그룹에 성공적으로 가입되었습니다.");
-	    return "redirect:/group/detail?id=" + groupId;
+		groupMemberService.save(groupMember);
+
+		redirectAttributes.addFlashAttribute("msg", "그룹에 성공적으로 가입되었습니다.");
+		return "redirect:/group/detail?id=" + groupId;
 	}
 
-	
 	// 특정 그룹의 멤버 전체 조회 (Read_all)
 	@GetMapping("/list")
 	public String list(@RequestParam("groupId")int groupId,
@@ -183,7 +191,6 @@ public class GroupMemberController {
 		// 그룹장(리더)이 다른 멤버를 강퇴하는 경우인지 확인
 		boolean isLeaderKick = loginMember.getId() == group.getLeaderId();
 		
-		
 		// 위 두 조건에 해당하지 않으면 -> 무단 접근으로 간주하고 -> 차단
 		if (!isSelf && !isLeaderKick) {
 			return "redirect:/group/detail?id=" + groupId;
@@ -197,49 +204,44 @@ public class GroupMemberController {
 			return "redirect:/";
 		}
 		
-		
 		// 그룹장이 다른 멤버를 강퇴한 경우 -> 그룹 멤버 목록 페이지로 이동
 		return "redirect:/groupmember/list?groupId=" + groupId;
 	}
 	
-	
-	 
 	// 그룹장이면서 멤버가 1명일 경우에만 탈퇴 가능 (그룹장 혼자 그룹에 있을 때)
 	@PostMapping("/leave")
 	public String leaveGroup(@RequestParam("groupId") int groupId,
-	                         HttpSession session,
-	                         RedirectAttributes ra) {
+							 HttpSession session,
+							 RedirectAttributes ra) {
 
-	    // 세션에서 로그인한 사용자 정보 가져오기
-	    Member loginMember = (Member) session.getAttribute("loginMember");
-	    int memberId = loginMember.getId();
+		// 세션에서 로그인한 사용자 정보 가져오기
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		int memberId = loginMember.getId();
 
-	    // 현재 사용자의 그룹 내 역할 조회 (LEADER or MEMBER)
-	    String role = groupMemberService.findRoleByMemberIdAndGroupId(memberId, groupId);
+		// 현재 사용자의 그룹 내 역할 조회 (LEADER or MEMBER)
+		String role = groupMemberService.findRoleByMemberIdAndGroupId(memberId, groupId);
 
-	    // 현재 그룹 멤버 수 조회
-	    int memberCount = groupMemberService.countByGroupId(groupId);
+		// 현재 그룹 멤버 수 조회
+		int memberCount = groupMemberService.countByGroupId(groupId);
 
-	    // 그룹장인데 다른 멤버가 있는 경우 → 탈퇴 불가
-	    if ("LEADER".equals(role) && memberCount > 1) {
-	        ra.addFlashAttribute("msg", "그룹장이 탈퇴하려면 먼저 다른 멤버에게 리더를 위임해야 합니다.");
-	        return "redirect:/group/detail?id=" + groupId;
-	    }
+		// 그룹장인데 다른 멤버가 있는 경우 -> 탈퇴 불가
+		if ("LEADER".equals(role) && memberCount > 1) {
+			ra.addFlashAttribute("msg", "그룹장이 탈퇴하려면 먼저 다른 멤버에게 리더를 위임해야 합니다.");
+			return "redirect:/group/detail?id=" + groupId;
+		}
 
-	    // 리더이면서 혼자일 경우 -> 그룹 삭제
-	    if ("LEADER".equals(role) && memberCount == 1) {
-	    	
-	        groupService.delete(groupId); // 그룹 삭제
-	    }
+		// 리더이면서 혼자일 경우 -> 그룹 삭제
+		if ("LEADER".equals(role) && memberCount == 1) {
+			groupService.delete(groupId); // 그룹 삭제
+		}
 
-	    // 공통 탈퇴 처리
-	    groupMemberService.leaveGroup(memberId, groupId); 
+		// 공통 탈퇴 처리
+		groupMemberService.leaveGroup(memberId, groupId); 
 
-	    ra.addFlashAttribute("msg", "그룹에서 탈퇴되었습니다.");
-	    return "redirect:/group/groups";
+		ra.addFlashAttribute("msg", "그룹에서 탈퇴되었습니다.");
+		return "redirect:/group/groups";
 	}
 
-	
 	// 위임 대상 선택 폼 이동
 	@GetMapping("/transferForm")
 	public String showTransferForm(@RequestParam("groupId") int groupId, Model model) {
