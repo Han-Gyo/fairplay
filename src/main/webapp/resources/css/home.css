@@ -3,7 +3,6 @@
 :root {
   --mint: #78c2ad;
   --pink: #f3969a;
-  --dark: #1a1a1a;
 }
 
 body.home-body {
@@ -69,8 +68,13 @@ body.home-body {
 .hero-title {
   font-size: 6rem;
   font-weight: 900;
-  color: var(--dark);
+  background: linear-gradient(135deg, #2c3e50, #78c2ad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
   letter-spacing: -5px;
+  padding-right: 10px;
   margin-bottom: -40px;
 }
 .home-logo-img {
@@ -90,6 +94,7 @@ body.home-body {
   width: 100%;
   text-align: center; 
   margin-left: -50px;
+  color: #5a6a70;
 }
 
 .hero-desc .second-line {
@@ -100,7 +105,7 @@ body.home-body {
 }
 
 .hero-desc strong {
-  color: var(--mint); 
+  color: var(--mint);
   font-weight: 800;
   position: relative;
   border-bottom: 3px solid rgba(120, 194, 173, 0.3);
