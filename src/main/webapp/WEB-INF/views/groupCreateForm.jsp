@@ -47,7 +47,7 @@
         </div>
       </div>
 
-      <!-- ✅ 대표 이미지 + 미리보기 -->
+      <!-- 대표 이미지 + 미리보기 -->
       <div class="form-row">
         <label class="label">대표 이미지</label>
         <div class="inline" style="width:100%;">
