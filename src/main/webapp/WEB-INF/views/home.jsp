@@ -67,7 +67,7 @@
 	  </div>
 	</div>
   </div>
-
+<%@ include file="/WEB-INF/views/footer.jsp" %>
   <!-- JS 섹션 -->
   <!-- 
     주의: bootstrap.bundle.min.js는 nav.jsp에서 이미 로드했으므로 여기서 삭제합니다.
