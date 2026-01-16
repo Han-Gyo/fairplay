@@ -5,74 +5,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FairPlay - 홈</title>
-
-  <!-- 외부 라이브러리 (nav.jsp와 중복되는지 확인 후 제거 권장) -->
-  <!-- 이미 nav.jsp에서 로드하고 있다면 아래 link들은 제거해도 됩니다 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>FairPlay</title>
+  <link href="https://bootswatch.com/5/minty/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/home.css">
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/base.css">
 </head>
 
-<!-- nav.jsp 안에 Bootstrap JS와 jQuery가 포함되어 있어야 함 -->
-<%@ include file="/WEB-INF/views/nav.jsp" %>
-
 <body class="home-body">
-  <div class="home-container">
-    <h1 class="home-title" data-aos="fade-down">FairPlay에 오신 걸 환영해요!</h1>
+  <%@ include file="/WEB-INF/views/nav.jsp" %>
+
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+
+  <div class="main-wrapper">
+    <div class="home-content-area">
+      <div class="hero-section">
+        <h1 class="hero-title">
+        <img src="${pageContext.request.contextPath}/resources/img/nav-logo.png" class="home-logo-img" alt="FairPlay 로고">
+        airPlay</h1>
+        <p class="hero-desc">
+          당신의 일상을 더 가치 있게,<span class="second-line">
+          <c:choose>
+            <c:when test="${not empty sessionScope.loginMember}">
+              <strong>${userNickname}</strong>님을 위한 완벽한 관리
+            </c:when>
+            <c:otherwise>
+              fairplay와 함께하는 완벽한 관리
+            </c:otherwise>
+          </c:choose>
+          </span>
+        </p>
+      </div>
+
+      <nav class="interactive-menu">
+        <div class="main-nav-item" onclick="location.href='#'">
+          <span class="main-nav-link">집안일 관리</span>
+          <span class="main-nav-hover-text">오늘 할 일, 놓친 건 없는지 체크해볼까요?</span>
+        </div>
+        <div class="main-nav-item" onclick="location.href='#'">
+          <span class="main-nav-link">물품 정리</span>
+          <span class="main-nav-hover-text">부족한 물건이 없는지 체크해볼까요?</span>
+        </div>
+        <div class="main-nav-item" onclick="location.href='#'">
+          <span class="main-nav-link">일정 관리</span>
+          <span class="main-nav-hover-text">
+	          <c:choose>
+	            <c:when test="${not empty sessionScope.loginMember}">
+	              <strong>${userNickname}</strong>님의 소중한 약속들을 챙겨볼까요?
+	            </c:when>
+	            <c:otherwise>
+	              fairplay의 중요한 약속과 일정을 관리해볼까요?
+	            </c:otherwise>
+	          </c:choose>
+          </span>
+        </div>
+        <div class="main-nav-item" onclick="location.href='#'">
+          <span class="main-nav-link">히스토리</span>
+          <span class="main-nav-hover-text">우리가 함께한 기록들을 되돌아볼까요?</span>
+        </div>
+        <div class="main-nav-item" onclick="location.href='#'">
+          <span class="main-nav-link">가계부</span>
+          <span class="main-nav-hover-text">현명한 소비를 위한 지출 내역 확인해볼까요?</span>
+        </div>
+        <div class="main-nav-item" onclick="location.href='#'">
+          <span class="main-nav-link">기여도 통계</span>
+          <span class="main-nav-hover-text">누가 더 열심히 했는지 확인해볼까요?</span>
+        </div>
+      </nav>
+    </div>
     
-    <div class="home-card-container">
-	  <div class="home-card" data-aos="zoom-in" data-aos-delay="100">
-	    <i class="fas fa-broom fa-3x"></i>
-	    <h5>집안일 등록</h5>
-	    <p>할 일을 정리하세요.</p>
-	  </div>
-	
-	  <div class="home-card" data-aos="zoom-in" data-aos-delay="200">
-	    <i class="fas fa-dumpster fa-3x"></i>
-	    <h5>물품 정리</h5>
-	    <p>필요한 물건 체크!</p>
-	  </div>
-	
-	  <div class="home-card" data-aos="zoom-in" data-aos-delay="300">
-	    <i class="fas fa-calendar-alt fa-3x"></i>
-	    <h5>일정 관리</h5>
-	    <p>캘린더 확인.</p>
-	  </div>
-	
-	  <div class="home-card" data-aos="zoom-in" data-aos-delay="400">
-	    <i class="fas fa-book-open fa-3x"></i>
-	    <h5>히스토리</h5>
-	    <p>기록 되돌아보기.</p>
-	  </div>
-	
-	  <div class="home-card" data-aos="zoom-in" data-aos-delay="500">
-	    <i class="fas fa-wallet fa-3x"></i>
-	    <h5>가계부</h5>
-	    <p>지출 내역 확인.</p>
-	  </div>
-	
-	  <div class="home-card" data-aos="zoom-in" data-aos-delay="600">
-	    <i class="fas fa-chart-pie fa-3x"></i>
-	    <h5>기여도 통계</h5>
-	    <p>활동 통계 확인.</p>
-	  </div>
-	
-	  <div class="home-card" data-aos="zoom-in" data-aos-delay="700">
-	    <i class="fas fa-users fa-3x"></i>
-	    <h5>그룹 관리</h5>
-	    <p>그룹 멤버 관리.</p>
-	  </div>
-	</div>
+    <%@ include file="/WEB-INF/views/footer.jsp" %>
   </div>
-<%@ include file="/WEB-INF/views/footer.jsp" %>
-  <!-- JS 섹션 -->
-  <!-- 
-    주의: bootstrap.bundle.min.js는 nav.jsp에서 이미 로드했으므로 여기서 삭제합니다.
-    중복 로드는 드롭다운 이벤트를 파괴합니다.
-  -->
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="${pageContext.request.contextPath}/resources/js/home.js"></script>
   <script>

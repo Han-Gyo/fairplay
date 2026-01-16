@@ -23,23 +23,22 @@ public class HomeController {
 
         Member loginMember = (Member) session.getAttribute("loginMember");
         if (loginMember != null) {
-
-            Integer groupId = (Integer) session.getAttribute("currentGroupId");
-            if (groupId == null) {
-                List<Group> myGroups = groupMemberService.findGroupsByMemberId((long) loginMember.getId());
-                if (!myGroups.isEmpty()) {
-                    groupId = myGroups.get(0).getId();
-                    session.setAttribute("currentGroupId", groupId);
-                }
+        	session.setAttribute("userNickname", loginMember.getNickname());
+          Integer groupId = (Integer) session.getAttribute("currentGroupId");
+          if (groupId == null) {
+            List<Group> myGroups = groupMemberService.findGroupsByMemberId((long) loginMember.getId());
+            if (!myGroups.isEmpty()) {
+              groupId = myGroups.get(0).getId();
+              session.setAttribute("currentGroupId", groupId);
             }
+          }
 
-            if (groupId != null) {
-                String role = groupMemberService.findRoleByMemberIdAndGroupId(
-                        loginMember.getId(),
-                        groupId
-                );
-                session.setAttribute("role", role);
-            }
+          if (groupId != null) {
+            String role = groupMemberService.findRoleByMemberIdAndGroupId(
+              loginMember.getId(), groupId
+            );
+            session.setAttribute("role", role);
+          }
         }
 
         return "home";
