@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <title>그룹 목록</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/group.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/groups.css" />
 </head>
 <body class="group-body" data-context-path="${pageContext.request.contextPath}">
 <div class="group-container">

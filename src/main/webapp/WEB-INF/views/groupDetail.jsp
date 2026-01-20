@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/minty/bootstrap.min.css">
   <!-- Lucide Icons for better visuals -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/group.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/groupDetail.css" />
 </head>
 <body class="bg-light" 
       data-context-path="${pageContext.request.contextPath}"
@@ -203,7 +203,7 @@
   <img id="lightboxImg" alt="확대 이미지" />
 </div>
 
-<script src="${pageContext.request.contextPath}/resources/js/group.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/groupDetail.js"></script>
 <script>
   // 아이콘 초기화
   lucide.createIcons();

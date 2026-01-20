@@ -1,0 +1,15 @@
+@charset "UTF-8";
+
+/* Minty와 조합되는 커스텀 스타일 */
+.group-body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(180deg, #e0f7ff 0%, #f6fcff 100%);
+  margin: 0; padding: 40px; color: #111827;
+}
+.page-title { font-size: 28px; font-weight: 800; letter-spacing: -0.2px; }
+.img-preview { max-width: 280px; border-radius: 12px; box-shadow: 0 12px 28px rgba(0,0,0,0.08); }
+.toast-custom {
+  position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+  background: #78c2ad; color: #fff; padding: 10px 20px; border-radius: 8px;
+  opacity: 0; transition: all 0.3s ease; z-index: 9999;
+}

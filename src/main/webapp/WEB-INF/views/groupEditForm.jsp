@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <title>그룹 수정</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/group.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/groupEditForm.css" />
 </head>
 <body class="group-body" data-context-path="${pageContext.request.contextPath}">
 <div class="group-container">
@@ -104,6 +104,6 @@
   <img id="lightboxImg" alt="확대 이미지" />
 </div>
 
-<script src="${pageContext.request.contextPath}/resources/js/group.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/groupEditForm.js"></script>
 </body>
 </html>
