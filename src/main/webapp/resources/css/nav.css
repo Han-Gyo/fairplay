@@ -1,10 +1,25 @@
-.navbar .nav-link {
-  color: #fff ;   /* 흰색 유지 */
-  font-weight: 100;         /* 기본보다 굵게 */
+body {
+  padding-top: 70px; 
 }
 
-body {
-  padding-top: 70px; /* 네비게이션 높이만큼 여백 확보 */
+.navbar {
+	background-color: #ebfaf3;
+	border-bottom: 1px solid #c1e7d8;
+  height: 70px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar > .container-fluid {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+/* 로고 */
+.navbar-brand {
+	color: #2d3e36;
 }
 
 .logo-img {
@@ -13,6 +28,42 @@ body {
   object-fit: contain; 
   flex-shrink: 0; 
   margin-right: -13px; 
+}
+
+/* 메뉴 */
+.navbar-collapse {
+  flex: 2; 
+  display: flex !important;
+  justify-content: center !important;
+  margin-left: 200px;
+}
+
+.navbar-nav.me-auto {
+  margin-right: 0 !important; 
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+/* 유저 메뉴 */
+.nav-right-group {
+  flex: 1; 
+  display: flex;
+  justify-content: flex-end; 
+}
+
+.nav-right-group .navbar-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+}
+
+.navbar .nav-link {
+  color: #1a2b25; 
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
 }
 
 /* 캘린더 모달 스타일 */
@@ -26,7 +77,6 @@ body {
 }
 
 #calendarModal .modal-content {
-  background: #fff0f5;
   border-radius: 20px;
   padding: 30px;
   box-shadow: 0 0 12px rgba(0,0,0,0.15);
