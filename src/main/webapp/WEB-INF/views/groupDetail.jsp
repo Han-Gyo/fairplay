@@ -42,17 +42,17 @@
           <div class="d-flex flex-wrap gap-2 mb-4">
             <!-- 멤버 배지: align-items-center 추가로 수직 정렬 수정 -->
             <span class="badge rounded-pill bg-primary px-3 py-2 d-inline-flex align-items-center">
-              <i data-lucide="users" class="size-xs me-2"></i> 
+              <i data-lucide="users" class="size-xs"></i> 
               <span class="lh-1">멤버 ${currentMemberCount}/${group.maxMember}</span>
             </span>
             
             <span class="badge rounded-pill bg-light text-secondary border px-3 py-2 d-inline-flex align-items-center">
-              <i data-lucide="calendar" class="size-xs me-2"></i> 
+              <i data-lucide="calendar" class="size-xs"></i> 
               <span class="lh-1">${group.formattedCreatedAt}</span>
             </span>
 
             <span class="badge rounded-pill ${group.publicStatus ? 'bg-info-subtle text-info border-info-subtle' : 'bg-warning-subtle text-warning border-warning-subtle'} border px-3 py-2 d-inline-flex align-items-center">
-              <i data-lucide="${group.publicStatus ? 'unlock' : 'lock'}" class="size-xs me-2"></i>
+              <i data-lucide="${group.publicStatus ? 'unlock' : 'lock'}" class="size-xs"></i>
               <span class="lh-1">${group.publicStatus ? '공개' : '비공개'}</span>
             </span>
           </div>
