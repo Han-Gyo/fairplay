@@ -1,5 +1,6 @@
 package com.fairplay.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -185,27 +186,43 @@ public class GroupController {
 		
 	// 수정된 그룹 데이터를 DB에 반영하고 전체 그룹 목록 페이지로 리다이렉트 (Update)
 	@PostMapping("/update")
-	public String update(@ModelAttribute Group group) {
+	public String update(@ModelAttribute Group group, 
+	                     @RequestParam(value="imageDeleted", defaultValue="false") boolean imageDeleted) {
 
 		MultipartFile file = group.getFile(); // DTO에서 전달받은 파일 추출
 
-		// 기존 그룹 정보 가져오기
+		// 기존 그룹 정보 가져오기 (기존 파일명 확인 및 데이터 유지를 위해)
 	    Group existingGroup = groupService.findById(group.getId());
 	    
 		if (file != null && !file.isEmpty()) {
+			// [새 파일 업로드 처리]
 			String originalName = file.getOriginalFilename();
 			String safeFileName = UUID.randomUUID().toString() + "_" + originalName.replaceAll("[^a-zA-Z0-9.]", "_");
 			Path savePath = Paths.get("C:/upload/" + safeFileName);
 
 			try {
-				file.transferTo(savePath.toFile());              // 1. 파일 저장
-				group.setProfile_img(safeFileName);              // 2. DB에 저장할 파일명 설정
+				file.transferTo(savePath.toFile());             // 1. 파일 저장
+				group.setProfile_img(safeFileName);             // 2. DB에 저장할 파일명 설정
+				
+				// 기존 파일이 있었다면 서버에서 삭제 (파일 교체 시 용량 확보)
+				if (existingGroup.getProfile_img() != null && !existingGroup.getProfile_img().isEmpty()) {
+					deleteActualFile(existingGroup.getProfile_img());
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		} else if (imageDeleted) {
+			// [사용자가 이미지 삭제 버튼을 클릭한 경우 처리]
+			// 1. 서버 폴더에서 물리적 파일 삭제
+			if (existingGroup.getProfile_img() != null && !existingGroup.getProfile_img().isEmpty()) {
+				deleteActualFile(existingGroup.getProfile_img());
+			}
+			// 2. DB에 반영될 파일명을 빈 값(혹은 null)으로 설정
+			group.setProfile_img(null); 
 		} else {
+			// [새 파일도 없고 삭제 요청도 없는 경우]
 			// 파일이 비어 있으면 기존 이미지 유지
-			 group.setProfile_img(existingGroup.getProfile_img());
+			group.setProfile_img(existingGroup.getProfile_img());
 		}
 
 		groupService.update(group); // DB 업데이트 실행
@@ -225,8 +242,13 @@ public class GroupController {
 		
 		// 그룹장이 아닌 경우 삭제 차단
 		if (loginMember == null || group.getLeaderId() != loginMember.getId()) {
-			// 권한 없는 사용자 -> 그룹 상세 페이지로 리다이뤡트
+			// 권한 없는 사용자 -> 그룹 상세 페이지로 리다이렉트
 			return "redirect:/group/detail?id=" +id;
+		}
+		
+		// [추가 로직] 그룹 삭제 시 서버 폴더에 저장된 이미지 파일도 함께 삭제
+		if (group.getProfile_img() != null && !group.getProfile_img().isEmpty()) {
+			deleteActualFile(group.getProfile_img());
 		}
 		
 		// 그룹장 본인일 경우 삭제 진행
@@ -234,4 +256,13 @@ public class GroupController {
 		return "redirect:/group/groups";
 	}
 
+	
+	// [추가 함수] C:/upload 폴더에서 파일을 물리적으로 삭제하는 함수
+	// @param fileName 삭제할 파일명
+	private void deleteActualFile(String fileName) {
+		File file = new File("C:/upload/" + fileName);
+		if (file.exists()) {
+			file.delete();
+		}
+	}
 }
