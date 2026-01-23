@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const imgPreview = document.getElementById('groupImagePreview');
     const clearBtn = document.getElementById('clearImageBtn');
 
-    imgInput?.addEventListener('change', function () {
+    imgInput.addEventListener('change', function () {
         const file = this.files[0];
         if (file) {
             const reader = new FileReader();
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    clearBtn?.addEventListener('click', (e) => {
+    clearBtn.addEventListener('click', (e) => {
         e.preventDefault();
         imgInput.value = "";
         imgPreview.src = "";
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
         imageDeletedInput.value = "true";
     });
 
-    document.getElementById('genCodeBtn')?.addEventListener('click', () => {
+    document.getElementById('genCodeBtn').addEventListener('click', () => {
         const code = Math.random().toString(36).substring(2, 10).toUpperCase();
         codeInput.value = code;
         codeError.style.display = 'none';
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // 폼 전송 시 8자리 유효성 검사
-    editForm?.addEventListener('submit', function (e) {
+    editForm.addEventListener('submit', function (e) {
         if (codeInput.value.trim().length !== 8) {
             e.preventDefault();
             codeError.style.display = 'block';

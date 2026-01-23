@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const clearBtn = document.getElementById('clearImageBtn');
 
     // 이미지 업로드 로직
-    imgInput?.addEventListener('change', function () {
+    imgInput.addEventListener('change', function () {
         const file = this.files[0];
         if (file) {
             const reader = new FileReader();
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    clearBtn?.addEventListener('click', (e) => {
+    clearBtn.addEventListener('click', (e) => {
         e.preventDefault();
         imgInput.value = "";
         imgPreview.src = "";
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // 초대코드 생성
-    document.getElementById('genCodeBtn')?.addEventListener('click', () => {
+    document.getElementById('genCodeBtn').addEventListener('click', () => {
         const code = Math.random().toString(36).substring(2, 10).toUpperCase();
         codeInput.value = code;
         codeError.style.display = 'none';
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // 초대코드 복사
-    document.getElementById('copyCodeBtn')?.addEventListener('click', function() {
+    document.getElementById('copyCodeBtn').addEventListener('click', function() {
         if (!codeInput.value || codeInput.value.length !== 8) {
             toast("8자리 코드를 먼저 입력해주세요.");
             return;
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // 폼 전송 시 유효성 검사 (핵심 추가)
-    groupForm?.addEventListener('submit', function (e) {
+    groupForm.addEventListener('submit', function (e) {
         const codeValue = codeInput.value.trim();
         if (codeValue.length !== 8) {
             e.preventDefault(); // 전송 중단

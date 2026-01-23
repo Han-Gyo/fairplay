@@ -120,7 +120,7 @@
                   <c:choose>
                     <c:when test="${loginMember.id == group.leaderId}">
                       <a class="btn btn-outline-primary rounded-pill py-2" href="${pageContext.request.contextPath}/groupmember/transferForm?groupId=${group.id}">
-                        리더 권한 관리
+                        그룹장 위임 후 탈퇴
                       </a>
                     </c:when>
                     <c:otherwise>
