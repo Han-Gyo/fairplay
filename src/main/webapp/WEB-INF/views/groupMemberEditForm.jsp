@@ -65,9 +65,10 @@
         </div>
 
         <div class="form-group">
-            <label>이번 주 점수 (weekly_score)</label>
-            <input type="number" name="weeklyScore" class="form-control" value="${groupMember.weeklyScore}" />
-        </div>
+		    <label>이번 달 점수 (monthly_score)</label>
+		    <input type="number" name="monthlyScore" class="form-control" value="${groupMember.monthlyScore}" />
+		</div>
+
 
         <div class="form-group">
             <label>전체 점수 (total_score)</label>

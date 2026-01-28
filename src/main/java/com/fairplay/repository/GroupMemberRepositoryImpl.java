@@ -1,8 +1,6 @@
-// GroupMemberRepositoryImpl.java
 package com.fairplay.repository;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,7 +12,7 @@ import com.fairplay.mapper.GroupMemberInfoRowMapper;
 import com.fairplay.mapper.GroupMemberRowMapper;
 
 @Repository
-public class GroupMemberRepositoryImpl implements GroupMemberRepository{
+public class GroupMemberRepositoryImpl implements GroupMemberRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -23,87 +21,77 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    // 그룹 멤버 저장 (가입 처리)
     @Override
     public void save(GroupMember groupMember) {
-
-        String sql = "insert into group_member (group_id, member_id, role, weekly_score, total_score, warning_count) VALUES (?, ?, ?, ?, ?, ?)";
-
+        // weekly_score → monthly_score로 변경
+        String sql = "INSERT INTO group_member (group_id, member_id, role, monthly_score, total_score, warning_count) VALUES (?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
             groupMember.getGroupId(),
             groupMember.getMemberId(),
             groupMember.getRole(),
-            groupMember.getWeeklyScore(),
+            groupMember.getMonthlyScore(),
             groupMember.getTotalScore(),
             groupMember.getWarningCount()
         );
     }
 
+    // 특정 그룹에 속한 멤버 전체 조회
     @Override
     public List<GroupMember> findByGroupId(int groupId) {
-
-        String sql = "select * from group_member where group_id = ?";
-
+        String sql = "SELECT * FROM group_member WHERE group_id = ?";
         return jdbcTemplate.query(sql, new GroupMemberRowMapper(), groupId);
-
     }
 
+    // PK(id)로 그룹 멤버 단일 조회
     @Override
     public GroupMember findById(int id) {
-
-        // SQL문 : group_member 테이블에서 PK(id)로 한 명 조회
-        String sql = "select * from group_member where id = ?";
-
-        // 이미 정의된 RowMapper 클래스 재사용
+        String sql = "SELECT * FROM group_member WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new GroupMemberRowMapper(), id);
     }
 
+    // 그룹 멤버 정보 수정 (역할, 점수, 경고 등)
     @Override
     public void update(GroupMember groupmember) {
-
-        String sql = "UPDATE group_member SET role = ?, weekly_score = ?, total_score = ?, warning_count = ? WHERE id = ?";
-
+        // weekly_score → monthly_score로 변경
+        String sql = "UPDATE group_member SET role = ?, monthly_score = ?, total_score = ?, warning_count = ? WHERE id = ?";
         jdbcTemplate.update(sql,
             groupmember.getRole(),
-            groupmember.getWeeklyScore(),
+            groupmember.getMonthlyScore(),
             groupmember.getTotalScore(),
             groupmember.getWarningCount(),
-            groupmember.getId() // where id = ?        
+            groupmember.getId()
         );
     }
 
+    // 그룹 멤버 삭제
     @Override
     public void delete(int groupId, int memberId) {
-
-        String sql = "delete from group_member where group_id = ? AND member_id = ?";
-
+        String sql = "DELETE FROM group_member WHERE group_id = ? AND member_id = ?";
         jdbcTemplate.update(sql, groupId, memberId);
-
     }
 
+    // 특정 멤버가 그룹에 속해 있는지 여부 확인
     @Override
     public boolean isGroupMember(Long groupId, Long memberId) {
-
-        // 주어진 그룹 ID와 멤버 ID가 모두 일치하는 데이터가 group_member 테이블에 존재하는지 확인하는 SQL
-        String sql = "select count(*) from group_member where group_id = ? and member_id = ?";
-
-        // 쿼리 결과를 Integer 타입으로 받아옴 (조건에 맞는 레코드 수)
+        String sql = "SELECT COUNT(*) FROM group_member WHERE group_id = ? AND member_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, groupId, memberId);
-
-        // count가 null이 아니고 0보다 크면 -> 가입된 멤버로 판단하여 true 반환
         return count != null && count > 0;
     }
 
+    // 그룹 ID로 그룹 멤버 정보(닉네임, 이름 포함) 조회
     @Override
     public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
+        // weekly_score → monthly_score로 변경
         String sql = "SELECT gm.id, gm.group_id, gm.member_id, m.nickname, m.real_name, " +
-                     "gm.role, gm.total_score, gm.weekly_score, gm.warning_count " +
+                     "gm.role, gm.total_score, gm.monthly_score, gm.warning_count " +
                      "FROM group_member gm " +
                      "JOIN member m ON gm.member_id = m.id " +
                      "WHERE gm.group_id = ?";
-
         return jdbcTemplate.query(sql, new GroupMemberInfoRowMapper(), groupId);
     }
 
+    // 그룹 내 현재 인원 수 조회
     @Override
     public int countByGroupId(int groupId) {
         String sql = "SELECT COUNT(*) FROM group_member WHERE group_id = ?";
@@ -117,25 +105,26 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
         jdbcTemplate.update(sql, memberId, groupId);
     }
 
-    // 그룹 내 역할 조회
+    // 그룹 내 특정 멤버의 역할 조회
     @Override
     public String findRoleByMemberIdAndGroupId(int memberId, int groupId) {
         String sql = "SELECT role FROM group_member WHERE member_id = ? AND group_id = ?";
         return jdbcTemplate.queryForObject(sql, String.class, memberId, groupId);
     }
 
-    // 그룹 내에서 리더를 제외한 멤버 목록 조회 (위임 대상)
+    // 그룹 내에서 리더를 제외한 멤버 목록 조회 (리더 위임 대상)
     @Override
     public List<GroupMemberInfoDTO> findMembersExcludingLeader(int groupId) {
+        // weekly_score → monthly_score로 변경
         String sql = "SELECT gm.id, gm.group_id, gm.member_id, m.nickname, m.real_name, " +
-                     "gm.role, gm.total_score, gm.weekly_score, gm.warning_count " +
+                     "gm.role, gm.total_score, gm.monthly_score, gm.warning_count " +
                      "FROM group_member gm " +
                      "JOIN member m ON gm.member_id = m.id " +
                      "WHERE gm.group_id = ? AND gm.role != 'LEADER'";
-
         return jdbcTemplate.query(sql, new GroupMemberInfoRowMapper(), groupId);
     }
 
+    // 새로운 리더로 역할 변경
     @Override
     public void updateRoleToLeader(int groupId, int memberId) {
         String sql = "UPDATE group_member SET role = 'LEADER' WHERE group_id = ? AND member_id = ?";
@@ -149,7 +138,6 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
                      "FROM group_member gm " +
                      "JOIN `group` g ON gm.group_id = g.id " +
                      "WHERE gm.member_id = ?";
-        
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Group group = new Group();
             group.setId(rs.getInt("id"));
@@ -157,31 +145,39 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository{
             return group;
         }, memberId);
     }
-    
+
+    // 로그인 사용자의 최근 가입 그룹 ID 반환
     @Override
     public Integer findLatestGroupIdByMember(int memberId) {
-        // 최근 가입 = PK(id) 기준 내림차순
         String sql =
             "SELECT group_id " +
             "FROM group_member " +
             "WHERE member_id = ? " +
-            "ORDER BY id DESC " +   // ← created_at 대신 id 사용
+            "ORDER BY id DESC " +   // 최근 가입 = PK(id) 기준 내림차순
             "LIMIT 1";
-
         List<Integer> ids = jdbcTemplate.query(sql, (rs, i) -> rs.getInt("group_id"), memberId);
         return ids.isEmpty() ? null : ids.get(0);
     }
 
-    // 가장 오래된(가입일자 대신 PK 오름차순) 비리더 멤버 ID 조회
+    // 가장 오래된 비리더 멤버 ID 조회
     @Override
     public Integer findOldestNonLeaderMemberId(int groupId) {
         String sql =
             "SELECT member_id " +
             "FROM group_member " +
             "WHERE group_id = ? AND role != 'LEADER' " +
-            "ORDER BY id ASC " + // 가입일자 컬럼이 없으므로 PK(id) 오름차순을 '오래된 가입'의 근사치로 사용
+            "ORDER BY id ASC " + // PK(id) 오름차순을 '오래된 가입'의 근사치로 사용
             "LIMIT 1";
         List<Integer> ids = jdbcTemplate.query(sql, (rs, i) -> rs.getInt("member_id"), groupId);
         return ids.isEmpty() ? null : ids.get(0);
     }
+
+	@Override
+	public GroupMember findByGroupIdAndMemberId(int groupId, int memberId) {
+	    String sql = "SELECT * FROM group_member WHERE group_id = ? AND member_id = ?";
+	    return jdbcTemplate.queryForObject(sql, new GroupMemberRowMapper(), groupId, memberId);
+	}
+
+    
+    
 }

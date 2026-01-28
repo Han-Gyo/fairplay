@@ -74,6 +74,7 @@
 <div class="table-box">
     <h2>👥 그룹 멤버 목록</h2>
 
+
 <c:choose>
 
     <c:when test="${isMember}">
@@ -96,7 +97,7 @@
                         <td>${member.realName}</td>
                         <td>${member.role}</td>
                         <td>${member.totalScore}</td>
-                        <td>${member.weeklyScore}</td>
+                        <td>${member.monthlyScore}</td>
                         <td>${member.warningCount}</td>
                         
                         <td>
@@ -147,8 +148,6 @@
         <button type="submit" class="btn-back">그룹 목록으로 돌아가기</button>
     </form>
 </div>
-
-
 
 </body>
 </html>

@@ -46,4 +46,7 @@ public interface GroupMemberRepository {
 
     // 가장 오래된(가입일자 대신 PK 오름차순) 비리더 멤버 ID 조회
     Integer findOldestNonLeaderMemberId(int groupId);
+    
+    // 특정 그룹(groupId) 안에서 특정 멤버(memberId)에 해당하는 그룹멤버 1명을 조회하는 메서드
+    GroupMember findByGroupIdAndMemberId(int groupId, int memberId);
 }
