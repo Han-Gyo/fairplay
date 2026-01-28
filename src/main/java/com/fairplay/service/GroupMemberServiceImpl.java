@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,9 @@ import com.fairplay.domain.MemberMonthlyScore;
 import com.fairplay.repository.GroupMemberRepository;
 import com.fairplay.repository.GroupRepository;
 
+
 @Service
+@EnableScheduling
 public class GroupMemberServiceImpl implements GroupMemberService {
 
     private final GroupMemberRepository gmRepo;
@@ -68,24 +71,30 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     }
 
     // 그룹 ID로 멤버 정보 조회 (닉네임/실명 포함)
-    // + 현재 달의 history 데이터를 기반으로 월간 점수를 실시간 반영
+    // + 현재 달의 history 데이터를 기반으로 월간 점수, 총 점수를 실시간 반영
     @Override
     public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
         List<GroupMemberInfoDTO> members = gmRepo.findMemberInfoByGroupId(groupId);
 
-        // 현재 달(yyyy-MM) 기준으로 history 테이블에서 점수 집계
+        // 현재 달 기준 (yyyy-MM)
         String yearMonth = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
         List<MemberMonthlyScore> monthlyScores = historyService.getMemberMonthlyScore(groupId, yearMonth);
 
-        // DTO에 월간 점수 반영
         for (GroupMemberInfoDTO dto : members) {
             monthlyScores.stream()
                 .filter(ms -> ms.getMemberId().equals(dto.getMemberId()))
                 .findFirst()
-                .ifPresent(ms -> dto.setMonthlyScore(ms.getScore()));
+                .ifPresent(ms -> {
+                    // 월간 점수 실시간 반영
+                    dto.setMonthlyScore(ms.getScore());
+
+                    // 총점도 실시간 반영 (DB totalScore + 이번 달 점수)
+                    dto.setTotalScore(dto.getTotalScore() + ms.getScore());
+                });
         }
         return members;
     }
+
 
     // 그룹 내 현재 인원 수 조회
     @Override
@@ -150,6 +159,12 @@ public class GroupMemberServiceImpl implements GroupMemberService {
      * - 월간 점수 초기화 (monthlyScore = 0)
      * - 최고 점수의 20% 미만인 멤버는 경고 횟수 +1
      */
+    
+    
+	
+    // 매 분마다 실행 → 테스트용
+	// @Scheduled(cron = "0 * * * * ?")
+	// 매월 1일 0시 → 운영용
     @Scheduled(cron = "0 0 0 1 * ?")
     public void applyMonthlyWarnings() {
         // 모든 그룹 조회
