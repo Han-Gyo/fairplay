@@ -6,61 +6,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>기록 수정</title>
+  <meta charset="UTF-8">
+  <title>기록 수정</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/historyUpdate.css">
 </head>
-<body>
+<body class="history-update-body">
 
-<h2>✏️ 집안일 기록 수정</h2>
+  <div class="history-form-container">
+    <h2 class="history-form-title">✏️ 집안일 기록 수정</h2>
 
-<form action="${pageContext.request.contextPath}/history/update" method="post" enctype="multipart/form-data">
+    <form action="${pageContext.request.contextPath}/history/update" method="post" enctype="multipart/form-data">
+      
+      <input type="hidden" name="id" value="${history.id}" />
+      <input type="hidden" name="todo_id" value="${history.todo.id}">
+      <input type="hidden" name="member_id" value="${history.member.id}">
 
-    <!-- 히스토리 기본 정보 -->
-    <input type="hidden" name="id" value="${history.id}" />
-    <input type="hidden" name="todo_id" value="${history.todo.id}">
-    <input type="hidden" name="member_id" value="${history.member.id}">
+      <div class="form-group">
+        <label>할 일</label>
+        <select name="todo_id" required disabled> 
+          <option>${history.todo.title}</option> 
+        </select>
+      </div>
 
-    <!-- 할 일 (수정 불가) -->
-    <label>할 일 : </label>
-    <select name="todo_id" required> 
-	    	<option>${history.todo.title}</option> 
-    </select>
-    <br><br>
+      <div class="form-group">
+        <label>담당자</label>
+        <select name="member_id" required disabled>
+          <option>${history.member.nickname}</option>
+        </select>
+      </div>
 
-    <!-- 수행자 (수정 불가) -->
-    <label>수행자 : </label>
-    <select name="member_id" required>
-    	<option>${history.member.nickname}</option>
-    </select>
-    <br><br>
+      <div class="form-row">
+        <div class="form-group">
+          <fmt:formatDate value="${history.completed_at}" pattern="yyyy-MM-dd" var="completedDate" />
+          <label>완료 날짜</label> 
+          <input type="date" name="completed_at" value="${completedDate}" required />
+        </div>
 
-    <!-- 날짜 -->
-    <fmt:formatDate value="${history.completed_at}" pattern="yyyy-MM-dd" var="completedDate" />
-    <label>완료 날짜 : </label> 
-    <input type="date" name="completed_at" value="${completedDate}" required />
-    <br><br>
+        <div class="form-group">
+          <label>점수 (1~5)</label>
+          <select name="score">
+            <c:forEach begin="1" end="5" var="i">
+              <option value="${i}" <c:if test="${history.score == i}">selected</c:if>>${i}</option>
+            </c:forEach>
+          </select>
+        </div>
+      </div>
 
-    <!-- 점수 -->
-    <label>점수 (1~5) :</label>
-    <select name="score">
-        <c:forEach begin="1" end="5" var="i">
-            <option value="${i}" <c:if test="${history.score == i}">selected</c:if>>${i}</option>
-        </c:forEach>
-    </select>
-    <br><br>
+      <div class="form-group">
+        <label>메모</label>
+        <textarea name="memo" rows="4">${history.memo}</textarea>
+      </div>
 
-    <!-- 메모 -->
-    <label>메모 :</label><br>
-    <textarea name="memo" rows="4" cols="40">${history.memo}</textarea>
-    <br><br>
+      <div class="form-group">
+        <label>인증샷 업로드</label>
+        <input type="file" name="photo" accept="image/*" />
+      </div>
 
-    <!-- 인증샷 업로드 -->
-    <label>인증샷</label><br>
-    <input type="file" name="photo" accept="image/*" />
-    <br><br>
-
-    <button type="submit">수정 완료</button>
-</form>
+      <div class="form-btns">
+        <button type="submit" class="btn-submit">수정 완료</button>
+        <a href="javascript:history.back();" class="btn-cancel" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">취소</a>
+      </div>
+    </form>
+  </div>
 
 </body>
 </html>

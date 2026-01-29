@@ -42,9 +42,9 @@
 
       <!-- 완료 날짜 -->
       <div class="form-group">
-        <label for="completed_at">완료 날짜</label>
-        <input type="date" id="completed_at" name="completed_at" value="<%= today %>" required>
-      </div>
+			  <label for="completed_at">완료 날짜</label>
+			  <input type="date" name="completed_at" id="completed_at" class="form-control" required>
+			</div>
 
       <!-- 점수 입력 (1~5점) -->
       <div class="form-group">
@@ -99,6 +99,8 @@ window.onload = function() {
 	    updateScore(todoSelect);
 	}
 };
+
+document.getElementById('completed_at').value = new Date().toISOString().substring(0, 10);
 </script>
 
 </html>
