@@ -15,12 +15,12 @@
 <body>
 
 <!-- 네비게이션 바 -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
+<nav class="navbar navbar-expand-lg shadow-sm fixed-top">
   <div class="container-fluid">
 
     <!-- 로고 -->
     <a class="navbar-brand d-flex align-items-center fw-bold" href="${pageContext.request.contextPath}/">
-      <img src="${pageContext.request.contextPath}/resources/img/nav-logo.png" class="logo-img" alt="FairPlay 로고">
+      <img src="${pageContext.request.contextPath}/resources/img/logo.png" class="logo-img" alt="FairPlay 로고">
       airPlay
     </a>
 
@@ -36,83 +36,85 @@
 
         <!-- Todo -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">🧹 Todo</a>
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Todo</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/todos?groupId=${sessionScope.currentGroupId}">📋 Todo 목록</a></li>
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/todos/myTodos">✅ MyTodo 목록</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/todos?groupId=${sessionScope.currentGroupId}">Todo 목록</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/todos/myTodos">MyTodo 목록</a></li>
             <c:if test="${sessionScope.role eq 'LEADER'}">
-              <li><a class="dropdown-item" href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">✅ Todo 등록</a></li>
+              <li><a class="dropdown-item" href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">Todo 등록</a></li>
             </c:if>
           </ul>
         </li>
 
         <!-- History -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">📋 History</a>
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">History</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/history/all?groupId=${currentGroupId}">📋 전체 히스토리</a></li>
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/history/create">📝 기록 등록</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/history/all?groupId=${currentGroupId}">전체 히스토리</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/history/create">기록 등록</a></li>
           </ul>
         </li>
 
         <!-- Wallet -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">💸 가계부</a>
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">가계부</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/wallet">💰 내 가계부</a></li>
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/wallet/create">💸 작성하기</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/wallet">내 가계부</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/wallet/create">작성하기</a></li>
           </ul>
         </li>
 
         <!-- 그룹 -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">👥 그룹</a>
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">그룹</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/group/create">🏠 그룹 등록</a></li>
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/group/groups">👥 그룹 목록</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/group/create">그룹 등록</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/group/groups">그룹 목록</a></li>
           </ul>
         </li>
                 <!-- 점수 -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">📊 점수</a>
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">점수</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/history/monthly-score?groupId=${sessionScope.currentGroupId}">📅 월간 점수 보기</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/history/monthly-score?groupId=${sessionScope.currentGroupId}">월간 점수 보기</a></li>
           </ul>
         </li>
 
         <!-- 필요 물품 -->
         <c:if test="${not empty sessionScope.loginMember}">
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">📦 필요 물품</a>
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">필요 물품</a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="${pageContext.request.contextPath}/needed/list?groupId=${sessionScope.currentGroupId}">📋 전체 물품 목록</a></li>
-              <li><a class="dropdown-item" href="${pageContext.request.contextPath}/needed/add?groupId=${sessionScope.currentGroupId}">📝 물품 등록</a></li>
+              <li><a class="dropdown-item" href="${pageContext.request.contextPath}/needed/list?groupId=${sessionScope.currentGroupId}">전체 물품 목록</a></li>
+              <li><a class="dropdown-item" href="${pageContext.request.contextPath}/needed/add?groupId=${sessionScope.currentGroupId}">물품 등록</a></li>
             </ul>
           </li>
         </c:if>
       </ul>
+    </div>
 
       <!-- 오른쪽 로그인/회원/마이페이지 -->
-      <ul class="navbar-nav ms-auto fw-bold">
-        <c:choose>
-          <c:when test="${empty sessionScope.loginMember}">
-            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/member/login">🔐 로그인</a></li>
-            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/member/create">👤 회원가입</a></li>
-            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/forgot/forgotId">🆔 아이디찾기</a></li>
-            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/forgot">🔑 비밀번호 찾기</a></li>
-          </c:when>
-          <c:otherwise>
-            <li class="nav-item">
-              <span class="nav-link text-warning fw-bold">
-                ♥ ${sessionScope.loginMember.nickname}님 안녕하세요 ♥
-              </span>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/mypage">🙋 마이페이지</a></li>
-            <li class="nav-item"><a class="nav-link" href="javascript:void(0);" onclick="confirmLogout()">🚪 로그아웃</a></li>
-          </c:otherwise>
-        </c:choose>
-      </ul>
-    </div>
+      <div class="nav-right-group">
+	      <ul class="navbar-nav ms-auto fw-bold">
+	        <c:choose>
+	          <c:when test="${empty sessionScope.loginMember}">
+	            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/member/login">로그인</a></li>
+	            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/member/create">회원가입</a></li>
+	            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/forgot/forgotId">아이디찾기</a></li>
+	            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/forgot">비밀번호 찾기</a></li>
+	          </c:when>
+	          <c:otherwise>
+	            <li class="nav-item">
+	              <span class="nav-link text-warning fw-bold">
+	                ♥ ${sessionScope.loginMember.nickname}님 안녕하세요 ♥
+	              </span>
+	            </li>
+	            <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/mypage">마이페이지</a></li>
+	            <li class="nav-item"><a class="nav-link" href="javascript:void(0);" onclick="confirmLogout()">로그아웃</a></li>
+	          </c:otherwise>
+	        </c:choose>
+	      </ul>
+      </div>
   </div>
 </nav>
 
@@ -142,7 +144,7 @@
 	<div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
       <div class="modal-header">
-        <h5 class="modal-title fw-bold" style="color: #78C2AD;">📅 일정 상세 정보
+        <h5 class="modal-title fw-bold" style="color: #78C2AD;">📅일정 상세 정보
         	<span id="detailGroupName" class="badge rounded-pill ms-2" style="font-size: 0.6em; display: none;"></span>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
