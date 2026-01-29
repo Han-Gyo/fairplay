@@ -21,7 +21,7 @@
     <div class="home-content-area">
       <div class="hero-section">
         <h1 class="hero-title">
-        <img src="${pageContext.request.contextPath}/resources/img/nav-logo.png" class="home-logo-img" alt="FairPlay 로고">
+        <img src="${pageContext.request.contextPath}/resources/img/logo.png" class="home-logo-img" alt="FairPlay 로고">
         airPlay</h1>
         <p class="hero-desc">
           당신의 일상을 더 가치 있게,<span class="second-line">

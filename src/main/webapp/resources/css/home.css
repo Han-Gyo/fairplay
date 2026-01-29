@@ -6,7 +6,7 @@
 }
 
 body.home-body {
-  background-color: #ffffff;
+  background-color:#ebfaf3;
   font-family: 'Pretendard', sans-serif;
   margin: 0;
   padding: 0;
@@ -68,14 +68,14 @@ body.home-body {
 .hero-title {
   font-size: 6rem;
   font-weight: 900;
-  background: linear-gradient(135deg, #2c3e50, #78c2ad);
+  background: #2d3e36;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 1.2;
   letter-spacing: -5px;
   padding-right: 10px;
-  margin-bottom: -40px;
+  margin: 0 0 -40px 100px;
 }
 .home-logo-img {
 	height: 200px !important; 
@@ -93,7 +93,7 @@ body.home-body {
   justify-content: center;
   width: 100%;
   text-align: center; 
-  margin-left: -50px;
+  margin-left: 50px;
   color: #5a6a70;
 }
 
@@ -116,6 +116,7 @@ body.home-body {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  padding-left: 200px;
 }
 
 .main-nav-item {
@@ -130,7 +131,7 @@ body.home-body {
 .main-nav-link {
   font-size: 1.6rem;
   font-weight: 800;
-  color: #333;
+  color: #708a81;
   display: inline-block;
   transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
 }
@@ -141,7 +142,7 @@ body.home-body {
   font-size: 1rem; 
   font-weight: 600;
   padding-bottom: 0.5rem;
-  color: var(--mint);
+  color: rgb(228,182,179);
   opacity: 0;
   transform: translateY(100%);
   transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
@@ -156,7 +157,7 @@ body.home-body {
   left: 0;
   width: 0;
   height: 2px;
-  background-color: var(--mint);
+  background-color: rgb(235,196,193);
   transition: width 0.5s ease; 
 }
 
