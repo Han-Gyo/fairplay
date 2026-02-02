@@ -24,11 +24,14 @@ public class GroupMember {
 
     /** 공정성 경고 횟수 */
     private Integer warningCount;
+    
+    private String lastCountedMonth;
 
     public GroupMember() {}
 
     public GroupMember(Integer id, Integer groupId, Integer memberId, String role,
-                       Integer monthlyScore, Integer totalScore, Integer warningCount) {
+                       Integer monthlyScore, Integer totalScore, Integer warningCount,
+                       String lastCountedMonth) {
         this.id = id;
         this.groupId = groupId;
         this.memberId = memberId;
@@ -36,6 +39,7 @@ public class GroupMember {
         this.monthlyScore = monthlyScore;
         this.totalScore = totalScore;
         this.warningCount = warningCount;
+        this.lastCountedMonth = lastCountedMonth;
     }
 
     // Getter & Setter
@@ -59,4 +63,7 @@ public class GroupMember {
 
     public Integer getWarningCount() { return warningCount; }
     public void setWarningCount(Integer warningCount) { this.warningCount = warningCount; }
+
+    public String getLastCountedMonth() { return lastCountedMonth; }
+    public void setLastCountedMonth(String lastCountedMonth) { this.lastCountedMonth = lastCountedMonth; }
 }

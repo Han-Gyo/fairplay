@@ -1,11 +1,11 @@
 package com.fairplay.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +16,7 @@ import com.fairplay.domain.MemberMonthlyScore;
 import com.fairplay.repository.GroupMemberRepository;
 import com.fairplay.repository.GroupRepository;
 
-
 @Service
-@EnableScheduling
 public class GroupMemberServiceImpl implements GroupMemberService {
 
     private final GroupMemberRepository gmRepo;
@@ -70,8 +68,10 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         return gmRepo.isGroupMember(groupId, memberId);
     }
 
-    // 그룹 ID로 멤버 정보 조회 (닉네임/실명 포함)
-    // + 현재 달의 history 데이터를 기반으로 월간 점수, 총 점수를 실시간 반영
+    /**
+     * 그룹 ID로 멤버 정보 조회 (닉네임/실명 포함)
+     * + 현재 달의 History 데이터를 기반으로 월간 점수, 총 점수를 실시간 반영
+     */
     @Override
     public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
         List<GroupMemberInfoDTO> members = gmRepo.findMemberInfoByGroupId(groupId);
@@ -85,16 +85,21 @@ public class GroupMemberServiceImpl implements GroupMemberService {
                 .filter(ms -> ms.getMemberId().equals(dto.getMemberId()))
                 .findFirst()
                 .ifPresent(ms -> {
-                    // 월간 점수 실시간 반영
-                    dto.setMonthlyScore(ms.getScore());
+                    // 매월 1일에는 월간 점수를 0으로 초기화
+                    if (LocalDate.now().getDayOfMonth() == 1) {
+                        dto.setMonthlyScore(0);
+                    } else {
+                        dto.setMonthlyScore(ms.getScore());
+                    }
 
-                    // 총점도 실시간 반영 (DB totalScore + 이번 달 점수)
+                    // 총점 = DB totalScore + 이번 달 history 점수
                     dto.setTotalScore(dto.getTotalScore() + ms.getScore());
+
+                    // 경고 횟수는 DB 값 그대로 표시 (실시간 반영 X)
                 });
         }
         return members;
     }
-
 
     // 그룹 내 현재 인원 수 조회
     @Override
@@ -102,13 +107,16 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         return gmRepo.countByGroupId(groupId);
     }
 
-    // 그룹 탈퇴 처리
+    /**
+     * 그룹 탈퇴 처리
+     * - 해당 멤버 삭제
+     * - 남은 인원이 없으면 그룹 자체 삭제
+     */
     @Override
     public void leaveGroup(int memberId, int groupId) {
         gmRepo.deleteByMemberIdAndGroupId(memberId, groupId);
         int remaining = gmRepo.countByGroupId(groupId);
 
-        // 남은 인원이 없으면 그룹 자체 삭제
         if (remaining == 0) {
             groupRepository.deleteById(groupId);
         }
@@ -126,11 +134,15 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         return gmRepo.findMembersExcludingLeader(groupId);
     }
 
-    // 리더 위임 처리
+    /**
+     * 리더 위임 처리
+     * - group_member 테이블의 role 변경
+     * - group 테이블의 leader_id 갱신
+     */
     @Override
     public void updateRoleToLeader(int groupId, int memberId) {
         gmRepo.updateRoleToLeader(groupId, memberId);
-        groupRepository.updateLeader(groupId, memberId); // 그룹 테이블의 leader_id도 갱신
+        groupRepository.updateLeader(groupId, memberId);
     }
 
     // 내가 가입한 그룹 리스트 반환
@@ -157,18 +169,16 @@ public class GroupMemberServiceImpl implements GroupMemberService {
      * - 그룹 내 최고 점수(maxScore) 계산
      * - 각 멤버별 총점 누적 (totalScore += 지난달 score)
      * - 월간 점수 초기화 (monthlyScore = 0)
-     * - 최고 점수의 20% 미만인 멤버는 경고 횟수 +1
+     * - 최고 점수의 80% 미만인 멤버는 경고 횟수 +1
+     * - 이미 집계한 달(lastCountedMonth)은 다시 집계하지 않음
      */
     
-    
-	
-    // 매 분마다 실행 → 테스트용
-	// @Scheduled(cron = "0 * * * * ?")
-	// 매월 1일 0시 → 운영용
+    // 매월 1일 0시 → 운영용
     @Scheduled(cron = "0 0 0 1 * ?")
     public void applyMonthlyWarnings() {
         // 모든 그룹 조회
         List<Group> groups = groupRepository.readAll();
+        System.out.println("applyMonthlyWarnings 실행됨: " + LocalDateTime.now());
 
         // 지난 달 기준 (yyyy-MM)
         String yearMonth = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM"));
@@ -187,20 +197,29 @@ public class GroupMemberServiceImpl implements GroupMemberService {
                 // groupId + memberId로 GroupMember 조회
                 GroupMember gm = gmRepo.findByGroupIdAndMemberId(g.getId(), s.getMemberId());
 
+                // NEW: 이미 집계한 달이면 건너뛰기
+                if (yearMonth.equals(gm.getLastCountedMonth())) {
+                    continue;
+                }
+
                 // 총점 누적
                 gm.setTotalScore(gm.getTotalScore() + s.getScore());
 
                 // 새 달 시작 → 월간 점수 초기화
                 gm.setMonthlyScore(0);
 
-                // 경고 부여 (최고 점수의 20% 미만이면 경고 횟수 증가)
-                if (s.getScore() < maxScore * 0.2) {
+                // 경고 부여 (최고 점수의 80% 미만이면 경고 횟수 증가)
+                if (s.getScore() < maxScore * 0.8) {
                     gm.setWarningCount(gm.getWarningCount() + 1);
                 }
+
+                // NEW: 이번 달을 집계 완료로 표시
+                gm.setLastCountedMonth(yearMonth);
 
                 // DB 업데이트
                 gmRepo.update(gm);
             }
         }
     }
+
 }

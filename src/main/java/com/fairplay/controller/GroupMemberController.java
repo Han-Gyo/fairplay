@@ -43,8 +43,6 @@ public class GroupMemberController {
 							 RedirectAttributes redirectAttributes,
 							 Model model) {
 		
-		System.out.println("그룹 가입 폼 함수 입장"); // 문제 없으면 삭제
-		
 		// 로그인 확인
 		Member loginMember = (Member) session.getAttribute("loginMember");
 		if (loginMember == null) {
@@ -71,7 +69,7 @@ public class GroupMemberController {
 									HttpSession session,
 									RedirectAttributes redirectAttributes) {
 
-		// 세션에서 로그인한 사용자 확인
+		// 로그인 확인
 		Member loginMember = (Member) session.getAttribute("loginMember");
 		if (loginMember == null) {
 			redirectAttributes.addFlashAttribute("msg", "로그인이 필요합니다.");
@@ -85,7 +83,7 @@ public class GroupMemberController {
 			return "redirect:/group/list";
 		}
 
-		// 가입 처리 전 정원 체크
+		// 정원 체크
 		int currentMemberCount = groupMemberService.countByGroupId(groupId);
 		if (group.getMaxMember() != null && currentMemberCount >= group.getMaxMember()) {
 			redirectAttributes.addFlashAttribute("msg", "그룹 정원이 가득 차서 가입할 수 없습니다.");
@@ -102,7 +100,7 @@ public class GroupMemberController {
 		GroupMember groupMember = new GroupMember();
 		groupMember.setGroupId(groupId);
 		groupMember.setMemberId(loginMember.getId());
-		groupMember.setMonthlyScore(0);   // weekly → monthly로 변경
+		groupMember.setMonthlyScore(0);
 		groupMember.setTotalScore(0);
 		groupMember.setWarningCount(0);
 		groupMember.setRole("MEMBER");
@@ -142,27 +140,43 @@ public class GroupMemberController {
 	
 	// 특정 그룹 멤버 수정하는 뷰페이지 이동
 	@GetMapping("/edit")
-	public String editForm(@RequestParam("id")int id, Model model) {
+	public String editForm(@RequestParam("id")int id, HttpSession session, Model model) {
+		Member loginMember = (Member) session.getAttribute("loginMember");
 		GroupMember gm = groupMemberService.findById(id);
+		Group group = groupService.findById(gm.getGroupId());
+
+		// ✅ 권한 체크: 리더거나 자기 자신만 수정 가능
+		if (loginMember == null || 
+			(loginMember.getId() != group.getLeaderId() && loginMember.getId() != gm.getMemberId())) {
+			return "redirect:/groupmember/list?groupId=" + gm.getGroupId();
+		}
+
 		model.addAttribute("groupMember", gm);
+		model.addAttribute("group", group);
 		return "groupMemberEditForm";
 	}
 	
 	// 특정 그룹 멤버 수정
-	@PostMapping("update")
-	public String update(@ModelAttribute GroupMember groupMember) {
+	@PostMapping("/update")
+	public String update(@ModelAttribute GroupMember groupMember, HttpSession session) {
+		Member loginMember = (Member) session.getAttribute("loginMember");
+		Group group = groupService.findById(groupMember.getGroupId());
+
+		// ✅ 권한 체크: 리더거나 자기 자신만 수정 가능
+		if (loginMember == null || 
+			(loginMember.getId() != group.getLeaderId() && loginMember.getId() != groupMember.getMemberId())) {
+			return "redirect:/groupmember/list?groupId=" + groupMember.getGroupId();
+		}
+
 		groupMemberService.update(groupMember);
 		return "redirect:/groupmember/list?groupId=" + groupMember.getGroupId();
 	}
 	
 	// 그룹장이 다른 멤버를 강퇴하거나 본인이 스스로 탈퇴할 수 있도록 처리
-	@PostMapping("delete")
+	@PostMapping("/delete")
 	public String delete(@RequestParam int groupId,
 						 @RequestParam int memberId,
 						 HttpSession session) {
-		
-		System.out.println("삭제 요청 들어옴 groupId = " + groupId);
-		System.out.println("삭제 요청 들어옴 memberId = " + memberId);
 		
 		Member loginMember = (Member) session.getAttribute("loginMember");
 		if (loginMember == null) {
@@ -217,39 +231,40 @@ public class GroupMemberController {
 		return "redirect:/group/groups";
 	}
 
-	// 위임 대상 선택 폼 이동
-	@GetMapping("/transferForm")
-	public String showTransferForm(@RequestParam("groupId") int groupId, Model model) {
-		Group group = groupService.findById(groupId);
-		model.addAttribute("group", group);
-		
-		List<GroupMemberInfoDTO> members = groupMemberService.findMembersExcludingLeader(groupId);
-		model.addAttribute("members", members);
-		
-		return "transferForm";
-	}
-		
-	// 위임 대상 선택 후 처리
-	@PostMapping("/transferAndLeave")
-	public String transferLeaderAndLeave(@RequestParam("groupId") int groupId,
-										 @RequestParam("newLeaderId") int newLeaderId,
-										 HttpSession session,
-										 RedirectAttributes ra) {
-		
-		Member loginMember = (Member) session.getAttribute("loginMember");
-		if (loginMember == null) return "redirect:/member/login";
-		
+    // 위임 대상 선택 폼 이동
+    @GetMapping("/transferForm")
+    public String showTransferForm(@RequestParam("groupId") int groupId, Model model) {
+        Group group = groupService.findById(groupId);
+        model.addAttribute("group", group);
+
+        // 리더를 제외한 멤버 목록 조회 (위임 대상)
+        List<GroupMemberInfoDTO> members = groupMemberService.findMembersExcludingLeader(groupId);
+        model.addAttribute("members", members);
+
+        return "transferForm";
+    }
+
+    // 위임 대상 선택 후 처리
+    @PostMapping("/transferAndLeave")
+    public String transferLeaderAndLeave(@RequestParam("groupId") int groupId,
+                                         @RequestParam("newLeaderId") int newLeaderId,
+                                         HttpSession session,
+                                         RedirectAttributes ra) {
+
+        Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) return "redirect:/member/login";
+
         int currentLeaderId = loginMember.getId();
-        
+
         // 1. 차기 리더에게 권한 위임 (GroupMember 테이블의 role 업데이트)
         groupMemberService.updateRoleToLeader(groupId, newLeaderId);
-        
+
         // 2. group 테이블의 leader_id 정보 업데이트
         groupService.updateLeader(groupId, newLeaderId);
-        
+
         // 3. 기존 그룹장 탈퇴 처리
         groupMemberService.leaveGroup(currentLeaderId, groupId);
-        
+
         ra.addFlashAttribute("msg", "리더 권한을 위임하고 그룹을 성공적으로 탈퇴했습니다.");
         return "redirect:/group/groups";
     }

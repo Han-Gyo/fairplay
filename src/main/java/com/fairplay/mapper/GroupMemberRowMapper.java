@@ -20,6 +20,7 @@ public class GroupMemberRowMapper implements RowMapper<GroupMember> {
         groupMember.setMonthlyScore(rs.getInt("monthly_score"));   // weekly → monthly로 변경
         groupMember.setTotalScore(rs.getInt("total_score"));
         groupMember.setWarningCount(rs.getInt("warning_count"));
+        groupMember.setLastCountedMonth(rs.getString("last_counted_month"));
         return groupMember;
     }
 }

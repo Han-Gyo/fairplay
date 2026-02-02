@@ -25,16 +25,19 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
     @Override
     public void save(GroupMember groupMember) {
         // weekly_score → monthly_score로 변경
-        String sql = "INSERT INTO group_member (group_id, member_id, role, monthly_score, total_score, warning_count) VALUES (?, ?, ?, ?, ?, ?)";
+        // NEW: last_counted_month 추가
+        String sql = "INSERT INTO group_member (group_id, member_id, role, monthly_score, total_score, warning_count, last_counted_month) VALUES (?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
             groupMember.getGroupId(),
             groupMember.getMemberId(),
             groupMember.getRole(),
             groupMember.getMonthlyScore(),
             groupMember.getTotalScore(),
-            groupMember.getWarningCount()
+            groupMember.getWarningCount(),
+            groupMember.getLastCountedMonth()
         );
     }
+
 
     // 특정 그룹에 속한 멤버 전체 조회
     @Override
@@ -54,15 +57,18 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
     @Override
     public void update(GroupMember groupmember) {
         // weekly_score → monthly_score로 변경
-        String sql = "UPDATE group_member SET role = ?, monthly_score = ?, total_score = ?, warning_count = ? WHERE id = ?";
+        // NEW: last_counted_month 추가
+        String sql = "UPDATE group_member SET role = ?, monthly_score = ?, total_score = ?, warning_count = ?, last_counted_month = ? WHERE id = ?";
         jdbcTemplate.update(sql,
             groupmember.getRole(),
             groupmember.getMonthlyScore(),
             groupmember.getTotalScore(),
             groupmember.getWarningCount(),
+            groupmember.getLastCountedMonth(), // NEW
             groupmember.getId()
         );
     }
+
 
     // 그룹 멤버 삭제
     @Override
@@ -174,9 +180,18 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
 
 	@Override
 	public GroupMember findByGroupIdAndMemberId(int groupId, int memberId) {
-	    String sql = "SELECT * FROM group_member WHERE group_id = ? AND member_id = ?";
-	    return jdbcTemplate.queryForObject(sql, new GroupMemberRowMapper(), groupId, memberId);
-	}
+        // NEW: last_counted_month도 함께 조회됨
+        String sql = "SELECT * FROM group_member WHERE group_id = ? AND member_id = ?";
+        return jdbcTemplate.queryForObject(sql, new GroupMemberRowMapper(), groupId, memberId);
+    }
+
+	// NEW: 집계 중복 방지용 last_counted_month만 업데이트하는 메서드
+    @Override
+    public void updateLastCountedMonth(int groupMemberId, String yearMonth) {
+        String sql = "UPDATE group_member SET last_counted_month = ? WHERE id = ?";
+        jdbcTemplate.update(sql, yearMonth, groupMemberId);
+    }
+
 
     
     

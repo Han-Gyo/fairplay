@@ -49,4 +49,7 @@ public interface GroupMemberRepository {
     
     // 특정 그룹(groupId) 안에서 특정 멤버(memberId)에 해당하는 그룹멤버 1명을 조회하는 메서드
     GroupMember findByGroupIdAndMemberId(int groupId, int memberId);
+    
+    // 집계 중복 방지용 last_counted_month 컬럼을 업데이트하는 메서드
+    void updateLastCountedMonth(int groupMemberId, String yearMonth);
 }
