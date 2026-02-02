@@ -134,6 +134,9 @@ public String listAllHistories(
 	    	return "redirect:/";
 	    }
 	    
+	    List<Group> joinedGroups = groupMemberService.findGroupsByMemberId(Long.valueOf(loginMember.getId()));
+	    model.addAttribute("joinedGroups", joinedGroups);
+	    
 	    // todo 및 그룹 ID 추출
 	    Todo todo = todoService.findById(todo_id);
 	    int groupId = todo.getGroup_id();
@@ -150,6 +153,7 @@ public String listAllHistories(
 	    // 검증 통과 후 데이터 조회
 	    List<History> historyList = historyService.getHistoriesByTodoIdWithDetails(todo_id);
 	    model.addAttribute("historyList", historyList);
+	    model.addAttribute("groupId", todo.getGroup_id());
 	    model.addAttribute("todo", todo);
 	    
 	    System.out.println("그룹원 검증: memberId = " + memberId + ", groupId = " + groupIdLong);
@@ -171,7 +175,17 @@ public String listAllHistories(
 	        return "redirect:/member/login";
 	    }
 
+	    Long memberId = Long.valueOf(loginMember.getId());
+	    List<Group> joinedGroups = groupMemberService.findGroupsByMemberId(memberId);
+	    model.addAttribute("joinedGroups", joinedGroups); 
+
 	    Integer groupId = (Integer) session.getAttribute("currentGroupId");
+	    
+	    if (groupId == null && !joinedGroups.isEmpty()) {
+	      groupId = joinedGroups.get(0).getId();
+	      session.setAttribute("currentGroupId", groupId);
+	    }
+	    
 	    if (groupId == null || !groupMemberService.isGroupMember(Long.valueOf(groupId), Long.valueOf(loginMember.getId()))) {
 	        ra.addFlashAttribute("msg", "그룹에 속해있지 않습니다.");
 	        return "redirect:/";
@@ -202,6 +216,7 @@ public String listAllHistories(
 	    
 	    model.addAttribute("loginMember", loginMember);
 	    model.addAttribute("score", score);
+	    model.addAttribute("groupId", groupId);
 	    model.addAttribute("history", new History());
 
 	    return "historyCreateForm";
@@ -215,6 +230,7 @@ public String listAllHistories(
 	        @RequestParam("todo_id") int todoId,
 	        @RequestParam("score") int score,
 	        @RequestParam("memo") String memo,
+	        @RequestParam("completed_at") @DateTimeFormat(pattern = "yyyy-MM-dd") Date completedAt,
 	        @RequestParam(value = "photo", required = false) MultipartFile photo,
 	        HttpSession session,
 	        RedirectAttributes ra
@@ -243,7 +259,7 @@ public String listAllHistories(
 	    History history = new History();
 	    history.setTodo_id(todoId);
 	    history.setMember_id(loginMember.getId()); 
-	    history.setCompleted_at(new Date());
+	    history.setCompleted_at(completedAt);
 	    history.setScore(score);  
 	    history.setMemo(memo);
 
@@ -275,7 +291,7 @@ public String listAllHistories(
 
 
 	    // 7) 이동
-	    return "redirect:/history?todo_id=" + todoId;
+	    return "redirect:/history/all";
 	}
 
 
@@ -354,7 +370,7 @@ public String listAllHistories(
 	    }
 
 	    historyService.updateHistory(history);
-	    return "redirect:/history?todo_id=" + todoId;
+	    return "redirect:/history/all";
 	}
 
 
@@ -375,7 +391,7 @@ public String listAllHistories(
 	    }
 
 	    historyService.deleteHistory(id);
-	    return "redirect:/history?todo_id=" + todo_id;
+	    return "redirect:/history/all";
 	}
     
   // 7. 히스토리 상세 보기
