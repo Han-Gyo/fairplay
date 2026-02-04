@@ -39,7 +39,7 @@ public String list(@RequestParam(value = "groupId", required = false) Integer gr
     HttpSession session, Model model, RedirectAttributes ra) {
   Member loginMember = (Member) session.getAttribute("loginMember");
   if (loginMember == null) {
-    ra.addFlashAttribute("error", "로그인이 필요합니다.");
+    ra.addFlashAttribute("error", "로그인 후 이용해주세요.");
     return "redirect:/member/login";
   }
 
@@ -91,6 +91,7 @@ public String addWallet(@RequestParam(value = "groupId", required = false) Integ
 		// 1. 로그인 체크
 	Member loginMember = (Member) session.getAttribute("loginMember");
   if (loginMember == null) {
+  	ra.addFlashAttribute("msg", "로그인 후 이용해주세요.");
     return "redirect:/member/login";
   }
 	

@@ -82,7 +82,7 @@ public String listAllHistories(
    
    List<Group> joinedGroups = groupMemberService.findGroupsByMemberId(memberId);
    if (joinedGroups.isEmpty()) {
-       ra.addFlashAttribute("msg", "가입된 그룹이 없습니다.");
+       ra.addFlashAttribute("msg", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
        return "redirect:/";
    }
    
