@@ -298,6 +298,18 @@ $(document).ready(function() {
 	  });
 	}
 });
+
+window.onload = function() {
+  const message = "${msg}";
+  const errorMessage = "${error}";
+
+  if (message && message !== "null" && message !== "") {
+    alert(message);
+  } else if (errorMessage && errorMessage !== "null" && errorMessage !== "") {
+    alert(errorMessage);
+  }
+};
+
 </script>
 <script src="${pageContext.request.contextPath}/resources/js/calendarCustom.js"></script>
 </body>

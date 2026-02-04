@@ -82,8 +82,8 @@ public String listAllHistories(
    
    List<Group> joinedGroups = groupMemberService.findGroupsByMemberId(memberId);
    if (joinedGroups.isEmpty()) {
-       ra.addFlashAttribute("msg", "가입된 그룹이 없습니다.");
-       return "redirect:/";
+   	ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
+    return "redirect:/group/groups";
    }
    
    if (groupIdParam != null) {
@@ -145,7 +145,7 @@ public String listAllHistories(
 	    Long memberId = Long.valueOf(loginMember.getId());
 	    Long groupIdLong = Long.valueOf(groupId);
 	    
-	    // 그룹원이 아니면 접근 차단 (여기가 먼저!)
+	    // 그룹원이 아니면 접근 차단
 	    if (!groupMemberService.isGroupMember(groupIdLong, memberId)) {
 	        return "redirect:/";
 	    }
@@ -187,8 +187,8 @@ public String listAllHistories(
 	    }
 	    
 	    if (groupId == null || !groupMemberService.isGroupMember(Long.valueOf(groupId), Long.valueOf(loginMember.getId()))) {
-	        ra.addFlashAttribute("msg", "그룹에 속해있지 않습니다.");
-	        return "redirect:/";
+	    	ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
+	      return "redirect:/group/groups";
 	    }
 	    
       // 내가 맡은 할 일

@@ -58,7 +58,7 @@ public class TodoController {
 	public String listTodos(@RequestParam(value = "groupId", required = false) Integer groupIdParam,HttpSession session, Model model, RedirectAttributes ra) {
 	    Member loginMember = (Member) session.getAttribute("loginMember");
 	    if (loginMember == null) {
-	        ra.addFlashAttribute("error", "로그인이 필요합니다.");
+	        ra.addFlashAttribute("error", "로그인 후 이용해주세요.");
 	        return "redirect:/member/login";
 	    }
 
@@ -69,8 +69,8 @@ public class TodoController {
 
 	    if (groupList.isEmpty()) {
 	        System.out.println("그룹 미가입자 접근 차단");
-	        ra.addFlashAttribute("error", "소속된 그룹이 없습니다.");
-	        return "redirect:/";
+	        ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
+	        return "redirect:/group/groups";
 	    }
 	    
 	    if (groupIdParam != null) {
@@ -273,7 +273,7 @@ public class TodoController {
 		
 		if (loginMember == null) {
 			System.out.println("로그인 안된 사용자 요청");
-			redirectAttributes.addFlashAttribute("msg", "로그인 후 이용해주세요!");
+			redirectAttributes.addFlashAttribute("msg", "로그인 후 이용해주세요.");
 			return "redirect:/todos";
 		}
 		
@@ -299,25 +299,33 @@ public class TodoController {
 	
 	// 내 할 일 목록 조회
 	@GetMapping("/myTodos")
-	public String myTodos(HttpSession session, Model model) {
-	    Member loginMember = (Member) session.getAttribute("loginMember");
+	public String myTodos(HttpSession session, Model model, RedirectAttributes ra) {
+    Member loginMember = (Member) session.getAttribute("loginMember");
 
-	    if (loginMember == null) {
-			System.out.println("로그인 안된 사용자 요청");
-			return "redirect:/todos";
-		}
+    if (loginMember == null) {
+    	ra.addFlashAttribute("msg", "로그인 후 이용해주세요.");
+    	return "redirect:/member/login";
+	}
 
-	    int memberId = loginMember.getId();
-	    List<Todo> myTodoList = todoService.findNotDone(memberId);
-	    List<Group> myGroups = groupMemberService.findGroupsByMemberId((long)memberId);
-	    Map<Integer, String> groupMap = new HashMap<>();
-	    for (Group g : myGroups) {
-	        groupMap.put(g.getId(), g.getName());
-	    }
-	    
-	    model.addAttribute("myTodoList", myTodoList);
-	    model.addAttribute("groupMap", groupMap);
-	    return "myTodos";  
+    int memberId = loginMember.getId();
+    
+    List<Group> myGroups = groupMemberService.findGroupsByMemberId((long)memberId);
+    
+    if (myGroups.isEmpty()) {
+    	ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
+      return "redirect:/group/groups";
+  }
+    
+    List<Todo> myTodoList = todoService.findNotDone(memberId);
+    
+    Map<Integer, String> groupMap = new HashMap<>();
+    for (Group g : myGroups) {
+        groupMap.put(g.getId(), g.getName());
+    }
+    
+    model.addAttribute("myTodoList", myTodoList);
+    model.addAttribute("groupMap", groupMap);
+    return "myTodos";  
 	}
 	
 	// 완료된 할 일 목록 조회
