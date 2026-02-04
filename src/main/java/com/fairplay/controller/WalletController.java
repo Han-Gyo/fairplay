@@ -48,8 +48,8 @@ public String list(@RequestParam(value = "groupId", required = false) Integer gr
   // 1. 내가 가입한 그룹 리스트 조회
   List<Group> groupList = groupMemberService.findGroupsByMemberId((long) member_id);
   if (groupList.isEmpty()) {
-    ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
-    return "redirect:/"; // 혹은 그룹 생성 페이지
+  	ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
+    return "redirect:/group/groups";
   }
 
   // 2. URL 파라미터로 groupId가 들어오면 세션 갱신 (그룹 전환 대응)
@@ -104,8 +104,8 @@ public String addWallet(@RequestParam(value = "groupId", required = false) Integ
 	// 2. 소속 그룹 리스트 가져오기
 	List<Group> groupList = groupMemberService.findGroupsByMemberId((long) memberId);
   if (groupList.isEmpty()) {
-    ra.addFlashAttribute("error", "소속된 그룹이 없습니다.");
-    return "redirect:/";
+  	ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
+    return "redirect:/group/groups";
   }
  
 	// 3. 특정 그룹 정보 조회

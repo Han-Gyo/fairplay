@@ -70,7 +70,7 @@ public class TodoController {
 	    if (groupList.isEmpty()) {
 	        System.out.println("그룹 미가입자 접근 차단");
 	        ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
-	        return "redirect:/";
+	        return "redirect:/group/groups";
 	    }
 	    
 	    if (groupIdParam != null) {
@@ -312,8 +312,8 @@ public class TodoController {
     List<Group> myGroups = groupMemberService.findGroupsByMemberId((long)memberId);
     
     if (myGroups.isEmpty()) {
-      ra.addFlashAttribute("msg", "아직 소속된 그룹이 없으시네요! 그룹에 먼저 가입해야 할 일을 관리할 수 있어요.");
-      return "redirect:/"; 
+    	ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
+      return "redirect:/group/groups";
   }
     
     List<Todo> myTodoList = todoService.findNotDone(memberId);
