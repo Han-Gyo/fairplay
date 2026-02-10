@@ -38,6 +38,9 @@ public interface GroupMemberRepository {
     // 새로운 리더로 역할 변경
     void updateRoleToLeader(int groupId, int memberId);
 
+    // 기존 리더를 MEMBER로 강등하는 메서드 추가
+    void updateRoleToMember(int groupId, int memberId);
+
     // 내가 가입한 그룹 리스트 반환 (그룹명, ID 포함)
     List<Group> findGroupsByMemberId(Long memberId);
 

@@ -38,7 +38,6 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
         );
     }
 
-
     // 특정 그룹에 속한 멤버 전체 조회
     @Override
     public List<GroupMember> findByGroupId(int groupId) {
@@ -69,7 +68,6 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
         );
     }
 
-
     // 그룹 멤버 삭제
     @Override
     public void delete(int groupId, int memberId) {
@@ -88,7 +86,6 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
     // 그룹 ID로 그룹 멤버 정보(닉네임, 이름 포함) 조회
     @Override
     public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
-        // weekly_score → monthly_score로 변경
         String sql = "SELECT gm.id, gm.group_id, gm.member_id, m.nickname, m.real_name, " +
                      "gm.role, gm.total_score, gm.monthly_score, gm.warning_count " +
                      "FROM group_member gm " +
@@ -121,7 +118,6 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
     // 그룹 내에서 리더를 제외한 멤버 목록 조회 (리더 위임 대상)
     @Override
     public List<GroupMemberInfoDTO> findMembersExcludingLeader(int groupId) {
-        // weekly_score → monthly_score로 변경
         String sql = "SELECT gm.id, gm.group_id, gm.member_id, m.nickname, m.real_name, " +
                      "gm.role, gm.total_score, gm.monthly_score, gm.warning_count " +
                      "FROM group_member gm " +
@@ -133,9 +129,22 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
     // 새로운 리더로 역할 변경
     @Override
     public void updateRoleToLeader(int groupId, int memberId) {
+        // 새 리더 지정
         String sql = "UPDATE group_member SET role = 'LEADER' WHERE group_id = ? AND member_id = ?";
         jdbcTemplate.update(sql, groupId, memberId);
     }
+
+
+
+    // 기존 리더를 MEMBER로 강등하는 메서드 구현
+    @Override
+    public void updateRoleToMember(int groupId, int memberId) {
+        // 기존 리더 강등
+        String sql = "UPDATE group_member SET role = 'MEMBER' WHERE group_id = ? AND member_id = ?";
+        jdbcTemplate.update(sql, groupId, memberId);
+    }
+
+
 
     // 내가 가입한 그룹 리스트 반환 (그룹명, ID 포함)
     @Override
@@ -178,21 +187,17 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
         return ids.isEmpty() ? null : ids.get(0);
     }
 
-	@Override
-	public GroupMember findByGroupIdAndMemberId(int groupId, int memberId) {
+    @Override
+    public GroupMember findByGroupIdAndMemberId(int groupId, int memberId) {
         // NEW: last_counted_month도 함께 조회됨
         String sql = "SELECT * FROM group_member WHERE group_id = ? AND member_id = ?";
         return jdbcTemplate.queryForObject(sql, new GroupMemberRowMapper(), groupId, memberId);
     }
 
-	// NEW: 집계 중복 방지용 last_counted_month만 업데이트하는 메서드
+    // NEW: 집계 중복 방지용 last_counted_month만 업데이트하는 메서드
     @Override
     public void updateLastCountedMonth(int groupMemberId, String yearMonth) {
         String sql = "UPDATE group_member SET last_counted_month = ? WHERE id = ?";
         jdbcTemplate.update(sql, yearMonth, groupMemberId);
     }
-
-
-    
-    
 }

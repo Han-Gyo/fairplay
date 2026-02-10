@@ -107,13 +107,13 @@
 						</td>
 						
                         <td>
-                             <c:if test="${loginMember.id == group.leaderId && member.id != group.leaderId}">
-					            <form action="${pageContext.request.contextPath}/groupmember/delete" method="post" style="display:inline;">
-					                <input type="hidden" name="groupId" value="${group.id}" />
-					                <input type="hidden" name="memberId" value="${member.memberId}" />
-					                <button type="submit" class="action-link delete" onclick="return confirm('정말 추방하시겠습니까?');">추방</button>
-					            </form>
-					        </c:if>
+                             <c:if test="${loginMember.id == group.leaderId && member.id != group.leaderId && loginMember.id != member.memberId}">
+							    <form action="${pageContext.request.contextPath}/groupmember/delete" method="post" style="display:inline;">
+							        <input type="hidden" name="groupId" value="${group.id}" />
+							        <input type="hidden" name="memberId" value="${member.memberId}" />
+							        <button type="submit" class="action-link delete" onclick="return confirm('정말 추방하시겠습니까?');">추방</button>
+							    </form>
+							</c:if>
 					    </td>
 					</tr>
                 </c:forEach>

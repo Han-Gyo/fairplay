@@ -53,7 +53,22 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     // 그룹 멤버 정보 수정 (역할, 점수, 경고 등)
     @Override
     public void update(GroupMember groupMember) {
-        gmRepo.update(groupMember);
+        GroupMember existing = gmRepo.findById(groupMember.getId());
+
+        // 경고 횟수만 수정 가능
+        existing.setWarningCount(groupMember.getWarningCount());
+
+        // Role 변경은 리더 본인일 경우 무시
+        if ("LEADER".equals(existing.getRole()) && existing.getMemberId() == groupMember.getMemberId()) {
+            existing.setRole("LEADER");
+        } else {
+            existing.setRole(groupMember.getRole());
+        }
+
+        // 점수는 기존 DB 값 유지 → 수정하지 않음
+        // monthlyScore, totalScore는 그대로 둠
+
+        gmRepo.update(existing);
     }
 
     // 그룹 멤버 삭제
@@ -138,12 +153,27 @@ public class GroupMemberServiceImpl implements GroupMemberService {
      * 리더 위임 처리
      * - group_member 테이블의 role 변경
      * - group 테이블의 leader_id 갱신
+     * - 기존 리더 자동 강등 (리더는 반드시 1명)
      */
+
     @Override
-    public void updateRoleToLeader(int groupId, int memberId) {
-        gmRepo.updateRoleToLeader(groupId, memberId);
-        groupRepository.updateLeader(groupId, memberId);
+    public void updateRoleToLeader(int groupId, int newLeaderId) {
+        // 기존 리더 조회: group 테이블의 leader_id 기준으로 가져와야 함
+        Group group = groupRepository.findById(groupId);
+        Integer oldLeaderId = group.getLeaderId();
+
+        // 기존 리더 강등
+        if (oldLeaderId != null && !oldLeaderId.equals(newLeaderId)) {
+            gmRepo.updateRoleToMember(groupId, oldLeaderId);
+        }
+
+        // 새 리더 지정
+        gmRepo.updateRoleToLeader(groupId, newLeaderId);
+
+        // 그룹 테이블의 leader_id 갱신
+        groupRepository.updateLeader(groupId, newLeaderId);
     }
+
 
     // 내가 가입한 그룹 리스트 반환
     @Override
@@ -178,7 +208,6 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     public void applyMonthlyWarnings() {
         // 모든 그룹 조회
         List<Group> groups = groupRepository.readAll();
-        System.out.println("applyMonthlyWarnings 실행됨: " + LocalDateTime.now());
 
         // 지난 달 기준 (yyyy-MM)
         String yearMonth = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM"));
@@ -221,5 +250,4 @@ public class GroupMemberServiceImpl implements GroupMemberService {
             }
         }
     }
-
 }

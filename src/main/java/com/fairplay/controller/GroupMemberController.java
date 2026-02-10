@@ -139,67 +139,90 @@ public class GroupMemberController {
 	}
 	
 	// 특정 그룹 멤버 수정하는 뷰페이지 이동
-	@GetMapping("/edit")
-	public String editForm(@RequestParam("id")int id, HttpSession session, Model model) {
-		Member loginMember = (Member) session.getAttribute("loginMember");
-		GroupMember gm = groupMemberService.findById(id);
-		Group group = groupService.findById(gm.getGroupId());
+		@GetMapping("/edit")
+		public String editForm(@RequestParam("id")int id, HttpSession session, Model model) {
+			Member loginMember = (Member) session.getAttribute("loginMember");
+			GroupMember gm = groupMemberService.findById(id);
+			Group group = groupService.findById(gm.getGroupId());
 
-		// ✅ 권한 체크: 리더거나 자기 자신만 수정 가능
-		if (loginMember == null || 
-			(loginMember.getId() != group.getLeaderId() && loginMember.getId() != gm.getMemberId())) {
-			return "redirect:/groupmember/list?groupId=" + gm.getGroupId();
+			// 권한 체크: 리더거나 자기 자신만 수정 가능
+			if (loginMember == null || 
+				(loginMember.getId() != group.getLeaderId() && loginMember.getId() != gm.getMemberId())) {
+				return "redirect:/groupmember/list?groupId=" + gm.getGroupId();
+			}
+
+			// 리더 본인 수정 제한: 본인이 리더일 경우 Role 변경 불가 안내
+			boolean isSelfLeader = loginMember.getId() == gm.getMemberId() && "LEADER".equals(gm.getRole());
+			model.addAttribute("isSelfLeader", isSelfLeader);
+
+			model.addAttribute("groupMember", gm);
+			model.addAttribute("group", group);
+			return "groupMemberEditForm";
+		}
+		
+		// 특정 그룹 멤버 수정
+		@PostMapping("/update")
+		public String update(@ModelAttribute GroupMember groupMember, HttpSession session) {
+		    Member loginMember = (Member) session.getAttribute("loginMember");
+		    Group group = groupService.findById(groupMember.getGroupId());
+
+		    // 권한 체크: 로그인 멤버가 그룹 리더거나 본인일 때만 수정 가능
+		    if (loginMember == null || 
+		        (loginMember.getId() != group.getLeaderId() && loginMember.getId() != groupMember.getMemberId())) {
+		        return "redirect:/groupmember/list?groupId=" + groupMember.getGroupId();
+		    }
+
+		    // 리더 위임 로직: 다른 멤버를 LEADER로 지정하려는 경우
+		    if ("LEADER".equals(groupMember.getRole()) && groupMember.getMemberId() != group.getLeaderId()) {
+		        groupMemberService.updateRoleToLeader(groupMember.getGroupId(), groupMember.getMemberId());
+		        return "redirect:/groupmember/list?groupId=" + groupMember.getGroupId();
+		    }
+
+		    // 리더 본인 Role 변경 제한
+		    if (loginMember.getId() == groupMember.getMemberId() && "LEADER".equals(groupMember.getRole())) {
+		        groupMember.setRole("LEADER");
+		    }
+
+		    // 점수는 유지 → 컨트롤러에서 건드리지 않음
+		    groupMemberService.update(groupMember);
+
+		    return "redirect:/groupmember/list?groupId=" + groupMember.getGroupId();
 		}
 
-		model.addAttribute("groupMember", gm);
-		model.addAttribute("group", group);
-		return "groupMemberEditForm";
-	}
-	
-	// 특정 그룹 멤버 수정
-	@PostMapping("/update")
-	public String update(@ModelAttribute GroupMember groupMember, HttpSession session) {
-		Member loginMember = (Member) session.getAttribute("loginMember");
-		Group group = groupService.findById(groupMember.getGroupId());
-
-		// ✅ 권한 체크: 리더거나 자기 자신만 수정 가능
-		if (loginMember == null || 
-			(loginMember.getId() != group.getLeaderId() && loginMember.getId() != groupMember.getMemberId())) {
-			return "redirect:/groupmember/list?groupId=" + groupMember.getGroupId();
+		// 그룹장이 다른 멤버를 강퇴하거나 본인이 스스로 탈퇴할 수 있도록 처리
+		@PostMapping("/delete")
+		public String delete(@RequestParam int groupId,
+							 @RequestParam int memberId,
+							 HttpSession session) {
+			
+			Member loginMember = (Member) session.getAttribute("loginMember");
+			if (loginMember == null) {
+				return "redirect:/member/login";
+			}
+			
+			Group group = groupService.findById(groupId);
+			
+			boolean isSelf = loginMember.getId() == memberId;
+			boolean isLeaderKick = loginMember.getId() == group.getLeaderId();
+			
+			// 리더 본인은 추방 불가 → 자기 자신을 추방하는 경우 막음
+			if (!isSelf && !isLeaderKick) {
+				return "redirect:/group/detail?id=" + groupId;
+			}
+			if (isLeaderKick && memberId == group.getLeaderId()) {
+				// 리더 본인 추방 방지
+				return "redirect:/groupmember/list?groupId=" + groupId;
+			}
+			
+			groupMemberService.delete(groupId, memberId);
+			
+			if (isSelf) {
+				return "redirect:/";
+			}
+			
+			return "redirect:/groupmember/list?groupId=" + groupId;
 		}
 
-		groupMemberService.update(groupMember);
-		return "redirect:/groupmember/list?groupId=" + groupMember.getGroupId();
-	}
-	
-	// 그룹장이 다른 멤버를 강퇴하거나 본인이 스스로 탈퇴할 수 있도록 처리
-	@PostMapping("/delete")
-	public String delete(@RequestParam int groupId,
-						 @RequestParam int memberId,
-						 HttpSession session) {
-		
-		Member loginMember = (Member) session.getAttribute("loginMember");
-		if (loginMember == null) {
-			return "redirect:/member/login";
-		}
-		
-		Group group = groupService.findById(groupId);
-		
-		boolean isSelf = loginMember.getId() == memberId;
-		boolean isLeaderKick = loginMember.getId() == group.getLeaderId();
-		
-		if (!isSelf && !isLeaderKick) {
-			return "redirect:/group/detail?id=" + groupId;
-		}
-		
-		groupMemberService.delete(groupId, memberId);
-		
-		if (isSelf) {
-			return "redirect:/";
-		}
-		
-		return "redirect:/groupmember/list?groupId=" + groupId;
-	}
 	
 	// 그룹장이면서 멤버가 1명일 경우 혹은 일반 멤버 탈퇴 처리
 	@PostMapping("/leave")

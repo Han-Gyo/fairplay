@@ -39,6 +39,12 @@
             width: 100%;
             margin-top: 20px;
         }
+
+        .info-text {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -50,31 +56,28 @@
         <input type="hidden" name="id" value="${groupMember.id}" />
         <!-- 그룹 ID 유지 (리스트 복귀용) -->
         <input type="hidden" name="groupId" value="${groupMember.groupId}" />
-
-        <div class="form-group">
-            <label>회원 ID</label>
-            <input type="text" class="form-control" value="${groupMember.memberId}" readonly />
-        </div>
+        <!-- 멤버 ID 유지 (수정 시 필수) -->
+        <input type="hidden" name="memberId" value="${groupMember.memberId}" />
 
         <div class="form-group">
             <label>역할 (Role)</label>
-            <select name="role" class="form-control">
-                <option value="LEADER" ${groupMember.role == 'LEADER' ? 'selected' : ''}>LEADER</option>
-                <option value="MEMBER" ${groupMember.role == 'MEMBER' ? 'selected' : ''}>MEMBER</option>
-            </select>
+            <!-- 리더 본인일 경우 Role 변경 불가 -->
+            <c:choose>
+                <c:when test="${isSelfLeader}">
+                    <input type="text" class="form-control" value="LEADER" readonly />
+                    <p class="info-text">그룹장은 본인 페이지에서 역할을 변경할 수 없습니다.<br>
+                    다른 멤버의 수정 페이지에서 Role을 LEADER로 변경하면 리더 권한이 위임됩니다.</p>
+                </c:when>
+                <c:otherwise>
+                    <select name="role" class="form-control">
+                        <option value="LEADER" ${groupMember.role == 'LEADER' ? 'selected' : ''}>LEADER</option>
+                        <option value="MEMBER" ${groupMember.role == 'MEMBER' ? 'selected' : ''}>MEMBER</option>
+                    </select>
+                </c:otherwise>
+            </c:choose>
         </div>
 
-        <div class="form-group">
-		    <label>이번 달 점수 (monthly_score)</label>
-		    <input type="number" name="monthlyScore" class="form-control" value="${groupMember.monthlyScore}" />
-		</div>
-
-
-        <div class="form-group">
-            <label>전체 점수 (total_score)</label>
-            <input type="number" name="totalScore" class="form-control" value="${groupMember.totalScore}" />
-        </div>
-
+        <!-- 경고 횟수만 수정 가능 -->
         <div class="form-group">
             <label>경고 횟수 (warning_count)</label>
             <input type="number" name="warningCount" class="form-control" value="${groupMember.warningCount}" />
