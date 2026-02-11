@@ -1,0 +1,72 @@
+/* [수정 및 최적화]
+   1. badge: 부트스트랩의 d-inline-flex와 충돌하지 않도록 핵심 정렬만 강화
+   2. 아이콘 정렬: 텍스트와 정확히 수평을 이루도록 vertical-align 조정
+*/
+
+@charset "UTF-8";
+
+body {
+  background-color: #f8fbfd !important;
+  font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
+}
+
+.tracking-wider { letter-spacing: 0.1em; }
+.x-small { font-size: 0.75rem; }
+
+/* 리더 한마디 카드 */
+.admin-comment-card {
+  background-color: #ffffff;
+  border: 1px solid #e9ecef;
+  border-left: 4px solid #78c2ad; 
+}
+
+/* 이미지 스타일 */
+.img-thumb { 
+  cursor: zoom-in; 
+  max-height: 450px; 
+  object-fit: cover;
+  transition: opacity 0.3s;
+}
+.img-thumb:hover { opacity: 0.9; }
+
+/* 애니메이션 */
+.pulse-animation {
+  animation: pulse-primary 2s infinite;
+}
+
+@keyframes pulse-primary {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(120, 194, 173, 0.4); }
+  70% { transform: scale(1.01); box-shadow: 0 0 0 10px rgba(120, 194, 173, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(120, 194, 173, 0); }
+}
+
+/* 배지 내부 요소 정렬 최적화 */
+.badge {
+  /* gap을 주면 아이콘과 텍스트 사이 간격 조절이 쉽습니다 */
+  gap: 6px !important; 
+  /* 내부 텍스트가 위로 쏠리는 현상 방지 */
+  line-height: 1.2 !important; 
+  font-weight: 500;
+}
+
+.badge i, 
+.badge .lucide {
+  /* 아이콘 크기 고정 및 텍스트와의 수평 정렬 */
+  width: 14px !important;
+  height: 14px !important;
+  display: inline-block;
+  vertical-align: middle; 
+  flex-shrink: 0;
+}
+
+/* 라이트박스 & 토스트 */
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 10000; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 90%; max-height: 90%; border-radius: 8px; }
+.lightbox-close { position: fixed; top: 20px; right: 20px; background: none; color: #fff; border: 0; font-size: 40px; cursor: pointer; }
+
+.toast-custom { 
+  position: fixed; left: 50%; bottom: 40px; transform: translateX(-50%); 
+  background: #333; color: #fff; padding: 10px 25px; border-radius: 50px; 
+  font-size: 14px; opacity: 0; transition: all .3s ease; z-index: 10001; 
+}

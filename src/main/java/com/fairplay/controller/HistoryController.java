@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -93,7 +94,7 @@ public String listAllHistories(
    if (session.getAttribute("currentGroupId") == null) {
      int firstGroupId = joinedGroups.get(0).getId();
      session.setAttribute("currentGroupId", firstGroupId);
-     String role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), firstGroupId);
+     Optional<String> role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), firstGroupId);
      session.setAttribute("role", role);
  }
    

@@ -74,6 +74,7 @@
 <div class="table-box">
     <h2>👥 그룹 멤버 목록</h2>
 
+
 <c:choose>
 
     <c:when test="${isMember}">
@@ -84,7 +85,7 @@
                     <th>실명</th>
                     <th>역할</th>
                     <th>총 점수</th>
-                    <th>주간 점수</th>
+                    <th>월간 점수</th>
                     <th>경고 횟수</th>
                     <th>관리</th>
                 </tr>
@@ -96,7 +97,7 @@
                         <td>${member.realName}</td>
                         <td>${member.role}</td>
                         <td>${member.totalScore}</td>
-                        <td>${member.weeklyScore}</td>
+                        <td>${member.monthlyScore}</td>
                         <td>${member.warningCount}</td>
                         
                         <td>
@@ -106,13 +107,13 @@
 						</td>
 						
                         <td>
-                             <c:if test="${loginMember.id == group.leaderId && member.id != group.leaderId}">
-					            <form action="${pageContext.request.contextPath}/groupmember/delete" method="post" style="display:inline;">
-					                <input type="hidden" name="groupId" value="${group.id}" />
-					                <input type="hidden" name="memberId" value="${member.memberId}" />
-					                <button type="submit" class="action-link delete" onclick="return confirm('정말 추방하시겠습니까?');">추방</button>
-					            </form>
-					        </c:if>
+                             <c:if test="${loginMember.id == group.leaderId && member.id != group.leaderId && loginMember.id != member.memberId}">
+							    <form action="${pageContext.request.contextPath}/groupmember/delete" method="post" style="display:inline;">
+							        <input type="hidden" name="groupId" value="${group.id}" />
+							        <input type="hidden" name="memberId" value="${member.memberId}" />
+							        <button type="submit" class="action-link delete" onclick="return confirm('정말 추방하시겠습니까?');">추방</button>
+							    </form>
+							</c:if>
 					    </td>
 					</tr>
                 </c:forEach>
@@ -147,8 +148,6 @@
         <button type="submit" class="btn-back">그룹 목록으로 돌아가기</button>
     </form>
 </div>
-
-
 
 </body>
 </html>
