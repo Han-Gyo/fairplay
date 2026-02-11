@@ -1,6 +1,7 @@
 package com.fairplay.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
 
@@ -236,7 +237,7 @@ public class GroupMemberController {
 		}
 		
 		int memberId = loginMember.getId();
-		String role = groupMemberService.findRoleByMemberIdAndGroupId(memberId, groupId);
+		Optional<String> role = groupMemberService.findRoleByMemberIdAndGroupId(memberId, groupId);
 		int memberCount = groupMemberService.countByGroupId(groupId);
 
 		if ("LEADER".equals(role) && memberCount > 1) {

@@ -2,6 +2,7 @@
 package com.fairplay.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.fairplay.domain.Group;
 import com.fairplay.domain.GroupMember;
@@ -31,7 +32,7 @@ public interface GroupMemberService {
     void leaveGroup(int memberId, int groupId);
 
     // 특정 멤버의 그룹 내 역할 조회 (LEADER or MEMBER)
-    String findRoleByMemberIdAndGroupId(int memberId, int groupId);
+    Optional<String> findRoleByMemberIdAndGroupId(int memberId, int groupId);
 
     // 그룹 내에서 리더를 제외한 멤버 목록 조회 (리더 위임 대상 추출용)
     List<GroupMemberInfoDTO> findMembersExcludingLeader(int groupId);

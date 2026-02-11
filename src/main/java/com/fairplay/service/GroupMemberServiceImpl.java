@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -139,7 +140,7 @@ public class GroupMemberServiceImpl implements GroupMemberService {
 
     // 그룹 내 특정 멤버의 역할 조회
     @Override
-    public String findRoleByMemberIdAndGroupId(int memberId, int groupId) {
+    public Optional<String> findRoleByMemberIdAndGroupId(int memberId, int groupId) {
         return gmRepo.findRoleByMemberIdAndGroupId(memberId, groupId);
     }
 

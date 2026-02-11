@@ -1,5 +1,8 @@
 package com.fairplay.controller;
 
+import java.util.List;
+import java.util.Optional;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.fairplay.domain.Group;
 import com.fairplay.domain.Member;
 import com.fairplay.service.GroupMemberService;
-
-import java.util.List;
 
 @Controller
 public class HomeController {
@@ -34,10 +35,10 @@ public class HomeController {
           }
 
           if (groupId != null) {
-            String role = groupMemberService.findRoleByMemberIdAndGroupId(
+            Optional<String> roleOpt = groupMemberService.findRoleByMemberIdAndGroupId(
               loginMember.getId(), groupId
             );
-            session.setAttribute("role", role);
+            session.setAttribute("role", roleOpt.orElse("none"));
           }
         }
 

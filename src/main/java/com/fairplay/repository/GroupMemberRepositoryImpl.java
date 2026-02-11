@@ -1,6 +1,8 @@
 package com.fairplay.repository;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -110,9 +112,13 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
 
     // 그룹 내 특정 멤버의 역할 조회
     @Override
-    public String findRoleByMemberIdAndGroupId(int memberId, int groupId) {
+    public Optional<String> findRoleByMemberIdAndGroupId(int memberId, int groupId) {
         String sql = "SELECT role FROM group_member WHERE member_id = ? AND group_id = ?";
-        return jdbcTemplate.queryForObject(sql, String.class, memberId, groupId);
+        List<String> roles = jdbcTemplate.query(sql,
+            (rs, rowNum) -> rs.getString("role"),
+            memberId, groupId
+        );
+        return roles.stream().findFirst();
     }
 
     // 그룹 내에서 리더를 제외한 멤버 목록 조회 (리더 위임 대상)

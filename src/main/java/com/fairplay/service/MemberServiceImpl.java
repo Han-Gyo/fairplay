@@ -1,6 +1,7 @@
 package com.fairplay.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,8 +149,8 @@ public class MemberServiceImpl implements MemberService {
             }
 
             // 본인이 리더인지 확인
-            String role = groupMemberService.findRoleByMemberIdAndGroupId(id, groupId);
-            if ("LEADER".equalsIgnoreCase(role)) {
+            Optional<String> roleOpt = groupMemberService.findRoleByMemberIdAndGroupId(id, groupId);
+            if (roleOpt.isPresent() && "LEADER".equalsIgnoreCase(roleOpt.get())) {
                 // 다른 멤버가 있을 경우 → 가입날짜(대신 PK id 오름차순) 가장 오래된 사람에게 리더 위임
                 Integer newLeaderId = groupMemberService.findOldestNonLeaderMemberId(groupId);
                 if (newLeaderId != null) {
