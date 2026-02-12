@@ -23,13 +23,14 @@
 
     <!-- Toolbar: Search & Action -->
     <div class="row g-3 mb-4 justify-content-between align-items-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="input-group shadow-sm">
+        <div class="col-md-6 col-lg-6 d-flex align-items-center">
+            <div class="input-group shadow-sm me-3">
                 <span class="input-group-text bg-white border-end-0">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" ...></svg>
                 </span>
                 <input id="groupSearch" type="text" class="form-control border-start-0 ps-0" placeholder="그룹 이름으로 검색">
             </div>
+            
         </div>
         <div class="col-auto">
             <a href="${pageContext.request.contextPath}/group/create" class="btn btn-primary btn-lg shadow-sm px-4">
@@ -37,16 +38,26 @@
             </a>
         </div>
     </div>
+    
+    <!-- 내 그룹만 보기 체크박스 -->
+    <div class="form-check form-switch mb-4">
+        <input class="form-check-input" type="checkbox" id="myGroupsOnly">
+        <label class="form-check-label" for="myGroupsOnly">내 그룹</label>
+    </div>
 
     <!-- Group Grid -->
     <div id="groupGrid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <c:forEach var="g" items="${groups}">
-            <div class="col group-item" data-name="${g.name}">
+            <div class="col group-item" 
+                 data-name="${g.name}" 
+                 data-mygroup="${myGroupIds != null && myGroupIds.contains(g.id) ? 'true' : 'false'}">
                 <div class="card h-100 border-0 shadow-sm hover-shadow transition">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center mb-3">
                             <!-- Status Indicator -->
-                            <div class="rounded-circle me-2 ${g.publicStatus ? 'bg-success' : 'bg-warning'}" style="width: 12px; height: 12px;" title="${g.publicStatus ? '공개' : '비공개'}"></div>
+                            <div class="rounded-circle me-2 ${g.publicStatus ? 'bg-success' : 'bg-warning'}" 
+                                 style="width: 12px; height: 12px;" 
+                                 title="${g.publicStatus ? '공개' : '비공개'}"></div>
                             <span class="badge rounded-pill bg-light text-primary border border-primary-subtle">
                                 ${g.publicStatus ? 'Public' : 'Private'}
                             </span>
@@ -64,7 +75,8 @@
                         </div>
 
                         <div class="d-grid">
-                            <a href="${pageContext.request.contextPath}/group/detail?id=${g.id}" class="btn btn-outline-primary border-2 fw-bold">상세보기</a>
+                            <a href="${pageContext.request.contextPath}/group/detail?id=${g.id}" 
+                               class="btn btn-outline-primary border-2 fw-bold">상세보기</a>
                         </div>
                     </div>
                 </div>

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
@@ -95,7 +96,7 @@ public class GroupController {
 	
 	// 전체 그룹 목록을 조회하여 뷰에 전달 (Read_all)
 	@GetMapping("/groups")
-	public String groupList(Model model) {
+	public String groupList(Model model, HttpSession session) {
 
 	    // 전체 그룹 데이터 조회
 	    List<Group> groups = groupService.readAll();
@@ -107,9 +108,22 @@ public class GroupController {
 	        currentMemberCountMap.put(group.getId(), count);
 	    }
 
+	    // 로그인한 사용자 정보 가져오기
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+
+	    // 내가 가입한 그룹 리스트 조회 (서비스 메서드 그대로 활용)
+	    List<Group> myGroups = null;
+	    List<Integer> myGroupIds = null;
+	    if (loginMember != null) {
+	        myGroups = groupMemberService.findGroupsByMemberId((long) loginMember.getId());
+	        // ID 리스트로 변환해서 JSP에서 contains(g.id)로 체크 가능하게 함
+	        myGroupIds = myGroups.stream().map(Group::getId).collect(Collectors.toList());
+	    }
+
 	    // 모델에 그룹 리스트 + 현재 인원 수 map 추가
 	    model.addAttribute("groups", groups);
 	    model.addAttribute("memberCounts", currentMemberCountMap); // JSP에서 memberCounts[group.id]로 접근
+	    model.addAttribute("myGroupIds", myGroupIds); // JSP에서 내 그룹 여부 체크에 사용
 
 	    // 그룹 목록 JSP 뷰 반환
 	    return "groups";
