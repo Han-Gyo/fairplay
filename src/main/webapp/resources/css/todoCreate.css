@@ -1,7 +1,7 @@
 @charset "UTF-8";
 /* 기본 배경 및 폰트 설정 */
 .todo-create-body {
-    background-color: #f8f9fa; /* 밝은 그레이 배경으로 폼 강조 */
+    background-color: #ebfaf3;
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
     display: flex;
     justify-content: center;

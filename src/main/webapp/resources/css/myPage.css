@@ -1,8 +1,10 @@
 /* 마이페이지 전용 스타일 (Minty 기반) */
-
+body {
+  background-color: #ebfaf3;
+}
 /* 카드 스타일 */
 .glass-card {
-    background: rgba(255, 255, 255, 0.95);
+    background-color: #fff;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
     border-radius: 16px;
     border: 2px solid #78c2ad; /* Minty 포인트 컬러 */

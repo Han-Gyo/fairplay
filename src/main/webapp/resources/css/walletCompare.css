@@ -2,7 +2,7 @@
 /* 페이지 전체 배경 및 폰트 */
 .score-body {
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-  background-color: #f8f9fa;
+  background-color: #ebfaf3;
   margin: 0;
   padding: 80px 20px 40px 20px; /* 네비바 공간 확보 */
   color: #2c3e50;
