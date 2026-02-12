@@ -1,28 +1,38 @@
 package com.fairplay.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // 추가: 트랜잭션 처리
 
+import com.fairplay.domain.Group;
 import com.fairplay.domain.Member;
 import com.fairplay.enums.MemberStatus;
 import com.fairplay.repository.MemberRepository;
 
 @Service
 public class MemberServiceImpl implements MemberService {
-    
+
     @Autowired
     private MemberRepository memberRepository;
-    
+
     @Autowired
     private MailService mailService;
-    
+
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
+    // 추가: 그룹/그룹멤버 서비스 주입 (탈퇴 시 그룹 로직 처리)
+    @Autowired
+    private GroupService groupService;
+
+    @Autowired
+    private GroupMemberService groupMemberService;
+
     // 회원가입 요청으로 전달된 member 데이터를 저장 (Create)
     @Override
     public void save(Member member) {
@@ -110,14 +120,54 @@ public class MemberServiceImpl implements MemberService {
     }
 
     // 회원 탈퇴 처리 (마스킹 + 상태 변경)
+    // 변경: 그룹 로직 포함하여 단일 트랜잭션으로 처리
     @Override
+    @Transactional
     public void deactivate(int id) {
         Member member = memberRepository.findById(id);
         if (member == null || member.getStatus() == MemberStatus.INACTIVE) {
             return;
         }
 
-        // 랜덤 UUID 및 타임스탬프 생성
+        // 1) 회원이 가입한 모든 그룹 조회
+        List<Group> groups = groupMemberService.findGroupsByMemberId((long) id);
+
+        // 2) 각 그룹에 대해 탈퇴/리더 위임/그룹 삭제 처리
+        for (Group g : groups) {
+            int groupId = g.getId();
+
+            // 현재 그룹 멤버 수 조회
+            int count = groupMemberService.countByGroupId(groupId);
+
+            // 혼자 있을 경우 → 그룹 삭제 (트렌드에 맞게)
+            if (count == 1) {
+                // 본인 멤버 레코드 삭제
+                groupMemberService.delete(groupId, id);
+                // 그룹 자체 삭제
+                groupService.delete(groupId);
+                continue;
+            }
+
+            // 본인이 리더인지 확인
+            Optional<String> roleOpt = groupMemberService.findRoleByMemberIdAndGroupId(id, groupId);
+            if (roleOpt.isPresent() && "LEADER".equalsIgnoreCase(roleOpt.get())) {
+                // 다른 멤버가 있을 경우 → 가입날짜(대신 PK id 오름차순) 가장 오래된 사람에게 리더 위임
+                Integer newLeaderId = groupMemberService.findOldestNonLeaderMemberId(groupId);
+                if (newLeaderId != null) {
+                    // 그룹 테이블의 leader_id 변경
+                    groupService.updateLeader(groupId, newLeaderId);
+                    // 그룹멤버 테이블에서 해당 멤버를 LEADER로 승격
+                    groupMemberService.updateRoleToLeader(groupId, newLeaderId);
+                }
+                // 본인 탈퇴 처리
+                groupMemberService.delete(groupId, id);
+            } else {
+                // 일반 멤버일 경우 → 해당 그룹에서 자동 탈퇴
+                groupMemberService.delete(groupId, id);
+            }
+        }
+
+        // 3) 회원 마스킹 및 INACTIVE 처리 (기존 로직 유지)
         String uuid = UUID.randomUUID().toString();
         long ts = System.currentTimeMillis();
 

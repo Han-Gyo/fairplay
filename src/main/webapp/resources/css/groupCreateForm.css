@@ -1,0 +1,24 @@
+@charset "UTF-8";
+
+body { font-family: 'Pretendard', sans-serif; color: #334155; }
+.image-upload-wrapper { position: relative; width: 180px; height: 180px; }
+.image-preview-placeholder {
+    width: 100%; height: 100%; background-color: #f8fafc;
+    border: 2px dashed #cbd5e1; border-radius: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; overflow: hidden; position: relative; transition: all 0.2s;
+}
+.image-preview-placeholder:hover { border-color: #78c2ad; background-color: #f1f5f9; }
+#groupImagePreview { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+.image-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(120, 194, 173, 0.8); color: white;
+    padding: 5px 0; opacity: 0; transition: opacity 0.2s; text-align: center;
+}
+.image-preview-placeholder:hover .image-overlay { opacity: 1; }
+.form-control:focus { box-shadow: 0 0 0 0.25rem rgba(120, 194, 173, 0.2); border-color: #78c2ad; }
+.toast-custom {
+    position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%);
+    background: #334155; color: white; padding: 12px 24px; border-radius: 8px;
+    z-index: 9999; opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}

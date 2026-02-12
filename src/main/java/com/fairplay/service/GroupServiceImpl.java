@@ -38,7 +38,7 @@ public class GroupServiceImpl implements GroupService{
 		gm.setMemberId(group.getLeaderId());		// 그룹 생성자의 ID (컨트롤러에서 set 해줘야 함)
 		gm.setRole("LEADER");						// 무조건 LEADER로 지정
 		gm.setTotalScore(0);						// 초기값
-		gm.setWeeklyScore(0);						// 초기값
+		gm.setMonthlyScore(0);						// 초기값
 		gm.setWarningCount(0);						// 초기값
 		
 		// 저장

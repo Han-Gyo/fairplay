@@ -9,8 +9,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>아이디 찾기 - Fairplay</title>
-<!-- 민티 테마의 색감을 맞추기 위해 외부 CSS 연결 -->
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/forgotIdForm.css">
+    <style>
+        /* 미세한 UI 교정을 위한 최소한의 스타일 */
+        body { background-color: #f8f9fa; }
+        
+        .form-control {
+            /* 부트스트랩 기본 높이를 명시적으로 맞춰서 사이즈 차이 제거 */
+            padding: 0.75rem 1rem;
+        }
+    </style>
 </head>
 <body class="bg-light">
 <div class="container mt-5">

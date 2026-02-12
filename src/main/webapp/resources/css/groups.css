@@ -1,0 +1,39 @@
+/* Minty 테마 보조 스타일 */
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+/* 카드 호버 효과 */
+.hover-shadow {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,.1) !important;
+}
+
+/* 텍스트 줄바꿈 방지 및 말줄임 처리 (그룹 이름이 길 때) */
+.card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 검색바 포커스 효과 */
+#groupSearch:focus {
+    box-shadow: none;
+    border-color: #78c2ad;
+}
+
+#groupSearch:focus + .input-group-text {
+    border-color: #78c2ad;
+}
+
+/* 애니메이션 */
+.transition {
+    transition: all 0.3s ease;
+}

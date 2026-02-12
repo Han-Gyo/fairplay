@@ -1,0 +1,14 @@
+@charset "UTF-8";
+body { font-family: 'Pretendard', sans-serif; }
+.image-upload-wrapper { position: relative; width: 180px; height: 180px; }
+.image-preview-placeholder {
+    width: 100%; height: 100%; background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; position: relative;
+}
+#groupImagePreview { width: 100%; height: 100%; object-fit: cover; position: absolute; }
+.btn-lg { min-height: 60px; display: inline-flex; align-items: center; justify-content: center; }
+.toast-custom {
+    position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%);
+    background: #334155; color: white; padding: 12px 24px; border-radius: 8px;
+    z-index: 9999; opacity: 0; transition: all 0.4s;
+}

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
 
@@ -83,7 +84,7 @@ public class TodoController {
 	        int groupId = firstGroup.getId();
 	        session.setAttribute("currentGroupId", groupId);
 
-	        String role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), groupId);
+	        Optional<String> role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), groupId);
 	        session.setAttribute("role", role);
 
 	        System.out.println("그룹 세션 설정 완료 → groupId: " + groupId + " / role: " + role);
@@ -101,7 +102,7 @@ public class TodoController {
 	    }
 
 	    // 역할 재설정 (안전하게)
-	    String role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), groupId);
+	    Optional<String> role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), groupId);
 	    session.setAttribute("role", role);
 
 	    // groupId 기준으로 할 일만 불러와야 함

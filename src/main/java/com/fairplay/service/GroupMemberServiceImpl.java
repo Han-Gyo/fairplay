@@ -1,126 +1,254 @@
 package com.fairplay.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.fairplay.domain.Group;
 import com.fairplay.domain.GroupMember;
 import com.fairplay.domain.GroupMemberInfoDTO;
+import com.fairplay.domain.MemberMonthlyScore;
 import com.fairplay.repository.GroupMemberRepository;
 import com.fairplay.repository.GroupRepository;
 
 @Service
-public class GroupMemberServiceImpl implements GroupMemberService{
+public class GroupMemberServiceImpl implements GroupMemberService {
 
-	
-	private final GroupMemberRepository gmRepo;
-	private final GroupRepository groupRepository;
-	
-	// 생성자 주입 방식 (의존성 주입)
-	@Autowired
-	public GroupMemberServiceImpl(GroupMemberRepository gmRepo,
-								  GroupRepository groupRepository) {
-		this.gmRepo = gmRepo;
-		this.groupRepository = groupRepository;
-	}
-	
-	@Override
-	public void save(GroupMember groupMember) {
-		
-		gmRepo.save(groupMember);
-	}
+    private final GroupMemberRepository gmRepo;
+    private final GroupRepository groupRepository;
+    private final HistoryService historyService;
 
-	@Override
-	public List<GroupMember> findByGroupId(int groupId) {
-		
-		return gmRepo.findByGroupId(groupId);
-	}
+    @Autowired
+    public GroupMemberServiceImpl(GroupMemberRepository gmRepo,
+                                  GroupRepository groupRepository,
+                                  HistoryService historyService) {
+        this.gmRepo = gmRepo;
+        this.groupRepository = groupRepository;
+        this.historyService = historyService;
+    }
 
-	@Override
-	public GroupMember findById(int id) {
-		
-		return gmRepo.findById(id);
-	}
+    // 그룹 멤버 저장 (가입 처리)
+    @Override
+    public void save(GroupMember groupMember) {
+        gmRepo.save(groupMember);
+    }
 
-	@Override
-	public void update(GroupMember groupMember) {
-		gmRepo.update(groupMember);
-		
-	}
+    // 특정 그룹에 속한 멤버 전체 조회
+    @Override
+    public List<GroupMember> findByGroupId(int groupId) {
+        return gmRepo.findByGroupId(groupId);
+    }
 
-	@Override
-	public void delete(int groupId, int memberId) {
-		System.out.println("삭제 요청 들어옴: " + groupId + ", " + memberId);  // 삭제 요청으로 Id 값들 잘 들어오는지 확인
-		gmRepo.delete(groupId, memberId);
-		
-	}
+    // PK(id)로 그룹 멤버 단일 조회
+    @Override
+    public GroupMember findById(int id) {
+        return gmRepo.findById(id);
+    }
 
-	@Override
-	public boolean isGroupMember(Long groupId, Long memberId) {
-		
-		return gmRepo.isGroupMember(groupId, memberId);
-	}
+    // 그룹 멤버 정보 수정 (역할, 점수, 경고 등)
+    @Override
+    public void update(GroupMember groupMember) {
+        GroupMember existing = gmRepo.findById(groupMember.getId());
 
-	// 그룹 ID로 닉네임/이름 포함한 멤버 정보 조회
-	@Override
-	public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
-		return gmRepo.findMemberInfoByGroupId(groupId);
-	}
+        // 경고 횟수만 수정 가능
+        existing.setWarningCount(groupMember.getWarningCount());
 
-	// 그룹 멤버 수 조회
-	@Override
-	public int countByGroupId(int groupId) {
-	    return gmRepo.countByGroupId(groupId); 
-	}
+        // Role 변경은 리더 본인일 경우 무시
+        if ("LEADER".equals(existing.getRole()) && existing.getMemberId() == groupMember.getMemberId()) {
+            existing.setRole("LEADER");
+        } else {
+            existing.setRole(groupMember.getRole());
+        }
 
-	// 그룹 탈퇴 로직 구현
-	@Override
-	public void leaveGroup(int memberId, int groupId) {
-		
-		// 그룹 멤버에서 본인 row 삭제
-		gmRepo.deleteByMemberIdAndGroupId(memberId, groupId);
-		
-		// 삭제 후 남은 인원 수 체크
-		int remaining = gmRepo.countByGroupId(groupId);
-		
-		// 남은 인원이 0이면 그룹 자체 삭제
-		if (remaining == 0) {
-			groupRepository.deleteById(groupId);
-		}
-	}
+        // 점수는 기존 DB 값 유지 → 수정하지 않음
+        // monthlyScore, totalScore는 그대로 둠
 
-	// 그룹 내 역할 조회
-	@Override
-	public String findRoleByMemberIdAndGroupId(int memberId, int groupId) {
-		return gmRepo.findRoleByMemberIdAndGroupId(memberId, groupId);
-	}
+        gmRepo.update(existing);
+    }
 
-	// 그룹 내에서 리더를 제외한 멤버 목록 조회 (위임 대상용)
-	@Override
-	public List<GroupMemberInfoDTO> findMembersExcludingLeader(int groupId) {
-		return gmRepo.findMembersExcludingLeader(groupId);
-	}
+    // 그룹 멤버 삭제
+    @Override
+    public void delete(int groupId, int memberId) {
+        gmRepo.delete(groupId, memberId);
+    }
 
-	// 리더 위임 처리
-	@Override
-	public void updateRoleToLeader(int groupId, int memberId) {
-		gmRepo.updateRoleToLeader(groupId, memberId);
-	}
+    // 특정 멤버가 그룹에 속해 있는지 여부 확인
+    @Override
+    public boolean isGroupMember(Long groupId, Long memberId) {
+        return gmRepo.isGroupMember(groupId, memberId);
+    }
 
-	// 내가 가입한 그룹 리스트 반환 (그룹명, ID 포함)
-	@Override
-	public List<Group> findGroupsByMemberId(Long memberId) {
-		return gmRepo.findGroupsByMemberId(memberId);
-	}
+    /**
+     * 그룹 ID로 멤버 정보 조회 (닉네임/실명 포함)
+     * + 현재 달의 History 데이터를 기반으로 월간 점수, 총 점수를 실시간 반영
+     */
+    @Override
+    public List<GroupMemberInfoDTO> findMemberInfoByGroupId(int groupId) {
+        List<GroupMemberInfoDTO> members = gmRepo.findMemberInfoByGroupId(groupId);
 
-	@Override
+        // 현재 달 기준 (yyyy-MM)
+        String yearMonth = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        List<MemberMonthlyScore> monthlyScores = historyService.getMemberMonthlyScore(groupId, yearMonth);
+
+        for (GroupMemberInfoDTO dto : members) {
+            monthlyScores.stream()
+                .filter(ms -> ms.getMemberId().equals(dto.getMemberId()))
+                .findFirst()
+                .ifPresent(ms -> {
+                    // 매월 1일에는 월간 점수를 0으로 초기화
+                    if (LocalDate.now().getDayOfMonth() == 1) {
+                        dto.setMonthlyScore(0);
+                    } else {
+                        dto.setMonthlyScore(ms.getScore());
+                    }
+
+                    // 총점 = DB totalScore + 이번 달 history 점수
+                    dto.setTotalScore(dto.getTotalScore() + ms.getScore());
+
+                    // 경고 횟수는 DB 값 그대로 표시 (실시간 반영 X)
+                });
+        }
+        return members;
+    }
+
+    // 그룹 내 현재 인원 수 조회
+    @Override
+    public int countByGroupId(int groupId) {
+        return gmRepo.countByGroupId(groupId);
+    }
+
+    /**
+     * 그룹 탈퇴 처리
+     * - 해당 멤버 삭제
+     * - 남은 인원이 없으면 그룹 자체 삭제
+     */
+    @Override
+    public void leaveGroup(int memberId, int groupId) {
+        gmRepo.deleteByMemberIdAndGroupId(memberId, groupId);
+        int remaining = gmRepo.countByGroupId(groupId);
+
+        if (remaining == 0) {
+            groupRepository.deleteById(groupId);
+        }
+    }
+
+    // 그룹 내 특정 멤버의 역할 조회
+    @Override
+    public Optional<String> findRoleByMemberIdAndGroupId(int memberId, int groupId) {
+        return gmRepo.findRoleByMemberIdAndGroupId(memberId, groupId);
+    }
+
+    // 리더 제외 멤버 목록 조회 (리더 위임 대상)
+    @Override
+    public List<GroupMemberInfoDTO> findMembersExcludingLeader(int groupId) {
+        return gmRepo.findMembersExcludingLeader(groupId);
+    }
+
+    /**
+     * 리더 위임 처리
+     * - group_member 테이블의 role 변경
+     * - group 테이블의 leader_id 갱신
+     * - 기존 리더 자동 강등 (리더는 반드시 1명)
+     */
+
+    @Override
+    public void updateRoleToLeader(int groupId, int newLeaderId) {
+        // 기존 리더 조회: group 테이블의 leader_id 기준으로 가져와야 함
+        Group group = groupRepository.findById(groupId);
+        Integer oldLeaderId = group.getLeaderId();
+
+        // 기존 리더 강등
+        if (oldLeaderId != null && !oldLeaderId.equals(newLeaderId)) {
+            gmRepo.updateRoleToMember(groupId, oldLeaderId);
+        }
+
+        // 새 리더 지정
+        gmRepo.updateRoleToLeader(groupId, newLeaderId);
+
+        // 그룹 테이블의 leader_id 갱신
+        groupRepository.updateLeader(groupId, newLeaderId);
+    }
+
+
+    // 내가 가입한 그룹 리스트 반환
+    @Override
+    public List<Group> findGroupsByMemberId(Long memberId) {
+        return gmRepo.findGroupsByMemberId(memberId);
+    }
+
+    // 최근 가입 그룹 ID 반환
+    @Override
     public Integer findDefaultGroupId(int memberId) {
-        // 최근 가입 기준. 필요하면 ASC로 바꿔 '첫 가입' 기준으로 전환.
         return gmRepo.findLatestGroupIdByMember(memberId);
     }
 
-	
-	
+    // 가장 오래된 비리더 멤버 ID 조회
+    @Override
+    public Integer findOldestNonLeaderMemberId(int groupId) {
+        return gmRepo.findOldestNonLeaderMemberId(groupId);
+    }
+
+    /**
+     * 매월 1일 0시에 실행되는 스케줄러
+     * - 지난 달 점수 집계 (historyService.getMemberMonthlyScore)
+     * - 그룹 내 최고 점수(maxScore) 계산
+     * - 각 멤버별 총점 누적 (totalScore += 지난달 score)
+     * - 월간 점수 초기화 (monthlyScore = 0)
+     * - 최고 점수의 80% 미만인 멤버는 경고 횟수 +1
+     * - 이미 집계한 달(lastCountedMonth)은 다시 집계하지 않음
+     */
+    
+    // 매월 1일 0시 → 운영용
+    @Scheduled(cron = "0 0 0 1 * ?")
+    public void applyMonthlyWarnings() {
+        // 모든 그룹 조회
+        List<Group> groups = groupRepository.readAll();
+
+        // 지난 달 기준 (yyyy-MM)
+        String yearMonth = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM"));
+
+        for (Group g : groups) {
+            // 지난 달 멤버별 점수 집계
+            List<MemberMonthlyScore> scores = historyService.getMemberMonthlyScore(g.getId(), yearMonth);
+
+            // 그룹 내 최고 점수 계산
+            int maxScore = scores.stream()
+                                 .mapToInt(MemberMonthlyScore::getScore)
+                                 .max()
+                                 .orElse(0);
+
+            for (MemberMonthlyScore s : scores) {
+                // groupId + memberId로 GroupMember 조회
+                GroupMember gm = gmRepo.findByGroupIdAndMemberId(g.getId(), s.getMemberId());
+
+                // NEW: 이미 집계한 달이면 건너뛰기
+                if (yearMonth.equals(gm.getLastCountedMonth())) {
+                    continue;
+                }
+
+                // 총점 누적
+                gm.setTotalScore(gm.getTotalScore() + s.getScore());
+
+                // 새 달 시작 → 월간 점수 초기화
+                gm.setMonthlyScore(0);
+
+                // 경고 부여 (최고 점수의 80% 미만이면 경고 횟수 증가)
+                if (s.getScore() < maxScore * 0.8) {
+                    gm.setWarningCount(gm.getWarningCount() + 1);
+                }
+
+                // NEW: 이번 달을 집계 완료로 표시
+                gm.setLastCountedMonth(yearMonth);
+
+                // DB 업데이트
+                gmRepo.update(gm);
+            }
+        }
+    }
 }
