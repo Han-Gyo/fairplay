@@ -7,146 +7,131 @@
     <meta charset="UTF-8">
     <title>그룹 멤버 목록</title>
     <style>
+        /* 민티 테마의 배경색과 어울리는 부드러운 배경 설정 */
         body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #eef2f7;
-            padding: 50px;
+            background-color: #f9f9f9;
         }
-
-        .table-box {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            padding: 30px;
+        /* 컨테이너 상단 여백 및 최대 너비 조정 */
+        .main-container {
+            margin-top: 50px;
+            margin-bottom: 50px;
         }
-
-        h2 {
+        /* 테이블 헤더의 텍스트 중앙 정렬 및 배경색 강조 */
+        .table thead th {
             text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: center;
-        }
-
-        th {
-            background-color: #007bff;
+            background-color: #78C2AD; /* Minty Primary Color */
             color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f4f6f9;
-        }
-
-        tr:hover {
-            background-color: #d6e9f8;
-        }
-
-        .btn-back {
-            display: block;
-            margin: 30px auto 0;
-            text-align: center;
-            background-color: #6c757d;
-            color: white;
-            padding: 10px 20px;
             border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
         }
-
-        .btn-back:hover {
-            background-color: #5a6268;
+        /* 테이블 데이터 중앙 정렬 */
+        .table tbody td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        /* 카드 컴포넌트로 테이블 감싸기 */
+        .card {
+            border-radius: 15px;
+            overflow: hidden;
+            border: none;
         }
     </style>
 </head>
 <body>
 
-<div class="table-box">
-    <h2>👥 그룹 멤버 목록</h2>
+<div class="container main-container">
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <h2 class="text-center mb-4 text-primary">그룹 멤버 목록</h2>
 
+            <c:choose>
+                <%-- 멤버인 경우 모든 데이터(총점, 월간점, 경고 등) 출력 --%>
+                <c:when test="${isMember}">
+                    <div class="table-responsive">
+                        <table class="table table-hover border-light">
+                            <thead>
+                                <tr>
+                                    <th>닉네임</th>
+                                    <th>실명</th>
+                                    <th>역할</th>
+                                    <th>총 점수</th>
+                                    <th>월간 점수</th>
+                                    <th>경고 횟수</th>
+                                    <th>관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="member" items="${groupMembers}">
+                                    <tr>
+                                        <td>${member.nickname}</td>
+                                        <td>${member.realName}</td>
+                                        <td>
+                                            <span class="badge ${member.role == 'LEADER' ? 'bg-primary' : 'bg-info'}">
+                                                ${member.role}
+                                            </span>
+                                        </td>
+                                        <td class="fw-bold text-dark">${member.totalScore}</td>
+                                        <td>${member.monthlyScore}</td>
+                                        <td class="text-danger">${member.warningCount}</td>
+                                        <td>
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <%-- 수정 버튼 --%>
+                                                <c:if test="${loginMember.id == group.leaderId || loginMember.id == member.id}">
+                                                    <a href="${pageContext.request.contextPath}/groupmember/edit?id=${member.id}" 
+                                                       class="btn btn-sm btn-outline-primary">수정</a>
+                                                </c:if>
 
-<c:choose>
+                                                <%-- 추방 버튼 --%>
+                                                <c:if test="${loginMember.id == group.leaderId && member.id != group.leaderId && loginMember.id != member.memberId}">
+                                                    <form action="${pageContext.request.contextPath}/groupmember/delete" method="post" class="m-0">
+                                                        <input type="hidden" name="groupId" value="${group.id}" />
+                                                        <input type="hidden" name="memberId" value="${member.memberId}" />
+                                                        <button type="submit" class="btn btn-sm btn-danger text-white" 
+                                                                onclick="return confirm('정말 추방하시겠습니까?');">추방</button>
+                                                    </form>
+                                                </c:if>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </c:when>
 
-    <c:when test="${isMember}">
-        <table>
-            <thead>
-                <tr>
-                    <th>닉네임</th>
-                    <th>실명</th>
-                    <th>역할</th>
-                    <th>총 점수</th>
-                    <th>월간 점수</th>
-                    <th>경고 횟수</th>
-                    <th>관리</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach var="member" items="${groupMembers}">
-                    <tr>
-                        <td>${member.nickname}</td>
-                        <td>${member.realName}</td>
-                        <td>${member.role}</td>
-                        <td>${member.totalScore}</td>
-                        <td>${member.monthlyScore}</td>
-                        <td>${member.warningCount}</td>
-                        
-                        <td>
-						    <c:if test="${loginMember.id == group.leaderId || loginMember.id == member.id}">
-						        <a href="${pageContext.request.contextPath}/groupmember/edit?id=${member.id}">수정</a>
-						    </c:if>
-						</td>
-						
-                        <td>
-                             <c:if test="${loginMember.id == group.leaderId && member.id != group.leaderId && loginMember.id != member.memberId}">
-							    <form action="${pageContext.request.contextPath}/groupmember/delete" method="post" style="display:inline;">
-							        <input type="hidden" name="groupId" value="${group.id}" />
-							        <input type="hidden" name="memberId" value="${member.memberId}" />
-							        <button type="submit" class="action-link delete" onclick="return confirm('정말 추방하시겠습니까?');">추방</button>
-							    </form>
-							</c:if>
-					    </td>
-					</tr>
-                </c:forEach>
-            </tbody>
-        </table>
-    </c:when>
+                <%-- 멤버가 아니지만 공개 그룹인 경우 --%>
+                <c:when test="${group.publicStatus}">
+                    <table class="table table-hover">
+                        <thead class="table-primary text-white">
+                            <tr>
+                                <th>닉네임</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="member" items="${groupMembers}">
+                                <tr>
+                                    <td>${member.nickname}</td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:when>
 
-    <c:when test="${group.publicStatus}">
-        <table>
-            <thead>
-                <tr>
-                    <th>닉네임</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach var="member" items="${groupMembers}">
-                    <tr>
-                        <td>${member.nickname}</td>
-                    </tr>
-                </c:forEach>
-            </tbody>
-        </table>
-    </c:when>
+                <%-- 비공개 그룹인 경우 --%>
+                <c:otherwise>
+                    <div class="alert alert-dismissible alert-light text-center border mt-3">
+                        <p class="mb-0 text-muted">비공개 그룹의 멤버 목록은 가입자만 볼 수 있습니다.</p>
+                    </div>
+                </c:otherwise>
+            </c:choose>
 
-
-    <c:otherwise>
-        <p>비공개 그룹의 멤버 목록은 가입자만 볼 수 있습니다.</p>
-    </c:otherwise>
-</c:choose>
-
-    <form action="${pageContext.request.contextPath}/group/groups">
-        <button type="submit" class="btn-back">그룹 목록으로 돌아가기</button>
-    </form>
+            <%-- 돌아가기 버튼 --%>
+            <div class="text-center mt-4">
+                <a href="${pageContext.request.contextPath}/group/groups" class="btn btn-secondary px-4">
+                    그룹 목록으로 돌아가기
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>
