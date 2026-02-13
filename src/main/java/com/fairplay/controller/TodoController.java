@@ -80,14 +80,14 @@ public class TodoController {
 
 	    // 세션에 currentGroupId 없으면 첫 번째 그룹으로 설정
 	    if (session.getAttribute("currentGroupId") == null) {
-	        Group firstGroup = groupList.get(0);
-	        int groupId = firstGroup.getId();
-	        session.setAttribute("currentGroupId", groupId);
+        Group firstGroup = groupList.get(0);
+        int groupId = firstGroup.getId();
+        session.setAttribute("currentGroupId", groupId);
 
-	        Optional<String> role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), groupId);
-	        session.setAttribute("role", role);
+  	    Optional<String> roleOpt = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), groupId);
+  	    String role = roleOpt.orElse("MEMBER");
+        session.setAttribute("role", role);
 
-	        System.out.println("그룹 세션 설정 완료 → groupId: " + groupId + " / role: " + role);
 	    }
 
 	    // 세션에서 groupId 꺼냄
@@ -96,19 +96,18 @@ public class TodoController {
 	    // 이 그룹에 소속되어 있는지 최종 확인
 	    boolean isMember = groupMemberService.isGroupMember((long) groupId, memberId);
 	    if (!isMember) {
-	        System.out.println("접근 차단 - 그룹 소속 아님");
-	        ra.addFlashAttribute("error", "이 그룹에 소속되어 있지 않습니다.");
-	        return "redirect:/";
+        ra.addFlashAttribute("error", "이 그룹에 소속되어 있지 않습니다.");
+        return "redirect:/";
 	    }
 
 	    // 역할 재설정 (안전하게)
-	    Optional<String> role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), groupId);
+	    Optional<String> roleOpt = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), groupId);
+	    String role = roleOpt.orElse("MEMBER");
 	    session.setAttribute("role", role);
 
 	    // groupId 기준으로 할 일만 불러와야 함
 	    List<Todo> todoList = todoService.findByGroupId(groupId);
 
-	    System.out.println("할 일 목록 출력 시작 (groupId: " + groupId + ")");
 	    for (Todo t : todoList) {
 	        System.out.println(" - " + t.getTitle() + " / 상태: " + t.getStatus() + " / 담당자: " + t.getAssigned_to());
 	    }
