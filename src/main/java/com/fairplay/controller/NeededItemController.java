@@ -42,8 +42,8 @@ public class NeededItemController {
 
         Member loginMember = (Member) session.getAttribute("loginMember");
         if (loginMember == null) {
-            model.addAttribute("error", "로그인이 필요합니다.");
-            return "redirect:/login";
+            redirectAttributes.addFlashAttribute("error", "로그인 후 이용해주세요.");
+            return "redirect:/member/login";
         }
 
         // 1. 내가 속한 그룹 리스트 조회
@@ -52,13 +52,13 @@ public class NeededItemController {
 
         // 2. groupId가 없는 경우 → 첫 번째 그룹 선택
         if (groupId == null && !joinedGroups.isEmpty()) {
-            groupId = (long)joinedGroups.get(0).getId();  // 첫 번째 그룹 ID로 자동 설정
+            groupId = (long) joinedGroups.get(0).getId();  // 첫 번째 그룹 ID로 자동 설정
         }
 
         // 3. 해당 그룹 멤버인지 확인
         boolean isMember = groupMemberService.isGroupMember(groupId, (long) loginMember.getId());
         if (!isMember) {
-        	redirectAttributes.addFlashAttribute("error", "해당 그룹의 멤버만 접근 가능합니다.");
+            redirectAttributes.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
             return "redirect:/group/groups";
         }
 
@@ -71,22 +71,35 @@ public class NeededItemController {
 
 
 
+
     // [GET] 등록 폼으로 이동
     @GetMapping("/add")
     public String showAddForm(@RequestParam(value = "groupId", required = false) Long groupId,
                               HttpSession session,
-                              Model model) {
+                              Model model,
+                              RedirectAttributes ra) {
 
         Member loginMember = (Member) session.getAttribute("loginMember");
+        if (loginMember == null) {
+            ra.addFlashAttribute("error", "로그인 후 이용해주세요.");
+            return "redirect:/member/login";
+        }
 
         // 그룹 리스트 가져오기
         List<Group> joinedGroups = groupMemberService.findGroupsByMemberId((long) loginMember.getId());
+        if (joinedGroups.isEmpty()) {
+            ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
+            return "redirect:/group/groups";
+        }
         model.addAttribute("joinedGroups", joinedGroups);
 
         // item 객체 생성 및 groupId 설정
         NeededItemDTO item = new NeededItemDTO();
         if (groupId != null) {
             item.setGroupId(groupId);
+        } else {
+            // groupId가 없으면 첫 번째 그룹으로 자동 설정
+            item.setGroupId((long) joinedGroups.get(0).getId());
         }
         model.addAttribute("item", item);
 
@@ -94,13 +107,14 @@ public class NeededItemController {
     }
 
 
+
  // [POST] 등록 처리
     @PostMapping("/add")
     public String addItem(@ModelAttribute NeededItemDTO item, HttpSession session) {
 
-        System.out.println("📌 item 객체: " + item); // ← null인지 확인
-        System.out.println("📌 item.itemName: " + item.getItemName()); // ← 데이터 잘 들어오는지
-        System.out.println("📌 세션 객체: " + session.getAttribute("loginMember"));
+        System.out.println("item 객체: " + item); // ← null인지 확인
+        System.out.println("item.itemName: " + item.getItemName()); // ← 데이터 잘 들어오는지
+        System.out.println("세션 객체: " + session.getAttribute("loginMember"));
 
         Member loginMember = (Member) session.getAttribute("loginMember");
 
