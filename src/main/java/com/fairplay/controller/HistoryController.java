@@ -424,11 +424,20 @@ public String listAllHistories(
 	        @RequestParam(value = "group_id", required = false) Integer groupId,
 	        @RequestParam(value = "yearMonth", required = false) String yearMonth,
 	        HttpSession session,
-	        Model model
+	        Model model,
+	        RedirectAttributes ra // ← 추가
 	) {
 	    // 세션 키 통일: loginMember
 	    Member login = (Member) session.getAttribute("loginMember");
 	    if (login == null) return "redirect:/member/login";
+
+	    // 내가 가입한 그룹 리스트
+	    List<Group> groupList = groupMemberService.findGroupsByMemberId((long) login.getId());
+	    if (groupList.isEmpty()) {
+	        System.out.println("그룹 미가입자 접근 차단");
+	        ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
+	        return "redirect:/group/groups";
+	    }
 
 	    // group_id 없으면 기본 그룹으로 1회 리다이렉트
 	    if (groupId == null) {
@@ -436,7 +445,7 @@ public String listAllHistories(
 	        System.out.println("[MS] login=" + login.getId() + ", defaultGroup=" + def);
 	        if (def == null) {
 	            // 가입 그룹 없음 → 그룹 목록으로 (절대 다시 monthly-score로 보내지 말 것)
-	            return "redirect:/group/list";
+	            return "redirect:/group/groups";
 	        }
 	        String ym = (yearMonth != null && !yearMonth.isEmpty()) ? "&yearMonth=" + yearMonth : "";
 	        return "redirect:/history/monthly-score?group_id=" + def + ym;
@@ -473,6 +482,7 @@ public String listAllHistories(
 
 	    return "monthlyScore";
 	}
+
     
 	@PostMapping("/create-basic")
 	public ResponseEntity<String> addBasicHistory(
