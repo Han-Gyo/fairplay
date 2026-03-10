@@ -1,14 +1,11 @@
 package com.fairplay.repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.fairplay.domain.GroupMonthlyScore;
@@ -48,7 +45,7 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	public History findById(int id) {
 		// id로 기록 1개 조회
 		String sql = "SELECT * FROM history WHERE id = ?";
-		                                            // 자바 객체로 자동 매핑해주는 클래스
+		                                    
  		return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(History.class), id);
 	}
 
@@ -295,10 +292,6 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	@Override
 	public List<GroupMonthlyScore> findGroupMonthlyScore(int groupId, String yearMonth) {
 
-	    System.out.println("[Repository] SQL 실행 - 그룹 월간 점수(최종 score 합산)");
-	    System.out.println("groupId: " + groupId);
-	    System.out.println("yearMonth: " + yearMonth);
-
 	    String sql =
 	        "SELECT " +
 	        "  t.group_id, " +
@@ -326,9 +319,6 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	// 멤버별 월간 점수 조회 (최종 점수 기준)
 	@Override
 	public List<MemberMonthlyScore> findMemberMonthlyScore(int groupId, String yearMonth) {
-	    System.out.println("[Repository] 멤버 월간 점수 SQL 실행(최종 score 합산)");
-	    System.out.println("groupId: " + groupId);
-	    System.out.println("yearMonth: " + yearMonth);
 
 	    String sql =
 	        "SELECT " +

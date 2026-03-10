@@ -31,7 +31,6 @@ public class HistoryCommentServiceImpl implements HistoryCommentService{
 	@Override
 	public void deleteComment(int id, int requesterId, String role) {
 		HistoryComment target = commentRepository.findById(id);
-		System.out.println("🧾 댓글 삭제 요청 - id: " + id + ", 요청자: " + requesterId + ", 역할: " + role);
         if (target == null) {
             throw new RuntimeException("댓글이 존재하지 않음");
         }
@@ -39,7 +38,6 @@ public class HistoryCommentServiceImpl implements HistoryCommentService{
         boolean isAuthor = (target.getMemberId() == requesterId);
         boolean isAdmin = ("ADMIN".equalsIgnoreCase(role));
         if (isAuthor || isAdmin) {
-        	System.out.println("✅ 삭제 허용: " + (isAuthor || isAdmin));
             commentRepository.delete(id);
         } else {
             throw new RuntimeException("삭제 권한 없음");

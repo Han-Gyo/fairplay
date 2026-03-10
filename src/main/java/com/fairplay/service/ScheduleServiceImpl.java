@@ -16,7 +16,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public void create(Schedule schedule) {
-        System.out.println("[Service] 일정 등록 시작: " + schedule.getTitle());
         scheduleRepository.insert(schedule);
     }
 
@@ -37,7 +36,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
 		public void updateSchedule(Schedule schedule) {
-    	System.out.println("[Service] 일정 수정 시작 ID: " + schedule.getId());
       scheduleRepository.update(schedule);
 		}
 

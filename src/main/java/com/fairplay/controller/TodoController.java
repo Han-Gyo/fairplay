@@ -69,7 +69,6 @@ public class TodoController {
 	    List<Group> groupList = groupMemberService.findGroupsByMemberId(memberId);
 
 	    if (groupList.isEmpty()) {
-	        System.out.println("그룹 미가입자 접근 차단");
 	        ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
 	        return "redirect:/group/groups";
 	    }
@@ -107,10 +106,6 @@ public class TodoController {
 
 	    // groupId 기준으로 할 일만 불러와야 함
 	    List<Todo> todoList = todoService.findByGroupId(groupId);
-
-	    for (Todo t : todoList) {
-	        System.out.println(" - " + t.getTitle() + " / 상태: " + t.getStatus() + " / 담당자: " + t.getAssigned_to());
-	    }
 
 	    // 멤버 매핑
 	    List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId); 
@@ -172,9 +167,6 @@ public class TodoController {
 	    model.addAttribute("memberList", memberList);
 	    model.addAttribute("groupId", groupId);
 	    
-	    System.out.println("[등록폼 진입] 로그인 멤버 ID: " + memberId);
-	    System.out.println("[등록폼 진입] 그룹장 ID: " + group.getLeaderId());
-
 	    return "todoCreateForm";
 	}
 	
@@ -210,11 +202,6 @@ public class TodoController {
 	    todo.setDue_date(due_date);
 	    todo.setDifficulty_point(difficulty_point);
 	    todo.setCompleted(completed);
-
-	    System.out.println("받은 title: " + title);
-	    System.out.println("받은 group_id: " + group_id);
-	    System.out.println("받은 assigned_to: " + assigned_to);
-	    System.out.println("completed 값: " + completed);
 
 	    session.setAttribute("currentGroupId", todo.getGroup_id());
 	    
@@ -257,7 +244,6 @@ public class TodoController {
 	// 할 일 완료 처리
 	@PostMapping("/complete")
 	public String completeTodo(@RequestParam("id") int id) {
-		System.out.println("완료 요청 ID: " + id);
 		todoService.completeTodo(id);
 		return "redirect:/todos";
 	}
@@ -265,20 +251,16 @@ public class TodoController {
 	// 선착순 신청 처리
 	@PostMapping("/assign")
 	public String assignTodo(@RequestParam("todo_id")int todo_id, HttpSession session, RedirectAttributes redirectAttributes, Model model) {
-		System.out.println("신청 요청 - todo_id: " + todo_id);	
 		
 		// 세션에서 로그인 정보 가져오기
 		Member loginMember = (Member) session.getAttribute("loginMember");
-		System.out.println("세션에서 loginMember: " + loginMember);
 		
 		if (loginMember == null) {
-			System.out.println("로그인 안된 사용자 요청");
 			redirectAttributes.addFlashAttribute("msg", "로그인 후 이용해주세요.");
 			return "redirect:/todos";
 		}
 		
 		int memberId = loginMember.getId();
-		System.out.println("로그인 사용자 ID: " + memberId);
 		
 		model.addAttribute("loginMemberId", loginMember.getId());
 		model.addAttribute("todoList", todoService.getTodoList());
@@ -287,10 +269,8 @@ public class TodoController {
 	    boolean success = todoService.assignTodo(todo_id, memberId);
 
 	    if (!success) {
-	    	System.out.println("신청 실패 - 이미 신청됨");
 	        redirectAttributes.addFlashAttribute("msg", "이미 누군가 신청했어요!");
 	    } else {
-	    	System.out.println("신청 성공!");
 	        redirectAttributes.addFlashAttribute("msg", "신청 성공!");
 	    }
 
@@ -373,16 +353,13 @@ public class TodoController {
 	    Member loginMember = (Member) session.getAttribute("loginMember");
 
 	    if (loginMember == null) {
-	        System.out.println("비로그인 사용자 요청 차단");
-	        return Collections.emptyList(); // 빈 배열 반환 (JS에서 안전하게 처리됨)
+	        return Collections.emptyList();
 	    }
 
 	    int memberId = loginMember.getId();
-	    System.out.println("날짜별 할 일 요청: " + date + " / 사용자 ID: " + memberId);
 
 	    List<TodoSimple> result = todoService.getTodosByDate(date, memberId);
 
-	    System.out.println("응답할 할 일 수: " + result.size());
 	    return result;
 	}
 	

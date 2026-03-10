@@ -41,10 +41,10 @@
 			          <td>
 								  <c:choose>
 								    <c:when test="${todo.completed}">
-								      <span class="status-badge done">✅ 완료</span>
+								      <span class="status-badge done">완료</span>
 								    </c:when>
 								    <c:otherwise>
-								      <span class="status-badge pending">❌ 미완료</span>
+								      <span class="status-badge pending">미완료</span>
 								    </c:otherwise>
 								  </c:choose>
 								</td>
