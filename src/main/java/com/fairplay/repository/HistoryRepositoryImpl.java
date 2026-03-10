@@ -100,10 +100,17 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 				"todo.id AS todo_id, " +
 				"todo.title AS todo_title, " +
 				"member.id AS member_id, " +
-				"member.nickname AS member_nickname " +
+        "CASE " +
+        "  WHEN member.nickname IS NULL OR member.nickname LIKE 'deleted_%' THEN '탈퇴회원' " +
+        "  WHEN NOT EXISTS ( " +
+        "    SELECT 1 FROM group_member gm " +
+        "    WHERE gm.member_id = history.member_id AND gm.group_id = todo.group_id " +
+        "  ) THEN '탈퇴회원' " +
+        "  ELSE member.nickname " +
+        "END AS m_nickname " +
 				"FROM history " +
 				"JOIN todo ON history.todo_id = todo.id " +
-				"JOIN member ON history.member_id = member.id " + 
+				"LEFT JOIN member ON history.member_id = member.id " +
 				"ORDER BY history.completed_at DESC";
 		
 		return jdbcTemplate.query(sql, (rs, rowNum) -> {
@@ -127,7 +134,7 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	        // Member 객체 매핑
 	        Member member = new Member();
 	        member.setId(rs.getInt("member_id"));
-	        member.setNickname(rs.getString("member_nickname"));
+	        member.setNickname(rs.getString("m_nickname"));
 	        history.setMember(member);  // History에 Member 포함
 			return history;
 		});
@@ -159,10 +166,17 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 				"todo.id AS todo_id, " +
 				"todo.title AS todo_title, " +
 				"member.id AS member_id, " +
-				"member.nickname AS member_nickname " +
+        "CASE " +
+        "  WHEN member.nickname IS NULL OR member.nickname LIKE 'deleted_%' THEN '탈퇴회원' " +
+        "  WHEN NOT EXISTS ( " +
+        "    SELECT 1 FROM group_member gm " +
+        "    WHERE gm.member_id = history.member_id AND gm.group_id = todo.group_id " +
+        "  ) THEN '탈퇴회원' " +
+        "  ELSE member.nickname " +
+        "END AS m_nickname " +
 				"FROM history " +
 				"JOIN todo ON history.todo_id = todo.id " +
-				"JOIN member ON history.member_id = member.id " +
+				"LEFT JOIN member ON history.member_id = member.id " +
 				"WHERE history.id = ?";
 
 		return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
@@ -184,7 +198,7 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 
 			Member member = new Member();
 			member.setId(rs.getInt("member_id"));
-			member.setNickname(rs.getString("member_nickname"));
+			member.setNickname(rs.getString("m_nickname"));
 			h.setMember(member);
 
 			return h;
@@ -194,24 +208,31 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	@Override
 	public List<History> findByTodoIdWithDetails(int todo_id) {
 	    String sql = "SELECT " +
-	            "history.id AS history_id, " +
-	            "history.member_id AS h_member_id, " +
-	            "history.todo_id AS h_todo_id, " +
-	            "history.completed_at, " +
-	            "history.photo, " +
-	            "history.memo, " +
-	            "history.score, " +
-	            "history.check, " +
-	            "history.check_member, " +
-	            "todo.id AS t_id, " +
-	            "todo.title AS t_title, " +
-	            "member.id AS m_id, " +
-	            "member.nickname AS m_nickname " +
-	            "FROM history " +
-	            "JOIN todo ON history.todo_id = todo.id " +
-	            "JOIN member ON history.member_id = member.id " +
-	            "WHERE history.todo_id = ? " +
-	            "ORDER BY history.completed_at DESC";
+	      "history.id AS history_id, " +
+	      "history.member_id AS h_member_id, " +
+	      "history.todo_id AS h_todo_id, " +
+	      "history.completed_at, " +
+	      "history.photo, " +
+	      "history.memo, " +
+	      "history.score, " +
+	      "history.check, " +
+	      "history.check_member, " +
+	      "todo.id AS t_id, " +
+	      "todo.title AS t_title, " +
+	      "member.id AS m_id, " +
+	      "CASE " +
+	      "  WHEN member.nickname IS NULL OR member.nickname LIKE 'deleted_%' THEN '탈퇴회원' " +
+	      "  WHEN NOT EXISTS ( " +
+	      "    SELECT 1 FROM group_member gm " +
+	      "    WHERE gm.member_id = history.member_id AND gm.group_id = todo.group_id " +
+	      "  ) THEN '탈퇴회원' " +
+	      "  ELSE member.nickname " +
+	      "END AS m_nickname " +
+	      "FROM history " +
+	      "JOIN todo ON history.todo_id = todo.id " +
+	      "LEFT JOIN member ON history.member_id = member.id " +
+	      "WHERE history.todo_id = ? " +
+	      "ORDER BY history.completed_at DESC";
 
 	    return jdbcTemplate.query(sql, (rs, rowNum) -> {
 	        History history = new History();
@@ -242,48 +263,55 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	@Override
 	public List<History> findAllWithDetailsByGroupId(int groupId) {
 	    String sql = "SELECT " +
-	            "history.id AS history_id, " +
-	            "history.member_id AS h_member_id, " +
-	            "history.todo_id AS h_todo_id, " +
-	            "history.completed_at, " +
-	            "history.photo, " +
-	            "history.memo, " +
-	            "history.score, " +
-	            "history.check, " +
-	            "history.check_member, " +
-	            "todo.id AS t_id, " +
-	            "todo.title AS t_title, " +
-	            "member.id AS m_id, " +
-	            "member.nickname AS m_nickname " +
-	            "FROM history " +
-	            "JOIN todo ON history.todo_id = todo.id " +
-	            "JOIN member ON history.member_id = member.id " +
-	            "WHERE todo.group_id = ? " +
-	            "ORDER BY history.completed_at DESC";
+	      "history.id AS history_id, " +
+	      "history.member_id AS h_member_id, " +
+	      "history.todo_id AS h_todo_id, " +
+	      "history.completed_at, " +
+	      "history.photo, " +
+	      "history.memo, " +
+	      "history.score, " +
+	      "history.check, " +
+	      "history.check_member, " +
+	      "todo.id AS t_id, " +
+	      "todo.title AS t_title, " +
+	      "member.id AS m_id, " +
+	      "CASE " +
+	      "  WHEN member.nickname IS NULL OR member.nickname LIKE 'deleted_%' THEN '탈퇴회원' " +
+	      "  WHEN NOT EXISTS ( " +
+	      "    SELECT 1 FROM group_member gm " +
+	      "    WHERE gm.member_id = history.member_id AND gm.group_id = todo.group_id " +
+	      "  ) THEN '탈퇴회원' " +
+	      "  ELSE member.nickname " +
+	      "END AS m_nickname " +
+	      "FROM history " +
+	      "JOIN todo ON history.todo_id = todo.id " +
+	      "LEFT JOIN member ON history.member_id = member.id " +
+	      "WHERE todo.group_id = ? " +
+	      "ORDER BY history.completed_at DESC";
 
 	    return jdbcTemplate.query(sql, new Object[]{groupId}, (rs, rowNum) -> {
-	        History history = new History();
-	        history.setId(rs.getInt("history_id"));
-	        history.setMember_id(rs.getInt("h_member_id"));
-	        history.setTodo_id(rs.getInt("h_todo_id"));
-	        history.setCompleted_at(rs.getTimestamp("completed_at"));
-	        history.setPhoto(rs.getString("photo"));
-	        history.setMemo(rs.getString("memo"));
-	        history.setScore(rs.getInt("score"));
-	        history.setCheck(rs.getBoolean("check"));
-	        history.setCheck_member(rs.getInt("check_member"));
-
-	        Todo todo = new Todo();
-	        todo.setId(rs.getInt("t_id"));
-	        todo.setTitle(rs.getString("t_title"));
-	        history.setTodo(todo);
-
-	        Member member = new Member();
-	        member.setId(rs.getInt("m_id"));
-	        member.setNickname(rs.getString("m_nickname"));
-	        history.setMember(member);
-
-	        return history;
+	      History history = new History();
+	      history.setId(rs.getInt("history_id"));
+	      history.setMember_id(rs.getInt("h_member_id"));
+	      history.setTodo_id(rs.getInt("h_todo_id"));
+	      history.setCompleted_at(rs.getTimestamp("completed_at"));
+	      history.setPhoto(rs.getString("photo"));
+	      history.setMemo(rs.getString("memo"));
+	      history.setScore(rs.getInt("score"));
+	      history.setCheck(rs.getBoolean("check"));
+	      history.setCheck_member(rs.getInt("check_member"));
+	
+	      Todo todo = new Todo();
+	      todo.setId(rs.getInt("t_id"));
+	      todo.setTitle(rs.getString("t_title"));
+	      history.setTodo(todo);
+	
+	      Member member = new Member();
+	      member.setId(rs.getInt("m_id"));
+	      member.setNickname(rs.getString("m_nickname"));
+	      history.setMember(member);
+	
+	      return history;
 	    });
 	}
 
@@ -293,25 +321,25 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	public List<GroupMonthlyScore> findGroupMonthlyScore(int groupId, String yearMonth) {
 
 	    String sql =
-	        "SELECT " +
-	        "  t.group_id, " +
-	        "  g.name, " +
-	        "  DATE_FORMAT(h.completed_at, '%Y-%m') AS ym, " +
-	        "  SUM(COALESCE(h.score, 0)) AS total_score " +
-	        "FROM history h " +
-	        "JOIN todo t ON h.todo_id = t.id " +
-	        "JOIN `group` g ON t.group_id = g.id " +
-	        "WHERE t.group_id = ? " +
-	        "  AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
-	        "GROUP BY t.group_id, g.name, ym";
+	      "SELECT " +
+	      "  t.group_id, " +
+	      "  g.name, " +
+	      "  DATE_FORMAT(h.completed_at, '%Y-%m') AS ym, " +
+	      "  SUM(COALESCE(h.score, 0)) AS total_score " +
+	      "FROM history h " +
+	      "JOIN todo t ON h.todo_id = t.id " +
+	      "JOIN `group` g ON t.group_id = g.id " +
+	      "WHERE t.group_id = ? " +
+	      "  AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
+	      "GROUP BY t.group_id, g.name, ym";
 
 	    return jdbcTemplate.query(sql, new Object[]{groupId, yearMonth}, (rs, rowNum) ->
-	        new GroupMonthlyScore(
-	            rs.getInt("group_id"),
-	            rs.getString("name"),
-	            rs.getString("ym"),
-	            rs.getInt("total_score")
-	        )
+        new GroupMonthlyScore(
+          rs.getInt("group_id"),
+          rs.getString("name"),
+          rs.getString("ym"),
+          rs.getInt("total_score")
+        )
 	    );
 	}
 
@@ -321,32 +349,32 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	public List<MemberMonthlyScore> findMemberMonthlyScore(int groupId, String yearMonth) {
 
 	    String sql =
-	        "SELECT " +
-	        "  h.member_id, " +
-	        "  CASE " +
-	        "    WHEN m.nickname IS NULL OR m.nickname LIKE 'deleted_%' THEN '탈퇴회원' " +
-	        "    WHEN NOT EXISTS ( " +
-	        "      SELECT 1 FROM group_member gm " +
-	        "      WHERE gm.member_id = h.member_id AND gm.group_id = ? " +
-	        "    ) THEN '탈퇴회원' " +
-	        "    ELSE m.nickname " +
-	        "  END AS nickname, " +
-	        "  SUM(COALESCE(h.score, 0)) AS score, " + 
-	        "  DATE_FORMAT(h.completed_at, '%Y-%m') AS ym " +
-	        "FROM history h " +
-	        "JOIN todo t ON h.todo_id = t.id " +
-	        "LEFT JOIN member m ON h.member_id = m.id " +
-	        "WHERE t.group_id = ? " +
-	        "  AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
-	        "GROUP BY h.member_id, nickname, ym " +
-	        "ORDER BY score DESC";
+	      "SELECT " +
+	      "  h.member_id, " +
+	      "  CASE " +
+	      "    WHEN m.nickname IS NULL OR m.nickname LIKE 'deleted_%' THEN '탈퇴회원' " +
+	      "    WHEN NOT EXISTS ( " +
+	      "      SELECT 1 FROM group_member gm " +
+	      "      WHERE gm.member_id = h.member_id AND gm.group_id = ? " +
+	      "    ) THEN '탈퇴회원' " +
+	      "    ELSE m.nickname " +
+	      "  END AS nickname, " +
+	      "  SUM(COALESCE(h.score, 0)) AS score, " + 
+	      "  DATE_FORMAT(h.completed_at, '%Y-%m') AS ym " +
+	      "FROM history h " +
+	      "JOIN todo t ON h.todo_id = t.id " +
+	      "LEFT JOIN member m ON h.member_id = m.id " +
+	      "WHERE t.group_id = ? " +
+	      "  AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
+	      "GROUP BY h.member_id, nickname, ym " +
+	      "ORDER BY score DESC";
 
 	    return jdbcTemplate.query(sql, new Object[]{groupId, groupId, yearMonth}, (rs, rowNum) ->
 	        new MemberMonthlyScore(
-	            rs.getInt("member_id"),
-	            rs.getString("nickname"),
-	            rs.getInt("score"),
-	            rs.getString("ym")
+            rs.getInt("member_id"),
+            rs.getString("nickname"),
+            rs.getInt("score"),
+            rs.getString("ym")
 	        )
 	    );
 	}
