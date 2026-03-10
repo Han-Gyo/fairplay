@@ -1,4 +1,4 @@
-// statisticsGroupChart.js
+// statisticsGroupChart.js   그룹 전체의 월간 총 점수를 보여주는 차트
 // 데이터가 1개면 "막대", 여러 개면 "선+그라디언트"로 자동 스위칭
 
 document.addEventListener('DOMContentLoaded', function () {

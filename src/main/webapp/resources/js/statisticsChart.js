@@ -1,4 +1,4 @@
-// Modern member chart (rounded bars + value labels)
+// 그룹 멤버별 점수를 보여주는 막대(bar) 차트
 document.addEventListener('DOMContentLoaded', function () {
   if (typeof Chart === 'undefined') return;
 
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var ctx = canvas.getContext('2d');
   var chart;
 
-  // 값 라벨 플러그인
+  // 값 라벨 플러그인 (상단 잘림 방지 → y 좌표 -12로 조정)
   var valueLabelPlugin = {
     id: 'valueLabel',
     afterDatasetsDraw: function(c) {
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var val = ds.data[i];
         if (val == null) continue;
         var p = bar.tooltipPosition();
-        ctx2.fillText(String(val), p.x, p.y - 6);
+        ctx2.fillText(String(val), p.x, p.y - 12); // ← -6 → -12로 수정
       }
       ctx2.restore();
     }
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
           x: { grid: { display: false }, ticks: { maxRotation: 45, minRotation: 0, autoSkip: true, color: '#4b5563' } },
           y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.06)', drawBorder: false }, ticks: { stepSize: 5, color: '#4b5563' } }
         },
-        layout: { padding: { left: 6, right: 12, top: 4, bottom: 6 } }
+        layout: { padding: { left: 6, right: 12, top: 40, bottom: 6 } } // ← top padding 크게 조정
       },
       plugins: [valueLabelPlugin]
     });
