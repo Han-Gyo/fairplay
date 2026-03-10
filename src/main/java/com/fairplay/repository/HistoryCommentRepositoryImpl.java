@@ -17,14 +17,14 @@ public class HistoryCommentRepositoryImpl implements HistoryCommentRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    // ✅ 댓글 등록
+    // 댓글 등록
     @Override
     public void save(HistoryComment comment) {
         String sql = "INSERT INTO history_comment (history_id, member_id, content) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, comment.getHistoryId(), comment.getMemberId(), comment.getContent());
     }
 
-    // ✅ 특정 히스토리 ID로 댓글 목록 조회
+    // 특정 히스토리 ID로 댓글 목록 조회
     @Override
     public List<HistoryComment> findByHistoryId(int historyId) {
         String sql = """
@@ -49,14 +49,14 @@ public class HistoryCommentRepositoryImpl implements HistoryCommentRepository {
 				comment.getId());	
 	}
 
-	// ✅ 댓글 삭제
+	// 댓글 삭제
     @Override
     public void delete(int id) {
         String sql = "DELETE FROM history_comment WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
 
-    // ✅ 댓글 단건 조회
+    // 댓글 단건 조회
     @Override
     public HistoryComment findById(int id) {
         String sql = """
@@ -78,7 +78,7 @@ public class HistoryCommentRepositoryImpl implements HistoryCommentRepository {
 
         return jdbcTemplate.queryForObject(sql, new Object[]{historyId}, commentRowMapper());
     }
-    // ✅ RowMapper
+    // RowMapper
     private RowMapper<HistoryComment> commentRowMapper() {
         return new RowMapper<HistoryComment>() {
             @Override

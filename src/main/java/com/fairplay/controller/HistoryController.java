@@ -157,8 +157,6 @@ public String listAllHistories(
 	    model.addAttribute("groupId", todo.getGroup_id());
 	    model.addAttribute("todo", todo);
 	    
-	    System.out.println("그룹원 검증: memberId = " + memberId + ", groupId = " + groupIdLong);
-	    
 	    return "histories";
 	}
     
@@ -434,7 +432,6 @@ public String listAllHistories(
 	    // 내가 가입한 그룹 리스트
 	    List<Group> groupList = groupMemberService.findGroupsByMemberId((long) login.getId());
 	    if (groupList.isEmpty()) {
-	        System.out.println("그룹 미가입자 접근 차단");
 	        ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
 	        return "redirect:/group/groups";
 	    }
@@ -442,7 +439,6 @@ public String listAllHistories(
 	    // group_id 없으면 기본 그룹으로 1회 리다이렉트
 	    if (groupId == null) {
 	        Integer def = groupMemberService.findDefaultGroupId(login.getId());
-	        System.out.println("[MS] login=" + login.getId() + ", defaultGroup=" + def);
 	        if (def == null) {
 	            // 가입 그룹 없음 → 그룹 목록으로 (절대 다시 monthly-score로 보내지 말 것)
 	            return "redirect:/group/groups";

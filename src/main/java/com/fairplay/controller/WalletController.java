@@ -52,7 +52,7 @@ public String list(@RequestParam(value = "groupId", required = false) Integer gr
     return "redirect:/group/groups";
   }
 
-  // 2. URL 파라미터로 groupId가 들어오면 세션 갱신 (그룹 전환 대응)
+  // 2. URL 파라미터로 groupId가 들어오면 세션 갱신
   if (groupIdParam != null) {
     session.setAttribute("currentGroupId", groupIdParam);
   }
@@ -86,9 +86,8 @@ public String list(@RequestParam(value = "groupId", required = false) Integer gr
 @GetMapping("/create")
 public String addWallet(@RequestParam(value = "groupId", required = false) Integer groupId,
                        HttpSession session, Model model, RedirectAttributes ra) {
-	System.out.println("지출 등록 폼 진입");
  
-		// 1. 로그인 체크
+	// 1. 로그인 체크
 	Member loginMember = (Member) session.getAttribute("loginMember");
   if (loginMember == null) {
   	ra.addFlashAttribute("msg", "로그인 후 이용해주세요.");
@@ -139,7 +138,6 @@ public String save(@ModelAttribute Wallet wallet, HttpSession session) {
 	if (loginMember == null) {
 		return "redirect:/member/login";
 	}
-	System.out.println("save() 진입 - member_id: " + wallet.getMember_id());
 	
 	wallet.setMember_id(loginMember.getId());
 
@@ -151,7 +149,6 @@ public String save(@ModelAttribute Wallet wallet, HttpSession session) {
 	session.setAttribute("currentGroupId", wallet.getGroup_id());
 	
 	walletService.save(wallet);
-	System.out.println("지출 저장: " + wallet);
 	
 	return "redirect:/wallet?groupId=" + wallet.getGroup_id();
 }
@@ -159,7 +156,6 @@ public String save(@ModelAttribute Wallet wallet, HttpSession session) {
 // 항목 수정 폼
 @GetMapping("/edit")
 public String update(@RequestParam("id") int id, HttpSession session, Model model) {
-	System.out.println("수정 폼 진입: id = " + id);
 	//1. 로그인 체크 및 내 정보 가져오기
   Member loginMember = (Member) session.getAttribute("loginMember");
   if (loginMember == null) {
@@ -187,7 +183,6 @@ public String update(@RequestParam("id") int id, HttpSession session, Model mode
 // 항목 수정 처리
 @PostMapping("/update")
 public String update(@ModelAttribute Wallet wallet, HttpSession session) {
-	System.out.println("지출 수정: " + wallet);
 
 	walletService.update(wallet);
 
@@ -198,7 +193,6 @@ public String update(@ModelAttribute Wallet wallet, HttpSession session) {
 // 항목 삭제 처리
 @GetMapping("/delete")
 public String delete (@RequestParam("id") int id, @RequestParam("member_id") int member_id) {
-	System.out.println("지출 삭제: id = " + id + ", member_id = " + member_id);
 
 	walletService.delete(id);
 	return "redirect:/wallet";
@@ -209,10 +203,9 @@ public String delete (@RequestParam("id") int id, @RequestParam("member_id") int
 public String compare (@RequestParam("member_id") int member_id,
 					   @RequestParam("item_name") String item_name,
 					   Model model) {
-	System.out.println("단가 비교 요청: member_id = " + member_id + ", item_name = " + item_name);
 
 	List<Wallet> compareList = walletService.comparePriceByItemName(member_id, item_name);
-	System.out.println("비교 검색 결과: " + compareList);
+	
 	model.addAttribute("compareList",compareList);
 	model.addAttribute("item_name",item_name);
 	return "walletCompare";

@@ -263,7 +263,7 @@ $(document).ready(function() {
 	// 1. 공개 범위 변경 이벤트 감지
   $(document).on('change', '#visibilitySelect', function() {
     const selectedVal = $(this).val();
-    console.log("공주님, 선택하신 범위는:", selectedVal);
+    console.log("선택하신 범위는:", selectedVal);
 
     if (selectedVal === 'group') {
       $('#groupSelectSection').slideDown(200);

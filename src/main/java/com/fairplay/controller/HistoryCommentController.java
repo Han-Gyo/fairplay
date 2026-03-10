@@ -25,7 +25,7 @@ public class HistoryCommentController {
     @Autowired
     private HistoryCommentService commentService;
 
-    // ✅ 댓글 등록
+    // 댓글 등록
     @PostMapping("/add")
     public String addComment(
         @RequestParam("history_id") int historyId,
@@ -45,24 +45,15 @@ public class HistoryCommentController {
 
         commentService.addComment(comment);
         
-        // 🔍 댓글 등록 직후에 로그 찍기
-        System.out.println("✅ 댓글 등록됨");
-        System.out.println("🧾 historyId: " + historyId);
-        System.out.println("🧍‍♂️ memberId: " + loginMember.getId());
-        System.out.println("📦 content: " + content);
-
-        // 🔍 DB에서 실제 등록된 댓글 조회해서 시간 확인
+        // DB에서 실제 등록된 댓글 조회해서 시간 확인
         HistoryComment saved = commentService.getLatestCommentByHistoryId(historyId);
-        System.out.println("🕒 실제 DB에 저장된 createdAt: " + saved.getCreatedAt());
 
         return "redirect:/history/detail?history_id=" + historyId;
     }
-    // ✅ 댓글 수정
+    // 댓글 수정
     @PostMapping("/update")
     @ResponseBody
     public String updateComment(@RequestParam int id, @RequestParam String content) {
-        System.out.println("🔥 댓글 수정 요청 들어옴");
-        System.out.println("📝 id: " + id + ", content: " + content);
 
         HistoryComment comment = new HistoryComment();
         comment.setId(id);
@@ -73,7 +64,7 @@ public class HistoryCommentController {
         return "success";
     }
     
-    // ✅ 댓글 삭제
+    // 댓글 삭제
     @PostMapping("/delete")
     public String deleteComment(
         @RequestParam("id") int commentId,
@@ -91,7 +82,7 @@ public class HistoryCommentController {
         return "redirect:/history/detail?history_id=" + historyId;
     }
 
-    // ✅ (선택) 댓글 목록 별도 뷰에 출력할 때 필요
+    // 댓글 목록 별도 뷰에 출력할 때 필요
     @GetMapping("/list")
     public String commentList(@RequestParam("history_id") int historyId, Model model) {
         List<HistoryComment> commentList = commentService.getCommentsByHistoryId(historyId);

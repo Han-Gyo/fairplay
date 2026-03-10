@@ -62,7 +62,6 @@ public class TodoRepositoryImpl implements TodoRepository{
 	@Override
 	public void insert(Todo todo) {
 	    String sql = "INSERT INTO todo (title, group_id, assigned_to, due_date, difficulty_point, completed, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-	    System.out.println("[DB 저장 전] status 확인: " + todo.getStatus());
 	    
 	    KeyHolder keyHolder = new GeneratedKeyHolder();
 	    
@@ -93,7 +92,6 @@ public class TodoRepositoryImpl implements TodoRepository{
     if (keyHolder.getKey() != null) {
         int newId = keyHolder.getKey().intValue();
         todo.setId(newId);
-        System.out.println("[DB] 방금 생성된 Todo ID: " + newId);
     }
 }
 	
@@ -115,7 +113,6 @@ public class TodoRepositoryImpl implements TodoRepository{
 	
 	@Override
 	public void updateAssignedStatus(int todoId, int memberId) {
-		System.out.println("[DB] updateAssignedStatus 실행됨! todo_id = " + todoId + ", memberId = " + memberId);
 		String sql = "UPDATE todo SET assigned_to = ?, status = ? WHERE id = ?";
 	    template.update(sql, memberId, "신청완료", todoId);
 	}
@@ -150,7 +147,6 @@ public class TodoRepositoryImpl implements TodoRepository{
 	@Override
 	public List<Todo> findCompletedTodos() {
 		String sql = "SELECT * FROM todo WHERE completed = true ORDER BY id DESC";
-		System.out.println("[DB] 완료된 할 일 목록 조회됨");
 		return template.query(sql, todoRowMapper);
 	}
 
@@ -187,7 +183,6 @@ public class TodoRepositoryImpl implements TodoRepository{
 	public List<Todo> findByGroupId(int groupId) {
 	    // 그룹 ID를 사용하여 해당 그룹의 Todo만 조회
 	    String sql = "SELECT * FROM todo WHERE group_id = ? ORDER BY id DESC";
-	    System.out.println("[DB] 그룹 ID(" + groupId + ")로 할 일 목록 조회됨");
 	    return template.query(sql, todoRowMapper, groupId); // groupId를 파라미터로 넘김
 	}
 
