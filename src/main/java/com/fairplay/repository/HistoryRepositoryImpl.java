@@ -323,18 +323,25 @@ public class HistoryRepositoryImpl implements HistoryRepository{
 	    String sql =
 	        "SELECT " +
 	        "  h.member_id, " +
-	        "  m.nickname, " +
+	        "  CASE " +
+	        "    WHEN m.nickname IS NULL OR m.nickname LIKE 'deleted_%' THEN '탈퇴회원' " +
+	        "    WHEN NOT EXISTS ( " +
+	        "      SELECT 1 FROM group_member gm " +
+	        "      WHERE gm.member_id = h.member_id AND gm.group_id = ? " +
+	        "    ) THEN '탈퇴회원' " +
+	        "    ELSE m.nickname " +
+	        "  END AS nickname, " +
 	        "  SUM(COALESCE(h.score, 0)) AS score, " + 
 	        "  DATE_FORMAT(h.completed_at, '%Y-%m') AS ym " +
 	        "FROM history h " +
 	        "JOIN todo t ON h.todo_id = t.id " +
-	        "JOIN member m ON h.member_id = m.id " +
+	        "LEFT JOIN member m ON h.member_id = m.id " +
 	        "WHERE t.group_id = ? " +
 	        "  AND DATE_FORMAT(h.completed_at, '%Y-%m') = ? " +
-	        "GROUP BY h.member_id, m.nickname, ym " +
+	        "GROUP BY h.member_id, nickname, ym " +
 	        "ORDER BY score DESC";
 
-	    return jdbcTemplate.query(sql, new Object[]{groupId, yearMonth}, (rs, rowNum) ->
+	    return jdbcTemplate.query(sql, new Object[]{groupId, groupId, yearMonth}, (rs, rowNum) ->
 	        new MemberMonthlyScore(
 	            rs.getInt("member_id"),
 	            rs.getString("nickname"),
