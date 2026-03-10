@@ -36,19 +36,19 @@
 
         <!-- Todo -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Todo</a>
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">집안일</a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/todos?groupId=${sessionScope.currentGroupId}">Todo 목록</a></li>
-            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/todos/myTodos">MyTodo 목록</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/todos?groupId=${sessionScope.currentGroupId}">집안일 목록</a></li>
+            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/todos/myTodos">나의 집안일 목록</a></li>
             <c:if test="${sessionScope.role eq 'LEADER'}">
-              <li><a class="dropdown-item" href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">Todo 등록</a></li>
+              <li><a class="dropdown-item" href="${pageContext.request.contextPath}/todos/create?groupId=${sessionScope.currentGroupId}">집안일 등록</a></li>
             </c:if>
           </ul>
         </li>
 
         <!-- History -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">History</a>
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">히스토리</a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/history/all?groupId=${currentGroupId}">전체 히스토리</a></li>
             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/history/create">기록 등록</a></li>
@@ -233,7 +233,7 @@
         <div id="summaryScheduleList" class="list-group mb-4">
           </div>
         
-        <h6 class="fw-bold mb-2">✅ Todo</h6>
+        <h6 class="fw-bold mb-2">✅ 집안일</h6>
         <div id="summaryTodoList" class="list-group mb-3">
           </div>
       </div>
