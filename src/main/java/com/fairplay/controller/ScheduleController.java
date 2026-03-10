@@ -62,8 +62,6 @@ public class ScheduleController {
         schedule.setGroupId(sessionGroupId != null ? sessionGroupId : 0);
       }
 
-      System.out.println("DB에 저장될 최종 그룹 ID: " + schedule.getGroupId());
-
       try {
         scheduleService.create(schedule);
         return ResponseEntity.ok("success");

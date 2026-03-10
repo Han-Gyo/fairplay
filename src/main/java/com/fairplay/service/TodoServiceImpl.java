@@ -24,7 +24,6 @@ public class TodoServiceImpl implements TodoService{
 	// 전체 할 일 목록 조회
 	@Override
 	public List<Todo> getTodoList() {
-		System.out.println("할 일 전체 목록 조회");
 		return todoRepository.findAll();
 	}
  //할 일 추가
@@ -47,7 +46,6 @@ public class TodoServiceImpl implements TodoService{
    
    if (todo.isCompleted() && assignedTo != null && assignedTo > 0) {
      createHistory(todo, assignedTo);
-     System.out.println("할 일 등록과 동시에 히스토리 자동 생성!");
    }
  }
 
@@ -72,7 +70,6 @@ public class TodoServiceImpl implements TodoService{
    
    if (!oldTodo.isCompleted() && todo.isCompleted() && assignedTo != null && assignedTo > 0) {
      createHistory(todo, assignedTo);
-     System.out.println("수정 시 히스토리 자동 등록 완료!");
    }
    
    todoRepository.update(todo);
@@ -91,13 +88,11 @@ public class TodoServiceImpl implements TodoService{
 	@Override
 	public void deleteTodo(int id) {
 		todoRepository.deleteById(id);
-		System.out.println("삭제된 ID: " + id);
 	}
 	// 할 일 완료 처리
 	@Override
 	public void completeTodo(int id) {
 		todoRepository.complete(id);
-		System.out.println("완료 처리된 ID: " + id);
 	}
 	// 특정 ID로 할 일 하나 조회
 	@Override
@@ -114,7 +109,6 @@ public class TodoServiceImpl implements TodoService{
 	        if (todo.getAssigned_to() == memberId) {
 	            // 내가 이미 신청했는데 status만 '미신청'이면 → 갱신 필요
 	            if ("미신청".equals(todo.getStatus())) {
-	                System.out.println("이미 신청했지만 상태는 미신청 → 상태만 갱신");
 	                todoRepository.updateAssignedStatus(todoId, memberId);
 	            }
 	            return true;  // 내가 이미 맡은 할 일이라면 OK
@@ -135,14 +129,12 @@ public class TodoServiceImpl implements TodoService{
 	
 	@Override
 	public List<Todo> getCompletedTodos() {
-		System.out.println("완료된 할 일 목록 조회 실행됨");
 		return todoRepository.findCompletedTodos();
 	}
 	
 	@Override
 	public void unassignTodo(int todoId) {
 		todoRepository.resetAssignedStatus(todoId);
-		System.out.println("담당자 해제됨 → 다시 공용 할 일로 이동됨 (todo_id: " + todoId + ")");
 	}
 	@Override
 	public List<Todo> findNotDone(int memberId) {
@@ -155,7 +147,6 @@ public class TodoServiceImpl implements TodoService{
 	@Override
 	public List<Todo> findByGroupId(int groupId) {
 	    // 그룹 ID로 할 일 목록 조회
-	    System.out.println("그룹 ID(" + groupId + ")로 할 일 목록 조회");
 	    return todoRepository.findByGroupId(groupId);
 	}
 	@Override
