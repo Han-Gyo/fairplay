@@ -15,6 +15,7 @@
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: #ebfaf3;
   padding: 40px;
+  padding-top: 80px; /* nav.jsp fixed-top 겹침 방지용 여백 추가 */
   margin: 0;
   color: var(--ink);
 }
@@ -109,8 +110,8 @@
 .chart-wrap {
   position: relative;
   width: 100%;
-  height: 340px;
-  padding-top: 12px;
+  height: 400px; /* 기존 340px → 여유 확보 */
+  padding-top: 20px; /* nav와 간격 확보 */
   box-sizing: border-box;
   background: #fdfefe;
   border-radius: 12px;
@@ -150,8 +151,11 @@
 
 /* ===== 반응형 ===== */
 @media (max-width: 640px) {
-  .score-body { padding: 20px; }
+  .score-body { 
+    padding: 20px; 
+    padding-top: 100px; /* 모바일 nav 높이에 맞춰 보정 */
+  }
   .score-title { font-size: 22px; }
   .nav-btn { width: 36px; height: 36px; font-size: 16px; }
-  .chart-wrap { height: 280px; padding-top: 10px; }
+  .chart-wrap { height: 300px; padding-top: 15px; }
 }
