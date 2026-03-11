@@ -11,9 +11,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/groupDetail.css" />
 </head>
-<body class="bg-light" 
-      data-context-path="${pageContext.request.contextPath}"
-      data-msg="${msg}">
+<body data-context-path="${pageContext.request.contextPath} "data-msg="${msg}">
 
 <div class="container py-5">
   <!-- 상단 헤더 -->

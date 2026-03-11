@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>그룹 멤버 등록 - Fairplay</title>
+    <title>그룹 가입</title>
     <!-- Bootswatch Minty Theme -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/minty/bootstrap.min.css">
     <!-- Google Fonts: Noto Sans KR -->
@@ -17,7 +17,7 @@
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #ebfaf3;
         }
         .container-wrapper {
             min-height: 80vh;
@@ -52,6 +52,7 @@
         }
     </style>
 </head>
+
 <body>
 
 <div class="container-wrapper">

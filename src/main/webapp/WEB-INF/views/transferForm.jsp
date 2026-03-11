@@ -11,7 +11,7 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        body { background-color: #fcfcfc; }
+        body { background-color: #ebfaf3; }
         .container { max-width: 500px; margin-top: 50px; margin-bottom: 50px; }
         .card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
         .card-header { background-color: #78c2ad; color: white; border-radius: 12px 12px 0 0 !important; font-weight: bold; border-bottom: none; }
@@ -57,8 +57,8 @@
         .btn-submit { font-weight: 600; padding: 12px; border-radius: 8px; }
     </style>
 </head>
-<body>
 
+<body>
 <div class="container">
     <div class="card">
         <div class="card-header text-center py-3">

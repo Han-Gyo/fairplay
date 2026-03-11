@@ -11,7 +11,7 @@
 <title>아이디 찾기 - Fairplay</title>
     <style>
         /* 미세한 UI 교정을 위한 최소한의 스타일 */
-        body { background-color: #f8f9fa; }
+        body { background-color: #ebfaf3; }
         
         .form-control {
             /* 부트스트랩 기본 높이를 명시적으로 맞춰서 사이즈 차이 제거 */
@@ -19,7 +19,9 @@
         }
     </style>
 </head>
-<body class="bg-light">
+
+<body>
+
 <div class="container mt-5">
 <div class="row justify-content-center">
 <div class="col-md-6 col-lg-5">

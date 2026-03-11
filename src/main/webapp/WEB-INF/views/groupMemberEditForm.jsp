@@ -7,8 +7,13 @@
 <head>
     <meta charset="UTF-8">
     <title>그룹 멤버 수정</title>
+    <style>
+	    body {
+	            background-color: #ebfaf3;
+	            }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
 <div class="container py-5">
     <div class="row justify-content-center">

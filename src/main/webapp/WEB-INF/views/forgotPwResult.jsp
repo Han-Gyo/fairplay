@@ -12,11 +12,12 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
-        body { background-color: #f8f9fa; }
+        body { background-color: #ebfaf3; }
         .result-container { max-width: 500px; margin-top: 100px; }
         .icon-box { font-size: 3rem; margin-bottom: 20px; }
     </style>
 </head>
+
 <body>
 
 <div class="container result-container">
