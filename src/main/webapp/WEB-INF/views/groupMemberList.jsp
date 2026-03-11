@@ -9,7 +9,7 @@
     <style>
         /* 민티 테마의 배경색과 어울리는 부드러운 배경 설정 */
         body {
-            background-color: #f9f9f9;
+            background-color: #ebfaf3;
         }
         /* 컨테이너 상단 여백 및 최대 너비 조정 */
         .main-container {

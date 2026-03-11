@@ -11,7 +11,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/groupCreateForm.css" />
 </head>
-<body class="bg-light" data-context-path="${pageContext.request.contextPath}">
+<body data-context-path="${pageContext.request.contextPath}">
 
 <div class="container py-5">
   <div class="row justify-content-center">

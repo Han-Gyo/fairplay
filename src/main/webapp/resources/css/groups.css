@@ -1,7 +1,7 @@
 /* Minty 테마 보조 스타일 */
 
-.bg-light {
-    background-color: #f8f9fa !important;
+body {
+    background-color: #ebfaf3;
 }
 
 /* 카드 호버 효과 */

@@ -5,40 +5,6 @@
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/myPage.css" />
 
-<style>
-    .mypage-container {
-        padding-top: 100px;
-        padding-bottom: 50px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-    }
-    .glass-card {
-        background: #fff;
-        border-radius: 12px;
-        padding: 30px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        width: 100%;
-        max-width: 550px;
-    }
-    .profile-img-container { text-align: center; margin-bottom: 25px; }
-    .profile-img {
-        width: 130px; height: 130px; border-radius: 50%; object-fit: cover; cursor: pointer;
-        border: 3px solid #78c2ad; transition: 0.3s;
-    }
-    .info-group { margin-bottom: 15px; border-bottom: 1px solid #f1f1f1; padding-bottom: 8px; }
-    .info-label { font-weight: bold; color: #78c2ad; width: 100px; display: inline-block; }
-    .action-links { margin-top: 30px; display: flex; gap: 15px; justify-content: center; }
-
-    /* 모달 기본 스타일 */
-    #imageModal {
-        display: none; position: fixed; z-index: 3000; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.8); justify-content: center; align-items: center;
-    }
-    #modalImg { max-width: 90%; max-height: 90%; }
-</style>
-
 <div class="mypage-container">
     <div class="glass-card">
         <h3 class="text-center mb-4">마이페이지</h3>

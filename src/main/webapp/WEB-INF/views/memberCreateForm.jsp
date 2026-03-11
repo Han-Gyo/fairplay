@@ -6,7 +6,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/minty/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/memberCreateForm.css">
 </head>
-<body class="bg-light">
+
+<body>
 
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">

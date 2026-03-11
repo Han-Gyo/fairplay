@@ -15,10 +15,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 
   <!-- 기존 CSS/JS -->
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/needed.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/neededList.css">
   <script defer src="${pageContext.request.contextPath}/resources/js/needed.js"></script>
 </head>
-<body class="bg-light" data-context-path="${pageContext.request.contextPath}">
+<body data-context-path="${pageContext.request.contextPath}">
 
 <div class="container mt-5">
   <div class="card shadow-lg border-0">

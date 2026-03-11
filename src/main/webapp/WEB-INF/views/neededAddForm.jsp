@@ -13,8 +13,13 @@
 
   <!-- FontAwesome 아이콘 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  
+  <style>
+  	body { background-color: #ebfaf3; }
+  </style>
+  
 </head>
-<body class="bg-light">
+<body>
 
 <div class="container mt-5">
   <div class="card shadow-lg border-0">
