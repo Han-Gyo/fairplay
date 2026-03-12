@@ -6,7 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Wallet {
 	private int id;                // 고유 ID
 	private int member_id;         // 작성한 사용자 ID
-	private Integer group_id;          // 소속 그룹 ID
+	private Integer group_id;      // 소속 그룹 ID
 	private String item_name;      // 물품 이름
 	private String category;       // 카테고리 (식비, 생필품 등)
 	private Integer price;         // 총 가격

@@ -113,12 +113,6 @@ public String addWallet(@RequestParam(value = "groupId", required = false) Integ
     ra.addFlashAttribute("error", "존재하지 않는 그룹입니다.");
     return "redirect:/";
   }
- 
-	// 4. 그룹장 권한 체크
-	if (group.getLeaderId() != memberId) {
-    ra.addFlashAttribute("error", "그룹장만 할 일을 등록할 수 있습니다.");
-    return "redirect:/todos?groupId=" + groupId;
-  }
 
 	List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId);
   
