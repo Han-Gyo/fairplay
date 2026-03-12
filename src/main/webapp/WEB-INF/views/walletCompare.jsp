@@ -3,6 +3,8 @@
 <%@ include file="/WEB-INF/views/nav.jsp" %>
 <html>
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>단가 비교 - ${item_name}</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/walletCompare.css">
