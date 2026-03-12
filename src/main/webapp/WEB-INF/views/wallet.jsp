@@ -4,8 +4,10 @@
 <%@ include file="/WEB-INF/views/nav.jsp" %>
 <html>
 <head>
-<title>가계부 목록</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/wallet.css" />
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>가계부 목록</title>
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/wallet.css" />
 
 </head>
 <body class="wallet-body">
