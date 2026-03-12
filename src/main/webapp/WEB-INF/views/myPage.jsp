@@ -3,7 +3,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ include file="/WEB-INF/views/nav.jsp" %>
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/myPage.css" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/myPage.css" />
+</head>
 
 <div class="mypage-container">
     <div class="glass-card">

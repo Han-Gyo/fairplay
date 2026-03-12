@@ -5,6 +5,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>그룹 멤버 목록</title>
     <style>
         /* 민티 테마의 배경색과 어울리는 부드러운 배경 설정 */
