@@ -159,7 +159,7 @@ public String update(@RequestParam("id") int id, HttpSession session, Model mode
 
   // 2. 수정할 데이터 조회
   Wallet wallet = walletService.findById(id);
-  if (wallet == null) {
+  if (wallet.getMember_id() != memberId) {
     return "redirect:/wallet";
   }
 
@@ -178,6 +178,14 @@ public String update(@RequestParam("id") int id, HttpSession session, Model mode
 @PostMapping("/update")
 public String update(@ModelAttribute Wallet wallet, HttpSession session) {
 
+	Member loginMember = (Member) session.getAttribute("loginMember");
+	
+	Wallet origin = walletService.findById(wallet.getId());
+	
+	if (origin.getMember_id() != loginMember.getId()) {
+		return "redirect:/wallet";
+	}
+	
 	walletService.update(wallet);
 
 	session.setAttribute("currentGroupId", wallet.getGroup_id());
@@ -186,8 +194,16 @@ public String update(@ModelAttribute Wallet wallet, HttpSession session) {
 
 // 항목 삭제 처리
 @GetMapping("/delete")
-public String delete (@RequestParam("id") int id, @RequestParam("member_id") int member_id) {
-
+public String delete (@RequestParam("id") int id, HttpSession session) {
+	
+	Member loginMember = (Member) session.getAttribute("loginMember");
+	
+	Wallet wallet = walletService.findById(id);
+	
+	if (wallet.getMember_id() != loginMember.getId()) {
+		return "redirect:/wallet";
+	}
+	
 	walletService.delete(id);
 	return "redirect:/wallet";
 }

@@ -93,8 +93,10 @@
 	          <td><fmt:formatDate value="${item.purchase_date}" pattern="yyyy-MM-dd"/></td>
 	          <td class="memo">${item.memo}</td>
 	          <td class="actions">
+	          	<c:if test="${member_id == item.member_id}">
 	            <a class="btn btn-ghost" href="${pageContext.request.contextPath}/wallet/edit?id=${item.id}">✏️ 수정</a>
-	            <a class="btn btn-danger" href="${pageContext.request.contextPath}/wallet/delete?id=${item.id}&member_id=${member_id}" onclick="return confirm('정말 삭제할까요?');">🗑️ 삭제</a>
+	            <a class="btn btn-danger" href="${pageContext.request.contextPath}/wallet/delete?id=${item.id}" onclick="return confirm('정말 삭제할까요?');">🗑️ 삭제</a>
+	            </c:if>
 	          </td>
 	        </tr>
 	      </c:forEach>

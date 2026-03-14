@@ -80,9 +80,6 @@
 	                                <button type="submit" class="btn-pink" onclick="return confirm('정말 삭제할까요?');">삭제</button>
 	                            </form>
 	                        </c:if>
-	                        <c:if test="${history.member_id != loginMember.id}">
-	                            <small class="text-light-gray">권한 없음</small>
-	                        </c:if>
 	                    </td>
 	                </tr>
 	            </c:forEach>
