@@ -113,12 +113,6 @@ public String addWallet(@RequestParam(value = "groupId", required = false) Integ
     ra.addFlashAttribute("error", "존재하지 않는 그룹입니다.");
     return "redirect:/";
   }
- 
-	// 4. 그룹장 권한 체크
-	if (group.getLeaderId() != memberId) {
-    ra.addFlashAttribute("error", "그룹장만 할 일을 등록할 수 있습니다.");
-    return "redirect:/todos?groupId=" + groupId;
-  }
 
 	List<GroupMemberInfoDTO> memberList = groupMemberService.findMemberInfoByGroupId(groupId);
   
@@ -165,7 +159,7 @@ public String update(@RequestParam("id") int id, HttpSession session, Model mode
 
   // 2. 수정할 데이터 조회
   Wallet wallet = walletService.findById(id);
-  if (wallet == null) {
+  if (wallet.getMember_id() != memberId) {
     return "redirect:/wallet";
   }
 
@@ -184,6 +178,14 @@ public String update(@RequestParam("id") int id, HttpSession session, Model mode
 @PostMapping("/update")
 public String update(@ModelAttribute Wallet wallet, HttpSession session) {
 
+	Member loginMember = (Member) session.getAttribute("loginMember");
+	
+	Wallet origin = walletService.findById(wallet.getId());
+	
+	if (origin.getMember_id() != loginMember.getId()) {
+		return "redirect:/wallet";
+	}
+	
 	walletService.update(wallet);
 
 	session.setAttribute("currentGroupId", wallet.getGroup_id());
@@ -192,8 +194,16 @@ public String update(@ModelAttribute Wallet wallet, HttpSession session) {
 
 // 항목 삭제 처리
 @GetMapping("/delete")
-public String delete (@RequestParam("id") int id, @RequestParam("member_id") int member_id) {
-
+public String delete (@RequestParam("id") int id, HttpSession session) {
+	
+	Member loginMember = (Member) session.getAttribute("loginMember");
+	
+	Wallet wallet = walletService.findById(id);
+	
+	if (wallet.getMember_id() != loginMember.getId()) {
+		return "redirect:/wallet";
+	}
+	
 	walletService.delete(id);
 	return "redirect:/wallet";
 }
