@@ -4,7 +4,7 @@
   width: 100%;
   background: #ebfaf3 !important;
   border-top: 1px solid rgba(120, 194, 173, 0.2);
-  padding: 10px 0;
+  
 }
 
 .footer-left {
@@ -17,11 +17,13 @@
 }
 
 .footer-logo-fit {
-  margin-right: -8px; /* 음수 마진으로 글자를 왼쪽으로 당김 */
+  margin-right: -8px; 
 }
 
 .footer-right {
   letter-spacing: -0.5px;
+  flex-grow: 1;
+  text-align: right;
 }
 
 @media (max-width: 768px) {
