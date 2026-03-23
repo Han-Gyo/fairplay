@@ -172,6 +172,7 @@ body.home-body {
   }
   .hero-section {
     padding-right: 0;
+    justify-content: center; 
     align-items: center;
     margin-bottom: 50px;
   }
@@ -197,6 +198,7 @@ body.home-body {
   .hero-title { font-size: 4rem; }
   .home-logo-img { 
     height: 120px !important; 
+    margin-left: -45px;
     margin-right: -42px;
   }
 }
