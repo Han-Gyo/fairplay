@@ -47,10 +47,10 @@ body.home-body {
 }
 
 .home-logo-img {
-  height: 150px !important;
+  height: 200px !important;
   width: auto !important;
-  margin-left: -20px;
-  margin-right: -40px; 
+  margin-left: -90px;
+  margin-right: -70px; 
   object-fit: contain;
   z-index: 2;
 }
@@ -197,6 +197,6 @@ body.home-body {
   .hero-title { font-size: 4rem; }
   .home-logo-img { 
     height: 120px !important; 
-    margin-right: -30px;
+    margin-right: -42px;
   }
 }
