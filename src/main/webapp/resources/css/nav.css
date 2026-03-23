@@ -1,23 +1,17 @@
 @charset "UTF-8";
 
+/* --- [기존 네비게이션 스타일 - 절대 유지] --- */
 body {
-  padding-top: 90px;
+  padding-top: 70px;
 }
 
 /* 네비게이션 바 전체 배경 */
 .navbar {
   background-color: #ebfaf3 !important;
   border-bottom: 1px solid rgba(120, 194, 173, 0.3);
-  height: 55px;
+  height: 70px;
 }
 
-/*네비 중앙정렬*/
-.navbar-nav.mx-auto {
-	padding-left: 70px;
-}
-.navbar-nav.mx-auto .nav-item {
-	margin: 0 30px;
-}
 /* 메인 메뉴 글자색 */
 .navbar .nav-link {
   color: #4a5d55 !important;
@@ -67,7 +61,7 @@ body {
 @media (max-width: 991.98px) {
   .navbar-collapse {
     background-color: #ebfaf3;
-    top: 55px;
+    top: 70px;
     padding: 20px;
   }
   
@@ -206,7 +200,7 @@ body {
   max-height: 80vh;
   overflow-y: auto;
   
-  position: absolute;
+    position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

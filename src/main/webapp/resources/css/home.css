@@ -36,23 +36,21 @@ body.home-body {
 .hero-section {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-left:-200px;
+  align-items: flex-start;
+  padding-right: 80px; 
 }
 
 .logo-title-group {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: -30px;
+  margin-bottom: 10px;
 }
 
 .home-logo-img {
-  height: 200px !important;
+  height: 150px !important;
   width: auto !important;
-  margin-left: -90px;
-  margin-right: -70px; 
+  margin-left: -20px;
+  margin-right: -40px; 
   object-fit: contain;
   z-index: 2;
 }
@@ -67,19 +65,20 @@ body.home-body {
 }
 
 .hero-desc {
-	font-size: 3rem;
+  padding-left: 10px;
 }
 
 .hero-desc .main-text {
-  font-size: 1.05rem;
-  color: #888;
+  font-size: 1.5rem;
+  color: #666;
+  margin-bottom: 5px;
   font-weight: 500;
-  margin-bottom: -5px;
 }
 
 .hero-desc .sub-text {
-  font-size: 1.05rem;
+  font-size: 1.2rem;
   color: #888;
+  margin: 0;
 }
 
 .nickname-highlight {
@@ -94,7 +93,8 @@ body.home-body {
   display: flex;
   flex-direction: column;
   gap: 25px;
-  transform: translateX(300px);
+  padding-left: 60px;
+  border-left: 1.5px solid rgba(120, 194, 173, 0.2);
   align-items: flex-start; 
 }
 
@@ -105,12 +105,13 @@ body.home-body {
   display: flex;
   align-items: center;
   justify-content: flex-start; 
+  /* [수정] overflow: hidden 제거 - 설명 글자가 잘리지 않도록 함 */
   width: 100%; /* 너비를 확보하여 긴 문장 수용 */
 }
 
 .main-nav-link {
-  font-size: 1.5rem;
-	font-weight: 900;
+  font-size: 1.8rem;
+  font-weight: 800;
   color: #708a81;
   transition: transform 0.4s cubic-bezier(0.7, 0, 0.3, 1), opacity 0.3s;
   white-space: nowrap;
