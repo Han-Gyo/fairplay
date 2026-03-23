@@ -120,7 +120,7 @@
       </ul>
 
       <!-- 데스크톱용 로그인/회원 메뉴 -->
-      <ul class="navbar-nav fw-bold d-none d-lg-flex align-items-center">
+      <ul class="navbar-nav fw-bold ms-auto d-none d-lg-flex align-items-center">
         <c:choose>
           <c:when test="${empty sessionScope.loginMember}">
             <li class="nav-item"><a class="nav-link px-2" href="${pageContext.request.contextPath}/member/login">로그인</a></li>
