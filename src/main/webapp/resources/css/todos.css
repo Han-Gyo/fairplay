@@ -24,7 +24,7 @@ body {
   box-shadow: 0 15px 30px rgba(120, 194, 173, 0.15) !important;
 }
 
-/* 3. 버튼 크기 고정 (중요!) */
+/* 3. 버튼 크기 고정 */
 .btn-fixed {
   width: 60px; 
   height: 30px;

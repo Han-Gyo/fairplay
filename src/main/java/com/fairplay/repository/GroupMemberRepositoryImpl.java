@@ -26,8 +26,7 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
     // 그룹 멤버 저장 (가입 처리)
     @Override
     public void save(GroupMember groupMember) {
-        // weekly_score → monthly_score로 변경
-        // NEW: last_counted_month 추가
+
         String sql = "INSERT INTO group_member (group_id, member_id, role, monthly_score, total_score, warning_count, last_counted_month) VALUES (?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
             groupMember.getGroupId(),
@@ -57,15 +56,14 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
     // 그룹 멤버 정보 수정 (역할, 점수, 경고 등)
     @Override
     public void update(GroupMember groupmember) {
-        // weekly_score → monthly_score로 변경
-        // NEW: last_counted_month 추가
+
         String sql = "UPDATE group_member SET role = ?, monthly_score = ?, total_score = ?, warning_count = ?, last_counted_month = ? WHERE id = ?";
         jdbcTemplate.update(sql,
             groupmember.getRole(),
             groupmember.getMonthlyScore(),
             groupmember.getTotalScore(),
             groupmember.getWarningCount(),
-            groupmember.getLastCountedMonth(), // NEW
+            groupmember.getLastCountedMonth(),
             groupmember.getId()
         );
     }
@@ -195,12 +193,12 @@ public class GroupMemberRepositoryImpl implements GroupMemberRepository {
 
     @Override
     public GroupMember findByGroupIdAndMemberId(int groupId, int memberId) {
-        // NEW: last_counted_month도 함께 조회됨
+
         String sql = "SELECT * FROM group_member WHERE group_id = ? AND member_id = ?";
         return jdbcTemplate.queryForObject(sql, new GroupMemberRowMapper(), groupId, memberId);
     }
 
-    // NEW: 집계 중복 방지용 last_counted_month만 업데이트하는 메서드
+    // 집계 중복 방지용 last_counted_month만 업데이트하는 메서드
     @Override
     public void updateLastCountedMonth(int groupMemberId, String yearMonth) {
         String sql = "UPDATE group_member SET last_counted_month = ? WHERE id = ?";

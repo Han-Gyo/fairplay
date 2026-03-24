@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import com.fairplay.domain.Group;
 import com.fairplay.mapper.GroupRowMapper;
 
-// 실제 SQL을 실행할 Repository 구현체 (JDBC 활용)
 @Repository
 public class GroupRepositoryImpl implements GroupRepository{
 	
@@ -33,7 +32,7 @@ public class GroupRepositoryImpl implements GroupRepository{
 
 	    // PreparedStatement를 생성하고, RETURN_GENERATED_KEYS 옵션으로 insert 후 생성된 ID를 가져옴
 	    jdbcTemplate.update(connection -> {
-	        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS); // ← 자동 생성된 ID를 얻기 위한 설정
+	        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS); // <- 자동 생성된 ID를 얻기 위한 설정
 	        ps.setString(1, group.getName());              // 그룹 이름
 	        ps.setString(2, group.getDescription());       // 그룹 설명
 	        ps.setString(3, group.getCode());              // 초대 코드
@@ -45,7 +44,7 @@ public class GroupRepositoryImpl implements GroupRepository{
 	        return ps;
 	    }, keyHolder);
 
-	    // insert 후 자동 생성된 그룹 ID 값을 Group 객체에 설정 → 이후 서비스에서 group.getId()로 사용 가능
+	    // insert 후 자동 생성된 그룹 ID 값을 Group 객체에 설정 -> 이후 서비스에서 group.getId()로 사용 가능
 	    group.setId(keyHolder.getKey().intValue());
 	}
 
@@ -63,7 +62,7 @@ public class GroupRepositoryImpl implements GroupRepository{
 
 	    try {
 	        // queryForObject()는 결과가 1건일 때 사용하며,
-	        // RowMapper를 통해 ResultSet → Group 객체로 매핑됨
+	        // RowMapper를 통해 ResultSet -> Group 객체로 매핑됨
 	        return jdbcTemplate.queryForObject(sql, new GroupRowMapper(), id);
 	        
 	    } catch (EmptyResultDataAccessException e) {

@@ -37,10 +37,6 @@ public class StatisticsController {
 		@RequestParam("groupId") int groupId,
 		@RequestParam("yearMonth") String yearMonth) {
 
-		System.out.println("📌 [Controller] 그룹 월간 총점 요청");
-		System.out.println("    ▶ groupId: " + groupId);
-		System.out.println("    ▶ yearMonth: " + yearMonth);
-
 		List<GroupMonthlyScore> results = historyService.getGroupMonthlyScore(groupId, yearMonth);
 		
 		if (results.isEmpty()) {

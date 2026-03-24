@@ -7,7 +7,7 @@ public class GroupMemberInfoDTO {
     private String realName;
     private String role;
     private int totalScore;
-    private int monthlyScore;   // 이번 달 집안일 점수 (weekly → monthly로 변경)
+    private int monthlyScore;   
     private int warningCount;
     private int id;
     private int memberId;

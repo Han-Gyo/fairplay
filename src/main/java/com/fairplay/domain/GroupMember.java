@@ -42,7 +42,6 @@ public class GroupMember {
         this.lastCountedMonth = lastCountedMonth;
     }
 
-    // Getter & Setter
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 

@@ -64,9 +64,6 @@ public class MyPageController {
                          @RequestParam(required = false) MultipartFile profileImageFile,
                          HttpServletRequest request,
                          HttpSession session) {
-        
-        // 최종 저장할 프사 가지고 있는지 확인 로그 찍어보기
-        System.out.println("최종 저장할 프로필 이미지 파일명: " + member.getProfileImage());
 
         // 전화번호 합치기
         String phone = request.getParameter("phone1") + "-" +
@@ -91,7 +88,6 @@ public class MyPageController {
             if (fileName != null) {
                 member.setProfileImage(fileName); // 새 이미지 성공 시 저장
             } else {
-                System.out.println(" 파일 저장 실패로 기존 이미지 유지");
                 String currentImage = memberService.findById(member.getId()).getProfileImage();
                 member.setProfileImage(currentImage); // 실패 시 기존 이미지 유지
             }
@@ -106,10 +102,8 @@ public class MyPageController {
         if (member.getEmail() != null && !member.getEmail().isEmpty()) {
             if (Boolean.TRUE.equals(emailVerified)) {
                 // 인증 성공 시 이메일 반영
-                System.out.println("이메일 인증 성공 -> 변경 반영");
             } else {
                 // 인증 실패 시 기존 이메일 유지
-                System.out.println("이메일 인증 실패-> 기존 이메일 유지");
                 String currentEmail = memberService.findById(member.getId()).getEmail();
                 member.setEmail(currentEmail);
             }

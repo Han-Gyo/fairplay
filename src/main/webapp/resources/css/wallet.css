@@ -20,6 +20,7 @@
     margin: 0;
     letter-spacing: -1px;
 }
+
 /* 3. 테이블 카드 디자인 */
 .table-card {
     background: white;
@@ -159,7 +160,7 @@
     box-shadow: 0 4px 15px rgba(108, 195, 213, 0.3);
 }
 
-/* --- 버튼 Hover 효과 추가 --- */
+/* 버튼 Hover 효과 추가 */
 /* 1. 수정 버튼 (민트색 유지하면서 살짝 어둡게) */
 .btn-ghost:hover {
     background-color: #66b19c !important; /* 조금 더 진한 민트 */

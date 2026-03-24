@@ -106,7 +106,6 @@ body.home-body {
   display: flex;
   align-items: center;
   justify-content: flex-start; 
-  /* [수정] overflow: hidden 제거 - 설명 글자가 잘리지 않도록 함 */
   width: 100%; /* 너비를 확보하여 긴 문장 수용 */
 }
 
@@ -128,7 +127,6 @@ body.home-body {
   color: #f3969a;
   opacity: 0;
   transition: all 0.4s cubic-bezier(0.7, 0, 0.3, 1);
-  /* [수정] 텍스트가 잘리지 않게 시원하게 한 줄 처리 */
   white-space: nowrap; 
   word-break: keep-all;    
   line-height: 1.3;

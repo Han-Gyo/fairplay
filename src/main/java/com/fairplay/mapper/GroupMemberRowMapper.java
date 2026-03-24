@@ -17,7 +17,7 @@ public class GroupMemberRowMapper implements RowMapper<GroupMember> {
         groupMember.setGroupId(rs.getInt("group_id"));
         groupMember.setMemberId(rs.getInt("member_id"));
         groupMember.setRole(rs.getString("role"));
-        groupMember.setMonthlyScore(rs.getInt("monthly_score"));   // weekly → monthly로 변경
+        groupMember.setMonthlyScore(rs.getInt("monthly_score"));
         groupMember.setTotalScore(rs.getInt("total_score"));
         groupMember.setWarningCount(rs.getInt("warning_count"));
         groupMember.setLastCountedMonth(rs.getString("last_counted_month"));

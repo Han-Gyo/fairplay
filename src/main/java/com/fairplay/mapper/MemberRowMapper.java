@@ -13,7 +13,6 @@ public class MemberRowMapper implements RowMapper<Member> {
 
     @Override
     public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
-        System.out.println("MemberRowMapper 실행됨");
 
         Member member = new Member();
         member.setId(rs.getInt("id"));

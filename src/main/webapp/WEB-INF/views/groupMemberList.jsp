@@ -20,7 +20,7 @@
         /* 테이블 헤더의 텍스트 중앙 정렬 및 배경색 강조 */
         .table thead th {
             text-align: center;
-            background-color: #78C2AD; /* Minty Primary Color */
+            background-color: #78C2AD;
             color: white;
             border: none;
         }

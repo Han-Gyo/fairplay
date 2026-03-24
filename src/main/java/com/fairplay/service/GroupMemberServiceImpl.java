@@ -227,7 +227,7 @@ public class GroupMemberServiceImpl implements GroupMemberService {
                 // groupId + memberId로 GroupMember 조회
                 GroupMember gm = gmRepo.findByGroupIdAndMemberId(g.getId(), s.getMemberId());
 
-                // NEW: 이미 집계한 달이면 건너뛰기
+                // 이미 집계한 달이면 건너뛰기
                 if (yearMonth.equals(gm.getLastCountedMonth())) {
                     continue;
                 }
@@ -243,7 +243,7 @@ public class GroupMemberServiceImpl implements GroupMemberService {
                     gm.setWarningCount(gm.getWarningCount() + 1);
                 }
 
-                // NEW: 이번 달을 집계 완료로 표시
+                // 이번 달을 집계 완료로 표시
                 gm.setLastCountedMonth(yearMonth);
 
                 // DB 업데이트

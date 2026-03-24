@@ -1,14 +1,11 @@
-console.log(" memberEditForm.js 연결 확인");
-
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("JS 로딩됨");
 
-    // ===== 공통 메시지 출력 헬퍼 ===== //
+    // 공통 메시지 출력 헬퍼 //
     function showResult(targetDiv, message, type) {
         targetDiv.innerHTML = `<span class="text-${type}">${message}</span>`;
     }
 
-    // ===== 유효성 검증 및 제출 제어 ===== //
+    // 유효성 검증 및 제출 제어 //
     const emailInput = document.getElementById('email');
     const phone2 = document.getElementById('phone2');
     const phone3 = document.getElementById('phone3');
@@ -61,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // ===== 닉네임 중복 확인 로직 ===== //
+    // 닉네임 중복 확인 로직 //
     if (nicknameInput) {
         nicknameInput.addEventListener("input", function() {
             const currentNickname = nicknameInput.value.trim();
@@ -104,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ===== 이메일 관련 변수 및 이벤트 ===== //
+    // 이메일 관련 변수 및 이벤트 //
     const emailCheckResult = document.getElementById("emailCheckResult");
     const checkEmailBtn = document.getElementById("checkEmailBtn");
     const sendEmailBtn = document.getElementById("sendEmailCodeBtn");
@@ -158,12 +155,12 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-    // ===== 이메일 인증 발송 ===== //
+    // 이메일 인증 발송 //
     if (sendEmailBtn) {
         sendEmailBtn.addEventListener("click", function () {
             const email = emailInput.value.trim();
             
-            // [수정] 무분별한 클릭 방지를 위해 발송 즉시 버튼 비활성화
+            // 무분별한 클릭 방지를 위해 발송 즉시 버튼 비활성화
             sendEmailBtn.disabled = true;
             showResult(emailCheckResult, "인증번호를 발송 중입니다...", "info");
 
@@ -183,13 +180,13 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(err => {
                 showResult(emailCheckResult, "발송에 실패했습니다. 다시 시도해주세요.", "danger");
-                // [수정] 실패 시에는 다시 누를 수 있도록 활성화
+                // 실패 시에는 다시 누를 수 있도록 활성화
                 sendEmailBtn.disabled = false;
             });
         });
     }
 
-    // ===== 이메일 다시 입력 버튼 ===== //
+    // 이메일 다시 입력 버튼 //
     if (resetEmailBtn) {
         resetEmailBtn.addEventListener("click", function () {
             emailInput.readOnly = false;
@@ -208,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ===== 인증번호 확인 ===== //
+    // 인증번호 확인 //
     if (verifyEmailBtn) {
         verifyEmailBtn.addEventListener("click", function () {
             const code = emailCodeInput.value.trim();
@@ -240,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // ===== 프사 미리보기/비밀번호 변경 등 나머지 로직 동일 =====
+    // 프사 미리보기/비밀번호 변경 등 나머지 로직 동일 
     const fileInput = document.getElementById('profileImageFile');
     const previewImg = document.getElementById('profilePreview');
 
@@ -319,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// ===== 주소 검색 API 실행 함수 ===== //
+// 주소 검색 API 실행 함수 //
 function execDaumPostcode() {
     new daum.Postcode({
         oncomplete: function(data) {

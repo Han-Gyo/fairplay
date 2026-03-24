@@ -42,9 +42,8 @@ public class MemberController {
 	@GetMapping("/create")
 	public String createForm() {
 		
-		System.out.println("회원가입 createForm 함수 진입"); // 디버깅용 오류 없으면 삭제
-		
 		return "memberCreateForm";
+		
 	}
 	
 	// 회원가입 폼 제출 시 회원 등록 처리 (Create)
@@ -63,24 +62,24 @@ public class MemberController {
 		
 		try {
 		profileImageFile.transferTo(dest); // 실제 파일 저장
-		System.out.println("파일 저장 성공: " + savedFileName);
 		
 		// DB에는 "profile/" 경로 포함해서 저장
 		member.setProfileImage(savedFileName);
 		} catch (IOException e) {
+			
 		e.printStackTrace();
-		System.out.println("파일 저장 실패: " + e.getMessage());
 		member.setProfileImage("default_profile.png");
-		}
-		} else {
-		member.setProfileImage("default_profile.png");
+		
 		}
 		
-		// 이미지 업로드 디버깅 로그
-		System.out.println("파일 업로드 여부: " + profileImageFile);
+		} else {
+			
+		member.setProfileImage("default_profile.png");
+		
+		}
+		
 		if (profileImageFile != null) {
-		System.out.println("파일명: " + profileImageFile.getOriginalFilename());
-		System.out.println("isEmpty? " + profileImageFile.isEmpty());
+			
 		}
 		
 		// 비밀번호 암호화
@@ -158,8 +157,9 @@ public class MemberController {
 	// 로그인 폼 이동
 	@GetMapping("/login")
 	public String loginForm() {
-		System.out.println("로그인 폼 이동 함수 진입");
+		
 		return "login";
+		
 	}
 	
 	
@@ -207,8 +207,6 @@ public class MemberController {
 	@GetMapping(value = "/checkId", produces = "application/json")
 	@ResponseBody
 	public Map<String, String> checkId(@RequestParam("user_id") String userId) {
-	    System.out.println(" checkId() 진입");
-	    System.out.println(" 전달받은 userId: " + userId);
 	    
 	    boolean isDuplicate = memberService.isDuplicatedId(userId);
 
@@ -226,8 +224,6 @@ public class MemberController {
 	@ResponseBody
 	public Map<String, String> checkNickname(@RequestParam("nickname") String nickname){
 		
-		System.out.println("checkNickname() 진입: " + nickname);
-		
 		// 서비스 계층을 통해 닉네임 중복 여부 확인
 		boolean isDuplicate = memberService.isDuplicatedNickname(nickname);
 		
@@ -242,7 +238,6 @@ public class MemberController {
 	@GetMapping(value = "/checkEmail", produces = "application/json")
 	@ResponseBody
 	public Map<String, String> checkEmail(@RequestParam("email") String email) {
-	    System.out.println("checkEmail() 진입: " + email);
 
 	    // 서비스 계층을 통해 이메일 중복 여부 확인
 	    boolean isDuplicate = memberService.isDuplicatedEmail(email);

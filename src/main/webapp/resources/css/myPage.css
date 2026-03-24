@@ -20,7 +20,6 @@ body {
     border: 2px solid #78c2ad; /* Minty 포인트 컬러 */
     padding: 40px;
     width: 100%;
-    /* 기존 550px과 500px 중 더 아래에 있던 500px로 통일 */
     max-width: 500px; 
 }
 
@@ -39,14 +38,12 @@ h3 {
 }
 
 .profile-img {
-    /* 기존 130px과 120px 중 120px로 병합 */
     width: 120px;
     height: 120px;
     object-fit: cover;
     border-radius: 50%;
     cursor: pointer;
     border: 3px solid #78c2ad;
-    /* transition 속성 병합 (transform, box-shadow 추가) */
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
@@ -58,14 +55,12 @@ h3 {
 /* 정보 라인 */
 .info-group {
     margin-bottom: 15px;
-    /* 테두리 색상 중복 제거: Minty 톤인 #e0f2f1 적용 */
     border-bottom: 1px solid #e0f2f1;
     padding-bottom: 8px;
     font-size: 15px;
 }
 
 .info-label {
-    /* 완전히 동일한 중복 속성이었으므로 하나만 남김 */
     font-weight: bold;
     color: #78c2ad;
     width: 100px;

@@ -123,11 +123,5 @@
     </div>
 </div>
 
-<script>
-    /* 별도의 JS 없이 CSS의 :checked 선택자만으로 처리 가능하도록 구조를 수정했습니다. 
-       라디오 버튼이 클릭되면 바로 뒤에 오는 .member-card의 스타일이 바뀝니다.
-    */
-</script>
-
 </body>
 </html>

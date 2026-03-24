@@ -112,14 +112,10 @@ public class NeededItemController {
     @PostMapping("/add")
     public String addItem(@ModelAttribute NeededItemDTO item, HttpSession session) {
 
-        System.out.println("item 객체: " + item); // ← null인지 확인
-        System.out.println("item.itemName: " + item.getItemName()); // ← 데이터 잘 들어오는지
-        System.out.println("세션 객체: " + session.getAttribute("loginMember"));
-
         Member loginMember = (Member) session.getAttribute("loginMember");
 
         if (loginMember != null) {
-            item.setAddedBy((long)loginMember.getId());  // ← 여기서 nullPointerException 나면 item 자체가 null일 가능성 있음
+            item.setAddedBy((long)loginMember.getId());  // 여기서 nullPointerException 나면 item 자체가 null일 가능성 있음
         } else {
             throw new IllegalStateException("로그인 정보가 없습니다.");
         }

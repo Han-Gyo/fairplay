@@ -54,7 +54,7 @@ function openCalendarModal() {
 							const scheduleId = event.id || (event.extendedProps && event.extendedProps.id);
 							const visibility = event.extendedProps.visibility;
 							const groupName = event.extendedProps.groupName;
-							console.log("클릭한 일정 ID 확인:", scheduleId);
+
 							// 모달 각 요소에 데이터 집어넣기
 							$("#detailId").val(scheduleId);
 					    $("#detailTitle").text(event.title);
@@ -107,8 +107,6 @@ $(document).ready(function() {
             visibility: $("select[name='visibility']").val(),
 						groupId: $("#scheduleForm").find("select[name='groupId']").val()
         };
-				
-				console.log("보내는 그룹ID:", scheduleData.groupId);
 
         // 3. 수정일 경우에만 id 추가
         if (isUpdate) {
@@ -190,7 +188,6 @@ function updateEvent() {
 
 function deleteEvent() {
     const scheduleId = $("#detailId").val();
-		console.log("삭제할 ID:", scheduleId);
 		
     if (!confirm("정말 이 일정을 삭제하시겠습니까?")) return;
 
@@ -199,7 +196,7 @@ function deleteEvent() {
         type: "POST",
         data: { id: scheduleId },
         success: function(res) {
-					console.log("서버 응답:", res);
+			
           alert("일정이 삭제되었습니다!");
           $("#eventDetailModal").modal("hide"); // 상세창 닫기
             

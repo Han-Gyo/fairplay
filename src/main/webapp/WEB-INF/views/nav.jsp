@@ -204,7 +204,7 @@
     </div>
   </div>
 
-  <!-- [복구] 일정 등록 모달 (공개범위 포함) -->
+  <!-- 일정 등록 모달 (공개범위 포함) -->
   <div class="modal fade" id="scheduleModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -246,7 +246,7 @@
     </div>
   </div>
 
-  <!-- [복구] 일일 요약 모달 -->
+  <!-- 일일 요약 모달 -->
   <div class="modal fade" id="dailySummaryModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content" style="border-radius: 20px;">

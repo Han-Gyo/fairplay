@@ -30,7 +30,7 @@ public class GroupServiceImpl implements GroupService{
 	public void save(Group group) {
 		
 		// 그룹 저장
-		groupRepository.save(group);	// group.getId()가 여기서 auto_increment로 생김
+		groupRepository.save(group);
 		
 		// 그룹장 자동 등록
 		GroupMember gm = new GroupMember();
@@ -63,6 +63,7 @@ public class GroupServiceImpl implements GroupService{
 
 	@Override
 	public void update(Group group) {
+		
 		//그룹수정 요청으로 전달된 group 데이터를 저장 (Update)
 		groupRepository.update(group);
 		

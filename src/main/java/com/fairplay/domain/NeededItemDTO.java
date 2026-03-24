@@ -4,16 +4,16 @@ import java.time.LocalDateTime;
 
 public class NeededItemDTO {
 
-    private Long id;              // 물품 ID
-    private Long groupId;         // 그룹 ID
-    private String itemName;      // 물품 이름
-    private int quantity;         // 수량
-    private Long addedBy;         // 작성자 ID
-    private boolean isPurchased;  // 구매 여부
-    private LocalDateTime createdAt;  // 생성일
-    private LocalDateTime updatedAt;  // 수정일
-    private String writerNickname;	// 작성자 별명
-    private String memo;		  // 메모
+    private Long id;              		// 물품 ID
+    private Long groupId;         		// 그룹 ID
+    private String itemName;      		// 물품 이름
+    private int quantity;         		// 수량
+    private Long addedBy;         		// 작성자 ID
+    private boolean isPurchased;  	  	// 구매 여부
+    private LocalDateTime createdAt;  	// 생성일
+    private LocalDateTime updatedAt;  	// 수정일
+    private String writerNickname;		// 작성자 별명
+    private String memo;		  		// 메모
 
     //  기본 생성자
     public NeededItemDTO() {}
@@ -32,9 +32,6 @@ public class NeededItemDTO {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-
-    
-    //  Getter/Setter
     
 	public Long getId() {
 		return id;
