@@ -43,7 +43,7 @@ body.home-body {
 .logo-title-group {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: -20px;
 }
 
 .home-logo-img {
@@ -172,7 +172,6 @@ body.home-body {
   }
   .hero-section {
     padding-right: 0;
-    justify-content: center; 
     align-items: center;
     margin-bottom: 50px;
   }
@@ -198,7 +197,7 @@ body.home-body {
   .hero-title { font-size: 4rem; }
   .home-logo-img { 
     height: 120px !important; 
-    margin-left: -45px;
+    margin-left: -35px;
     margin-right: -42px;
   }
 }
