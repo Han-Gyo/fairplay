@@ -23,7 +23,7 @@
         <div class="row align-items-center justify-content-center w-100">
           
           <!-- Hero Section (좌측) -->
-          <div class="col-lg-6 hero-section">
+          <div class="col-lg-8 hero-section">
             <div class="logo-title-group">
               <img src="${pageContext.request.contextPath}/resources/img/logo.png" class="home-logo-img" alt="F">
               <h1 class="hero-title">airPlay</h1>
@@ -43,7 +43,7 @@
           </div>
           
           <!-- Interactive Menu (우측) -->
-          <div class="col-lg-6 interactive-menu">
+          <div class="col-lg-4 interactive-menu">
             <div class="main-nav-item" onclick="location.href='${pageContext.request.contextPath}/todos?groupId=${sessionScope.currentGroupId}'">
               <span class="main-nav-link">집안일 관리</span>
               <span class="main-nav-hover-text">오늘 할 일, 놓친 건 없는지 체크해볼까요?</span>
