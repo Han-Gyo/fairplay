@@ -3,7 +3,7 @@
 
 /* --- [기존 네비게이션 스타일 - 절대 유지] --- */
 body {
-  padding-top: 70px;
+  padding-top: 90px;
 }
 
 /* 네비게이션 바 전체 배경 */
@@ -13,6 +13,20 @@ body {
   height: 70px;
 }
 
+/* 중앙 메뉴 그룹 가운데 배치 */
+.navbar-nav.mx-auto {
+  flex: 1;                  /* 좌우 공간을 차지해서 중앙 고정 */
+  display: flex;
+  justify-content: center;  /* 메뉴들을 중앙 정렬 */
+  gap: 70px;                /* 메뉴 간격 넓히기 */
+}
+
+/* 좌측 로고와 우측 메뉴를 양 끝으로 밀어내기 */
+.navbar .container-fluid {
+  display: flex;
+  justify-content: space-between;
+	align-items: center;
+}
 /* 메인 메뉴 글자색 */
 .navbar .nav-link {
   color: #4a5d55 !important;
