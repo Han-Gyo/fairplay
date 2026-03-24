@@ -14,7 +14,6 @@ import com.fairplay.mapper.MemberRowMapper;
 @Repository
 public class MemberRepositoryImpl implements MemberRepository {
     
-    // Spring 설정에 등록된 JdbcTemplate Bean을 주입받음
     @Autowired 
     private JdbcTemplate jdbcTemplate;
     
@@ -87,7 +86,7 @@ public class MemberRepositoryImpl implements MemberRepository {
         try {
             return jdbcTemplate.queryForObject(sql, new MemberRowMapper(), user_id);
         } catch (EmptyResultDataAccessException e) {
-            return null; // 결과가 없으면 null 반환
+            return null;
         }
     }
 

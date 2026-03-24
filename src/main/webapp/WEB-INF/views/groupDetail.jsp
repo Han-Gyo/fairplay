@@ -38,7 +38,7 @@
         <div class="card-body p-4">
           <!-- 배지 영역: 톤을 Primary로 통일 -->
           <div class="d-flex flex-wrap gap-2 mb-4">
-            <!-- 멤버 배지: align-items-center 추가로 수직 정렬 수정 -->
+            <!-- 멤버 배지: align-items-center로 수직 정렬 -->
             <span class="badge rounded-pill bg-primary px-3 py-2 d-inline-flex align-items-center">
               <i data-lucide="users" class="size-xs"></i> 
               <span class="lh-1">멤버 ${currentMemberCount}/${group.maxMember}</span>

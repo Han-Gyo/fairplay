@@ -18,7 +18,7 @@ public class GroupMemberInfoRowMapper implements RowMapper<GroupMemberInfoDTO> {
         dto.setRealName(rs.getString("real_name"));
         dto.setRole(rs.getString("role"));
         dto.setTotalScore(rs.getInt("total_score"));
-        dto.setMonthlyScore(rs.getInt("monthly_score"));   // weekly → monthly로 변경
+        dto.setMonthlyScore(rs.getInt("monthly_score"));
         dto.setWarningCount(rs.getInt("warning_count"));
         dto.setId(rs.getInt("id"));
         dto.setGroupId(rs.getInt("group_id"));

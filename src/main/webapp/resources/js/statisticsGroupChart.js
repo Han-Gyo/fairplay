@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var ctx = canvas.getContext('2d');
   var chart;
 
-  // ===== 값 라벨 플러그인 (바/포인트 위에 값 표시)
+  // 값 라벨 플러그인 (바/포인트 위에 값 표시)
   var valueLabelPlugin = {
     id: 'valueLabel',
     afterDatasetsDraw: function(c) {
@@ -38,13 +38,13 @@ document.addEventListener('DOMContentLoaded', function () {
         var val = ds.data[i];
         if (val == null) continue;
         var p = el.tooltipPosition();
-        g.fillText(String(val), p.x, p.y - 6); // ← 멤버 차트와 동일하게 -6으로 조정
+        g.fillText(String(val), p.x, p.y - 6); // 멤버 차트와 동일하게
       }
       g.restore();
     }
   };
 
-  // ===== 선 그래프용 배경 그라디언트
+  // 선 그래프용 배경 그라디언트
   function buildGradient(chart) {
     var area = chart.chartArea;
     var grad = ctx.createLinearGradient(0, area ? area.top : 0, 0, area ? area.bottom : 300);
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return grad;
   }
 
-  // ===== 렌더 (자동 스위칭)
+  // 렌더 (자동 스위칭)
   function render(labels, data) {
     if (chart) chart.destroy();
 
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // ===== 데이터 로딩
+  // 데이터 로딩
   function fetchJson(url) {
     return fetch(url, { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
       .then(function (res) {

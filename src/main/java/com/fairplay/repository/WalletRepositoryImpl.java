@@ -108,7 +108,6 @@ public class WalletRepositoryImpl implements WalletRepository{
 	    };
 	}
 	
-	//WalletRepositoryImpl.java 에 추가
 	@Override
 	public List<Wallet> findByGroupId(int groupId) {
 	   String sql = "SELECT * FROM wallet WHERE group_id = ? ORDER BY purchase_date DESC";

@@ -16,12 +16,11 @@ public class FileUploadUtil {
     // 실제 파일 저장 및 새 파일명 반환
     public String saveFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            System.out.println("❌ 파일이 비어 있음");
             return null;
         }
 
         try {
-            // 🔸 파일명 정제 (한글, 특수문자 제거 → URL 오류 방지)
+            // 파일명 정제 (한글, 특수문자 제거 → URL 오류 방지)
             String originalFileName = file.getOriginalFilename();
             String safeFileName = originalFileName.replaceAll("[^a-zA-Z0-9.]", "_");
 
@@ -31,10 +30,8 @@ public class FileUploadUtil {
             File destination = new File(uploadPath + newFileName);
             file.transferTo(destination);
 
-            System.out.println("✅ 파일 저장 성공: " + newFileName);
             return newFileName;
         } catch (IOException e) {
-            System.out.println("❌ 파일 저장 실패: " + e.getMessage());
             return null;
         }
     }

@@ -76,7 +76,6 @@
                 <div class="form-group mb-3">
                     <label for="inviteCode" class="form-label fw-bold">초대코드</label>
                     <%-- 
-                        추가 및 수정 사항:
                         1. maxlength="8": 8자 이상 입력 방지
                         2. minlength="8": 8자 미만일 시 브라우저단에서 경고
                         3. pattern="[A-Za-z0-9]{8}": 영문/숫자 8자리 정규식 검사

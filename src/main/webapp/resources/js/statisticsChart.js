@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var val = ds.data[i];
         if (val == null) continue;
         var p = bar.tooltipPosition();
-        ctx2.fillText(String(val), p.x, p.y - 12); // ← -6 → -12로 수정
+        ctx2.fillText(String(val), p.x, p.y - 12);
       }
       ctx2.restore();
     }
