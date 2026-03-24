@@ -65,7 +65,9 @@ body.home-body {
 }
 
 .hero-desc {
-  padding-left: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .hero-desc .main-text {
@@ -94,7 +96,6 @@ body.home-body {
   flex-direction: column;
   gap: 25px;
   padding-left: 60px;
-  border-left: 1.5px solid rgba(120, 194, 173, 0.2);
   align-items: flex-start; 
 }
 
