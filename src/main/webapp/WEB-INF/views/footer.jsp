@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/footer.css">
 
 <footer class="custom-footer mt-auto">
-  <div class="container py-3">
+  <div class="container py-2">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center w-100">
       
       <!-- 로고 -->
