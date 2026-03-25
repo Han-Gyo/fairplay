@@ -62,12 +62,17 @@
 .btn-primary {
     background-color: #78C2AD;
     color: white !important;
-    padding: 10px 20px;
+    padding: 10px 20px;       /* 동일한 내부 여백 */
     border-radius: 30px;
     font-weight: bold;
     text-decoration: none;
     font-size: 0.9rem;
     box-shadow: 0 4px 10px rgba(120, 194, 173, 0.2);
+    display: inline-flex;     /* 아이콘과 텍스트 정렬 */
+    align-items: center;
+    gap: 6px;
+    line-height: 1.2;         /* a, button 차이 줄이기 */
+    border: none;             /* button 기본 border 제거 */
 }
 
 .btn-ghost {
@@ -188,4 +193,50 @@
 		background-color: #66b19c !important;
 	  transform: scale(1.05);
     transition: all 0.2s ease-in-out;
+}
+
+/* 작은 화면 (모바일) */
+@media (max-width: 576px) {
+  .btn-primary {
+    padding: 8px 16px;       /* 버튼 조금 더 작게 */
+    font-size: 0.8rem;       /* 글자 크기 줄임 */
+    border-radius: 25px;     /* pill 유지 */
+  }
+
+  .page-title {
+  	flex: 1;
+  	margin: 0;
+    font-size: 1.4rem;       /* 타이틀도 줄여줌 */
+    white-space: normal;
+  }
+
+  .page-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+  }
+}
+
+/* 중간 화면 (태블릿) */
+@media (min-width: 577px) and (max-width: 992px) {
+  .btn-primary {
+    padding: 9px 18px;
+    font-size: 0.85rem;
+  }
+
+  .page-title {
+    font-size: 1.6rem;
+  }
+}
+
+/* 큰 화면 (데스크톱) */
+@media (min-width: 993px) {
+  .btn-primary {
+    padding: 10px 20px;   /* 기본값 유지 */
+    font-size: 0.9rem;
+  }
+
+  .page-title {
+    font-size: 1.8rem;
+  }
 }

@@ -19,7 +19,7 @@
       <c:if test="${role eq 'LEADER'}">
         <form action="${pageContext.request.contextPath}/todos/create" method="get">
           <input type="hidden" name="groupId" value="${sessionScope.currentGroupId}">
-          <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+          <button type="submit" class="btn btn-primary">
             <i class="fas fa-plus-circle me-1"></i> 새 할 일 등록
           </button>
         </form>
