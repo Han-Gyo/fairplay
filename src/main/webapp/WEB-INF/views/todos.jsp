@@ -12,7 +12,7 @@
 </head>
 <body>
   <div class="container todo-page">
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-between page-head">
       <div>
         <h1 class="text-primary fw-bolder mb-0">🧹${group.name} 그룹의 할 일 리스트</h1>
       </div>
