@@ -1,4 +1,4 @@
- package com.fairplay.controller;
+package com.fairplay.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value; // @Value 임포트 추가
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +38,11 @@ public class MemberController {
 	// 비밀번호 암호화 처리 객체
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	// 외부 설정(db.properties)에서 가져오도록 변경
+	@Value("${upload.path}")
+	private String rootUploadPath;
+	
 	
 	// 회원 등록 폼 페이지로 이동 (Create)
 	@GetMapping("/create")
@@ -54,10 +60,18 @@ public class MemberController {
 
 		// 업로드된 이미지 처리
 		if (profileImageFile != null && !profileImageFile.isEmpty()) {
+		
 		// 저장 경로 설정
-		String uploadDir = "C:/upload/profile/"; // 환경에 맞게 수정
+		String uploadDir = rootUploadPath + "profile/"; 
 		String originalFilename = profileImageFile.getOriginalFilename();
 		String savedFileName = UUID.randomUUID().toString() + "_" + originalFilename.replaceAll("[^a-zA-Z0-9.]", "_");
+		
+		//폴더가 없을 경우 자동 생성하는 로직 추가 (배포 환경 대비)
+		File dir = new File(uploadDir);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+
 		File dest = new File(uploadDir + savedFileName);
 		
 		try {
@@ -166,8 +180,8 @@ public class MemberController {
 	// 로그인 처리
 	@PostMapping("/login")
 	public String login(@RequestParam String user_id, 
-	                    @RequestParam String password, 
-	                    HttpSession session, Model model) {
+                    @RequestParam String password, 
+                    HttpSession session, Model model) {
 
 	    Member member = memberService.findByUserId(user_id);
 
@@ -248,8 +262,5 @@ public class MemberController {
 
 	    return result;
 	}
-
-
-
 
 }

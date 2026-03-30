@@ -52,7 +52,7 @@ public class MyPageController {
         // 모델에 담아서 JSP에 전달
         model.addAttribute("member", member);
 
-        return "myPage"; // → /WEB-INF/views/myPage.jsp
+        return "myPage"; //  /WEB-INF/views/myPage.jsp
     }
 
     
@@ -77,35 +77,46 @@ public class MyPageController {
             member.setStatus(loginUser.getStatus());
         }
         
+        // 기존 회원 정보 조회 (파일 삭제 및 유지 로직용)
+        Member existingMember = memberService.findById(member.getId());
+        String oldFileName = existingMember.getProfileImage();
+        
         // 프로필 이미지 처리
         if ("true".equals(resetProfileImage)) {
             // 기본 이미지로 초기화
             member.setProfileImage("default_profile.png"); 
+            
+            // 기존에 쓰던 이미지가 기본 이미지가 아니었다면 서버에서 삭제
+            if (oldFileName != null && !oldFileName.equals("default_profile.png")) {
+                fileUploadUtil.deleteFile(oldFileName, "profile/");
+            }
         } else if (profileImageFile != null && !profileImageFile.isEmpty()) {
             // 새로운 이미지 업로드
-            String fileName = fileUploadUtil.saveFile(profileImageFile);
+            String fileName = fileUploadUtil.saveFile(profileImageFile, "profile/");
             
             if (fileName != null) {
                 member.setProfileImage(fileName); // 새 이미지 성공 시 저장
+                
+                // 업로드 성공 후, 기존 파일이 기본 이미지가 아니면 삭제
+                if (oldFileName != null && !oldFileName.equals("default_profile.png")) {
+                    fileUploadUtil.deleteFile(oldFileName, "profile/");
+                }
             } else {
-                String currentImage = memberService.findById(member.getId()).getProfileImage();
-                member.setProfileImage(currentImage); // 실패 시 기존 이미지 유지
+                member.setProfileImage(oldFileName); // 실패 시 기존 이미지 유지
             }
         } else {
             // 아무것도 업로드 안 했을 때 → 기존 이미지 유지
-            String currentImage = memberService.findById(member.getId()).getProfileImage();
-            member.setProfileImage(currentImage);
+            member.setProfileImage(oldFileName);
         }
 
-        // ===== 이메일 인증 여부 확인 =====
+        // 이메일 인증 여부 확인
         Boolean emailVerified = (Boolean) session.getAttribute("emailVerified");
         if (member.getEmail() != null && !member.getEmail().isEmpty()) {
             if (Boolean.TRUE.equals(emailVerified)) {
                 // 인증 성공 시 이메일 반영
             } else {
                 // 인증 실패 시 기존 이메일 유지
-                String currentEmail = memberService.findById(member.getId()).getEmail();
-                member.setEmail(currentEmail);
+                member.setEmail(existingMember.getEmail());
             }
         }
         // 인증 상태 초기화
