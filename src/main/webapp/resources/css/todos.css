@@ -2,10 +2,12 @@
 body {
   font-family: 'NanumSquare', 'Segoe UI', sans-serif;
   background-color: #ebfaf3;
+  padding-bottom: 80px;
 }
-
+.page-head {
+	margin-bottom: 10px;
+}
 .todo-page {
-  padding-top: 5px !important;
   padding-bottom: 80px;
 }
 
@@ -25,6 +27,21 @@ body {
 }
 
 /* 3. 버튼 크기 고정 */
+.btn-primary {
+    background-color: #78C2AD;
+    color: white !important;
+    padding: 10px 20px;       /* 동일한 내부 여백 */
+    border-radius: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 10px rgba(120, 194, 173, 0.2);
+    display: inline-flex;     /* 아이콘과 텍스트 정렬 */
+    align-items: center;
+    gap: 6px;
+    line-height: 1.2;         /* a, button 차이 줄이기 */
+    border: none;             /* button 기본 border 제거 */
+}
 .btn-fixed {
   width: 60px; 
   height: 30px;
@@ -51,13 +68,30 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.btn-primary:hover {
+    background-color: #66b19c !important;
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(120, 194, 173, 0.3);
+    transition: all 0.2s ease-in-out;
+}
+
 /* 4. Minty 테마 컬러 보조색 */
 .bg-info-light { background-color: #e3f2fd; }
 .bg-success-light { background-color: #e8f5e9; }
 
 /* 5. 텍스트 및 제목 스타일 */
-.text-primary { color: #78C2AD !important; font-size: 1.8rem;} /* Minty 메인색 */
-.btn-info { background-color: #6cc3d5 !important; border-color: #6cc3d5 !important; }
+.text-primary { 
+	color: #78C2AD;
+  font-weight: 800;
+  font-size: 1.8rem;
+  margin: 0;
+  letter-spacing: -1px;
+}
+.btn-info { 
+	background-color: #6cc3d5 !important; 
+	border-color: #6cc3d5 !important; 
+}
 .h1 {font-size: 1.8rem !important;}
 
 /* 6. 입력창 커스텀 */
@@ -68,4 +102,57 @@ body {
 
 .input-group-text {
   border: none;
+}
+
+/* 작은 화면 (모바일) */
+@media (max-width: 576px) {
+  .btn-primary {
+    padding: 8px 16px;       /* 버튼 조금 더 작게 */
+    font-size: 0.8rem;       /* 글자 크기 줄임 */
+    border-radius: 25px;     /* pill 유지 */
+  }
+
+  .text-primary {
+  	flex: 1;
+  	margin: 0;
+    font-size: 1.5rem;       /* 타이틀도 줄여줌 */
+    white-space: normal;
+    word-break: keep-all;
+  }
+
+  .page-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+  }
+  
+  .page-head .btn-primary {
+	  flex-shrink: 0;       /* 버튼 크기 유지 */
+	  min-width: 140px;     /* 버튼 영역 확보 */
+	  text-align: center;
+	}
+}
+
+/* 중간 화면 (태블릿) */
+@media (min-width: 577px) and (max-width: 992px) {
+  .btn-primary {
+    padding: 9px 18px;
+    font-size: 0.85rem;
+  }
+
+  .page-title {
+    font-size: 1.6rem;
+  }
+}
+
+/* 큰 화면 (데스크톱) */
+@media (min-width: 993px) {
+  .btn-primary {
+    padding: 10px 20px;   /* 기본값 유지 */
+    font-size: 0.9rem;
+  }
+
+  .page-title {
+    font-size: 1.8rem;
+  }
 }

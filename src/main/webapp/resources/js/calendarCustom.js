@@ -1,6 +1,3 @@
-/**
- * FairPlay 프로젝트 전용 캘린더 로직
- */
 let calendar; 
 
 // 1. 달력 모달 열기
@@ -63,7 +60,7 @@ function openCalendarModal() {
 					    const memo = event.extendedProps.memo || "등록된 메모가 없습니다.";
 					    $("#detailMemo").text(memo);
 					    
-					    // 날짜 예쁘게 포맷팅 (YYYY-MM-DD)
+					    // 날짜 포맷팅 (YYYY-MM-DD)
 					    const dateStr = event.startStr;
 					    $("#detailDate").text(dateStr);
 							
@@ -119,7 +116,7 @@ $(document).ready(function() {
             contentType: "application/json",
             data: JSON.stringify(scheduleData),
             success: function(res) {
-                alert(isUpdate ? "일정이 수정되었습니다! ✨" : "일정이 등록되었습니다! 🎉");
+                alert(isUpdate ? "일정이 수정되었습니다." : "일정이 등록되었습니다.");
                 
                 $("#scheduleModal").modal("hide");
                 $("#scheduleForm")[0].reset(); 
@@ -131,7 +128,7 @@ $(document).ready(function() {
             },
             error: function(err) {
                 console.error("에러 발생:", err);
-                alert("처리에 실패했습니다. 콘솔을 확인해주세요.");
+                alert("로그인 후 이용해주세요.");
             }
         });
     });
@@ -197,7 +194,7 @@ function deleteEvent() {
         data: { id: scheduleId },
         success: function(res) {
 			
-          alert("일정이 삭제되었습니다!");
+          alert("일정이 삭제되었습니다.");
           $("#eventDetailModal").modal("hide"); // 상세창 닫기
             
 	        if(calendar) {
@@ -207,7 +204,7 @@ function deleteEvent() {
 				error: function(xhr, status, error) {
 	        console.error("에러 내용:", error);
 	        console.error("상태 코드:", xhr.status);
-	        alert("삭제 실패! 서버 콘솔이나 브라우저 콘솔을 확인해주세요.");
+	        alert("일정을 삭제하지 못했습니다. 잠시 후 다시 시도해주세요.");
 	    	}
     });
 }
@@ -222,7 +219,7 @@ function showDailySummary(date, events, todos) {
         events.forEach(ev => {
             // 1. 가시성(visibility) 가져오기
             const visibility = ev.extendedProps.visibility;
-            // 2. 그룹명 가져오기 (데이터 필드명은 s.setGroupName으로 넘겨준 값이어야 해!)
+            // 2. 그룹명 가져오기
             const gName = ev.extendedProps.groupName || '알 수 없는 그룹'; 
             
             // 3. 배지에 표시할 텍스트 결정
@@ -245,7 +242,7 @@ function showDailySummary(date, events, todos) {
         $sList.append('<p class="text-muted small ps-2">등록된 일정이 없습니다.</p>'); 
     }
 
-    // Todo 리스트 부분은 그대로 유지 (필요하면 여기도 똑같이 수정 가능!)
+    // Todo 리스트 부분은 그대로 유지
     if (todos && todos.length > 0) {
         todos.forEach(t => {
             const item = `<div class="list-group-item d-flex justify-content-between align-items-center mb-2 border-0 shadow-sm" style="border-radius: 10px;">
@@ -265,7 +262,7 @@ function showDailySummary(date, events, todos) {
     const myModal = new bootstrap.Modal(document.getElementById('dailySummaryModal'));
     myModal.show();
 
-    // 3. 모달이 뜨고 나서 생성되는 배경막(backdrop)의 z-index를 강제로 5000으로!
+    // 3. 모달이 뜨고 나서 생성되는 배경막(backdrop)의 z-index를 강제로 5000으로
     setTimeout(() => {
         $(".modal-backdrop").css("z-index", "5000");
         $("#dailySummaryModal").css("z-index", "5001");
@@ -281,10 +278,10 @@ function openRegisterModalFromSummary() {
 // 요약 리스트에서 일정 클릭 시 상세 모달로 연결
 function showDetailFromSummary(id) {
     $("#dailySummaryModal").modal("hide");
-    // 기존에 만들어둔 eventClick 로직을 활용하기 위해 해당 이벤트 객체 찾기
+    // eventClick 로직을 활용하기 위해 해당 이벤트 객체 찾기
     const event = calendar.getEventById(id);
     if(event) {
-        // 이미 구현하신 상세 모달 채우기 로직 실행
+        // 상세 모달 채우기 로직 실행
         $("#detailId").val(id);
         $("#detailTitle").text(event.title);
         $("#detailMemo").text(event.extendedProps.memo || "메모 없음");

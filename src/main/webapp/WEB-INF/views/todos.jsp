@@ -12,14 +12,14 @@
 </head>
 <body>
   <div class="container todo-page">
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-between page-head">
       <div>
         <h1 class="text-primary fw-bolder mb-0">🧹${group.name} 그룹의 할 일 리스트</h1>
       </div>
       <c:if test="${role eq 'LEADER'}">
         <form action="${pageContext.request.contextPath}/todos/create" method="get">
           <input type="hidden" name="groupId" value="${sessionScope.currentGroupId}">
-          <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+          <button type="submit" class="btn btn-primary">
             <i class="fas fa-plus-circle me-1"></i> 새 할 일 등록
           </button>
         </form>

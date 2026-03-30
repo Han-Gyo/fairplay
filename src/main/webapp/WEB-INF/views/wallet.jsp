@@ -16,7 +16,8 @@
 
   <div class="page-head">
     <h1 class="page-title">💸 가계부 전체 목록</h1>
-    <a class="btn btn-primary" href="${pageContext.request.contextPath}/wallet/create">+ 새 항목 등록</a>
+    <a class="btn btn-primary" href="${pageContext.request.contextPath}/wallet/create">
+    <i class="fas fa-plus-circle me-1"></i> 새 항목 등록</a>
   </div>
   
 	<div class="card border-0 shadow-sm mb-5 rounded-4">
