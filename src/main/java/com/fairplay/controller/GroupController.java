@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +36,10 @@ public class GroupController {
 	private GroupService groupService;
 	@Autowired
 	private GroupMemberService groupMemberService;
+
+	// db.properties에 설정된 upload.path 값을 가져옴
+	@Value("${upload.path}")
+	private String uploadPath;
 	
 	// 그룹 등록 폼 페이지로 이동 (Create)
 	@GetMapping("/create")
@@ -76,10 +81,17 @@ public class GroupController {
 	        // 2. UUID + 안전한 파일명으로 변환 (한글/공백 문제 방지)
 	        String safeFileName = UUID.randomUUID().toString() + "_" + originalName.replaceAll("[^a-zA-Z0-9.]", "_");
 
-	        // 3. 실제 저장 경로 지정
-	        Path savePath = Paths.get("C:/upload/" + safeFileName);
+	        // 3. 실제 저장 경로 지정 (주입받은 uploadPath 활용)
+	        // /* Paths.get(path, filename) 방식을 사용하면 OS별 구분자(\ 또는 /)를 안전하게 처리합니다. */
+	        Path savePath = Paths.get(uploadPath, safeFileName);
 
 	        try {
+	            /* 디렉토리가 존재하지 않을 경우를 대비해 생성 로직을 추가하면 배포 시 더 안전합니다. */
+	            File directory = new File(uploadPath);
+	            if (!directory.exists()) {
+	                directory.mkdirs();
+	            }
+
 	            file.transferTo(savePath.toFile()); // 4. 파일 저장
 	            group.setProfile_img(safeFileName); // 5. DB에 저장할 파일명 설정
 	        } catch (IOException e) {
@@ -93,7 +105,6 @@ public class GroupController {
 	    return "redirect:/group/groups"; // 저장 후 그룹 목록으로 이동
 	}
 
-	
 	// 전체 그룹 목록을 조회하여 뷰에 전달 (Read_all)
 	@GetMapping("/groups")
 	public String groupList(Model model, HttpSession session) {
@@ -129,7 +140,6 @@ public class GroupController {
 	    return "groups";
 	}
 
-	
 	// 특정 그룹을 조회하여 수정 폼 이동(Update용 Read_one 그룹장만 접근 가능하게)
 	@GetMapping("/edit")
 	public String findById(@RequestParam("id")int id,
@@ -197,7 +207,6 @@ public class GroupController {
 		return "groupDetail";
 	}
 	
-		
 	// 수정된 그룹 데이터를 DB에 반영하고 전체 그룹 목록 페이지로 리다이렉트 (Update)
 	@PostMapping("/update")
 	public String update(@ModelAttribute Group group, 
@@ -212,7 +221,10 @@ public class GroupController {
 			// [새 파일 업로드 처리]
 			String originalName = file.getOriginalFilename();
 			String safeFileName = UUID.randomUUID().toString() + "_" + originalName.replaceAll("[^a-zA-Z0-9.]", "_");
-			Path savePath = Paths.get("C:/upload/" + safeFileName);
+			
+			// 주입받은 uploadPath 활용
+			/* Paths.get을 사용하여 경로 결합 방식 통일 */
+			Path savePath = Paths.get(uploadPath, safeFileName);
 
 			try {
 				file.transferTo(savePath.toFile());             // 1. 파일 저장
@@ -243,7 +255,6 @@ public class GroupController {
 		return "redirect:/group/groups"; // 수정 후 목록 페이지로 이동
 	}
 
-	
 	// 그룹 삭제 요청 처리 (Delete)
 	@GetMapping("delete")
 	String delete(@RequestParam("id")int id, HttpSession session) {
@@ -260,7 +271,7 @@ public class GroupController {
 			return "redirect:/group/detail?id=" +id;
 		}
 		
-		// [추가 로직] 그룹 삭제 시 서버 폴더에 저장된 이미지 파일도 함께 삭제
+		// 그룹 삭제 시 서버 폴더에 저장된 이미지 파일도 함께 삭제
 		if (group.getProfile_img() != null && !group.getProfile_img().isEmpty()) {
 			deleteActualFile(group.getProfile_img());
 		}
@@ -270,11 +281,12 @@ public class GroupController {
 		return "redirect:/group/groups";
 	}
 
-	
-	// [추가 함수] C:/upload 폴더에서 파일을 물리적으로 삭제하는 함수
+	// 설정된 uploadPath 폴더에서 파일을 물리적으로 삭제하는 함수
 	// @param fileName 삭제할 파일명
 	private void deleteActualFile(String fileName) {
-		File file = new File("C:/upload/" + fileName);
+		/* File 객체 생성 시 부모 경로(uploadPath)와 파일명을 분리하여 전달하면 
+		   OS별 경로 구분자 문제를 자바가 자동으로 해결해 주어 더 안전합니다. */
+		File file = new File(uploadPath, fileName);
 		if (file.exists()) {
 			file.delete();
 		}

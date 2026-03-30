@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -61,69 +62,71 @@ public class HistoryController {
 	
 	@Autowired
 	private GroupMemberService groupMemberService;
+
+	// db.properties의 upload.path 값을 주입받음
+	@Value("${upload.path}")
+	private String uploadPath;
 	
-//전체 히스토리 보기
-
-@GetMapping("/all")
-
-public String listAllHistories(
-	@RequestParam(value = "groupId", required = false) Integer groupIdParam,
-	 @RequestParam(value = "todo_id", required = false) Integer todoId,
-	 HttpSession session,
-	 Model model,
-	 RedirectAttributes ra) {
-
-   Member loginMember = (Member) session.getAttribute("loginMember");
-   if (loginMember == null) {
-       ra.addFlashAttribute("msg", "로그인 후 이용해주세요.");
-       return "redirect:/member/login";
-   }
-
-   Long memberId = Long.valueOf(loginMember.getId());
-   
-   List<Group> joinedGroups = groupMemberService.findGroupsByMemberId(memberId);
-   if (joinedGroups.isEmpty()) {
-   	ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
-    return "redirect:/group/groups";
-   }
-   
-   if (groupIdParam != null) {
-     session.setAttribute("currentGroupId", groupIdParam);
- }
-   
-   if (session.getAttribute("currentGroupId") == null) {
-     int firstGroupId = joinedGroups.get(0).getId();
-     session.setAttribute("currentGroupId", firstGroupId);
-     Optional<String> role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), firstGroupId);
-     session.setAttribute("role", role);
- }
-   
-   Integer groupId = (Integer) session.getAttribute("currentGroupId");
-   
-   if (!groupMemberService.isGroupMember(Long.valueOf(groupId), memberId)) {
-     ra.addFlashAttribute("msg", "접근 권한이 없습니다.");
-     return "redirect:/";
- }
-   
-   List<History> historyList;
-   if (todoId != null) {
-       historyList = historyService.getHistoriesByTodoIdWithDetails(todoId);
-       Todo todo = todoService.findById(todoId);
-       model.addAttribute("selectedTodo", todo);
-   } else {
-       historyList = historyService.getHistoriesByGroupIdWithDetails(groupId); 
-   }
-
-   List<Todo> todoList = todoService.findByGroupId(groupId);
-
-   model.addAttribute("historyList", historyList);
-   model.addAttribute("todoList", todoList);
-   model.addAttribute("joinedGroups", joinedGroups); 
-   model.addAttribute("groupId", groupId);  
-   model.addAttribute("selectedTodoId", todoId);
-
-   return "histories";
-}
+	//전체 히스토리 보기
+	@GetMapping("/all")
+	public String listAllHistories(
+		@RequestParam(value = "groupId", required = false) Integer groupIdParam,
+		 @RequestParam(value = "todo_id", required = false) Integer todoId,
+		 HttpSession session,
+		 Model model,
+		 RedirectAttributes ra) {
+	
+	   Member loginMember = (Member) session.getAttribute("loginMember");
+	   if (loginMember == null) {
+	       ra.addFlashAttribute("msg", "로그인 후 이용해주세요.");
+	       return "redirect:/member/login";
+	   }
+	
+	   Long memberId = Long.valueOf(loginMember.getId());
+	   
+	   List<Group> joinedGroups = groupMemberService.findGroupsByMemberId(memberId);
+	   if (joinedGroups.isEmpty()) {
+	   	ra.addFlashAttribute("error", "소속된 그룹이 없습니다. 그룹에 먼저 가입해주세요.");
+	    return "redirect:/group/groups";
+	   }
+	   
+	   if (groupIdParam != null) {
+	     session.setAttribute("currentGroupId", groupIdParam);
+	 }
+	   
+	   if (session.getAttribute("currentGroupId") == null) {
+	     int firstGroupId = joinedGroups.get(0).getId();
+	     session.setAttribute("currentGroupId", firstGroupId);
+	     Optional<String> role = groupMemberService.findRoleByMemberIdAndGroupId(loginMember.getId(), firstGroupId);
+	     session.setAttribute("role", role);
+	 }
+	   
+	   Integer groupId = (Integer) session.getAttribute("currentGroupId");
+	   
+	   if (!groupMemberService.isGroupMember(Long.valueOf(groupId), memberId)) {
+	     ra.addFlashAttribute("msg", "접근 권한이 없습니다.");
+	     return "redirect:/";
+	 }
+	   
+	   List<History> historyList;
+	   if (todoId != null) {
+	       historyList = historyService.getHistoriesByTodoIdWithDetails(todoId);
+	       Todo todo = todoService.findById(todoId);
+	       model.addAttribute("selectedTodo", todo);
+	   } else {
+	       historyList = historyService.getHistoriesByGroupIdWithDetails(groupId); 
+	   }
+	
+	   List<Todo> todoList = todoService.findByGroupId(groupId);
+	
+	   model.addAttribute("historyList", historyList);
+	   model.addAttribute("todoList", todoList);
+	   model.addAttribute("joinedGroups", joinedGroups); 
+	   model.addAttribute("groupId", groupId);  
+	   model.addAttribute("selectedTodoId", todoId);
+	
+	   return "histories";
+	}
 	
 	// 1. 기록 목록 (히스토리 리스트)
 	@GetMapping
@@ -266,7 +269,8 @@ public String listAllHistories(
 	    if (photo != null && !photo.isEmpty()) {
 	        try {
 	            String fileName = System.currentTimeMillis() + "_" + photo.getOriginalFilename();
-	            File dir = new File("C:/upload/");
+	            // 하드코딩된 경로 대신 주입받은 uploadPath 사용
+	            File dir = new File(uploadPath);
 	            if (!dir.exists()) dir.mkdirs();
 	            File savedFile = new File(dir, fileName);
 	            photo.transferTo(savedFile);
@@ -360,7 +364,8 @@ public String listAllHistories(
 	    if (photo != null && !photo.isEmpty()) {
 	        try {
 	            String fileName = photo.getOriginalFilename();
-	            File savedFile = new File("C:/upload/", fileName);
+	            // 하드코딩된 경로 대신 주입받은 uploadPath 사용
+	            File savedFile = new File(uploadPath, fileName);
 	            photo.transferTo(savedFile);
 	            history.setPhoto(fileName);
 	        } catch (Exception e) {
