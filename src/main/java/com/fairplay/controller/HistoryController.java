@@ -349,15 +349,15 @@ public class HistoryController {
 	    if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
 	        return "redirect:/";
 	    }
+	    
+	    // 기존 히스토리 불러오기
+	    History oldHistory = historyService.getHistoryByIdWithDetails(id);
 
 	    History history = new History();
 	    history.setId(id);
 	    history.setTodo_id(todoId);
 	    history.setMember_id(memberId);
-
-	    // 사용자가 선택한 날짜 그대로 저장
-	    history.setCompleted_at(completedAt);
-
+	    history.setCompleted_at(completedAt);	// 사용자가 선택한 날짜 그대로 저장
 	    history.setScore(score);
 	    history.setMemo(memo);
 
@@ -371,6 +371,9 @@ public class HistoryController {
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
+	    } else {
+        // 새 파일 없으면 기존 사진 유지
+        history.setPhoto(oldHistory.getPhoto());
 	    }
 
 	    historyService.updateHistory(history);
