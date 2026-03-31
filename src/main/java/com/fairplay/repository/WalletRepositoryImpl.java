@@ -80,9 +80,11 @@ public class WalletRepositoryImpl implements WalletRepository{
 
 	@Override
 	public List<Wallet> comparePriceByItemName(int memberId, String itemName) {
-		String sql = "SELECT * FROM wallet " +
-                "WHERE member_id = ? AND item_name = ? AND type = '지출' " +
-                "ORDER BY (price / NULLIF(unit_count, 0)) ASC";
+    String sql = "SELECT w.*, m.nickname " +
+        "FROM wallet w " +
+        "JOIN member m ON w.member_id = m.id " +
+        "WHERE w.group_id = ? AND w.item_name = ? AND w.type = '지출' " +
+        "ORDER BY (w.price / NULLIF(w.unit_count, 0)) ASC";
 
 		return jdbcTemplate.query(sql, walletRowMapper(), memberId, itemName);
 	}
@@ -92,6 +94,7 @@ public class WalletRepositoryImpl implements WalletRepository{
 	        Wallet wallet = new Wallet();
 	        wallet.setId(rs.getInt("id"));
 	        wallet.setMember_id(rs.getInt("member_id"));
+	        wallet.setNickname(rs.getString("nickname"));
 	        wallet.setGroup_id(rs.getInt("group_id"));
 	        wallet.setItem_name(rs.getString("item_name"));
 	        wallet.setCategory(rs.getString("category"));
@@ -110,7 +113,10 @@ public class WalletRepositoryImpl implements WalletRepository{
 	
 	@Override
 	public List<Wallet> findByGroupId(int groupId) {
-	   String sql = "SELECT * FROM wallet WHERE group_id = ? ORDER BY purchase_date DESC";
+	   String sql = "SELECT w.*, m.nickname " +
+         "FROM wallet w " +
+         "JOIN member m ON w.member_id = m.id " +
+         "WHERE w.group_id = ? ORDER BY w.purchase_date DESC";
 	   return jdbcTemplate.query(sql, walletRowMapper(), groupId);
 	}
 }

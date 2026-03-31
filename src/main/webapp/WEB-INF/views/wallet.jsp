@@ -41,12 +41,11 @@
 	  <table class="wallet-table">
 	    <thead>
 	      <tr>
-	        <th>ID</th>
+	        <th>작성자</th>
 	        <th>품목명</th>
 	        <th>카테고리</th>
 	        <th>가격</th>
 	        <th>수량</th>
-	        <th>단위</th>
 	        <th>단가(1개당)</th>
 	        <th>구매처</th>
 	        <th>유형</th>
@@ -58,7 +57,7 @@
 	    <tbody>
 	      <c:forEach var="item" items="${walletList}">
 	        <tr>
-	          <td class="num">${item.id}</td>
+	          <td class="num">${item.nickname}</td>
 	          <td class="strong">${item.item_name}</td>
 	          <td>
 	            <span class="badge badge-cat">${item.category}</span>
@@ -66,8 +65,7 @@
 	          <td class="num">
 	            <fmt:formatNumber value="${item.price}" pattern="#,###" />원
 	          </td>
-	          <td class="num">${item.quantity}</td>
-	          <td>${item.unit}</td>
+	          <td class="num">${item.quantity * (item.unit_count > 0 ? item.unit_count : 1)}${item.unit}</td>
 						<td class="num">
 						  <c:set var="totalCount" value="${item.quantity * (item.unit_count > 0 ? item.unit_count : 1)}" />
 						  
@@ -81,7 +79,7 @@
 						        
 						        <c:otherwise>
 						          <fmt:formatNumber value="${item.price / totalCount}" pattern="#,###"/>원
-						          <small style="font-size: 0.75rem; color: #666;">/개</small>
+						          <small style="font-size: 0.75rem; color: #666;">/개당</small>
 						        </c:otherwise>
 						      </c:choose>
 						    </span>
@@ -115,7 +113,7 @@
     </div>
     
     <form class="compare-form-new" action="${pageContext.request.contextPath}/wallet/compare" method="get">
-      <input type="hidden" name="member_id" value="${member_id}" />
+      <input type="hidden" name="groupId" value="${groupId}" />
       <div class="input-group-custom">
         <div class="search-input-wrapper">
           <i class="fas fa-search search-icon"></i>
