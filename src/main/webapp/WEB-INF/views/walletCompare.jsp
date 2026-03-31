@@ -30,6 +30,7 @@
     <c:forEach var="item" items="${compareList}" varStatus="status">
       {
         store: "${item.store}",
+        nickname: "${item.nickname}",
         price: ${item.price},
         quantity: ${item.quantity},
         unit_count: ${item.unit_count > 0 ? item.unit_count : 1},
@@ -39,7 +40,7 @@
   ];
 
   // 2. 단위에 따른 단가 계산
-  const labels = rawData.map(item => item.store);
+  const labels = rawData.map(item => item.store + " (" + item.nickname + ")");
   const unitPrices = rawData.map(item => {
     // 총 개수 = 수량 * 단위당 개수
     const totalCount = item.quantity * item.unit_count;

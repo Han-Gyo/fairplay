@@ -4,29 +4,31 @@ import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public class Wallet {
-	private int id;                // 고유 ID
-	private int member_id;         // 작성한 사용자 ID
-	private Integer group_id;      // 소속 그룹 ID
-	private String item_name;      // 물품 이름
-	private String category;       // 카테고리 (식비, 생필품 등)
-	private Integer price;         // 총 가격
-	private Integer quantity;      // 수량
-	private String unit;           // 단위 (ex. 개, 묶음)
-	private Integer unit_count;    // 단위당 개수 (예: 1묶음에 30개)
-	private String store;          // 구매처 (마트, 편의점 등)
-	private String type;           // 타입 (수입/지출)
+	private int id;                	// 고유 ID
+	private int member_id;         	// 작성한 사용자 ID
+	private String nickname;				// 닉네임
+	private Integer group_id;      	// 소속 그룹 ID
+	private String item_name;      	// 물품 이름
+	private String category;       	// 카테고리 (식비, 생필품 등)
+	private Integer price;         	// 총 가격
+	private Integer quantity;      	// 수량
+	private String unit;           	// 단위 (ex. 개, 묶음)
+	private Integer unit_count;    	// 단위당 개수 (예: 1묶음에 30개)
+	private String store;          	// 구매처 (마트, 편의점 등)
+	private String type;           	// 타입 (수입/지출)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date purchase_date;    // 구매 날짜
-	private String memo;           // 메모
-	private Date created_at;       // 작성일시
+	private Date purchase_date;    	// 구매 날짜
+	private String memo;           	// 메모
+	private Date created_at;       	// 작성일시
 	
 	public Wallet() {}
 	
-	public Wallet(int id, int member_id, Integer group_id, String item_name, String category, Integer price, Integer quantity,
+	public Wallet(int id, int member_id, String nickname, Integer group_id, String item_name, String category, Integer price, Integer quantity,
 			String unit, Integer unit_count, String store, String type, Date purchase_date, String memo, Date created_at) {
 		super();
 		this.id = id;
 		this.member_id = member_id;
+		this.nickname = nickname;
 		this.group_id = group_id;
 		this.item_name = item_name;
 		this.category = category;
@@ -53,6 +55,15 @@ public class Wallet {
 	public void setMember_id(int member_id) {
 		this.member_id = member_id;
 	}
+	
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
 	public Integer getGroup_id() {
 		return group_id;
 	}

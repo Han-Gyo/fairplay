@@ -210,11 +210,11 @@ public String delete (@RequestParam("id") int id, HttpSession session) {
 
 // 단가 비교 보기
 @GetMapping("/compare")
-public String compare (@RequestParam("member_id") int member_id,
+public String compare (@RequestParam("groupId") int groupId,
 					   @RequestParam("item_name") String item_name,
 					   Model model) {
 
-	List<Wallet> compareList = walletService.comparePriceByItemName(member_id, item_name);
+	List<Wallet> compareList = walletService.comparePriceByItemName(groupId, item_name);
 	
 	model.addAttribute("compareList",compareList);
 	model.addAttribute("item_name",item_name);
