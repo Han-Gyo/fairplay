@@ -60,6 +60,10 @@
 
       <div class="form-group">
         <label>인증샷 업로드</label>
+        <c:if test="${not empty history.photo}">
+        	<img src="${pageContext.request.contextPath}/upload/${history.photo}" 
+             alt="기존 인증샷" style="max-width:100px; display:block; margin-bottom:10px;">
+    		</c:if>
         <input type="file" name="photo" accept="image/*" />
       </div>
 
