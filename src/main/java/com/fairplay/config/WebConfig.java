@@ -17,7 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         
-        // [수정내용] OS 환경에 따른 업로드 경로 동적 설정 (AWS 배포 대비)
+        // OS 환경에 따른 업로드 경로 동적 설정 (AWS 배포 대비)
         String os = System.getProperty("os.name").toLowerCase();
         String uploadPath;
         String profilePath;
@@ -27,13 +27,13 @@ public class WebConfig implements WebMvcConfigurer {
             uploadPath = "file:///C:/upload/";
             profilePath = "file:///C:/upload/profile/";
         } else {
-            // AWS 리눅스 환경 (EC2 등) - 보통 /home/ubuntu/upload 등을 사용합니다.
-            // 관리자 권한 문제가 없는 사용자 홈 디렉토리 하위를 권장합니다.
+            // AWS 리눅스 환경 (EC2 등) - /home/ubuntu/upload 등
+            // 관리자 권한 문제가 없는 사용자 홈 디렉토리 하위를 권장
             uploadPath = "file:/home/ubuntu/upload/";
             profilePath = "file:/home/ubuntu/upload/profile/";
         }
 
-        // 최종 경로는 /upload/ → 설정된 경로에서 파일 찾음
+        // 최종 경로는 /upload/ -> 설정된 경로에서 파일 찾음
         // /** 와일드카드를 추가하여 하위 파일 접근 허용
         registry.addResourceHandler("/upload/**")
                 .addResourceLocations(uploadPath);
