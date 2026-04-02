@@ -310,10 +310,6 @@
 	            <include>**/*.xml</include>
 	            <include>**/*.properties</include>
 	        </includes>
-	        <excludes>
-	            <exclude>config-local.properties</exclude>
-	            <exclude>config-prod.properties</exclude>
-	        </excludes>
 	    </resource>
 	    
 	    <resource>
