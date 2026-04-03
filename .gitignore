@@ -3,3 +3,10 @@
 /.classpath
 .metadata/
 .project
+
+
+
+db/data/
+bin/
+
+upload/

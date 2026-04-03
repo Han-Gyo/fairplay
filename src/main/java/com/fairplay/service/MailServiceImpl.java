@@ -3,6 +3,7 @@ package com.fairplay.service;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -13,6 +14,10 @@ public class MailServiceImpl implements MailService {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    // 프로퍼티에서 발신자 정보를 가져옴 (관리 효율성을 위함)
+    @Value("${mail.username}")
+    private String fromEmail;
 
     // 인증번호 생성 (6자리 숫자)
     @Override
@@ -30,7 +35,7 @@ public class MailServiceImpl implements MailService {
             helper.setTo(toEmail);
             helper.setSubject("[FairPlay] 이메일 인증번호 안내");
             helper.setText("인증번호는 다음과 같습니다: " + code);
-            helper.setFrom("fairplay_@nate.com"); // 발신자 이메일
+            helper.setFrom(fromEmail); 
 
             mailSender.send(message);
         } catch (Exception e) {
@@ -39,17 +44,13 @@ public class MailServiceImpl implements MailService {
     }
 
     // 임시 비밀번호 발송 메일 (제목 + 본문만 전달하는 간단한 텍스트 메일)
-	@Override
+    @Override
     public void sendSimpleMessage(String to, String subject, String text) throws Exception {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
-        message.setFrom("fairplay_@nate.com");
+        message.setFrom(fromEmail);
         message.setSubject(subject);
         message.setText(text);
         mailSender.send(message);
     }
-    
-    
-    
-    
 }
