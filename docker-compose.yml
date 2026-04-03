@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # 1. 데이터베이스 서비스 (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: fairplay-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: fairplay
+      MYSQL_ROOT_PASSWORD: 1234  # config-prod.properties의 db.password와 일치해야 함
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d  # 초기 테이블 생성용 SQL
+      - ./db/data:/var/lib/mysql               # DB 데이터 보존용
+
+  # 2. 애플리케이션 서비스 (Tomcat)
+  app:
+    build: .
+    container_name: fairplay-app-container
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db  # DB가 먼저 켜진 후 App이 실행되도록 설정
+    environment:
+      - environment=prod
+    volumes:
+      - ./upload:/usr/local/tomcat/upload      # 파일 업로드 경로 연동

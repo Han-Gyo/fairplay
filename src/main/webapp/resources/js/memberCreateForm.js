@@ -269,6 +269,7 @@ function sendEmailCode() {
     const checkEmailBtn = document.querySelector("button[onclick='checkEmail()']");
     const sendBtn = document.getElementById("sendCodeBtn");
     const verifyBtn = document.getElementById("verifyBtn");
+	const contextPath = document.getElementById('contextPath').value;
     
     if (timerInterval) clearInterval(timerInterval);
 
@@ -292,11 +293,11 @@ function sendEmailCode() {
         }
     }, 1000);
 
-    fetch("/fairplay/mail/sendCode", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `email=${encodeURIComponent(email)}`
-    }).then(() => {
+	fetch(`${contextPath}/mail/sendCode`, {
+	        method: "POST",
+	        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+	        body: `email=${encodeURIComponent(email)}`
+	    }).then(() => {
         setError('emailResult', '인증번호가 발송되었습니다.', true);
         document.getElementById("email").readOnly = true;
         resetEmailBtn.style.display = "inline-block";
@@ -313,13 +314,15 @@ function sendEmailCode() {
 // 인증번호 확인
 function verifyEmailCode() {
     const code = document.getElementById("emailCode").value;
-    fetch("/fairplay/mail/verifyCode", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `code=${encodeURIComponent(code)}`
-    })
-    .then(res => res.text())
-    .then(msg => {
+	const contextPath = document.getElementById('contextPath').value;
+	
+	fetch(`${contextPath}/mail/verifyCode`, {
+	        method: "POST",
+	        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+	        body: `code=${encodeURIComponent(code)}`
+	    })
+	    .then(res => res.text())
+	    .then(msg => {
         if (msg.includes("성공")) {
             setError('emailResult', '인증 성공!', true);
             emailAuthStatus = true;
@@ -328,8 +331,6 @@ function verifyEmailCode() {
             document.getElementById("emailCode").disabled = true;
             document.getElementById("verifyBtn").disabled = true;
             
-            // 수정: 인증 성공 시에도 [다시 입력] 버튼을 숨기지 않고 유지함
-            // document.getElementById("resetEmailBtn").style.display = "none"; (주석 처리됨)
         } else {
             setError('emailResult', '인증번호가 일치하지 않습니다.');
         }
