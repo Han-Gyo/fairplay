@@ -1,17 +1,14 @@
 package com.fairplay.controller;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value; // @Value 임포트 추가
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fairplay.domain.Member;
 import com.fairplay.enums.MemberStatus;
 import com.fairplay.service.MemberService;
+import com.fairplay.util.FileUploadUtil; // FileUploadUtil 임포트 추가
 
 @Controller
 @RequestMapping("/member")
@@ -39,7 +37,11 @@ public class MemberController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	// 외부 설정(db.properties)에서 가져오도록 변경
+	// 파일 업로드 유틸리티 객체 주입 (마이페이지와 통일)
+	@Autowired
+	private FileUploadUtil fileUploadUtil;
+
+	// 외부 설정(db.properties)에서 가져오기
 	@Value("${upload.path}")
 	private String rootUploadPath;
 	
@@ -60,39 +62,20 @@ public class MemberController {
 
 		// 업로드된 이미지 처리
 		if (profileImageFile != null && !profileImageFile.isEmpty()) {
-		
-		// 저장 경로 설정
-		String uploadDir = rootUploadPath + "profile/"; 
-		String originalFilename = profileImageFile.getOriginalFilename();
-		String savedFileName = UUID.randomUUID().toString() + "_" + originalFilename.replaceAll("[^a-zA-Z0-9.]", "_");
-		
-		//폴더가 없을 경우 자동 생성하는 로직 추가 (배포 환경 대비)
-		File dir = new File(uploadDir);
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
-
-		File dest = new File(uploadDir + savedFileName);
-		
-		try {
-		profileImageFile.transferTo(dest); // 실제 파일 저장
-		
-		// DB에는 "profile/" 경로 포함해서 저장
-		member.setProfileImage(savedFileName);
-		} catch (IOException e) {
 			
-		e.printStackTrace();
-		member.setProfileImage("default_profile.png");
-		
-		}
-		
+			// FileUploadUtil을 사용하여 "profile/" 폴더에 저장 (마이페이지와 로직 통일)
+			String fileName = fileUploadUtil.saveFile(profileImageFile, "profile/");
+			
+			if (fileName != null) {
+				// DB에는 파일명만 저장 (JSP에서 /upload/profile/을 붙여서 호출하므로)
+				member.setProfileImage(fileName);
+			} else {
+				member.setProfileImage("default_profile.png");
+			}
+			
 		} else {
 			
-		member.setProfileImage("default_profile.png");
-		
-		}
-		
-		if (profileImageFile != null) {
+			member.setProfileImage("default_profile.png");
 			
 		}
 		
@@ -118,7 +101,7 @@ public class MemberController {
 		
 		// 로그인 페이지로 리다이렉트
 		return "redirect:/member/login";
-		}
+	}
 	
 	// 전체 회원 목록을 조회하여 뷰에 전달 (Read_all)
 	@GetMapping("/members")
