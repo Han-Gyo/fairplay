@@ -8,23 +8,28 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: fairplay
-      MYSQL_ROOT_PASSWORD: 1234  # config-prod.properties의 db.password와 일치해야 함
+      MYSQL_ROOT_PASSWORD: "1234"
+      TZ: Asia/Seoul
     ports:
       - "3306:3306"
     volumes:
-      - ./db/init:/docker-entrypoint-initdb.d  # 초기 테이블 생성용 SQL
       - ./db/data:/var/lib/mysql               # DB 데이터 보존용
+    command: --lower_case_table_names=1        # 테이블 대소문자 구분 안함 설정
+    # 만약 초기화 SQL이 필요하다면 아래 줄 주석을 해제하세요
+    # - ./db/init:/docker-entrypoint-initdb.d
 
   # 2. 애플리케이션 서비스 (Tomcat)
   app:
-    build: .
+    # 7단계 자동배포를 위해 build: . 대신 이미지를 직접 지정하는 것이 관리하기 편합니다.
+    image: ggyyoo/fairplay-app:latest
     container_name: fairplay-app-container
     restart: always
     ports:
       - "8080:8080"
     depends_on:
-      - db  # DB가 먼저 켜진 후 App이 실행되도록 설정
+      - db
     environment:
       - environment=prod
+      - TZ=Asia/Seoul
     volumes:
       - ./upload:/usr/local/tomcat/upload      # 파일 업로드 경로 연동
