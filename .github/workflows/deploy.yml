@@ -41,6 +41,11 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd ~/FairPlay
+          # 기존 컨테이너를 확실히 정리하여 이름 충돌 및 포트 꼬임을 방지합니다.
+          docker-compose down
+          # 최신 이미지를 다시 받아옵니다.
           docker-compose pull
+          # 새 컨테이너를 실행합니다.
           docker-compose up -d
+          # 쓰지 않는 이전 빌드 이미지들을 삭제하여 용량을 확보합니다.
           docker image prune -f
