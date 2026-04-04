@@ -280,63 +280,6 @@ function confirmLogout() {
     location.href = contextPath + "/member/logout";
   }
 }
-
-$(document).ready(function() {
-	// 1. 공개 범위 변경 이벤트 감지
-  $(document).on('change', '#visibilitySelect', function() {
-    const selectedVal = $(this).val();
-    console.log("선택하신 범위는:", selectedVal);
-
-    if (selectedVal === 'group') {
-      $('#groupSelectSection').slideDown(200);
-      fetchMyGroups(); // 그룹 목록 불러오기
-    } else {
-      $('#groupSelectSection').slideUp(200);
-      $('#groupIdSelect').val(''); // 값 초기화
-    }
-  });
-
-	// 2. 그룹 목록 가져오는 함수
-	function fetchMyGroups() {
-	  const $select = $('#groupIdSelect');
-	  
-	  $.ajax({
-	    url: contextPath + "/todos/api/myGroups",
-	    type: "GET",
-	    success: function(data) {
-	      $select.empty(); 
-	      $select.append('<option value="">-- 그룹을 선택해주세요 --</option>');
-	      
-	      if (data && data.length > 0) {
-	        let htmlOptions = "";
-	        data.forEach(function(group) {
-	          htmlOptions += '<option value="' + group.id + '">' + group.name + '</option>';
-	        });
-	        
-	        $select.append(htmlOptions);
-	        $select.val(""); 
-	      }
-	    }
-	  });
-	}
-});
-
-window.onload = function() {
-  const message = "${msg}";
-  const errorMessage = "${error}";
-
-  if (message && message !== "null" && message !== "") {
-    alert(message);
-  } else if (errorMessage && errorMessage !== "null" && errorMessage !== "") {
-    alert(errorMessage);
-  }
-};
-
-// 모바일 메뉴 열릴 때 배경 블러 처리
-const navCollapse = document.getElementById('navbarNav');
-const mainContent = document.getElementById('mainContent');
-navCollapse.addEventListener('show.bs.collapse', () => mainContent.classList.add('blurred'));
-navCollapse.addEventListener('hidden.bs.collapse', () => mainContent.classList.remove('blurred'));
 </script>
 <script src="${pageContext.request.contextPath}/resources/js/calendarCustom.js"></script>
 </body>
