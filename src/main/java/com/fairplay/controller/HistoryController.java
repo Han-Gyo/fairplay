@@ -322,62 +322,72 @@ public class HistoryController {
 	    return "historyUpdateForm";
 	}
     
-  // 5. 수정 처리
+	//5. 수정 처리
 	@PostMapping("/update")
 	public String updateHistory(
-	        HttpServletRequest request,
-	        @RequestParam("id") int id,
-	        @RequestParam("todo_id") int todoId,
-	        @RequestParam("member_id") int memberId,
-	        @RequestParam("score") int score,
-	        @RequestParam("memo") String memo,
-	        @RequestParam("completed_at") 
-	        @DateTimeFormat(pattern = "yyyy-MM-dd") Date completedAt,
-	        @RequestParam(value = "photo", required = false) MultipartFile photo,
-	        HttpSession session
+	   HttpServletRequest request,
+	   @RequestParam("id") int id,
+	   @RequestParam("todo_id") int todoId,
+	   @RequestParam("member_id") int memberId,
+	   @RequestParam("score") int score,
+	   @RequestParam("memo") String memo,
+	   @RequestParam("completed_at") 
+	   @DateTimeFormat(pattern = "yyyy-MM-dd") Date completedAt,
+	   @RequestParam(value = "photo", required = false) MultipartFile photo,
+	   HttpSession session
 	) {
-
-	    Member loginMember = (Member) session.getAttribute("loginMember");
-	    if (loginMember == null) {
-	        return "redirect:/";
-	    }
-
-	    Todo todo = todoService.findById(todoId);
-	    Long groupId = Long.valueOf(todo.getGroup_id());
-	    Long loginUserId = Long.valueOf(loginMember.getId());
-
-	    if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
-	        return "redirect:/";
-	    }
-	    
-	    // 기존 히스토리 불러오기
-	    History oldHistory = historyService.getHistoryByIdWithDetails(id);
-
-	    History history = new History();
-	    history.setId(id);
-	    history.setTodo_id(todoId);
-	    history.setMember_id(memberId);
-	    history.setCompleted_at(completedAt);	// 사용자가 선택한 날짜 그대로 저장
-	    history.setScore(score);
-	    history.setMemo(memo);
-
-	    if (photo != null && !photo.isEmpty()) {
-	        try {
-	            String fileName = photo.getOriginalFilename();
-	            // 하드코딩된 경로 대신 주입받은 uploadPath 사용
-	            File savedFile = new File(uploadPath, fileName);
-	            photo.transferTo(savedFile);
-	            history.setPhoto(fileName);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    } else {
-        // 새 파일 없으면 기존 사진 유지
-        history.setPhoto(oldHistory.getPhoto());
-	    }
-
-	    historyService.updateHistory(history);
-	    return "redirect:/history/all";
+	
+	 Member loginMember = (Member) session.getAttribute("loginMember");
+	 if (loginMember == null) {
+	   return "redirect:/";
+	 }
+	
+	 Todo todo = todoService.findById(todoId);
+	 Long groupId = Long.valueOf(todo.getGroup_id());
+	 Long loginUserId = Long.valueOf(loginMember.getId());
+	
+	 if (!groupMemberService.isGroupMember(groupId, loginUserId)) {
+	   return "redirect:/";
+	 }
+	 
+	 // 기존 히스토리 불러오기 (기존 사진 확인용)
+	 History oldHistory = historyService.getHistoryByIdWithDetails(id);
+	
+	 History history = new History();
+	 history.setId(id);
+	 history.setTodo_id(todoId);
+	 history.setMember_id(memberId);
+	 history.setCompleted_at(completedAt);
+	 history.setScore(score);
+	 history.setMemo(memo);
+	
+	 // 새 사진이 업로드되었을 때만 실행
+	 if (photo != null && !photo.isEmpty()) {
+	   try {
+	     // 1. 기존 파일이 있다면 삭제
+	     if (oldHistory.getPhoto() != null) {
+	       File oldFile = new File(uploadPath, oldHistory.getPhoto());
+	       if (oldFile.exists()) {
+	         oldFile.delete(); // 서버에서 물리적으로 파일 삭제!
+	       }
+	     }
+	
+	     // 2. 새 파일 저장 (파일명 중복 방지를 위해 타임스탬프 추가)
+	     String fileName = System.currentTimeMillis() + "_" + photo.getOriginalFilename();
+	     File savedFile = new File(uploadPath, fileName);
+	     photo.transferTo(savedFile);
+	     
+	     history.setPhoto(fileName); // DB에 새 파일명 저장
+	   } catch (Exception e) {
+	     e.printStackTrace();
+	   }
+	 } else {
+	   // 새 파일 없으면 기존 사진 유지
+	   history.setPhoto(oldHistory.getPhoto());
+	 }
+	
+	 historyService.updateHistory(history);
+	 return "redirect:/history/all";
 	}
 
 
