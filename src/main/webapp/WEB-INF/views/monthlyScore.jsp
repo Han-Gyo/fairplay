@@ -21,7 +21,7 @@
 
 <div class="score-container py-3">
     <!-- 페이지 타이틀 -->
-    <h2 class="mb-3 score-title">📅 ${yearMonth}월 / ${group.name} 그룹의 점수 현황</h2>
+    <h2 class="mb-3 score-title">${yearMonth}월 / ${group.name} 그룹의 점수 현황</h2>
 
     <!-- 그룹 선택 폼 -->
     <form method="get" action="${pageContext.request.contextPath}/history/monthly-score" class="card mb-4">
