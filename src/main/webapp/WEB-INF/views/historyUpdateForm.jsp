@@ -58,14 +58,23 @@
         <textarea name="memo" rows="4">${history.memo}</textarea>
       </div>
 
-      <div class="form-group">
-        <label>인증샷 업로드</label>
-        <c:if test="${not empty history.photo}">
-        	<img src="${pageContext.request.contextPath}/upload/${history.photo}" 
-             alt="기존 인증샷" style="max-width:100px; display:block; margin-bottom:10px;">
-    		</c:if>
-        <input type="file" name="photo" accept="image/*" />
-      </div>
+			<div class="form-group">
+			  <label>인증샷 업로드</label>
+			  
+			  <div class="image-preview-wrapper" style="margin-bottom:10px;">
+			    <c:choose>
+			      <c:when test="${not empty history.photo}">
+			        <img id="preview" src="${pageContext.request.contextPath}/upload/${history.photo}" 
+			             alt="인증샷" style="max-width:200px; display:block;">
+			      </c:when>
+			      <c:otherwise>
+			        <img id="preview" src="#" alt="미리보기" style="max-width:200px; display:none;">
+			      </c:otherwise>
+			    </c:choose>
+			  </div>
+			
+			  <input type="file" name="photo" id="photoInput" accept="image/*" onchange="previewImage(this)" />
+			</div>
 
       <div class="form-btns">
         <button type="submit" class="btn-submit">수정 완료</button>
@@ -73,6 +82,23 @@
       </div>
     </form>
   </div>
-
 </body>
+
+<script>
+  function previewImage(input) {
+    const preview = document.getElementById('preview');
+    
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+
 </html>
