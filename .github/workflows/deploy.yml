@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]  # main 브랜치에 푸시될 때 실행
+    branches: [ "master" ]
 
 jobs:
   build-and-deploy:
