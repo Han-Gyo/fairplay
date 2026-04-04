@@ -1,217 +1,102 @@
 @charset "UTF-8";
 
-/* 1. 모달 전체 컨테이너 */
-.calendar-custom-modal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 800px;
-    height: 85vh;
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    overflow-y: auto;
-    border: none;
-}
-
-/* 캘린더 모달의 어두운 배경 (백드롭) */
+/* 1. 모달 전체 레이아웃 */
 #calendarModal {
-    display: none; 
-    position: fixed; 
-    z-index: 2000; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    background-color: rgba(0, 0, 0, 0.4); 
-    backdrop-filter: blur(5px); /* 뒤 배경 흐릿하게 만드는 효과 */
+  display: none; 
+  position: fixed; 
+  z-index: 2000; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background-color: rgba(0, 0, 0, 0.6) !important; /* 배경막을 좀 더 어둡게 해서 투명감 방지 */
+  backdrop-filter: blur(5px);
 }
 
 .calendar-custom-modal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 900px;
-    height: 85vh;
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    padding: 30px;
-    overflow-y: auto;
-    border: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 900px;
+  height: 85vh;
+  /* 배경색은 JSP에서 bg-white로 줬지만 안전장치로 유지 */
+  background-color: #ffffff !important; 
+  padding: 30px;
+  overflow-y: auto;
 }
 
-/* 2. FullCalendar 커스텀 스타일 */
-/* 헤더 제목 */
+/* 2. FullCalendar */
 .fc .fc-toolbar-title {
-    font-size: 1.5rem !important;
-    font-weight: 800 !important;
-    color: #78C2AD; 
+  font-size: 1.5rem !important;
+  font-weight: 800 !important;
+  color: #78C2AD; 
 }
 
-/* 버튼 스타일 변경 */
 .fc .fc-button-primary {
-    background-color: #78C2AD !important;
-    border-color: #78C2AD !important;
-    border-radius: 10px !important;
-    text-transform: uppercase;
-    font-weight: bold;
-    transition: 0.3s;
+  background-color: #78C2AD !important;
+  border-color: #78C2AD !important;
+  border-radius: 10px !important;
+  font-weight: bold;
+  transition: 0.3s;
 }
 
 .fc .fc-button-primary:hover {
-    background-color: #5bb098 !important;
+  background-color: #5bb098 !important;
 }
 
-/* 오늘 날짜 강조 */
 .fc .fc-day-today {
-    background: rgba(120, 194, 173, 0.1) !important;
+  background: rgba(120, 194, 173, 0.1) !important;
 }
 
 .fc-daygrid-day-frame {
-    cursor: pointer;
+  cursor: pointer;
 }
 
-/* 3. 모달 내 리스트 디자인 */
+/* 3. 모달 내부 리스트 및 기타 요소 */
 #todoList, #schedule-container {
-    list-style: none;
-    padding-left: 0;
+  list-style: none;
+  padding-left: 0;
 }
 
 #todoList li, .schedule-item {
-    background: #f8f9fa;
-    border-left: 5px solid #78C2AD;
-    padding: 10px 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    transition: 0.2s;
-}
-
-#todoList li:hover {
-    transform: translateX(5px);
-    background: #eef9f6;
+  background: #f8f9fa;
+  border-left: 5px solid #78C2AD;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  font-size: 0.95rem;
 }
 
 /* 닫기 버튼 */
 .close-calendar {
-    position: absolute;
-    top: 20px;
-    right: 25px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #aaa;
-}
-.close-calendar:hover {
-    color: #ff7851; 
-}
-
-
-/* 2. 일정 등록 모달 커스텀 */
-#scheduleModal .modal-content {
-    border-radius: 20px; 
-    border: none;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-}
-
-#scheduleModal .modal-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #eee;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    padding: 20px;
-}
-
-#scheduleModal .modal-title {
-    font-weight: 800;
-    color: #78C2AD; 
-}
-
-#scheduleModal .modal-body {
-    padding: 25px;
-}
-
-#scheduleModal .form-label {
-    font-weight: 700;
-    color: #555;
-    margin-bottom: 8px;
-}
-
-#scheduleModal .form-control, 
-#scheduleModal .form-select {
-    border-radius: 12px; /* 입력창도 둥글게 */
-    border: 1px solid #e1e1e1;
-    padding: 12px;
-    transition: 0.3s;
-}
-
-#scheduleModal .form-control:focus, 
-#scheduleModal .form-select:focus {
-    border-color: #78C2AD;
-    box-shadow: 0 0 0 0.25rem rgba(120, 194, 173, 0.25);
-}
-
-#scheduleModal .modal-footer {
-    border-top: none;
-    padding: 20px;
-    display: flex;
-    gap: 10px;
-}
-
-#scheduleModal .btn {
-    border-radius: 12px;
-    padding: 10px 20px;
-    font-weight: 700;
-}
-.close-calendar {
-    position: absolute;
-    right: 25px;
-    top: 20px;
-    font-size: 24px;
-    cursor: pointer;
-    color: #aaa;
-    transition: 0.3s;
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  font-size: 1.5rem;
+  z-index: 10;
+  cursor: pointer;
+  color: #aaa;
 }
 
 .close-calendar:hover {
-    color: #ff6b6b;
-}
-.calendar-custom-modal {
-    overflow-y: auto; 
-    -ms-overflow-style: none; 
-    scrollbar-width: none; 
-}
-.calendar-custom-modal::-webkit-scrollbar {
-    display: none; 
+  color: #ff6b6b;
 }
 
-.fc-scroller {
-    -ms-overflow-style: none !important;
-    scrollbar-width: none !important;
-}
+/* 스크롤바 숨기기 */
+.calendar-custom-modal::-webkit-scrollbar,
 .fc-scroller::-webkit-scrollbar {
-    display: none !important;
-}
-.row.mt-4 {
-    display: none;
-    transition: all 0.3s ease-in-out;
-}
-/* 캘린더 배경: 기준점 */
-#calendarModal {
-    z-index: 1000 !important;
+  display: none !important;
 }
 
-/* 배경막: 캘린더보다 위 */
-.modal-backdrop {
-    z-index: 1040 !important; 
+.calendar-custom-modal,
+.fc-scroller {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }
 
-/* 모달 본체: 배경막보다 위 */
-#dailySummaryModal, #scheduleModal, #eventDetailModal {
-    z-index: 1050 !important;
-}
+/* 4. Z-INDEX 관리 */
+#calendarModal { z-index: 1000 !important; }
+.modal-backdrop { z-index: 1040 !important; }
+#dailySummaryModal, #scheduleModal, #eventDetailModal { z-index: 1050 !important; }
