@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📊 월간 점수 보기</title>
+    <title>월간 점수 보기</title>
 
     <!-- Bootswatch Minty theme -->
     <link rel="stylesheet" href="https://bootswatch.com/5/minty/bootstrap.min.css">
@@ -109,12 +109,12 @@
         <!-- 그룹 총 점수 카드 -->
         <div class="col-12 col-lg-6">
             <section class="card h-100">
-                <div class="card-header"><h5 class="mb-0">🏆 그룹 총 점수 그래프</h5></div>
+                <div class="card-header"><h5 class="mb-0">그룹 총 점수 그래프</h5></div>
                 <div class="card-body">
                     <div class="chart-wrap">
                         <canvas id="groupChart"></canvas>
                     </div>
-                    <p class="text-muted small mt-2">※ 점수는 집안일 완료 기록을 기준으로 집계됩니다.</p>
+                    <p class="text-muted small mt-2">※ 점수는 집안일 완료 기록을 기준으로 반영됩니다.</p>
                 </div>
             </section>
         </div>
@@ -122,7 +122,7 @@
         <!-- 멤버별 점수 카드 -->
         <div class="col-12 col-lg-6">
             <section class="card h-100">
-                <div class="card-header"><h5 class="mb-0">👥 멤버별 점수 그래프</h5></div>
+                <div class="card-header"><h5 class="mb-0">멤버별 점수 그래프</h5></div>
                 <div class="card-body">
                     <div class="chart-wrap">
                         <canvas id="memberChart"></canvas>
