@@ -15,6 +15,8 @@ https://github.com/Han-Gyo/fairplay
 Spring 기반 백엔드 개발과 Docker, AWS EC2를 활용한 인프라 구축 및
 GitHub Actions를 통한 CI/CD 자동화 경험에 중점을 두었습니다.
 
+실제 사용자 환경에서 동작하는 서비스 구축을 목표로 구현하였습니다.
+
 
 기술 스택
 
@@ -32,6 +34,7 @@ MySQL (Dockerized)
 AWS EC2, Docker
 - 클라우드 서버 환경 구축
 - 애플리케이션 및 DB 컨테이너 분리 운영
+- Docker Compose 기반으로 애플리케이션과 DB 컨테이너를 함께 구성
 
 4. CI/CD
 GitHub Actions
@@ -55,6 +58,7 @@ Git, Maven, Eclipse IDE, MySQL Workbench, Duck DNS
 - Docker 기반 컨테이너 환경 구성
 - GitHub Actions를 통한 AWS EC2 자동 배포
 - MySQL 컨테이너 운영 및 호스트 Volume 연동으로 데이터 유지
+- Docker Hub를 통한 이미지 배포 및 EC2에서 pull 후 실행
 
 
 주요 기능
@@ -76,7 +80,7 @@ src/main/java/com/fairplay/service
 - 비즈니스 로직 및 데이터 처리
 
 src/main/java/com/fairplay/domain
-- 데이터 객체 및 도메인 모델
+- 핵심 비즈니스 도메인 객체 정의
 
 src/main/webapp/WEB-INF/views
 - JSP 기반 View 구성
