@@ -148,13 +148,12 @@
 
 <!-- 커스텀 캘린더 모달 -->
 <div id="calendarModal">
-  <div class="modal-content calendar-custom-modal">
+  <div class="modal-content calendar-custom-modal bg-white shadow-lg rounded-4 border-0">
     <span class="close-calendar" onclick="closeModal()">
-        <i class="fas fa-times"></i>
+      <i class="fas fa-times"></i>
     </span>
     
-    <div id="calendar-full"></div>
-    
+    <div id="calendar-full" class="p-2"></div>
   </div>
 </div>
 
